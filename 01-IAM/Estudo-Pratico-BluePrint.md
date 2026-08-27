@@ -1,3133 +1,2155 @@
-# 🔐 Microsoft IAM Hybrid Lab
+# 🛡️ IAM Study Lab — Manual Prático
 
-> Laboratório prático para desenvolver competências profissionais em Identity and Access Management (IAM), com foco em Microsoft Active Directory, Microsoft Entra ID, Hybrid Identity, Authentication, Authorization, Governance, Privileged Access, Application Identity, Workload Identity, Automation, Monitoring, SIEM e PAM.
+> Laboratório de estudo para carreira em IAM, com foco em Microsoft Active Directory, Microsoft Entra ID, Azure RBAC, MFA, Conditional Access, PIM, JIT, JEA, PAM, governança, automação e monitoramento.
+
+**Princípio:** aprender → configurar → validar → documentar → automatizar → investigar.
 
 ---
 
 ## 🧭 Navegação
 
-- [🎯 Objetivo](#-objetivo)
-- [🧠 Modelo mental de IAM](#-modelo-mental-de-iam)
-- [🏗️ Arquitetura](#️-arquitetura)
-- [💻 Infraestrutura](#-infraestrutura)
-- [🌐 Rede](#-rede)
-- [🟦 Fase 1 — Active Directory](#-fase-1--active-directory)
-- [👥 Fase 2 — Identidades e Grupos](#-fase-2--identidades-e-grupos)
-- [🛡️ Fase 3 — GPO e Segurança](#️-fase-3--gpo-e-segurança)
-- [☁️ Fase 4 — Microsoft Entra ID](#️-fase-4--microsoft-entra-id)
-- [🔑 Fase 5 — Authentication](#-fase-5--authentication)
-- [🚦 Fase 6 — Conditional Access](#-fase-6--conditional-access)
-- [💻 Fase 7 — Device Identity](#-fase-7--device-identity)
-- [🔄 Fase 8 — Hybrid Identity](#-fase-8--hybrid-identity)
-- [👨‍💼 Fase 9 — JML](#-fase-9--jml)
-- [📱 Fase 10 — Application Identity](#-fase-10--application-identity)
-- [🤖 Fase 11 — Workload Identity](#-fase-11--workload-identity)
-- [🔐 Fase 12 — Protocolos](#-fase-12--protocolos)
-- [⚙️ Fase 13 — PowerShell e Microsoft Graph](#️-fase-13--powershell-e-microsoft-graph)
-- [🧠 Fase 14 — Identity Protection](#-fase-14--identity-protection)
-- [⏱️ Fase 15 — PIM](#️-fase-15--pim)
-- [🔎 Fase 16 — Access Reviews](#-fase-16--access-reviews)
-- [📦 Fase 17 — Entitlement Management](#-fase-17--entitlement-management)
-- [🔄 Fase 18 — Lifecycle Workflows](#-fase-18--lifecycle-workflows)
-- [🌎 Fase 19 — B2B](#-fase-19--b2b)
-- [🚨 Fase 20 — IAM Monitoring](#-fase-20--iam-monitoring)
-- [🛡️ Fase 21 — PAM](#️-fase-21--pam)
-- [⚖️ Fase 22 — Segregation of Duties](#️-fase-22--segregation-of-duties)
-- [🏆 Projeto Final](#-projeto-final)
-- [📚 Portfólio](#-portfólio)
-- [📊 Nível de domínio](#-nível-de-domínio)
-- [🎓 Perguntas de entrevista](#-perguntas-de-entrevista)
-- [🏁 Definição de pronto](#-definição-de-pronto)
+- [0. Como usar este laboratório](#0-como-usar-este-laboratório)
+- [1. Objetivos](#1-objetivos)
+- [2. Arquitetura otimizada](#2-arquitetura-otimizada)
+- [3. Inventário](#3-inventário)
+- [4. Planejamento de rede](#4-planejamento-de-rede)
+- [5. VirtualBox](#5-virtualbox)
+- [6. VM DC01](#6-vm-dc01)
+- [7. Active Directory](#7-active-directory)
+- [8. DNS](#8-dns)
+- [9. DHCP](#9-dhcp)
+- [10. Estrutura de OUs](#10-estrutura-de-ous)
+- [11. Usuários e grupos](#11-usuários-e-grupos)
+- [12. GPO](#12-gpo)
+- [13. Windows Client](#13-windows-client)
+- [14. Joiner](#14-joiner)
+- [15. Mover](#15-mover)
+- [16. Leaver](#16-leaver)
+- [17. Contas privilegiadas](#17-contas-privilegiadas)
+- [18. RBAC e Least Privilege](#18-rbac-e-least-privilege)
+- [19. Microsoft Entra ID](#19-microsoft-entra-id)
+- [20. Entra Users e Groups](#20-entra-users-e-groups)
+- [21. Azure RBAC](#21-azure-rbac)
+- [22. MFA](#22-mfa)
+- [23. Conditional Access](#23-conditional-access)
+- [24. Logs e auditoria](#24-logs-e-auditoria)
+- [25. Access Review](#25-access-review)
+- [26. PIM](#26-pim)
+- [27. JIT](#27-jit)
+- [28. JEA](#28-jea)
+- [29. PAM](#29-pam)
+- [30. PowerShell](#30-powershell)
+- [31. Microsoft Graph](#31-microsoft-graph)
+- [32. Service Principal](#32-service-principal)
+- [33. Managed Identity](#33-managed-identity)
+- [34. Identidade híbrida](#34-identidade-híbrida)
+- [35. IAM + Wazuh](#35-iam--wazuh)
+- [36. Cenários de incidente](#36-cenários-de-incidente)
+- [37. Projeto final](#37-projeto-final)
+- [38. Evidências e GitHub](#38-evidências-e-github)
+- [39. Checklist](#39-checklist)
+- [40. Critério de conclusão](#40-critério-de-conclusão)
+- [41. Referências oficiais](#41-referências-oficiais)
 
 ---
 
-# 🎯 Objetivo
+# 0. Como usar este laboratório
 
-Construir progressivamente um ambiente corporativo Microsoft híbrido capaz de reproduzir o ciclo completo de IAM:
+O laboratório foi deliberadamente reduzido para uma máquina com recursos limitados. Você **não precisa manter todas as VMs ligadas**.
 
-    IDENTITY
-        ↓
-    AUTHENTICATION
-        ↓
-    AUTHORIZATION
-        ↓
-    ACCESS
-        ↓
-    PRIVILEGED ACCESS
-        ↓
-    GOVERNANCE
-        ↓
-    MONITORING
-        ↓
-    AUDIT
-        ↓
-    LIFECYCLE
+Cada módulo informa:
 
-Ao final do laboratório, o objetivo é conseguir demonstrar, configurar, operar, investigar e documentar:
+- **🟢 Essencial:** obrigatório para avançar.
+- **🟡 Prática:** exercício para consolidar o conhecimento.
+- **🔵 Validação:** como saber se funcionou.
+- **📝 Evidência:** o que registrar no GitHub.
+- **⚠️ Falha comum:** o que verificar quando o resultado não for o esperado.
 
-- 👤 Identidades
-- 👥 Grupos
-- 🔐 Authentication
-- 🛡️ MFA
-- 🎣 Phishing-resistant Authentication
-- 🚦 Conditional Access
-- 🔑 RBAC
-- 💻 Device Identity
-- 🔄 Hybrid Identity
-- 👨‍💼 Joiner / Mover / Leaver
-- 📱 Application Identity
-- 🤖 Service Principals
-- ⚙️ Managed Identity
-- 🧩 Workload Identity
-- 🔑 SAML
-- 🔐 OAuth 2.0
-- 🪪 OpenID Connect
-- 🎫 JWT
-- 🔄 SCIM
-- 📊 Microsoft Graph
-- 💻 PowerShell
-- ⏱️ PIM
-- 🔎 Access Reviews
-- 📦 Entitlement Management
-- 🔄 Lifecycle Workflows
-- 🧠 Identity Protection
-- 🌎 B2B
-- 🚨 IAM Monitoring
-- 🛡️ PAM
-- ⚖️ Segregation of Duties
-- 🖥️ PAW
-- 📋 Auditoria
+### Regra operacional
 
----
-
-# 🧠 Modelo mental de IAM
-
-Antes de configurar qualquer tecnologia, responda:
-
-    WHO?
-    Quem é a identidade?
-
-    WHAT?
-    O que ela pode acessar?
-
-    WHY?
-    Por que ela possui esse acesso?
-
-    HOW?
-    Como ela autentica?
-
-    WHERE?
-    De onde está acessando?
-
-    WHEN?
-    Quando o acesso é permitido?
-
-    HOW LONG?
-    Por quanto tempo possui privilégio?
-
-    WHO APPROVED?
-    Quem aprovou?
-
-    WHO REVIEWED?
-    Quem revisou?
-
-    WHO AUDITED?
-    Quem auditou?
-
-O objetivo é sair do modelo:
-
-    "Usuário possui acesso."
-
-para:
-
-    "Usuário possui determinada identidade,
-    autenticou por determinado mecanismo,
-    recebeu acesso por determinado grupo ou função,
-    possui determinada justificativa,
-    foi aprovado por determinada pessoa,
-    está sujeito a determinadas políticas,
-    possui privilégio temporário quando necessário,
-    e sua utilização gera evidência auditável."
-
----
-
-# 🏗️ Arquitetura
-
-    ┌───────────────────────────────────────────────────────────┐
-    │                        INTERNET                           │
-    └────────────────────────────┬──────────────────────────────┘
-                                 │
-                                 ▼
-                    ┌─────────────────────────┐
-                    │   MICROSOFT ENTRA ID    │
-                    └────────────┬────────────┘
-                                 │
-             ┌───────────────────┼───────────────────┐
-             │                   │                   │
-             ▼                   ▼                   ▼
-          USERS               DEVICES            WORKLOADS
-             │                   │                   │
-             ▼                   ▼                   ▼
-          GROUPS            JOIN / HYBRID       APPLICATION
-             │                   │                   │
-             └───────────────────┼───────────────────┘
-                                 │
-                                 ▼
-                       ACCESS CONTROL
-                                 │
-                ┌────────────────┼────────────────┐
-                │                │                │
-                ▼                ▼                ▼
-               MFA               CA               RBAC
-                │                │                │
-                └────────────────┼────────────────┘
-                                 │
-                                 ▼
-                       PRIVILEGED ACCESS
-                                 │
-                         ┌───────┴───────┐
-                         │               │
-                         ▼               ▼
-                        PIM             PAM
-                         │               │
-                         └───────┬───────┘
-                                 │
-                                 ▼
-                           GOVERNANCE
-                                 │
-             ┌───────────────────┼───────────────────┐
-             │                   │                   │
-             ▼                   ▼                   ▼
-             JML           ACCESS REVIEWS       ENTITLEMENT
-                                                     │
-                                                     ▼
-                                             LIFECYCLE
-                                 │
-                                 ▼
-                            MONITORING
-                                 │
-                                 ▼
-                               SIEM
-                                 │
-                                 ▼
-                              AUDIT
-
----
-
-# 💻 Infraestrutura
-
-## Máquinas virtuais
-
-| Hostname | Sistema | Função | IP |
-|---|---|---|---|
-| `DC01` | Windows Server | AD DS + DNS | `192.168.100.10` |
-| `SYNC01` | Windows Server | Microsoft Entra Cloud Sync | `192.168.100.15` |
-| `SRV01` | Windows Server | Servidor corporativo | `192.168.100.20` |
-| `LINUX01` | Linux | Aplicação / alvo PAM | `192.168.100.30` |
-| `WIN11-01` | Windows 11 | Workstation | DHCP |
-| `PAW01` | Windows 11 | Administração privilegiada | DHCP |
-| `PAM01` | Conforme solução escolhida | PAM | `192.168.100.40` |
-
-### Ordem recomendada
-
-- [ ] `DC01`
-- [ ] `WIN11-01`
-- [ ] `SRV01`
-- [ ] `SYNC01`
-- [ ] `LINUX01`
-- [ ] `PAW01`
-- [ ] `PAM01`
-
-Não crie todas as VMs inicialmente. O laboratório deve crescer conforme as fases.
-
----
-
-# 🌐 Rede
-
-## Endereçamento
-
-    Network:
-    192.168.100.0/24
-
-    Gateway:
-    192.168.100.1
-
-    DNS:
-    192.168.100.10
-
-    Domain:
-    corp.lab
-
-## Hosts
-
-    DC01
-    192.168.100.10
-
-    SYNC01
-    192.168.100.15
-
-    SRV01
-    192.168.100.20
-
-    LINUX01
-    192.168.100.30
-
-    PAM01
-    192.168.100.40
-
-## DNS
-
-Criar e validar:
-
-    dc01.corp.lab
-    sync01.corp.lab
-    srv01.corp.lab
-    linux01.corp.lab
-
-Checklist:
-
-- [ ] IPs configurados
-- [ ] DNS funcionando
-- [ ] Forward Lookup funcionando
-- [ ] Reverse Lookup configurado/testado
-- [ ] Comunicação entre VMs
-- [ ] Internet disponível onde necessário
-- [ ] Firewall considerado no desenho
-
----
-
-# 🟦 Fase 1 — Active Directory
-
-## 🎯 Objetivo
-
-Construir a autoridade de identidade on-premises.
-
----
-
-## 1.1 — Preparar DC01
-
-Configurar:
-
-    Hostname:
-    DC01
-
-    IP:
-    192.168.100.10
-
-    Mask:
-    255.255.255.0
-
-    Gateway:
-    192.168.100.1
-
-    DNS:
-    192.168.100.10
-
-Instalar:
-
-- [ ] Active Directory Domain Services
-- [ ] DNS Server
-
-Criar uma nova floresta:
-
-    corp.lab
-
----
-
-## 1.2 — Validar o domínio
-
-Executar:
-
-    dcdiag
-
-Depois:
-
-    nslookup corp.lab
-
-E:
-
-    nslookup dc01.corp.lab
-
-Checklist:
-
-- [ ] DC saudável
-- [ ] DNS funcionando
-- [ ] Domínio funcional
-- [ ] Resolução direta funcionando
-- [ ] Resolução reversa validada
-- [ ] Horário sincronizado
-
----
-
-# 👥 Fase 2 — Identidades e Grupos
-
-## 2.1 — Estrutura de OUs
-
-Criar:
-
-    corp.lab
-    │
-    ├── OU=Users
-    │   ├── OU=Employees
-    │   ├── OU=IT
-    │   ├── OU=Finance
-    │   ├── OU=HR
-    │   └── OU=Helpdesk
-    │
-    ├── OU=Groups
-    ├── OU=Servers
-    ├── OU=Workstations
-    ├── OU=Service Accounts
-    ├── OU=Admins
-    ├── OU=Disabled
-    └── OU=IAM-Lab
-
-Checklist:
-
-- [ ] Users
-- [ ] Employees
-- [ ] IT
-- [ ] Finance
-- [ ] HR
-- [ ] Helpdesk
-- [ ] Groups
-- [ ] Servers
-- [ ] Workstations
-- [ ] Service Accounts
-- [ ] Admins
-- [ ] Disabled
-- [ ] IAM-Lab
-
----
-
-## 2.2 — Criar usuários
-
-Criar:
-
-    ana.silva
-    bruno.santos
-    carlos.oliveira
-    diana.souza
-
-Departamentos:
-
-    ana.silva
-    Finance
-
-    bruno.santos
-    IT
-
-    carlos.oliveira
-    Helpdesk
-
-    diana.souza
-    HR
-
-Criar contas administrativas separadas:
-
-    admin.iam
-    admin.infra
-
-Criar contas de serviço para laboratório:
-
-    svc-app
-    svc-backup
-    svc-iis
-
----
-
-## 2.3 — Criar grupos
-
-Criar:
-
-    GG-Finance
-    GG-IT
-    GG-Helpdesk
-    GG-HR
-
-    GG-IAM-Admins
-    GG-IAM-Readers
-    GG-Server-Admins
-
-    GG-App-Finance
-    GG-App-IT
-    GG-App-HR
-
-Preferir:
-
-    USER
-      ↓
-    GROUP
-      ↓
-    PERMISSION
-
-Evitar:
-
-    USER
-      ↓
-    DIRECT PERMISSION
-
----
-
-# 🔄 Exercício JML — Joiner
-
-Criar:
-
-    novo.finance
-
-Processo:
-
-    Criar identidade
-          ↓
-    Definir OU
-          ↓
-    Definir departamento
-          ↓
-    Adicionar grupos
-          ↓
-    Validar acesso
-
-Resultado esperado:
-
-    novo.finance
-    │
-    ├── OU=Finance
-    ├── GG-Finance
-    └── GG-App-Finance
-
-Checklist:
-
-- [ ] Usuário criado
-- [ ] OU correta
-- [ ] Departamento correto
-- [ ] Grupo correto
-- [ ] Aplicação correta
-- [ ] Evidência capturada
-
----
-
-# 🔄 Exercício JML — Mover
-
-Mover:
-
-    Finance
-       ↓
-    IT
-
-Executar:
-
-- [ ] Remover `GG-Finance`
-- [ ] Adicionar `GG-IT`
-- [ ] Remover `GG-App-Finance`
-- [ ] Adicionar `GG-App-IT`
-
-Resultado esperado:
-
-    Finance Access = REMOVED
-
-    IT Access = GRANTED
-
-Validar efetivamente o acesso, não apenas a associação aos grupos.
-
----
-
-# 🚪 Exercício JML — Leaver
-
-Desligar:
-
-    novo.finance
-
-Executar:
-
-    Disable Account
-          ↓
-    Remove Groups
-          ↓
-    Move to OU=Disabled
-          ↓
-    Validate Access Removal
-
-Não apagar imediatamente a identidade.
-
-Checklist:
-
-- [ ] Conta desabilitada
-- [ ] Grupos removidos conforme política
-- [ ] OU `Disabled`
-- [ ] Acesso revogado
-- [ ] Evidência registrada
-
----
-
-# 🛡️ Fase 3 — GPO e Segurança
-
-Criar:
-
-    GPO-Security-Baseline
-    GPO-Workstations
-    GPO-Servers
-    GPO-Admins
-
-Testar:
-
-- [ ] Password Policy
-- [ ] Account Lockout
-- [ ] Screen Lock
-- [ ] Windows Firewall
-- [ ] Audit Policy
-- [ ] PowerShell Logging
-- [ ] Restrições administrativas
-
-Não aplicar alterações de segurança diretamente no ambiente inteiro sem testar primeiro em uma OU de laboratório.
-
----
-
-# ☁️ Fase 4 — Microsoft Entra ID
-
-Criar um tenant dedicado ao laboratório.
-
-Criar:
-
-    cloud.admin
-    cloud.iam
-    cloud.user01
-    cloud.user02
-
-Criar duas contas de emergência:
-
-    breakglass01
-    breakglass02
-
----
-
-# 🚨 Break-glass Accounts
-
-As contas de emergência devem ser tratadas como exceção controlada.
-
-Características desejáveis:
-
-- [ ] Cloud-only
-- [ ] Não dependem do AD local
-- [ ] Credenciais protegidas
-- [ ] Monitoramento específico
-- [ ] Uso somente emergencial
-- [ ] Teste periódico
-- [ ] Exclusão de políticas que possam impedir acesso emergencial, conforme desenho da organização
-- [ ] Alertas para utilização
-
-Não utilizar essas contas para administração cotidiana.
-
----
-
-# 👥 Grupos no Entra ID
-
-Criar:
-
-    GRP-FINANCE
-    GRP-IT
-    GRP-HELPDESK
-    GRP-HR
-
-    GRP-IAM-ADMINS
-    GRP-IAM-READERS
-
-    GRP-APP-FINANCE
-    GRP-APP-IT
-    GRP-APP-HR
-
-Documentar para cada grupo:
-
-    Owner
-    Purpose
-    Membership
-    Source
-    Access
-    Review Frequency
-
----
-
-# 🔑 RBAC
-
-Não confundir:
-
-    Microsoft Entra Directory Roles
-
-com:
-
-    Azure RBAC
-
-São mecanismos relacionados a autorização, mas possuem escopos e finalidades diferentes.
-
----
-
-## Entra Directory Roles
-
-Estudar, conforme disponibilidade:
-
-    Global Administrator
-    User Administrator
-    Groups Administrator
-    Application Administrator
-    Authentication Administrator
-    Directory Readers
-
-Sempre aplicar Least Privilege.
-
----
-
-## Azure RBAC
-
-Modelo:
-
-    Management Group
-          ↓
-    Subscription
-          ↓
-    Resource Group
-          ↓
-    Resource
-
-Testar:
-
-    Reader
-    Contributor
-    Owner
-
-Matriz:
-
-| Role | Scope | Ler | Alterar | Conceder acesso |
-|---|---|---:|---:|---:|
-| Reader | Resource Group | ✅ | ❌ | ❌ |
-| Contributor | Resource Group | ✅ | ✅ | ❌ |
-| Owner | Resource Group | ✅ | ✅ | ✅ |
-
-Modelo mental:
-
-    ROLE
-      +
-    SCOPE
-      =
-    EFFECTIVE ACCESS
-
----
-
-# 🔐 Fase 5 — Authentication
-
-Estudar:
-
-- [ ] Password
-- [ ] MFA
-- [ ] Passwordless
-- [ ] FIDO2
-- [ ] Passkeys
-- [ ] Windows Hello for Business
-- [ ] Authentication Strength
-- [ ] SSPR
-
----
-
-# 🛡️ MFA
-
-Configurar:
-
-    Microsoft Authenticator
-
-Depois estudar:
-
-    FIDO2
-    Passkeys
-
-Comparar:
-
-    Password
-       ↓
-    MFA
-       ↓
-    Passwordless
-       ↓
-    Phishing-resistant Authentication
-
----
-
-# 🎣 Phishing-resistant Authentication
-
-Estudar:
-
-- [ ] FIDO2
-- [ ] Passkeys
-- [ ] Authentication Strength
-- [ ] Requisitos de autenticação para administradores
-
-Objetivo:
-
-    Password
-       ↓
-    MFA
-       ↓
-    Passwordless
-       ↓
-    Phishing-resistant
-
----
-
-# 🔑 SSPR
-
-Configurar:
-
-    Self-Service Password Reset
+Nunca avance apenas porque a configuração foi salva. Avance somente quando a validação passar.
 
 Fluxo:
 
-    User
-      ↓
-    Forgot Password
-      ↓
-    Identity Verification
-      ↓
-    Password Reset
-      ↓
-    Access Restored
-
-No cenário híbrido, estudar também:
-
-    Password Writeback
-
-quando suportado pelo cenário e licenciamento utilizado.
-
----
-
-# 🚦 Fase 6 — Conditional Access
-
-## Regra de implementação
-
-Sempre que possível:
-
-    CONFIGURE
-       ↓
-    REPORT-ONLY
-       ↓
-    TESTE
-       ↓
-    ANALISE IMPACTO
-       ↓
-    ENABLE
-
----
-
-## CA01 — Administradores
-
-Target:
-
-    Admin Roles
-
-Control:
-
-    MFA
-
----
-
-## CA02 — Usuários
-
-Target:
-
-    All Users
-
-Control:
-
-    MFA
-
----
-
-## CA03 — Legacy Authentication
-
-Target:
-
-    Legacy Authentication
-
-Control:
-
-    Block
-
----
-
-## CA04 — Authentication Strength
-
-Target:
-
-    Administrators
-
-Control:
-
-    Phishing-resistant Authentication
-
----
-
-## CA05 — Application
-
-Target:
-
-    FinanceApp
-
-Control:
-
-    MFA
-
----
-
-## CA06 — Device
-
-Target:
-
-    Sensitive Application
-
-Control:
-
-    Compliant Device
-
----
-
-## CA07 — Location
-
-Cenário:
-
-    Untrusted Location
-
-Ação:
-
-    MFA
-    ou
-    Block
-
-Sempre validar o impacto antes de aplicar políticas abrangentes.
-
----
-
-# 💻 Fase 7 — Device Identity
-
-Estudar:
-
-    Microsoft Entra Registered
-    Microsoft Entra Joined
-    Microsoft Entra Hybrid Joined
-
-Criar:
-
-    WIN11-01
-    PAW01
-
-Fluxo híbrido:
-
-    AD
-      ↓
-    Hybrid Join
-      ↓
-    Entra Device
-
-Validar:
-
-- [ ] Device ID
-- [ ] Join Type
-- [ ] Owner
-- [ ] Enabled
-- [ ] Last Activity
-- [ ] Compliance quando aplicável
-
----
-
-# 🖥️ PAW — Privileged Access Workstation
-
-Criar:
-
-    PAW01
-
-Objetivo:
-
-    Administração privilegiada
-
-Separar:
-
-    Normal User
-         X
-    Privileged Administration
-
-Preferir:
-
-    Admin Account
-          ↓
-        PAW
-          ↓
-        PIM
-          ↓
-        Target
-
-A PAW deve ser tratada como dispositivo de maior confiança e ter superfície de ataque reduzida.
-
----
-
-# 🔄 Fase 8 — Hybrid Identity
-
-Arquitetura:
-
-    ACTIVE DIRECTORY
-           ↓
-        SYNC01
-           ↓
-    Microsoft Entra Cloud Sync
-           ↓
-    Microsoft Entra ID
-
----
-
-# 🖥️ SYNC01
-
-Criar:
-
-    SYNC01
-
-Configurar:
-
-- [ ] Windows Server
-- [ ] Domain Joined
-- [ ] Static IP
-- [ ] DNS = DC01
-- [ ] Comunicação com Entra
-
-Instalar o agente correspondente ao cenário escolhido.
-
----
-
-# 🔍 IdFix
-
-Antes da sincronização:
-
-    IdFix
-
-Verificar:
-
-- [ ] Duplicate Attributes
-- [ ] Invalid Attributes
-- [ ] Invalid Characters
-- [ ] UPN Problems
-- [ ] Proxy Address Problems
-
-Criar:
-
-    OU=IAM-Lab
-
-Inicialmente sincronizar somente o escopo necessário ao laboratório.
-
-Não sincronizar todo o domínio sem necessidade.
-
----
-
-# 🔄 Cloud Sync
-
-Fluxo:
-
-    AD Source
-        ↓
-    OU Scope
-        ↓
-    Microsoft Entra
-
-Validar:
-
-- [ ] User
-- [ ] UPN
-- [ ] Groups
-- [ ] Attributes
-- [ ] Source
-- [ ] Synchronization Status
-- [ ] Errors
-
----
-
-# 💻 Hybrid Join
-
-Executar:
-
-    AD Joined Device
-           ↓
-    Microsoft Entra Hybrid Joined
-
-Validar:
-
-- [ ] Device
-- [ ] Join Type
-- [ ] Owner
-- [ ] Enabled
-- [ ] Last Activity
-
----
-
-# 👨‍💼 Fase 9 — JML
-
-## Joiner
-
-Fluxo:
-
-    HR Event
-        ↓
-    AD Identity
-        ↓
-    OU
-        ↓
-    Group
-        ↓
-    Cloud Sync
-        ↓
-    Entra
-        ↓
-    MFA
-        ↓
-    Application Access
-
----
-
-## Mover
-
-Fluxo:
-
-    Department Change
-          ↓
-    Remove Old Access
-          ↓
-    Assign New Access
-          ↓
-    Validate Effective Access
-
----
-
-## Leaver
-
-Fluxo:
-
-    HR Termination
-          ↓
-    Disable AD
-          ↓
-    Cloud Sync
-          ↓
-    Disable Entra
-          ↓
-    Remove Groups
-          ↓
-    Remove Applications
-          ↓
-    Remove Privileged Access
-          ↓
-    Revoke Sessions conforme necessário
-          ↓
-    Audit
-
----
-
-# 📱 Fase 10 — Application Identity
-
-Criar:
-
-    App Registration
-
-Entender:
-
-    Application Object
-           ≠
-    Service Principal
-
-Estudar:
-
-- [ ] Application ID
-- [ ] Tenant ID
-- [ ] Object ID
-- [ ] Redirect URI
-- [ ] API Permissions
-- [ ] Certificates
-- [ ] Client Secrets
-- [ ] Consent
-- [ ] Service Principal
-- [ ] Enterprise Application
-
----
-
-# 🤖 Service Principal
-
-Criar:
-
-    FinanceApp-SP
-
-Modelo:
-
-    Application
-         ↓
-    Service Principal
-         ↓
-    Permissions
-
-Documentar:
-
-    Owner
-    Purpose
-    Permissions
-    Credential
-    Expiration
-    Last Usage
-    Risk
-
----
-
-# 🔐 API Permissions
-
-Criar:
-
-    IAM-Lab-Automation
-
-Testar Microsoft Graph.
-
-Diferenciar:
-
-    Delegated Permissions
-
-de:
-
-    Application Permissions
-
-Entender:
-
-    User Context
-
-versus:
-
-    Application Context
-
-Testar:
-
-    Admin Consent
-
----
-
-# 🔑 Client Secret
-
-Criar somente para laboratório.
-
-Documentar:
-
-    Created
-    Expiration
-    Owner
-    Purpose
-
-Depois praticar:
-
-    Rotation
-    Replacement
-    Revocation
-    Deletion
-
-Nunca publicar secrets no GitHub.
-
----
-
-# 📜 Certificates
-
-Criar certificado de laboratório.
-
-Testar:
-
-    Application
-        ↓
-    Certificate Credential
-
-Documentar:
-
-    Expiration
-    Rotation
-    Replacement
-    Revocation
-
----
-
-# 🤖 Fase 11 — Workload Identity
-
-Estudar:
-
-    Workload
-       │
-       ├── Managed Identity
-       │
-       ├── Service Principal
-       │
-       └── Workload Identity Federation
-
----
-
-# ⚙️ Managed Identity
-
-Criar uma VM Azure.
-
-Habilitar:
-
-    System-assigned Managed Identity
-
-Fluxo:
-
-    Azure VM
-       ↓
-    Managed Identity
-       ↓
-    Azure Resource
-
-Comparar:
-
-    User Account
-    Service Principal
-    Managed Identity
-
-Objetivo:
-
-    Automação
-       ↓
-    Machine Identity
-       ↓
-    Resource
-
-Evitar utilizar identidade humana para automação quando uma identidade de workload apropriada puder ser utilizada.
-
----
-
-# 🔐 Fase 12 — Protocolos
-
----
-
-## SAML 2.0
-
-Estudar:
-
-- [ ] IdP
-- [ ] SP
-- [ ] Entity ID
-- [ ] ACS URL
-- [ ] Assertion
-- [ ] Claims
-- [ ] NameID
-- [ ] Certificate
-- [ ] Signature
-
-Fluxo:
-
-    User
-      ↓
-    Application
-      ↓
-    Entra ID
-      ↓
-    Authentication
-      ↓
-    SAML Assertion
-      ↓
-    Application
-
-Responder:
-
-- [ ] Quem é o IdP?
-- [ ] Quem é o SP?
-- [ ] Qual é o ACS?
-- [ ] Quais claims são enviados?
-- [ ] Como a assinatura é validada?
-
----
-
-# 🔐 OAuth 2.0
-
-Estudar:
-
-- [ ] Authorization Server
-- [ ] Client
-- [ ] Resource Server
-- [ ] Access Token
-- [ ] Refresh Token
-- [ ] Scope
-- [ ] Consent
-- [ ] Authorization Code
-- [ ] PKCE
-
-Fluxo:
-
-    Client
-       ↓
-    Authorization Endpoint
-       ↓
-    Authorization Code
-       ↓
-    Token Endpoint
-       ↓
-    Access Token
-
----
-
-# 🪪 OpenID Connect
-
-Entender:
-
-    OAuth 2.0
-       +
-    Identity Layer
-       =
-    OpenID Connect
-
-Estudar:
-
-- [ ] ID Token
-- [ ] Access Token
-- [ ] Claims
-- [ ] Issuer
-- [ ] Audience
-- [ ] Nonce
-- [ ] State
-- [ ] Redirect URI
-
----
-
-# 🎫 JWT
-
-Estrutura:
-
-    JWT
-     │
-     ├── Header
-     ├── Payload
-     └── Signature
-
-Estudar:
-
-    iss
-    sub
-    aud
-    exp
-    iat
-    nonce
-    scp
-    roles
-
-Validar:
-
-- [ ] Issuer
-- [ ] Audience
-- [ ] Expiration
-- [ ] Signature
-
-Nunca confiar apenas no conteúdo visual de um token.
-
----
-
-# 🔄 SCIM
-
-Arquitetura:
-
-    Entra ID
-       │
-       │ SCIM
-       ▼
-    Application
-
-Testar:
-
-- [ ] Create User
-- [ ] Update User
-- [ ] Disable User
-- [ ] Deprovision User
-- [ ] Group Assignment
-- [ ] Attribute Mapping
-
----
-
-# ⚙️ Fase 13 — PowerShell e Microsoft Graph
-
-Criar:
-
-    IAM-Automation/
-    │
-    ├── New-IAMUser.ps1
-    ├── Disable-IAMUser.ps1
-    ├── Add-IAMGroup.ps1
-    ├── Remove-IAMAccess.ps1
-    ├── Get-InactiveUsers.ps1
-    ├── Get-PrivilegedUsers.ps1
-    ├── Export-GroupMembers.ps1
-    ├── Get-ServicePrincipals.ps1
-    └── Export-IAMReport.ps1
-
----
-
-# 🤖 Microsoft Graph
-
-Testar:
-
-- [ ] Get Users
-- [ ] Get Groups
-- [ ] Get Group Members
-- [ ] Create User
-- [ ] Create Group
-- [ ] Add Group Member
-- [ ] Remove Group Member
-- [ ] Get Directory Roles
-- [ ] Get Applications
-- [ ] Get Service Principals
-
-Depois:
-
-    Export IAM Report
-
----
-
-# 🔄 Automação JML
-
-Criar:
-
-    New-IAMUser.ps1
-
-Entrada:
-
-    FirstName
-    LastName
-    Department
-    JobTitle
-    Manager
-
-Processo:
-
-    Validate Input
-          ↓
-    Create User
-          ↓
-    Set Attributes
-          ↓
-    Assign Group
-          ↓
-    Log Operation
-
-Boas práticas:
-
-- [ ] Validar entrada
-- [ ] Usar tratamento de erro
-- [ ] Gerar logs
-- [ ] Evitar credenciais embutidas
-- [ ] Usar identidade apropriada para automação
-- [ ] Aplicar menor privilégio
-- [ ] Testar primeiro em laboratório
-
----
-
-# 🚪 Automação Leaver
-
-Criar:
-
-    Disable-IAMUser.ps1
-
-Processo:
-
-    Validate User
-          ↓
-    Disable
-          ↓
-    Remove Groups
-          ↓
-    Remove Application Access
-          ↓
-    Log
-
----
-
-# 🧠 Fase 14 — Identity Protection
-
-> ⚠️ Tratar como módulo dependente de licenciamento. Confirmar o licenciamento atual antes do exercício.
-
-Estudar:
-
-- [ ] Risk Detection
-- [ ] User Risk
-- [ ] Sign-in Risk
-- [ ] Risky User
-- [ ] Risky Sign-in
-- [ ] Remediation
-- [ ] Risk-based Conditional Access
-
-Fluxo:
-
-    Sign-in
-       ↓
-    Risk Detection
-       ↓
-    Risk Level
-       ↓
-    Conditional Access
-       ├── MFA
-       ├── Password Reset
-       └── Block
-
----
-
-# ⏱️ Fase 15 — PIM
-
-> ⚠️ PIM depende de licenciamento. Executar como módulo pontual para reduzir custo do laboratório.
-
-Objetivo:
-
-    Permanent Privilege
-           ↓
-    Eligible Privilege
-           ↓
-    JIT Activation
-
----
-
-# 🔐 PIM Lab
-
-Utilizar:
-
-    admin.iam
-
-Atribuir uma função elegível.
-
-Quando disponível no cenário:
-
-- [ ] MFA
-- [ ] Justification
-- [ ] Approval
-- [ ] Maximum Activation Duration
-- [ ] Notification
-- [ ] Audit
-
-Fluxo:
-
-    Admin
-      ↓
-    Activate
-      ↓
-    MFA
-      ↓
-    Justification
-      ↓
-    Approval
-      ↓
-    Temporary Privilege
-      ↓
-    Expiration
-
----
-
-# 💰 Estratégia para reduzir custo do PIM
-
-Não é necessário manter diversos usuários licenciados para praticar os conceitos.
-
-Utilizar:
-
-    1 usuário de laboratório
-    admin.iam
-
-Executar:
-
-    PIM License
-         ↓
-    Assign to admin.iam
-         ↓
-    Execute Exercise
-         ↓
-    Capture Evidence
-         ↓
-    Remove Assignment
-         ↓
-    Reuse User
-
-Para diferentes cenários:
-
-    Role A
-      ↓
-    Test
-      ↓
-    Remove
-
-    Role B
-      ↓
-    Test
-      ↓
-    Remove
-
-Essa estratégia é adequada para laboratório, não para representar a arquitetura operacional de uma organização.
-
----
-
-# 🔎 Fase 16 — Access Reviews
-
-Criar:
-
-    GRP-FINANCE
-
-Adicionar:
-
-    ana.silva
-    carlos.oliveira
-    diana.souza
-
-Criar:
-
-    Access Review
-
-Fluxo:
-
-    Group
-      ↓
-    Reviewer
-      ├── Approve
-      └── Deny
-            ↓
-       Access Removed
-
-Testar:
-
-    carlos.oliveira
-        ↓
-       Deny
-
-Validar a remoção efetiva do acesso.
-
----
-
-# 📦 Fase 17 — Entitlement Management
-
-Criar:
-
-    Catalog:
-    Finance
-
-Adicionar:
-
-    FinanceApp
-    GRP-FINANCE
-
-Criar:
-
-    Access Package:
-    Finance Employee
-
-Configurar, conforme disponibilidade:
-
-- [ ] Request
-- [ ] Approval
-- [ ] Expiration
-- [ ] Review
-
-Fluxo:
-
-    User
-      ↓
-    Request
-      ↓
-    Approval
-      ↓
-    Access Package
-      ├── Group
-      └── Application
-      ↓
-    Expiration
-
----
-
-# 🔄 Fase 18 — Lifecycle Workflows
-
-Cobrir:
-
-    JOINER
-    MOVER
-    LEAVER
-
----
-
-## Joiner
-
-    New Employee
-         ↓
-    Lifecycle Workflow
-         ↓
-    Groups / Access Package
-         ↓
-    Application
-
----
-
-## Mover
-
-    Finance
-       ↓
-    Department Change
-       ↓
-    Remove Finance Access
-       ↓
-    Assign IT Access
-
----
-
-## Leaver
-
-    Employee Exit
-       ↓
-    Disable / Remove Access
-       ↓
-    Cleanup
-
----
-
-# 🌎 Fase 19 — B2B
-
-Criar:
-
-    guest.finance
-
-Testar:
-
-    Guest User
-       ↓
-    B2B
-       ↓
-    Application
-
-Estudar:
-
-- [ ] Guest
-- [ ] External User
-- [ ] Cross-Tenant Access
-- [ ] External Collaboration
-- [ ] Guest Lifecycle
-
----
-
-# 🔎 B2B Governance
-
-Responder:
-
-    Quem pode convidar?
-
-    Quem aprova?
-
-    Qual aplicação pode acessar?
-
-    Por quanto tempo?
-
-    Quem revisa?
-
-    Quando remover?
-
-Criar:
-
-    Guest Access Review
-
----
-
-# 🚨 Fase 20 — IAM Monitoring
-
-Monitorar:
-
-- [ ] Audit Logs
-- [ ] Sign-in Logs
-- [ ] Provisioning Logs
-- [ ] PIM Logs
-- [ ] Access Reviews
-- [ ] Conditional Access
-- [ ] Risk Events
-- [ ] Application Changes
-- [ ] Service Principal Changes
-
----
-
-# 🚨 Eventos críticos
-
-Criar casos de detecção para:
-
-    User Created
-    User Deleted
-    User Disabled
-    Group Created
-    Group Membership Changed
-    Role Assigned
-    Role Removed
-    PIM Activated
-    PIM Assignment Changed
-    Conditional Access Changed
-    MFA Method Added
-    MFA Method Removed
-    Application Created
-    Application Permission Changed
-    Service Principal Created
-    Client Secret Added
-    Certificate Added
-    Admin Consent Granted
-    Guest Created
-    Guest Removed
-    Break-glass Login
-
-Para cada detecção:
-
-    Trigger
-       ↓
-    Detection
-       ↓
-    Investigation
-       ↓
-    Response
-       ↓
-    Evidence
-
----
-
-# 🛡️ Fase 21 — IAM + SIEM
-
-Arquitetura:
-
-    Microsoft Entra
-          ↓
-        Logs
-          ↓
-      Monitoring
-          ↓
-         SIEM
-          ↓
-      Detection
-          ↓
-       Incident
-
-Como já existe experiência com SOC no laboratório, utilizar IAM como fonte de casos de detecção.
-
----
-
-# 🚨 Casos de detecção
-
-Implementar:
-
-    01. Global Administrator assigned
-    02. Privileged role assigned
-    03. MFA method changed
-    04. Conditional Access changed
-    05. Service Principal credential added
-    06. Application permission changed
-    07. Multiple failed sign-ins
-    08. Risky sign-in
-    09. Guest created
-    10. Guest privilege changed
-    11. Break-glass login
-    12. PIM activation
-
-Para cada caso documentar:
-
-    Data Source
-    Event
-    Detection Logic
-    Severity
-    Investigation
-    Response
-    Evidence
-
----
-
-# 🛡️ Fase 22 — PAM
-
-> ⚠️ PAM é um domínio mais amplo que PIM. O laboratório deve manter os dois conceitos separados.
-
-Modelo:
-
-    Privileged Account
-          ↓
-        Vault
-          ↓
-       Approval
-          ↓
-    Credential Checkout
-          ↓
-        Target
-          ↓
-        Audit
-
----
-
-# 🧰 PAM Lab
-
-Criar papéis:
-
-    PAM-Admin
-    PAM-Operator
-    PAM-Auditor
-
-Criar contas:
-
-    Administrator
-    svc-app
-    svc-db
-
----
-
-# 🔐 PAM Vault
-
-Armazenar:
-
-    Privileged Credential
-
-Modelo:
-
-    Credential
-         ↓
-       Vault
-         ↓
-    Controlled Access
-
----
-
-# ✅ PAM Approval
-
-    Operator
-       ↓
-    Request
-       ↓
-    Approval
-       ↓
-    Checkout
-       ↓
-    Use
-       ↓
-    Audit
-
----
-
-# 🔄 PAM Rotation
-
-Quando suportado pela solução:
-
-    Credential
-         ↓
-      Rotation
-         ↓
-    New Credential
-         ↓
-    Target Updated
-
-Validar:
-
-    Old Credential = Invalid
-    New Credential = Valid
-
----
-
-# 🎥 PAM Session
-
-Se a solução suportar:
-
-    Privileged Session
-          ↓
-       Recording
-          ↓
-        Audit
-
-Registrar:
-
-    Who
-    When
-    Where
-    Target
-    Duration
-    Action
-
----
-
-# 🧩 PAM gratuito para laboratório
-
-O objetivo do módulo PAM é compreender o modelo operacional, mesmo que a solução corporativa completa não esteja disponível gratuitamente.
-
-Praticar:
-
-    DISCOVER
-       ↓
-    STORE
-       ↓
-    CONTROL
-       ↓
-    ROTATE
-       ↓
-    MONITOR
-       ↓
-    AUDIT
-
-O laboratório deve diferenciar claramente:
-
-    PIM
-    =
-    controle de ativação de privilégios
-
-e:
-
-    PAM
-    =
-    proteção e controle de contas,
-    credenciais e sessões privilegiadas
-
----
-
-# ⚖️ Fase 23 — Segregation of Duties
-
-Criar funções:
-
-| Função | Permissão |
+```text
+Objetivo
+  ↓
+Pré-requisitos
+  ↓
+Configuração
+  ↓
+Validação
+  ↓
+Evidência
+  ↓
+Próximo módulo
+```
+
+### Estratégia para economizar RAM
+
+| Módulo | VMs ligadas |
 |---|---|
-| Helpdesk | Reset de senha |
-| IAM Analyst | Grupos |
-| IAM Admin | IAM Roles |
-| Application Owner | Application Access |
-| Manager | Aprovação |
-| Auditor | Leitura |
+| AD / DNS / DHCP / GPO | DC01 + CLIENT01 |
+| IAM local | DC01 + CLIENT01 |
+| Wazuh | DC01 + LINUX01 |
+| Cloud IAM | Nenhuma |
+| PIM / Conditional Access | Nenhuma |
+| PowerShell / Graph | DC01 ou somente host |
+| Identidade híbrida | Somente quando necessário |
 
-Regra:
-
-    REQUESTOR
-        ≠
-    APPROVER
-
-E:
-
-    APPROVER
-        ≠
-    AUDITOR
+Desligue as VMs ao concluir cada módulo.
 
 ---
 
-# 🧪 Cenário SoD
+# 1. Objetivos
 
-    Employee
-       ↓
-    Request Access
-       ↓
-    Manager
-       ↓
-    Approval
-       ↓
-    IAM
-       ↓
-    Provisioning
-       ↓
-    Audit
+Ao terminar o laboratório, você deverá conseguir explicar e executar:
 
-Nunca:
+- Identity Lifecycle.
+- Joiner / Mover / Leaver.
+- Provisioning / Deprovisioning.
+- Active Directory.
+- DNS e DHCP para domínio Microsoft.
+- OUs, usuários, grupos e GPO.
+- RBAC e Least Privilege.
+- Microsoft Entra ID.
+- Microsoft Entra roles e Azure RBAC.
+- MFA.
+- Conditional Access.
+- Sign-in Logs e Audit Logs.
+- Access Reviews.
+- PIM e JIT.
+- JEA.
+- Fundamentos de PAM.
+- PowerShell para IAM.
+- Microsoft Graph.
+- Service Principals e Managed Identities.
+- Identidade híbrida.
+- Monitoramento de eventos IAM com Wazuh.
+- Investigação e revogação de acesso.
 
-    Employee
-       ↓
-    Self Approval
-       ↓
-    Self Provisioning
-
----
-
-# 🏆 Projeto Final
-
-## Empresa simulada
-
-    Contoso Lab
-
-Departamentos:
-
-    Finance
-    IT
-    HR
-    Helpdesk
+O foco não é decorar telas. O objetivo é saber **por que um acesso existe, quem o possui, qual o escopo, por quanto tempo e como revogá-lo**.
 
 ---
 
-# 👤 Projeto — Joiner
+# 2. Arquitetura otimizada
 
-Usuário:
+## 2.1 Arquitetura principal
 
-    joao.silva
+```text
+HOST
+ │
+ └── VirtualBox
+      │
+      └── LAB-NET
+           │
+           ├── DC01
+           │    ├── AD DS
+           │    ├── DNS
+           │    ├── DHCP
+           │    └── GPO
+           │
+           ├── CLIENT01
+           │    └── Windows Client
+           │
+           └── LINUX01 (somente nos módulos de SIEM)
+                └── Wazuh
+```
 
-Cargo:
+## 2.2 Cloud
 
-    Finance Analyst
+```text
+Microsoft Entra ID
+ │
+ ├── Users
+ ├── Groups
+ ├── Directory Roles
+ ├── MFA
+ ├── Conditional Access
+ ├── PIM
+ └── Workload Identities
+       │
+       └── Azure
+            ├── Subscription
+            ├── Resource Group
+            └── Resources
+```
+
+## 2.3 O que não é obrigatório
+
+Não crie inicialmente:
+
+- segundo Domain Controller;
+- servidor de arquivos;
+- servidor de aplicação;
+- PAM comercial;
+- PAW dedicada;
+- servidor de sincronização;
+- várias VMs Linux.
+
+Esses componentes podem ser adicionados depois, se houver recursos e necessidade pedagógica.
+
+---
+
+# 3. Inventário
+
+## 3.1 Hardware recomendado
+
+- 16 GB RAM: recomendado.
+- 8 GB RAM: possível, usando apenas uma ou duas VMs por vez.
+- CPU com virtualização habilitada.
+- SSD recomendado.
+
+## 3.2 Software
+
+- Oracle VirtualBox.
+- Windows Server para DC01.
+- Windows Client para CLIENT01.
+- Linux para LINUX01.
+- Conta Microsoft para Entra ID.
+- Azure Subscription apenas para os exercícios que exigirem recursos Azure.
+
+## 3.3 Convenção de nomes
+
+| Recurso | Nome |
+|---|---|
+| Domain Controller | `DC01` |
+| Windows Client | `CLIENT01` |
+| Linux/SIEM | `LINUX01` |
+| Domínio | `corp.lab` |
+| Rede | `LAB-NET` |
+
+---
+
+# 4. Planejamento de rede
+
+## 4.1 Endereçamento
+
+| Item | Valor |
+|---|---|
+| Rede | `192.168.50.0/24` |
+| Gateway do laboratório | `192.168.50.1` |
+| DC01 | `192.168.50.10` |
+| LINUX01 | `192.168.50.20` |
+| DHCP inicial | `192.168.50.100` |
+| DHCP final | `192.168.50.200` |
+| DNS interno | `192.168.50.10` |
+| Domínio | `corp.lab` |
+
+## 4.2 Por que uma rede isolada?
+
+O laboratório poderá gerar autenticações, logs, testes de segurança e alterações de configuração. A rede Host-only permite comunicação entre as VMs sem depender da rede corporativa ou doméstica.
+
+## 4.3 Por que o DHCP do VirtualBox ficará desativado?
+
+Porque o **DC01 será o servidor DHCP do laboratório**. Dois servidores DHCP na mesma rede podem entregar configurações diferentes aos clientes, causando problemas de IP, DNS e gateway.
+
+---
+
+# 5. VirtualBox
+
+## 🟢 Objetivo
+
+Criar uma rede privada para as VMs.
+
+## 5.1 Criar a Host-only Network
+
+Abra o VirtualBox.
+
+Procure o gerenciador de redes, que pode aparecer como:
+
+`Tools → Network Manager`
+
+ou, dependendo da versão:
+
+`Arquivo → Ferramentas → Network Manager`
+
+Abra **Host-only Networks** e clique em **Create**.
+
+Configure:
+
+```text
+IPv4 Address: 192.168.50.1
+IPv4 Network Mask: 255.255.255.0
+```
+
+Desative o servidor DHCP do VirtualBox.
+
+### Por que?
+
+Porque o DHCP será instalado no Windows Server posteriormente.
+
+## 5.2 Criar DC01
+
+Clique:
+
+`New`
+
+Nome:
+
+`DC01`
+
+Tipo:
+
+`Microsoft Windows`
+
+Configuração inicial:
+
+- 2 vCPU.
+- 4 GB RAM.
+- 60 GB de disco.
+
+Em:
+
+`Settings → Network → Adapter 1`
+
+selecione:
+
+`Host-only Adapter`
+
+Escolha:
+
+`LAB-NET`
+
+### 🔵 Validação
+
+Antes de instalar o sistema, confirme que a placa está conectada à Host-only Network correta.
+
+---
+
+# 6. VM DC01
+
+## 🟢 Objetivo
+
+Instalar o Windows Server e preparar o futuro Domain Controller.
+
+## 6.1 Instalação
+
+Instale o Windows Server normalmente.
+
+Após o primeiro login, abra:
+
+`Server Manager → Local Server`
+
+Altere o nome do computador para:
+
+`DC01`
+
+Reinicie.
+
+### Por que alterar o nome antes do AD DS?
+
+O nome do servidor será usado na administração, DNS e identificação do Domain Controller. Fazer isso antes da promoção evita retrabalho.
+
+## 6.2 IP estático
+
+Abra:
+
+`Control Panel → Network and Internet → Network and Sharing Center → Change Adapter Settings`
+
+Clique com botão direito na placa → `Properties`.
+
+Abra:
+
+`Internet Protocol Version 4 (TCP/IPv4)`
+
+Selecione:
+
+`Use the following IP address`
+
+Configure:
+
+```text
+IP address:       192.168.50.10
+Subnet mask:      255.255.255.0
+Default gateway:  192.168.50.1
+Preferred DNS:    192.168.50.10
+```
+
+### Por que IP estático?
+
+O Domain Controller fornece DNS e serviços essenciais de autenticação. Clientes precisam encontrá-lo sempre no mesmo endereço.
+
+### ⚠️ Observação
+
+Antes de o DNS do domínio estar instalado, alguns testes de resolução de nomes podem falhar. Isso é esperado.
+
+---
+
+# 7. Active Directory
+
+## 🟢 Objetivo
+
+Transformar DC01 em Domain Controller do domínio `corp.lab`.
+
+## 7.1 Instalar AD DS
+
+Abra:
+
+`Server Manager → Add Roles and Features`
+
+Em **Server Roles**, marque:
+
+`Active Directory Domain Services`
+
+Quando aparecer:
+
+`Add Features`
+
+confirme.
+
+Continue até:
+
+`Install`
+
+### Por que instalar AD DS antes de promover?
+
+O papel AD DS fornece os componentes necessários para transformar o servidor em Domain Controller. A instalação do papel, sozinha, ainda não cria o domínio.
+
+## 7.2 Promover o servidor
+
+Após a instalação:
+
+`Server Manager → Notifications`
+
+Clique:
+
+`Promote this server to a domain controller`
+
+Selecione:
+
+`Add a new forest`
+
+Informe:
+
+```text
+Root domain name: corp.lab
+```
+
+Mantenha habilitados:
+
+- DNS Server.
+- Global Catalog.
+
+Defina a senha do DSRM.
+
+Finalize e reinicie.
+
+## 7.3 🔵 Validação
+
+Abra:
+
+`Server Manager → Tools`
+
+Confirme a existência de:
+
+- Active Directory Users and Computers.
+- DNS.
+- Group Policy Management.
+
+No PowerShell:
+
+```powershell
+ipconfig /all
+nslookup corp.lab
+dcdiag
+```
+
+Resultado esperado:
+
+- DC01 possui `192.168.50.10`.
+- DNS aponta para `192.168.50.10`.
+- `corp.lab` resolve.
+- `dcdiag` não apresenta falhas críticas.
+
+---
+
+# 8. DNS
+
+## 🟢 Objetivo
+
+Entender o DNS como componente essencial do Active Directory.
+
+O fluxo é:
+
+```text
+Cliente
+  ↓
+DNS
+  ↓
+Localização do DC
+  ↓
+Kerberos / LDAP / autenticação
+```
+
+## 8.1 Abrir DNS
+
+No DC01:
+
+`Server Manager → Tools → DNS`
+
+Verifique:
+
+`Forward Lookup Zones → corp.lab`
+
+Procure registros relacionados ao Domain Controller.
+
+## 8.2 🔵 Validação
+
+No CLIENT01, posteriormente:
+
+```powershell
+nslookup corp.lab
+nslookup dc01.corp.lab
+```
+
+O DNS deve responder pelo DC01.
+
+### ⚠️ Falha comum
+
+Se o cliente usar DNS público, como `8.8.8.8`, o domínio `corp.lab` não será resolvido corretamente.
+
+Em um domínio Microsoft, os clientes devem utilizar o DNS interno capaz de resolver os registros do AD.
+
+---
+
+# 9. DHCP
+
+## 🟢 Objetivo
+
+Fazer o DC01 entregar IP e DNS aos clientes.
+
+## 9.1 Instalar DHCP
+
+Abra:
+
+`Server Manager → Add Roles and Features → Server Roles`
+
+Marque:
+
+`DHCP Server`
+
+Finalize a instalação.
+
+Depois:
+
+`Server Manager → Tools → DHCP`
+
+## 9.2 Criar escopo
+
+Abra:
+
+`DHCP → DC01 → IPv4`
+
+Clique com botão direito em IPv4:
+
+`New Scope`
+
+Nome:
+
+`LAB-SCOPE`
+
+Configure:
+
+```text
+Start IP:       192.168.50.100
+End IP:         192.168.50.200
+Subnet Mask:    255.255.255.0
+```
+
+Configure as opções do escopo:
+
+```text
+Router/Gateway: 192.168.50.1
+DNS Server:     192.168.50.10
+DNS Domain:     corp.lab
+```
+
+Ative o escopo.
+
+### Por que entregar o DNS 192.168.50.10?
+
+Porque o DC01 é o DNS autoritativo do laboratório. O cliente precisa consultar o DNS interno para localizar o domínio e os serviços do AD.
+
+## 9.3 🔵 Validação
+
+No CLIENT01:
+
+```powershell
+ipconfig /release
+ipconfig /renew
+ipconfig /all
+```
+
+Confirme:
+
+- IP entre `192.168.50.100` e `192.168.50.200`.
+- DNS `192.168.50.10`.
+- domínio `corp.lab` quando aplicável.
+
+---
+
+# 10. Estrutura de OUs
+
+## 🟢 Objetivo
+
+Organizar objetos e preparar escopo para GPO e delegação.
+
+Abra:
+
+`Server Manager → Tools → Active Directory Users and Computers`
+
+No domínio `corp.lab`, crie:
+
+```text
+corp.lab
+├── Users
+├── Groups
+├── Admins
+├── Servers
+├── Workstations
+└── ServiceAccounts
+```
+
+### Por que usar OUs?
+
+OUs permitem aplicar políticas e organizar administração por contexto. Não use a organização apenas como estética: cada OU deve ter uma finalidade administrativa.
+
+---
+
+# 11. Usuários e grupos
+
+## 11.1 Criar usuários
+
+Na OU `Users`:
+
+`New → User`
+
+Crie:
+
+```text
+joao.silva
+maria.santos
+ana.financeiro
+carlos.rh
+```
+
+Crie uma conta administrativa separada na OU `Admins`:
+
+```text
+adm.iam
+```
+
+### Por que separar conta comum e administrativa?
+
+Uma conta administrativa possui maior impacto em caso de comprometimento. A separação reduz a exposição do privilégio durante atividades comuns.
+
+## 11.2 Criar grupos
+
+Na OU `Groups`, crie:
+
+```text
+GG-Financeiro
+GG-RH
+GG-TI
+GG-SOC
+GG-IAM
+GG-IAM-Readers
+GG-IAM-Admins
+```
+
+### Regra de acesso
+
+Prefira:
+
+```text
+Usuário → Grupo → Permissão → Recurso
+```
+
+Evite:
+
+```text
+Usuário → Permissão direta
+```
+
+### Por que?
+
+Grupos facilitam provisionamento, revogação, auditoria e Access Review.
+
+---
+
+# 12. GPO
+
+## 🟢 Objetivo
+
+Aplicar controles de segurança de maneira centralizada.
+
+Abra:
+
+`Server Manager → Tools → Group Policy Management`
+
+Crie:
+
+`GPO-LAB-Security`
+
+Vincule inicialmente à OU `Workstations`.
+
+### Por que não aplicar no domínio inteiro imediatamente?
+
+Uma política incorreta pode afetar todos os computadores. O laboratório deve reproduzir o princípio:
+
+```text
+Piloto → Teste → Validação → Expansão
+```
+
+## 12.1 Políticas iniciais
+
+Pratique, de forma controlada:
+
+- auditoria;
+- bloqueio de tela;
+- configurações de senha;
+- Windows Firewall;
+- restrições administrativas apropriadas.
+
+Não aplique configurações agressivas sem antes criar snapshot da VM.
+
+## 12.2 🔵 Validação
+
+No CLIENT01:
+
+```powershell
+gpupdate /force
+gpresult /r
+```
+
+Confirme se a GPO aparece como aplicada.
+
+---
+
+# 13. Windows Client
+
+## 🟢 Objetivo
+
+Criar uma estação que consuma os serviços de identidade do domínio.
+
+Crie `CLIENT01` com:
+
+- 2 vCPU.
+- 4 GB RAM.
+- 60 GB de disco.
+- Host-only Adapter `LAB-NET`.
+
+Instale o Windows.
+
+Configure o adaptador para obter IP automaticamente.
+
+### 🔵 Validação
+
+Execute:
+
+```powershell
+ipconfig /all
+```
+
+Confirme:
+
+- IP fornecido pelo DHCP do DC01.
+- DNS `192.168.50.10`.
+
+---
+
+# 14. Joiner
+
+## 🟢 Objetivo
+
+Praticar o processo de entrada de um colaborador.
+
+Modelo:
+
+```text
+RH
+ ↓
+Solicitação
+ ↓
+Aprovação
+ ↓
+IAM
+ ↓
+Identidade
+ ↓
+Grupo
+ ↓
+Acesso
+ ↓
+Evidência
+```
+
+## 14.1 Exercício
+
+Crie:
+
+`joao.financeiro`
+
+Atribua:
+
+`GG-Financeiro`
+
+Registre:
+
+- solicitante;
+- aprovador;
+- departamento;
+- grupo;
+- data;
+- responsável;
+- justificativa.
+
+### 🔵 Validação
+
+Confirme:
+
+```powershell
+Get-ADUser joao.financeiro
+Get-ADPrincipalGroupMembership joao.financeiro
+```
+
+### Conceito
+
+Provisionamento não é apenas criar usuário. É criar uma identidade com autorização justificada e rastreável.
+
+---
+
+# 15. Mover
+
+## 🟢 Objetivo
+
+Simular mudança de função.
+
+Mude `joao.financeiro` de Financeiro para TI.
+
+Faça:
+
+1. adicionar `GG-TI`;
+2. verificar permissões antigas;
+3. remover `GG-Financeiro` se não houver necessidade legítima;
+4. validar novo acesso;
+5. registrar evidência.
+
+### Por que remover o grupo antigo?
+
+Para evitar **Privilege Creep**: acúmulo de acessos que deixaram de ser necessários.
+
+---
+
+# 16. Leaver
+
+## 🟢 Objetivo
+
+Praticar desligamento e revogação.
 
 Fluxo:
 
-    HR
-      ↓
-    Identity
-      ↓
-    AD
-      ↓
-    Cloud Sync
-      ↓
-    Entra
-      ↓
-    Group
-      ↓
-    Access Package
-      ↓
-    FinanceApp
+```text
+Desligamento
+ ↓
+Disable Account
+ ↓
+Revisar grupos
+ ↓
+Remover acessos
+ ↓
+Revisar sessões/tokens quando aplicável
+ ↓
+Registrar evidência
+```
 
-Aplicar:
+No AD:
 
-- [ ] MFA
-- [ ] Conditional Access
-- [ ] Device Requirement
-- [ ] Least Privilege
+- desabilite a conta;
+- remova grupos conforme política do exercício;
+- mova para uma OU de contas desativadas se você criar essa OU;
+- registre o procedimento.
 
----
+### 🔵 Validação
 
-# 🔄 Projeto — Mover
+```powershell
+Get-ADUser joao.financeiro -Properties Enabled
+```
 
-Executar:
+Resultado esperado:
 
-    Finance
-       ↓
-    IT
+`Enabled = False`
 
-Remover:
+### Importante
 
-- [ ] Finance Group
-- [ ] Finance Application
-
-Adicionar:
-
-- [ ] IT Group
-- [ ] IT Application
-
-Validar:
-
-    Old Access = REMOVED
-    New Access = GRANTED
+Em ambiente híbrido/cloud, o desligamento também deve considerar aplicações, VPN, Microsoft 365, Entra ID, grupos, roles, sessões e credenciais de workload.
 
 ---
 
-# 🔐 Projeto — Privileged Access
+# 17. Contas privilegiadas
 
-João precisa executar uma tarefa administrativa.
+## 🟢 Objetivo
 
-Fluxo:
+Separar identidade administrativa da identidade de uso diário.
 
-    PAW
-      ↓
-    admin.iam
-      ↓
-    PIM
-      ↓
-    MFA
-      ↓
-    Approval
-      ↓
-    JIT
-      ↓
-    Target
-      ↓
-    Expiration
+Use:
 
----
+```text
+Conta comum:     luiz
+Conta admin:     adm.iam
+```
 
-# 🔎 Projeto — Access Review
+A conta privilegiada não deve ser usada para navegação, e-mail ou atividades comuns.
 
-Criar:
+### Modelo
 
-    Access Review
+```text
+Usuário comum
+ ↓
+Atividade diária
 
-Reviewer:
+Conta administrativa
+ ↓
+Administração
+```
 
-    Manager
+### 🔵 Validação
 
-Decisão:
-
-    Approve
-
-ou:
-
-    Deny
-
-Registrar evidência da decisão.
+Documente quais tarefas exigem `adm.iam` e quais não exigem.
 
 ---
 
-# 🚪 Projeto — Leaver
+# 18. RBAC e Least Privilege
 
-João deixa a empresa.
+## 18.1 Conceito
 
-Executar:
+RBAC associa permissões a funções, não a indivíduos isolados.
 
-    AD Disable
-        ↓
-    Cloud Sync
-        ↓
-    Entra Disable
-        ↓
-    Remove Groups
-        ↓
-    Remove Applications
-        ↓
-    Remove Privileged Access
-        ↓
-    Revoke Sessions conforme necessário
-        ↓
-    Audit
+```text
+Identidade
+ ↓
+Função
+ ↓
+Permissão
+ ↓
+Recurso
+```
 
----
+## 18.2 Exercício
 
-# 📋 Projeto — Auditoria
+Crie um cenário de leitura:
 
-Responder:
+`GG-IAM-Readers`
 
-    Quem criou João?
+E um cenário administrativo:
 
-    Quem aprovou seus acessos?
+`GG-IAM-Admins`
 
-    Quais grupos ele recebeu?
+Teste o que cada identidade consegue fazer.
 
-    Quais aplicações acessou?
+### Perguntas obrigatórias
 
-    Quando recebeu privilégio?
-
-    Quando ativou PIM?
-
-    Quem aprovou?
-
-    Qual foi a duração?
-
-    Quando foi movido?
-
-    Quando perdeu o acesso?
-
-    Quando a conta foi desativada?
-
-A resposta deve ser baseada em evidências, não em memória.
+- O acesso é necessário?
+- O escopo é o menor possível?
+- O privilégio é permanente?
+- Existe aprovação?
+- Existe auditoria?
+- Como o acesso será revogado?
 
 ---
 
-# 📸 Evidências
+# 19. Microsoft Entra ID
 
-Capturar:
+## 🟢 Objetivo
 
-- [ ] 01 — AD User
-- [ ] 02 — AD Group
-- [ ] 03 — Cloud Sync
-- [ ] 04 — Entra User
-- [ ] 05 — MFA
-- [ ] 06 — Conditional Access
-- [ ] 07 — Device
-- [ ] 08 — Application
-- [ ] 09 — Access Package
-- [ ] 10 — PIM
-- [ ] 11 — Access Review
-- [ ] 12 — Lifecycle Workflow
-- [ ] 13 — Audit Logs
-- [ ] 14 — SIEM Detection
-- [ ] 15 — Leaver
+Migrar o modelo mental de IAM local para identidade cloud.
 
-Nunca capturar ou publicar:
+Conceitos:
 
-- ❌ Password
-- ❌ Client Secret
-- ❌ Private Key
-- ❌ Access Token
-- ❌ Refresh Token
-- ❌ API Key
-- ❌ Dados pessoais desnecessários
+```text
+Tenant
+ ↓
+Users / Groups
+ ↓
+Roles
+ ↓
+Resources
+ ↓
+Access
+```
+
+Acesse o Microsoft Entra admin center.
+
+Não crie recursos Azure antes de entender o modelo de identidade.
 
 ---
 
-# 📚 Portfólio
+# 20. Entra Users e Groups
 
-Estrutura recomendada:
+Crie usuários de laboratório:
 
-    microsoft-iam-homelab/
-    │
-    ├── README.md
-    │
-    ├── architecture/
-    │   ├── architecture.md
-    │   ├── network.md
-    │   └── identity-flow.md
-    │
-    ├── active-directory/
-    │   ├── structure.md
-    │   ├── users.md
-    │   ├── groups.md
-    │   ├── gpo.md
-    │   ├── jml.md
-    │   └── service-accounts.md
-    │
-    ├── entra-id/
-    │   ├── users.md
-    │   ├── groups.md
-    │   ├── roles.md
-    │   ├── rbac.md
-    │   ├── authentication.md
-    │   ├── mfa.md
-    │   ├── sspr.md
-    │   ├── conditional-access.md
-    │   └── device-identity.md
-    │
-    ├── hybrid/
-    │   ├── cloud-sync.md
-    │   ├── hybrid-identity.md
-    │   ├── hybrid-join.md
-    │   └── troubleshooting.md
-    │
-    ├── applications/
-    │   ├── app-registration.md
-    │   ├── service-principal.md
-    │   ├── managed-identity.md
-    │   ├── workload-identity.md
-    │   ├── saml.md
-    │   ├── oauth.md
-    │   ├── oidc.md
-    │   ├── jwt.md
-    │   └── scim.md
-    │
-    ├── governance/
-    │   ├── pim.md
-    │   ├── access-reviews.md
-    │   ├── entitlement-management.md
-    │   ├── access-packages.md
-    │   ├── lifecycle-workflows.md
-    │   ├── identity-protection.md
-    │   ├── b2b.md
-    │   └── sod.md
-    │
-    ├── monitoring/
-    │   ├── audit-logs.md
-    │   ├── sign-in-logs.md
-    │   ├── provisioning-logs.md
-    │   ├── siem.md
-    │   └── detections.md
-    │
-    ├── pam/
-    │   ├── architecture.md
-    │   ├── vault.md
-    │   ├── privileged-accounts.md
-    │   ├── approval.md
-    │   ├── rotation.md
-    │   └── audit.md
-    │
-    ├── automation/
-    │   ├── New-IAMUser.ps1
-    │   ├── Disable-IAMUser.ps1
-    │   ├── Add-IAMGroup.ps1
-    │   ├── Remove-IAMAccess.ps1
-    │   ├── Get-InactiveUsers.ps1
-    │   ├── Get-PrivilegedUsers.ps1
-    │   ├── Get-ServicePrincipals.ps1
-    │   └── Export-IAMReport.ps1
-    │
-    ├── evidence/
-    │   ├── screenshots/
-    │   ├── reports/
-    │   └── diagrams/
-    │
-    └── projects/
-        ├── hybrid-jml.md
-        ├── privileged-access.md
-        └── iam-soc-integration.md
+```text
+iam.user01
+iam.user02
+iam.admin01
+iam.pimlab
+```
+
+Crie grupos:
+
+```text
+IAM-Lab-Users
+IAM-Lab-Readers
+IAM-Lab-Admins
+```
+
+Atribua usuários aos grupos conforme a função do exercício.
+
+### Por que grupos?
+
+A Microsoft recomenda grupos para facilitar delegação, acesso a aplicações e administração de identidades. Grupos também reduzem atribuições individuais e facilitam revisões.
+
+### 🔵 Validação
+
+Para cada usuário, registre:
+
+- grupos;
+- roles;
+- aplicações;
+- recursos acessíveis;
+- justificativa.
 
 ---
 
-# 📝 Padrão de documentação
+# 21. Azure RBAC
 
-Cada laboratório deve possuir:
+## 🟢 Objetivo
 
-    # 🎯 Objetivo
+Praticar autorização em recursos Azure.
 
-    # 🏢 Cenário
+Modelo:
 
-    # 🏗️ Arquitetura
+```text
+Subscription
+ ↓
+Resource Group
+ ↓
+Resource
+```
 
-    # 📋 Pré-requisitos
+Crie, se sua subscription permitir:
 
-    # ⚙️ Configuração
+`rg-iam-lab`
 
-    # 🧪 Teste
+Teste uma identidade com:
 
-    # ✅ Resultado esperado
+`Reader`
 
-    # 📊 Resultado obtido
+Depois, em um exercício controlado, teste:
 
-    # 📸 Evidências
+`Contributor`
 
-    # 🐛 Problemas encontrados
+Após validar a diferença, remova o privilégio elevado.
 
-    # 🔧 Troubleshooting
+### Por que?
 
-    # ⚠️ Riscos
+Para compreender a diferença entre:
 
-    # 🛡️ Boas práticas
+- autenticar;
+- possuir uma role;
+- possuir uma role em determinado escopo.
 
-    # 📌 Conclusão técnica
+### Regra
+
+Prefira o menor escopo:
+
+```text
+Resource > Resource Group > Subscription
+```
+
+quando a tarefa permitir.
 
 ---
 
-# 🐛 Padrão de Troubleshooting
+# 22. MFA
 
-Nunca registrar apenas:
+## 🟢 Objetivo
 
-    "Funcionou."
+Adicionar um fator adicional à autenticação.
 
-Utilizar:
+Existem diferentes formas de habilitar MFA no ecossistema Microsoft Entra. Security Defaults podem fornecer MFA básico sem depender de Conditional Access; Conditional Access exige licenciamento adequado.
 
-    SINTOMA
-       ↓
-    HIPÓTESE
-       ↓
-    TESTE
-       ↓
-    RESULTADO
-       ↓
-    CAUSA RAIZ
-       ↓
-    CORREÇÃO
-       ↓
-    VALIDAÇÃO
+### Exercício básico
+
+Habilite MFA para a identidade de laboratório conforme os recursos disponíveis no tenant.
+
+Faça login e complete o registro/método de autenticação.
+
+### 🔵 Validação
+
+Verifique o resultado no:
+
+`Microsoft Entra admin center → Sign-in logs`
+
+Procure os detalhes de autenticação.
+
+---
+
+# 23. Conditional Access
+
+## 🟢 Objetivo
+
+Criar políticas do tipo:
+
+```text
+SE condição
+ENTÃO controle
+```
 
 Exemplo:
 
-    Sintoma:
-    Usuário não sincronizou.
+```text
+SE usuário privilegiado
+ENTÃO exigir MFA
+```
 
-    Hipótese:
-    OU fora do escopo.
+## 23.1 Licenciamento
 
-    Teste:
-    Verificar configuração do Cloud Sync.
+Conditional Access requer Microsoft Entra ID P1 ou licença que inclua essa capacidade. Microsoft 365 Business Premium também inclui Conditional Access.
 
-    Resultado:
-    OU não estava incluída.
+Políticas baseadas em risco dependem de Microsoft Entra ID Protection, associado ao P2.
 
-    Correção:
-    Adicionar OU ao escopo.
+Consulte a documentação oficial antes de executar o módulo porque licenciamento e funcionalidades podem mudar.
 
-    Validação:
-    Executar sincronização.
+## 23.2 Primeira política
 
-    Resultado:
-    Usuário sincronizado.
+Crie:
 
----
+`CA-LAB-Admins-MFA`
 
-# 💰 Estratégia de laboratório e licenciamento
+Aplique inicialmente somente a identidade de laboratório `iam.admin01`.
 
-Separar o laboratório em dois grupos.
+### Por que começar com escopo pequeno?
 
-## 🟢 Base
+Para reduzir o risco de bloqueio administrativo.
 
-Manter permanentemente:
+## 23.3 Configuração
 
-- [ ] AD
-- [ ] DNS
-- [ ] GPO
-- [ ] PowerShell
-- [ ] Graph
-- [ ] Entra
-- [ ] RBAC
-- [ ] MFA
-- [ ] Conditional Access
-- [ ] SSPR
-- [ ] Device Identity
-- [ ] Hybrid Identity
-- [ ] SAML
-- [ ] OAuth
-- [ ] OIDC
-- [ ] JWT
-- [ ] SCIM
-- [ ] Application Identity
-- [ ] Workload Identity
-- [ ] Monitoring
+No portal:
 
----
+`Entra ID → Protection → Conditional Access → Policies → New policy`
 
-## 🟡 Premium Sprint
+Configure:
 
-Ativar somente durante exercícios específicos:
+- nome;
+- usuários selecionados;
+- aplicação de teste;
+- condição necessária;
+- grant control para MFA;
+- primeiro modo `Report-only` quando apropriado.
 
-- [ ] PIM
-- [ ] Identity Protection
-- [ ] Access Reviews
-- [ ] Entitlement Management
-- [ ] Lifecycle Workflows
-- [ ] Outros recursos dependentes de licença
+### Por que Report-only?
 
-Antes do exercício:
+Para observar o impacto da política antes de impor o bloqueio.
 
-    Verificar licença
-         ↓
-    Identificar usuário necessário
-         ↓
-    Habilitar recurso
-         ↓
-    Executar laboratório
-         ↓
-    Capturar evidências
-         ↓
-    Remover configuração
-         ↓
-    Liberar licença quando aplicável
+## 23.4 🔵 Validação
 
-Os requisitos de licenciamento podem mudar. Sempre confirmar a documentação e o licenciamento atual da Microsoft antes de executar o laboratório.
+Faça login com o usuário de teste.
+
+Depois abra:
+
+`Entra ID → Monitoring & health → Sign-in logs`
+
+Analise:
+
+- usuário;
+- aplicação;
+- resultado;
+- MFA;
+- Conditional Access;
+- Authentication Details.
+
+## 23.5 What If
+
+Use a ferramenta `What If` para simular uma solicitação antes de alterar a política.
+
+Teste:
+
+- usuário;
+- aplicação;
+- localização;
+- dispositivo.
+
+O objetivo é descobrir quais políticas seriam aplicadas.
 
 ---
 
-# 🧠 IAM × IGA × PIM × PAM
+# 24. Logs e auditoria
 
-## IAM
+## 24.1 Entra Sign-in Logs
 
-    Quem é?
-    Como autentica?
-    O que pode acessar?
+Use para investigar autenticações.
 
-## IGA
+Perguntas:
 
-    Por que possui acesso?
-    Quem aprovou?
-    Quem revisou?
-    Quando expira?
+- Quem autenticou?
+- Quando?
+- De qual IP?
+- Qual aplicação?
+- Qual resultado?
+- MFA foi usado?
+- Qual política de Conditional Access foi aplicada?
 
-## PIM
+## 24.2 Entra Audit Logs
 
-    Quem pode administrar?
-    Quando?
-    Por quanto tempo?
-    Com qual controle?
+Use para investigar alterações administrativas.
 
-## PAM
+Exemplos:
 
-    Como proteger credenciais privilegiadas?
-    Como controlar sessões?
-    Como armazenar?
-    Como rotacionar?
-    Como auditar?
+- usuário criado;
+- usuário excluído;
+- grupo alterado;
+- role atribuída;
+- aplicação alterada.
 
----
+## 24.3 Windows Security Logs
 
-# 🧭 Ordem de estudo
+No CLIENT01/DC01:
 
-    01. IAM Fundamentals
-    02. Active Directory
-    03. Groups
-    04. RBAC
-    05. Entra ID
-    06. Authentication
-    07. MFA
-    08. Conditional Access
-    09. SSPR
-    10. Device Identity
-    11. Hybrid Identity
-    12. JML
-    13. Application Identity
-    14. Service Principals
-    15. Managed Identity
-    16. Workload Identity
-    17. Azure RBAC
-    18. Enterprise Applications
-    19. SAML
-    20. OAuth 2.0
-    21. OIDC
-    22. JWT
-    23. SCIM
-    24. PowerShell
-    25. Microsoft Graph
-    26. Identity Protection
-    27. PIM
-    28. Access Reviews
-    29. Entitlement Management
-    30. Access Packages
-    31. Lifecycle Workflows
-    32. B2B
-    33. Service Account Governance
-    34. Monitoring
-    35. SIEM
-    36. PAM
-    37. SoD
-    38. PAW
-    39. Projeto Final
+`Event Viewer → Windows Logs → Security`
+
+Investigue eventos de:
+
+- logon;
+- falha de logon;
+- criação de usuário;
+- alteração de grupo;
+- uso de conta privilegiada.
 
 ---
 
-# 📊 Nível de domínio
+# 25. Access Review
 
-## Nível 1 — Conhece
+## 🟢 Objetivo
 
-Consegue explicar o conceito.
+Revisar se acessos continuam necessários.
 
-## Nível 2 — Configura
+Para cada identidade:
 
-Consegue implementar.
+```text
+Usuário
+ ↓
+Grupo / Role
+ ↓
+Recurso
+ ↓
+Justificativa
+ ↓
+Necessidade atual
+```
 
-## Nível 3 — Opera
+Resultado:
 
-Consegue administrar.
+- Aprovar.
+- Revogar.
+- Alterar.
 
-## Nível 4 — Troubleshoots
+### Exercício
 
-Consegue investigar e corrigir.
+Crie uma planilha ou Markdown com 10 acessos fictícios.
 
-## Nível 5 — Automatiza
+Para cada um, determine:
 
-Consegue automatizar.
+- manter;
+- remover;
+- alterar.
 
-## Nível 6 — Governa
+Justifique cada decisão.
 
-Consegue definir controles, revisão e auditoria.
+### Licenciamento
 
----
-
-# 🎯 Meta recomendada
-
-Buscar nível 4–5 em:
-
-- Active Directory
-- Microsoft Entra ID
-- Hybrid Identity
-- RBAC
-- Conditional Access
-- MFA
-- JML
-- PIM
-- PowerShell
-- Microsoft Graph
-- Governance
-
-Buscar inicialmente nível 3–4 em:
-
-- SAML
-- OAuth
-- OIDC
-- SCIM
-- PAM
-- Identity Protection
-- B2B
-- Workload Identity
+Recursos específicos de Access Reviews podem exigir licenciamento Microsoft Entra P2 ou Governance, dependendo do cenário. Não assuma que todo tipo de revisão é gratuito.
 
 ---
 
-# 🧪 Regra de conclusão
+# 26. PIM
 
-Não considerar:
+## 🟢 Objetivo
 
-    "Funcionou."
+Praticar privilégio temporário em vez de privilégio permanente.
 
-como conclusão.
+Fluxo:
 
-Utilizar:
+```text
+Eligible
+ ↓
+Activate
+ ↓
+MFA / controles
+ ↓
+Justification
+ ↓
+Privilégio temporário
+ ↓
+Expiration
+```
 
-    EXPLICAR
-       +
-    IMPLEMENTAR
-       +
-    TESTAR
-       +
-    INVESTIGAR
-       +
-    CORRIGIR
-       +
-    AUDITAR
-       +
-    AUTOMATIZAR
-       +
-    DOCUMENTAR
+## 26.1 Licenciamento
 
----
+Para usar PIM e suas configurações, a Microsoft exige Microsoft Entra ID P2 ou Microsoft Entra ID Governance, conforme a documentação atual.
 
-# 🎓 Perguntas de entrevista
+Usuários com atribuições elegíveis ou temporárias, aprovadores e participantes de determinadas Access Reviews podem precisar de licença conforme o cenário.
 
-## Identity
+## 26.2 Estratégia econômica do laboratório
 
-    O que é uma identidade?
+Você pode concentrar os exercícios em uma única identidade de laboratório licenciada:
 
-    Qual diferença entre User, Group,
-    Service Principal e Managed Identity?
+`iam.pimlab`
 
-    Como funciona JML?
+Fluxo:
 
----
+```text
+iam.pimlab
+ ↓
+Role A
+ ↓
+Teste
+ ↓
+Remover
+ ↓
+Role B
+ ↓
+Teste
+ ↓
+Remover
+```
 
-## Authentication
+Isso não significa que uma licença cobre arbitrariamente qualquer usuário em produção. É uma estratégia de **laboratório individual** e deve respeitar os termos de licenciamento do tenant.
 
-    Qual diferença entre Authentication
-    e Authorization?
+## 26.3 Exercício
 
-    O que é MFA?
+Atribua uma role como `Eligible` para `iam.pimlab`.
 
-    O que é phishing-resistant authentication?
+Ative o privilégio.
 
-    Por que FIDO2 é mais resistente a phishing?
+Observe:
 
----
+- MFA;
+- justificativa;
+- duração;
+- estado ativo;
+- expiração;
+- auditoria.
 
-## Authorization
+### 🔵 Validação
 
-    O que é RBAC?
-
-    Qual diferença entre Entra Directory Roles
-    e Azure RBAC?
-
-    O que significa Least Privilege?
-
----
-
-## Conditional Access
-
-    Como uma política CA é avaliada?
-
-    O que é Report-only?
-
-    Como evitar lockout administrativo?
-
-    O que é Authentication Strength?
+Após a expiração, confirme que a identidade não mantém o privilégio ativo.
 
 ---
 
-## Hybrid Identity
+# 27. JIT
 
-    Como AD chega ao Entra?
+## 🟢 Objetivo
 
-    Qual função do Cloud Sync?
+Entender Just-In-Time Access.
 
-    O que é Hybrid Join?
+Modelo:
 
-    Como investigar usuário não sincronizado?
+```text
+Sem privilégio
+ ↓
+Necessidade
+ ↓
+Solicitação
+ ↓
+Aprovação/controle
+ ↓
+Ativação
+ ↓
+Privilégio temporário
+ ↓
+Expiração
+```
 
----
+PIM será utilizado como exercício prático de JIT para privilégios Azure/Entra quando disponível.
 
-## PIM
+### Conceito essencial
 
-    Qual diferença entre Active e Eligible?
-
-    Por que JIT reduz risco?
-
-    Como auditar uma ativação?
-
----
-
-## Governance
-
-    Por que fazer Access Review?
-
-    O que é Access Package?
-
-    Qual diferença entre PIM
-    e Entitlement Management?
-
-    Como Lifecycle Workflows participa do JML?
+JIT reduz a janela de exposição de uma identidade privilegiada.
 
 ---
 
-## Application Identity
+# 28. JEA
 
-    Qual diferença entre Application Object
-    e Service Principal?
+## 🟢 Objetivo
 
-    O que é Delegated Permission?
+Praticar **Just Enough Administration** no Windows PowerShell.
 
-    O que é Application Permission?
+A ideia não é dar acesso administrativo completo. É permitir somente as operações necessárias.
 
-    O que é Admin Consent?
+Exemplo conceitual:
 
-    Quando utilizar Managed Identity?
+```text
+Operador
+ ↓
+Endpoint JEA
+ ↓
+Comandos permitidos
+ ↓
+Recurso específico
+```
 
----
+## Exercício
 
-## Protocolos
+Crie uma sessão JEA de laboratório que permita uma operação administrativa limitada, como consultar ou reiniciar um serviço específico.
 
-    O que é SAML?
+O operador não deve possuir acesso irrestrito ao PowerShell administrativo.
 
-    O que é OAuth?
+### 🔵 Validação
 
-    O que é OIDC?
+Teste:
 
-    Qual diferença entre Access Token
-    e ID Token?
-
-    O que é JWT?
-
-    Por que PKCE existe?
-
-    O que é SCIM?
-
----
-
-## PAM
-
-    Qual diferença entre IAM, PIM e PAM?
-
-    O que é Credential Vault?
-
-    Por que rotacionar credenciais?
-
-    Como controlar Service Accounts?
+- comando permitido;
+- comando não permitido;
+- acesso ao recurso autorizado;
+- tentativa fora do escopo.
 
 ---
 
-# 🏁 Definição de pronto
+# 29. PAM
 
-## Active Directory
+## 🟢 Objetivo
 
-- [ ] AD DS
-- [ ] DNS
-- [ ] OU
-- [ ] Users
-- [ ] Groups
-- [ ] GPO
-- [ ] Service Accounts
-- [ ] Admin Accounts
-- [ ] JML
-- [ ] Leaver
+Entender PAM como disciplina de proteção de acesso privilegiado.
 
----
+PAM pode incluir:
 
-## Entra ID
+- contas administrativas separadas;
+- Least Privilege;
+- JIT;
+- PIM;
+- JEA;
+- PAW;
+- Jump Host;
+- vault de credenciais;
+- rotação de credenciais;
+- aprovação;
+- gravação/auditoria de sessão.
 
-- [ ] Users
-- [ ] Groups
-- [ ] Directory Roles
-- [ ] Azure RBAC
-- [ ] Least Privilege
-- [ ] Break-glass
+## 29.1 O que será feito gratuitamente
 
----
+O laboratório não depende de um produto PAM comercial.
 
-## Authentication
+Você irá simular os princípios usando:
 
-- [ ] MFA
-- [ ] Authenticator
-- [ ] FIDO2
-- [ ] Passkeys
-- [ ] Authentication Strength
-- [ ] SSPR
+```text
+Conta comum
+Conta administrativa
+Least Privilege
+PIM
+JIT
+JEA
+PAW conceitual
+Jump Host conceitual
+Auditoria
+Revogação
+```
 
----
+## 29.2 PAW conceitual
 
-## Conditional Access
+Use o CLIENT01 como estação administrativa de laboratório.
 
-- [ ] MFA
-- [ ] Admin
-- [ ] Legacy Authentication
-- [ ] Device
-- [ ] Location
-- [ ] Application
-- [ ] Phishing-resistant
-- [ ] Report-only
+Regra:
 
----
-
-## Device Identity
-
-- [ ] Registered
-- [ ] Joined
-- [ ] Hybrid Joined
-- [ ] PAW
+```text
+Atividade diária → conta comum
+Administração → conta privilegiada / estação administrativa
+```
 
 ---
 
-## Hybrid Identity
+# 30. PowerShell
 
-- [ ] SYNC01
-- [ ] Cloud Sync
-- [ ] IdFix
-- [ ] OU Filtering
-- [ ] User Sync
-- [ ] Group Sync
-- [ ] Hybrid Join
-- [ ] Troubleshooting
+## 🟢 Objetivo
 
----
+Automatizar tarefas repetitivas de IAM.
 
-## Application Identity
+Pratique:
 
-- [ ] App Registration
-- [ ] Application Object
-- [ ] Service Principal
-- [ ] API Permissions
-- [ ] Delegated Permissions
-- [ ] Application Permissions
-- [ ] Admin Consent
-- [ ] Client Secret
-- [ ] Certificate
-- [ ] Enterprise Application
+```powershell
+Get-ADUser
+New-ADUser
+Disable-ADAccount
+Get-ADGroup
+Get-ADGroupMember
+Add-ADGroupMember
+Remove-ADGroupMember
+```
 
----
+## 30.1 Script Joiner
 
-## Workload Identity
+O script deverá receber:
 
-- [ ] Service Principal
-- [ ] Managed Identity
-- [ ] Workload Identity
-- [ ] Credential Rotation
-- [ ] Least Privilege
+- nome;
+- sobrenome;
+- departamento;
+- grupo.
 
----
+Executar:
 
-## Protocolos
+```text
+Validar entrada
+ ↓
+Criar usuário
+ ↓
+Definir atributos
+ ↓
+Adicionar grupo
+ ↓
+Registrar resultado
+```
 
-- [ ] SAML
-- [ ] OAuth 2.0
-- [ ] OIDC
-- [ ] JWT
-- [ ] PKCE
-- [ ] SCIM
+## 30.2 Script Leaver
 
----
+Executar:
 
-## Automation
+```text
+Localizar usuário
+ ↓
+Desabilitar
+ ↓
+Listar grupos
+ ↓
+Remover grupos conforme regra
+ ↓
+Registrar alterações
+```
 
-- [ ] PowerShell
-- [ ] Microsoft Graph
-- [ ] REST
-- [ ] JSON
-- [ ] JML Automation
-- [ ] Reporting
-- [ ] Logging
-- [ ] Error Handling
+### Regra de segurança
 
----
-
-## Governance
-
-- [ ] PIM
-- [ ] Access Reviews
-- [ ] Entitlement Management
-- [ ] Access Packages
-- [ ] Lifecycle Workflows
-- [ ] Identity Protection
-- [ ] B2B
-- [ ] SoD
+Scripts de IAM devem validar entrada e evitar operações destrutivas em massa sem confirmação explícita.
 
 ---
 
-## Monitoring
+# 31. Microsoft Graph
 
-- [ ] Audit Logs
-- [ ] Sign-in Logs
-- [ ] Provisioning Logs
-- [ ] PIM Logs
-- [ ] Risk Logs
-- [ ] Conditional Access Logs
-- [ ] SIEM
-- [ ] Detection
-- [ ] Incident Response
+## 🟢 Objetivo
 
----
+Administrar objetos do Entra por API.
 
-## PAM
+Estude:
 
-- [ ] Vault
-- [ ] Privileged Accounts
-- [ ] RBAC
-- [ ] Approval
-- [ ] Rotation
-- [ ] Session
-- [ ] Audit
+- Users.
+- Groups.
+- Applications.
+- Service Principals.
+- Directory Roles.
+- Role Assignments.
 
----
+Modelo:
 
-# 🏅 Resultado profissional esperado
+```text
+PowerShell / Script
+ ↓
+Microsoft Graph
+ ↓
+Microsoft Entra ID
+ ↓
+Objeto de identidade
+```
 
-Ao terminar, você deve conseguir demonstrar:
+## Exercício
 
-    IDENTITY
-       ↓
-    AUTHENTICATION
-       ↓
-    DEVICE
-       ↓
-    ACCESS
-       ↓
-    APPLICATION
-       ↓
-    PRIVILEGE
-       ↓
-    GOVERNANCE
-       ↓
-    MONITORING
-       ↓
-    AUDIT
-       ↓
-    MOVER
-       ↓
-    LEAVER
+Realize pelo Graph uma operação equivalente a uma tarefa já feita no portal.
 
-E responder tecnicamente:
+Compare:
 
-    Quem é o usuário?
-          ↓
-    De onde veio?
-          ↓
-    Como autenticou?
-          ↓
-    Qual dispositivo utilizou?
-          ↓
-    Quais grupos possui?
-          ↓
-    Quais aplicações acessa?
-          ↓
-    Por que possui acesso?
-          ↓
-    Quem aprovou?
-          ↓
-    O acesso foi revisado?
-          ↓
-    Possui privilégios?
-          ↓
-    Como são protegidos?
-          ↓
-    Como são monitorados?
-          ↓
-    Como são removidos?
-          ↓
-    Qual evidência ficou?
+- portal;
+- PowerShell;
+- API.
+
+O objetivo é entender que a interface é apenas uma camada de administração.
 
 ---
 
-# 🧭 Atalhos rápidos
+# 32. Service Principal
 
-| Tema | Fase |
-|---|---|
-| 👤 Identidades | [Fase 1](#-fase-1--active-directory) |
-| 👥 Grupos | [Fase 2](#-fase-2--identidades-e-grupos) |
-| 🔐 MFA | [Fase 5](#-fase-5--authentication) |
-| 🚦 Conditional Access | [Fase 6](#-fase-6--conditional-access) |
-| 💻 Device Identity | [Fase 7](#-fase-7--device-identity) |
-| 🔄 Hybrid Identity | [Fase 8](#-fase-8--hybrid-identity) |
-| 👨‍💼 JML | [Fase 9](#-fase-9--jml) |
-| 📱 Applications | [Fase 10](#-fase-10--application-identity) |
-| 🤖 Workload Identity | [Fase 11](#-fase-11--workload-identity) |
-| 🔐 SAML/OAuth/OIDC | [Fase 12](#-fase-12--protocolos) |
-| 💻 Graph/PowerShell | [Fase 13](#️-fase-13--powershell-e-microsoft-graph) |
-| 🧠 Identity Protection | [Fase 14](#-fase-14--identity-protection) |
-| ⏱️ PIM | [Fase 15](#️-fase-15--pim) |
-| 🔎 Access Reviews | [Fase 16](#-fase-16--access-reviews) |
-| 📦 Access Packages | [Fase 17](#-fase-17--entitlement-management) |
-| 🔄 Lifecycle | [Fase 18](#-fase-18--lifecycle-workflows) |
-| 🌎 B2B | [Fase 19](#-fase-19--b2b) |
-| 🚨 IAM + SIEM | [Fase 20](#-fase-20--iam-monitoring) |
-| 🛡️ PAM | [Fase 21](#️-fase-21--pam) |
-| ⚖️ SoD | [Fase 22](#️-fase-22--segregation-of-duties) |
-| 🏆 Projeto completo | [Projeto Final](#-projeto-final) |
+## 🟢 Objetivo
+
+Entender identidade de aplicação.
+
+Diferencie:
+
+```text
+Application
+     ↓
+Service Principal
+     ↓
+Permissions
+     ↓
+Resource
+```
+
+Compare com:
+
+```text
+Human Identity
+```
+
+### Segurança
+
+Não conceda permissões excessivas a aplicações.
+
+Registre:
+
+- finalidade;
+- proprietário;
+- permissões;
+- escopo;
+- segredo/certificado quando houver;
+- data de revisão.
 
 ---
 
-# 📌 Regra operacional do laboratório
+# 33. Managed Identity
 
-    ┌──────────────────────────────────────┐
-    │                                      │
-    │  CONFIGURE                           │
-    │      ↓                               │
-    │  TESTE                              │
-    │      ↓                               │
-    │  QUEBRE                             │
-    │      ↓                               │
-    │  INVESTIGUE                         │
-    │      ↓                               │
-    │  CORRIJA                            │
-    │      ↓                               │
-    │  AUTOMATIZE                         │
-    │      ↓                               │
-    │  AUDITE                             │
-    │      ↓                               │
-    │  DOCUMENTE                          │
-    │                                      │
-    └──────────────────────────────────────┘
+## 🟢 Objetivo
 
-> 🔐 O objetivo do laboratório não é apenas demonstrar que uma configuração funciona. É demonstrar que você entende quem recebeu acesso, por que recebeu, qual privilégio foi concedido, como o acesso é controlado, como é monitorado, como pode ser investigado e como será removido.
+Entender identidade de workload sem armazenar credenciais manualmente.
+
+Modelo:
+
+```text
+Azure Resource
+ ↓
+Managed Identity
+ ↓
+Token
+ ↓
+Azure Resource/API
+```
+
+A principal vantagem é reduzir a necessidade de armazenar secrets no código.
+
+### Regra
+
+Managed Identity não elimina Least Privilege. A identidade ainda precisa receber somente as permissões necessárias.
+
+---
+
+# 34. Identidade híbrida
+
+## 🟡 Módulo avançado
+
+Somente execute depois de dominar AD e Entra separadamente.
+
+Conceito:
+
+```text
+Active Directory
+ ↓
+Sincronização
+ ↓
+Microsoft Entra ID
+ ↓
+Cloud Access
+```
+
+Estude:
+
+- UPN.
+- Source of Authority.
+- sincronização.
+- Password Hash Synchronization.
+- Microsoft Entra Connect.
+- Microsoft Entra Cloud Sync.
+
+## Laboratório
+
+Se os recursos da máquina permitirem, adicione posteriormente uma VM de sincronização.
+
+Não mantenha essa VM ligada durante os demais módulos.
+
+### Objetivo
+
+Entender o ciclo:
+
+```text
+Criar no AD
+ ↓
+Sincronizar
+ ↓
+Aparecer no Entra
+ ↓
+Acessar cloud
+ ↓
+Desabilitar no AD
+ ↓
+Sincronizar
+ ↓
+Revogar
+```
+
+---
+
+# 35. IAM + Wazuh
+
+## 🟡 Módulo avançado
+
+Ligue somente:
+
+- DC01.
+- LINUX01.
+
+Não é necessário manter CLIENT01 ligado se o exercício não exigir interação do usuário.
+
+## 35.1 Arquitetura
+
+```text
+Windows Security Events
+ ↓
+Wazuh Agent
+ ↓
+Wazuh
+ ↓
+Detection
+ ↓
+Investigation
+ ↓
+Response
+```
+
+## 35.2 Eventos para investigar
+
+Pratique detecção de:
+
+- login bem-sucedido;
+- login falho;
+- criação de usuário;
+- alteração de grupo;
+- adição a grupo privilegiado;
+- uso de conta administrativa;
+- alterações suspeitas.
+
+## 35.3 Exercício
+
+Faça:
+
+```text
+Conta privilegiada
+ ↓
+Falhas de login
+ ↓
+Login bem-sucedido
+ ↓
+Alteração de grupo privilegiado
+ ↓
+Alerta
+ ↓
+Investigação
+```
+
+Perguntas:
+
+- Quem?
+- Quando?
+- De onde?
+- O que mudou?
+- Qual privilégio?
+- Qual recurso?
+- É legítimo?
+- Qual ação deve ser tomada?
+
+---
+
+# 36. Cenários de incidente
+
+## Cenário 1 — Privilege Escalation
+
+Simule a adição de uma conta comum a um grupo privilegiado.
+
+Investigue:
+
+- evento;
+- responsável;
+- horário;
+- grupo;
+- usuário;
+- justificativa.
+
+Depois remova o privilégio.
+
+## Cenário 2 — Password Spray conceitual
+
+Gere várias falhas controladas de autenticação no laboratório.
+
+Procure:
+
+- origem;
+- quantidade;
+- contas afetadas;
+- intervalo de tempo.
+
+Não faça testes contra sistemas externos.
+
+## Cenário 3 — Leaver incompleto
+
+Desabilite uma conta, mas deixe uma associação de grupo como cenário de revisão.
+
+Identifique o acesso residual e corrija.
+
+## Cenário 4 — Privilege Creep
+
+Dê a uma identidade acesso de Financeiro e TI.
+
+Depois mude a função para RH.
+
+Faça uma Access Review e remova os acessos antigos.
+
+---
+
+# 37. Projeto final
+
+## 🏢 Empresa fictícia
+
+Use:
+
+`ACME Corporation`
+
+Departamentos:
+
+- Financeiro.
+- RH.
+- TI.
+- SOC.
+- IAM.
+
+## 37.1 Identidades
+
+Crie 20 usuários:
+
+```text
+Financeiro: 5
+RH:         4
+TI:         6
+SOC:        3
+IAM:        2
+```
+
+## 37.2 Grupos
+
+```text
+GG-Financeiro
+GG-RH
+GG-TI
+GG-SOC
+GG-IAM
+GG-IAM-Readers
+GG-IAM-Admins
+```
+
+## 37.3 Contas administrativas
+
+Crie identidades administrativas separadas.
+
+Não use Global Administrator como conta diária.
+
+## 37.4 Processos
+
+Execute:
+
+- 5 Joiners.
+- 5 Movers.
+- 5 Leavers.
+- 5 Access Reviews.
+- 3 alterações privilegiadas.
+- 3 investigações de logs.
+- 1 incidente completo.
+
+## 37.5 Incidente final
+
+Simule:
+
+```text
+Conta privilegiada
+ ↓
+Falhas de login
+ ↓
+Login bem-sucedido
+ ↓
+Alteração de grupo privilegiado
+ ↓
+Detecção
+ ↓
+Investigação
+ ↓
+Containment
+ ↓
+Revogação
+ ↓
+Evidência
+ ↓
+Lição aprendida
+```
+
+---
+
+# 38. Evidências e GitHub
+
+## 38.1 Estrutura recomendada
+
+```text
+01-IAM/
+├── Estudo-Pratico-BluePrint.md
+├── evidencias/
+│   ├── 01-rede/
+│   ├── 02-ad/
+│   ├── 03-dns/
+│   ├── 04-dhcp/
+│   ├── 05-gpo/
+│   ├── 06-users-groups/
+│   ├── 07-jml/
+│   ├── 08-rbac/
+│   ├── 09-entra/
+│   ├── 10-mfa/
+│   ├── 11-conditional-access/
+│   ├── 12-audit/
+│   ├── 13-access-review/
+│   ├── 14-pim/
+│   ├── 15-jea-jit-pam/
+│   ├── 16-automation/
+│   ├── 17-workload-identity/
+│   ├── 18-hybrid/
+│   ├── 19-wazuh/
+│   └── 20-incidentes/
+└── scripts/
+    ├── provision-user.ps1
+    ├── disable-user.ps1
+    ├── audit-groups.ps1
+    └── access-review.ps1
+```
+
+## 38.2 Template de evidência
+
+Para cada exercício, registre:
+
+```markdown
+# Nome do exercício
+
+## Objetivo
+
+## Ambiente
+
+## Pré-requisitos
+
+## Configuração
+
+## Por que esta configuração?
+
+## Validação
+
+## Resultado esperado
+
+## Resultado obtido
+
+## Falhas encontradas
+
+## Correção
+
+## Evidências
+
+## Aprendizado
+```
+
+Não publique:
+
+- senhas;
+- tokens;
+- client secrets;
+- certificados privados;
+- chaves SSH privadas;
+- cookies;
+- dados pessoais reais.
+
+Use somente dados fictícios.
+
+---
+
+# 39. Checklist
+
+## 39.1 Infraestrutura
+
+- [ ] VirtualBox instalado.
+- [ ] Host-only Network criada.
+- [ ] DHCP do VirtualBox desativado.
+- [ ] DC01 criado.
+- [ ] IP estático configurado.
+- [ ] CLIENT01 criado.
+- [ ] DHCP Windows funcionando.
+- [ ] LINUX01 criado somente para SIEM.
+
+## 39.2 Active Directory
+
+- [ ] AD DS instalado.
+- [ ] `corp.lab` criado.
+- [ ] DNS validado.
+- [ ] `dcdiag` validado.
+- [ ] OUs criadas.
+- [ ] Usuários criados.
+- [ ] Grupos criados.
+- [ ] GPO criada.
+- [ ] Cliente ingressado no domínio.
+
+## 39.3 IAM
+
+- [ ] Joiner.
+- [ ] Mover.
+- [ ] Leaver.
+- [ ] Provisioning.
+- [ ] Deprovisioning.
+- [ ] RBAC.
+- [ ] Least Privilege.
+- [ ] Privilege Creep.
+- [ ] Access Review.
+- [ ] Segregation of Duties.
+
+## 39.4 Entra
+
+- [ ] Users.
+- [ ] Groups.
+- [ ] Directory Roles.
+- [ ] Azure RBAC.
+- [ ] MFA.
+- [ ] Conditional Access.
+- [ ] Report-only.
+- [ ] What If.
+- [ ] Sign-in Logs.
+- [ ] Audit Logs.
+- [ ] Access Review.
+- [ ] PIM.
+
+## 39.5 Privileged Access
+
+- [ ] Conta administrativa separada.
+- [ ] Least Privilege.
+- [ ] JIT.
+- [ ] PIM.
+- [ ] JEA.
+- [ ] PAM conceitual.
+- [ ] PAW conceitual.
+- [ ] Auditoria.
+- [ ] Revogação.
+
+## 39.6 Automação
+
+- [ ] PowerShell AD.
+- [ ] Provisionamento automatizado.
+- [ ] Desprovisionamento automatizado.
+- [ ] Auditoria automatizada.
+- [ ] Microsoft Graph.
+- [ ] Service Principal.
+- [ ] Managed Identity.
+
+## 39.7 Segurança
+
+- [ ] Windows Security Events.
+- [ ] Wazuh Agent.
+- [ ] Wazuh.
+- [ ] Detecção.
+- [ ] Investigação.
+- [ ] Resposta.
+- [ ] Evidências.
+
+---
+
+# 40. Critério de conclusão
+
+O laboratório estará concluído quando você conseguir realizar cada processo sem copiar mecanicamente o tutorial.
+
+Você deve conseguir:
+
+```text
+Planejar
+ ↓
+Implementar
+ ↓
+Testar
+ ↓
+Validar
+ ↓
+Auditar
+ ↓
+Investigar
+ ↓
+Revogar
+ ↓
+Automatizar
+ ↓
+Documentar
+```
+
+## Perguntas finais
+
+Para qualquer acesso, responda:
+
+1. Quem é a identidade?
+2. Como ela foi autenticada?
+3. O que ela pode acessar?
+4. Qual é a role?
+5. Qual é o escopo?
+6. Por que ela precisa do acesso?
+7. Quem aprovou?
+8. Por quanto tempo?
+9. Como o acesso é monitorado?
+10. Como será revogado?
+
+Se você consegue responder essas dez perguntas com evidências, o laboratório cumpriu seu objetivo de IAM.
+
+---
+
+# 41. Referências oficiais
+
+Consulte a documentação atual antes de executar recursos que dependam de licenciamento ou que tenham mudado de interface.
+
+- Microsoft Entra ID: https://learn.microsoft.com/entra/identity/
+- Microsoft Entra users/groups: https://learn.microsoft.com/entra/identity/users/
+- Microsoft Entra RBAC: https://learn.microsoft.com/entra/identity/role-based-access-control/
+- Conditional Access: https://learn.microsoft.com/entra/identity/conditional-access/
+- Conditional Access planning: https://learn.microsoft.com/entra/identity/conditional-access/plan-conditional-access
+- Microsoft Entra licensing: https://learn.microsoft.com/entra/fundamentals/licensing
+- PIM: https://learn.microsoft.com/entra/id-governance/privileged-identity-management/
+- Azure RBAC: https://learn.microsoft.com/azure/role-based-access-control/
+- Microsoft Graph: https://learn.microsoft.com/graph/
+- Active Directory Domain Services: https://learn.microsoft.com/windows-server/identity/ad-ds/
+- Windows Security Auditing: https://learn.microsoft.com/windows/security/threat-protection/auditing/
+- Wazuh: https://documentation.wazuh.com/
+- CIS Benchmarks: https://www.cisecurity.org/cis-benchmarks
+
+---
+
+# 🎯 Modelo mental final
+
+```text
+IDENTIDADE
+   ↓
+AUTENTICAÇÃO
+   ↓
+AUTORIZAÇÃO
+   ↓
+RBAC
+   ↓
+LEAST PRIVILEGE
+   ↓
+ACESSO
+   ↓
+MONITORAMENTO
+   ↓
+REVISÃO
+   ↓
+REVOGAÇÃO
+   ↓
+EVIDÊNCIA
+```
+
+> **IAM não é apenas conceder acesso. É garantir que a identidade correta tenha o acesso correto, no escopo correto, pelo motivo correto, pelo tempo necessário, com controle, monitoramento e capacidade de revogação.**
