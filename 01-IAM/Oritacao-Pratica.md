@@ -1,1319 +1,1663 @@
-# 🔐 IAM HOMELAB — MANUAL OPERACIONAL
+# 🔐 IAM HOMELAB — MANUAL COMPLETO E MICRODETALHADO
 
-**Objetivo:** preparar, praticar e demonstrar competências para atuação profissional em IAM, com foco em Microsoft Active Directory, Microsoft Entra ID, Hybrid Identity, Authentication, Authorization, Governance, Privileged Access, Application Identity e automação.
-
-**Princípio de infraestrutura:** manter o laboratório modular. Não é necessário manter todas as VMs ligadas simultaneamente.
+> Laboratório prático para preparação profissional em IAM, com foco em Active Directory, Microsoft Entra ID, Hybrid Identity, Authentication, Authorization, RBAC, Conditional Access, PIM, Governance, Application Identity, Workload Identity, PAM, automação e monitoramento.
 
 ---
 
-# 🧭 NAVEGAÇÃO
+# 🧭 SUMÁRIO
 
-- [1. Objetivo e metodologia](#1-objetivo-e-metodologia)
-- [2. Arquitetura otimizada](#2-arquitetura-otimizada)
-- [3. Dimensionamento](#3-dimensionamento)
-- [4. Inventário](#4-inventário)
-- [5. Convenções](#5-convenções)
-- [6. Preparação do ambiente](#6-preparação-do-ambiente)
-- [7. Módulo AD](#7-módulo-ad)
-- [8. Módulo usuários e grupos](#8-módulo-usuários-e-grupos)
-- [9. Módulo GPO e hardening](#9-módulo-gpo-e-hardening)
-- [10. Módulo JML on-premises](#10-módulo-jml-on-premises)
-- [11. Módulo Entra ID](#11-módulo-entra-id)
-- [12. Módulo MFA e Authentication](#12-módulo-mfa-e-authentication)
-- [13. Módulo Conditional Access](#13-módulo-conditional-access)
-- [14. Módulo RBAC](#14-módulo-rbac)
-- [15. Módulo Device Identity](#15-módulo-device-identity)
-- [16. Módulo Cloud Sync](#16-módulo-cloud-sync)
-- [17. Módulo Hybrid Join](#17-módulo-hybrid-join)
-- [18. Módulo JML híbrido](#18-módulo-jml-híbrido)
-- [19. Módulo App Registration](#19-módulo-app-registration)
-- [20. Módulo Service Principal](#20-módulo-service-principal)
-- [21. Módulo Workload Identity](#21-módulo-workload-identity)
-- [22. Módulo SAML](#22-módulo-saml)
-- [23. Módulo OAuth 20](#23-módulo-oauth-20)
-- [24. Módulo OIDC](#24-módulo-oidc)
-- [25. Módulo JWT](#25-módulo-jwt)
-- [26. Módulo SCIM](#26-módulo-scim)
-- [27. Módulo PowerShell](#27-módulo-powershell)
-- [28. Módulo Microsoft Graph](#28-módulo-microsoft-graph)
-- [29. Módulo Identity Protection](#29-módulo-identity-protection)
-- [30. Módulo PIM](#30-módulo-pim)
-- [31. Módulo Access Reviews](#31-módulo-access-reviews)
-- [32. Módulo Entitlement Management](#32-módulo-entitlement-management)
-- [33. Módulo Lifecycle Workflows](#33-módulo-lifecycle-workflows)
-- [34. Módulo B2B](#34-módulo-b2b)
-- [35. Módulo IAM Monitoring](#35-módulo-iam-monitoring)
-- [36. Módulo PAM](#36-módulo-pam)
-- [37. Módulo SoD](#37-módulo-sod)
-- [38. Projeto final](#38-projeto-final)
-- [39. Portfólio](#39-portfólio)
-- [40. Checklist](#40-checklist)
-- [41. Critério de domínio](#41-critério-de-domínio)
-
----
-
-# 1. OBJETIVO E METODOLOGIA
-
-O laboratório deve ensinar IAM como uma disciplina completa, e não apenas como administração de usuários.
-
-O modelo mental será:
-
-    IDENTITY
-        ↓
-    AUTHENTICATION
-        ↓
-    DEVICE / CONTEXT
-        ↓
-    AUTHORIZATION
-        ↓
-    ACCESS
-        ↓
-    PRIVILEGE
-        ↓
-    GOVERNANCE
-        ↓
-    MONITORING
-        ↓
-    AUDIT
-        ↓
-    DEPROVISIONING
-
-Para cada módulo utilizar sempre:
-
-    1. CONCEITO
-    2. PRÉ-REQUISITOS
-    3. CONFIGURAÇÃO
-    4. TESTE
-    5. FALHA CONTROLADA
-    6. TROUBLESHOOTING
-    7. EVIDÊNCIA
-    8. DOCUMENTAÇÃO
-
-Não considerar um tema concluído apenas porque conseguiu configurá-lo.
-
-O objetivo é conseguir:
-
-    EXPLICAR
-    CONFIGURAR
-    OPERAR
-    INVESTIGAR
-    AUTOMATIZAR
-    GOVERNAR
+1. [Objetivo](#1-objetivo)
+2. [Como utilizar este manual](#2-como-utilizar-este-manual)
+3. [Arquitetura](#3-arquitetura)
+4. [Decisões técnicas](#4-decisões-técnicas)
+5. [Dimensionamento](#5-dimensionamento)
+6. [Pré-requisitos](#6-pré-requisitos)
+7. [Downloads](#7-downloads)
+8. [VirtualBox](#8-virtualbox)
+9. [Criando a rede](#9-criando-a-rede)
+10. [Criando DC01](#10-criando-dc01)
+11. [Instalando Windows Server](#11-instalando-windows-server)
+12. [Configurando DC01](#12-configurando-dc01)
+13. [Instalando AD DS](#13-instalando-ad-ds)
+14. [Criando domínio](#14-criando-domínio)
+15. [Validando AD](#15-validando-ad)
+16. [Criando OUs](#16-criando-ous)
+17. [Criando usuários](#17-criando-usuários)
+18. [Criando grupos](#18-criando-grupos)
+19. [Delegação](#19-delegação)
+20. [GPO](#20-gpo)
+21. [Hardening](#21-hardening)
+22. [JML On-Premises](#22-jml-on-premises)
+23. [Criando WIN11-01](#23-criando-win11-01)
+24. [Domain Join](#24-domain-join)
+25. [Criando tenant Entra](#25-criando-tenant-entra)
+26. [Estrutura Entra](#26-estrutura-entra)
+27. [MFA](#27-mfa)
+28. [SSPR](#28-sspr)
+29. [Conditional Access](#29-conditional-access)
+30. [RBAC](#30-rbac)
+31. [Device Identity](#31-device-identity)
+32. [Cloud Sync](#32-cloud-sync)
+33. [Provisionamento sob demanda](#33-provisionamento-sob-demanda)
+34. [Sincronização contínua](#34-sincronização-contínua)
+35. [JML híbrido](#35-jml-híbrido)
+36. [Application Identity](#36-application-identity)
+37. [Service Principal](#37-service-principal)
+38. [API Permissions](#38-api-permissions)
+39. [Secrets e certificados](#39-secrets-e-certificados)
+40. [Managed Identity](#40-managed-identity)
+41. [OAuth 2.0](#41-oauth-20)
+42. [OIDC](#42-oidc)
+43. [JWT](#43-jwt)
+44. [SAML](#44-saml)
+45. [SCIM](#45-scim)
+46. [PowerShell](#46-powershell)
+47. [Microsoft Graph](#47-microsoft-graph)
+48. [PIM](#48-pim)
+49. [Access Reviews](#49-access-reviews)
+50. [Entitlement Management](#50-entitlement-management)
+51. [Lifecycle Workflows](#51-lifecycle-workflows)
+52. [B2B](#52-b2b)
+53. [PAM](#53-pam)
+54. [SoD](#54-sod)
+55. [IAM Monitoring](#55-iam-monitoring)
+56. [SIEM](#56-siem)
+57. [Projeto final](#57-projeto-final)
+58. [Portfólio](#58-portfólio)
+59. [Checklist](#59-checklist)
+60. [Critério de domínio](#60-critério-de-domínio)
 
 ---
 
-# 2. ARQUITETURA OTIMIZADA
+# 1. OBJETIVO
 
-## 2.1 Componentes
+O objetivo não é simplesmente aprender a criar usuários.
 
-O laboratório será dividido em:
+O laboratório deve permitir demonstrar o ciclo completo:
 
-    CORE
-      ├── DC01
-      ├── WIN11-01
-      └── SYNC01
+```text
+IDENTITY
+   ↓
+AUTHENTICATION
+   ↓
+DEVICE
+   ↓
+AUTHORIZATION
+   ↓
+ACCESS
+   ↓
+PRIVILEGE
+   ↓
+GOVERNANCE
+   ↓
+MONITORING
+   ↓
+AUDIT
+   ↓
+REVOCATION
+```
 
-    CLOUD
-      └── Microsoft Entra ID
-
-    OPTIONAL
-      ├── LINUX01
-      └── SIEM
-
-A maior parte dos módulos de IAM acontece diretamente no Entra ID e não exige nenhuma VM.
-
----
-
-## 2.2 Arquitetura
-
-    ┌────────────────────────────────────────────────────┐
-    │                 MICROSOFT ENTRA ID                  │
-    │                                                    │
-    │ Users | Groups | MFA | CA | RBAC | PIM             │
-    │ Apps | B2B | Governance | Graph | Logs             │
-    └───────────────────────┬────────────────────────────┘
-                            │
-                       Cloud Sync
-                            │
-                            ▼
-    ┌────────────────────────────────────────────────────┐
-    │                      DC01                          │
-    │                                                    │
-    │ AD DS | DNS | GPO | Users | Groups | JML           │
-    └───────────────────────┬────────────────────────────┘
-                            │
-                            ▼
-    ┌────────────────────────────────────────────────────┐
-    │                     SYNC01                         │
-    │                                                    │
-    │ Microsoft Entra Provisioning Agent                 │
-    └────────────────────────────────────────────────────┘
-
-    ┌────────────────────────────────────────────────────┐
-    │                    WIN11-01                        │
-    │                                                    │
-    │ Domain Join | Hybrid Join | CA Testing             │
-    └────────────────────────────────────────────────────┘
-
-    ┌────────────────────────────────────────────────────┐
-    │                    LINUX01                         │
-    │                                                    │
-    │ PAM / Application / Protocol Labs                  │
-    └────────────────────────────────────────────────────┘
+Ao final, você deverá conseguir explicar, configurar, operar, automatizar, auditar e investigar um ambiente IAM.
 
 ---
 
-# 3. DIMENSIONAMENTO
+# 2. COMO UTILIZAR ESTE MANUAL
 
-## 3.1 Regra principal
+Cada laboratório possui cinco etapas:
 
-Não manter todas as VMs ligadas.
+```text
+1. ENTENDER
+2. CONFIGURAR
+3. TESTAR
+4. QUEBRAR CONTROLADAMENTE
+5. DOCUMENTAR
+```
 
-### Entra / PIM / CA / Governance
+Nunca avance simplesmente porque "funcionou".
 
-    VMs:
-    0
+Para cada exercício responda:
 
-### AD
-
-    VMs:
-    DC01
-
-### AD + Windows
-
-    VMs:
-    DC01
-    WIN11-01
-
-### Hybrid Identity
-
-    VMs:
-    DC01
-    SYNC01
-    WIN11-01
-
-### PAM / Application
-
-    VMs:
-    LINUX01
-
-### SIEM
-
-    Somente quando necessário.
+```text
+O que estou configurando?
+Por que estou configurando?
+Qual risco estou controlando?
+Como sei que funcionou?
+Como sei que não funcionou?
+Como investigo uma falha?
+Como removo a configuração?
+```
 
 ---
 
-## 3.2 Perfil recomendado
+# 3. ARQUITETURA
 
-Se a máquina possuir 16 GB RAM:
+## 3.1 Arquitetura física
 
-    DC01:
-    2–4 GB
+Você terá:
 
-    SYNC01:
-    2–4 GB
+```text
+                    INTERNET
+                       │
+                       │
+                 NAT - VirtualBox
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+      DC01          SYNC01         WIN11-01
+        │              │              │
+        └──────────────┼──────────────┘
+                       │
+                 HOST-ONLY
+              192.168.56.0/24
+                       │
+                     HOST
+```
 
-    WIN11-01:
-    4–6 GB
+O NAT fornece Internet.
 
-    LINUX01:
-    2–4 GB
-
-Operar normalmente com:
-
-    1–2 VMs
-
-Usar 3 VMs somente durante Hybrid Identity.
-
----
-
-## 3.3 Se a máquina tiver pouca RAM
-
-Prioridade:
-
-    1. DC01
-    2. WIN11-01
-    3. SYNC01
-    4. LINUX01
-    5. SIEM
-
-Nunca sacrificar o conteúdo de IAM para manter uma infraestrutura grande.
+O Host-Only fornece a rede privada do laboratório.
 
 ---
 
-# 4. INVENTÁRIO
+# 4. DECISÕES TÉCNICAS
 
-## 4.1 VMs
+## 4.1 Por que usar dois adaptadores?
 
-| Host | Sistema | Função | IP |
-|---|---|---|---|
-| DC01 | Windows Server | AD DS + DNS | 192.168.100.10 |
-| SYNC01 | Windows Server | Cloud Sync Agent | 192.168.100.15 |
-| WIN11-01 | Windows 11 | Cliente / Hybrid Join | DHCP |
-| LINUX01 | Linux | PAM / aplicação | 192.168.100.30 |
+Cada VM terá:
 
----
+```text
+ADAPTER 1
+NAT
+↓
+Internet
 
-## 4.2 Domínio
+ADAPTER 2
+HOST-ONLY
+↓
+Rede interna IAM
+```
 
-    corp.lab
-
----
-
-## 4.3 Rede
-
-    Network:
-    192.168.100.0/24
-
-    Gateway:
-    192.168.100.1
-
-    DNS:
-    192.168.100.10
+Isso evita colocar o domínio de laboratório diretamente na rede física da sua casa.
 
 ---
 
-# 5. CONVENÇÕES
+## 4.2 Por que o DHCP do VirtualBox ficará desativado?
 
-## Usuários
+Porque o laboratório terá endereçamento controlado.
 
-    nome.sobrenome
+O DC terá IP fixo:
+
+```text
+192.168.56.10
+```
+
+O DNS do laboratório será:
+
+```text
+192.168.56.10
+```
+
+Não queremos que o VirtualBox entregue outro DNS para os clientes.
+
+Também não queremos dois servidores DHCP disputando a mesma rede.
+
+Portanto:
+
+```text
+VirtualBox DHCP
+     ↓
+DESATIVADO
+
+Windows DHCP
+     ↓
+NÃO USADO inicialmente
+
+IP ESTÁTICO
+     ↓
+USADO
+```
+
+Posteriormente você poderá criar um laboratório separado com DHCP Server no Windows Server.
+
+---
+
+# 5. DIMENSIONAMENTO
+
+## 5.1 Máquina física recomendada
+
+Ideal:
+
+```text
+CPU: 4+ cores
+RAM: 16 GB+
+SSD: 100 GB+
+Virtualização:
+VT-x / AMD-V habilitado
+```
+
+Com 16 GB:
+
+```text
+DC01       3 GB
+WIN11-01   4 GB
+SYNC01     3 GB
+```
+
+Não mantenha todas ligadas.
+
+---
+
+## 5.2 Operação normal
+
+```text
+AD:
+DC01
+
+Hybrid:
+DC01
+SYNC01
+WIN11-01
+
+PAM:
+LINUX01
+
+Entra:
+0 VMs
+```
+
+---
+
+# 6. PRÉ-REQUISITOS
+
+Você precisará de:
+
+```text
+VirtualBox
+Windows Server 2025 Evaluation
+Windows 11 Enterprise Evaluation
+Conta Microsoft
+Tenant Microsoft Entra
+Azure Subscription
+```
+
+O Windows Server 2025 possui avaliação gratuita de 180 dias. O Windows 11 Enterprise possui avaliação de 90 dias. 
+
+---
+
+# 7. DOWNLOADS
+
+Baixe somente de fontes oficiais.
+
+## Windows Server
+
+Acesse o Microsoft Evaluation Center.
+
+Procure:
+
+```text
+Windows Server 2025
+```
+
+Baixe:
+
+```text
+ISO
+64-bit
+Evaluation
+```
+
+## Windows 11
+
+Baixe:
+
+```text
+Windows 11 Enterprise Evaluation
+```
+
+---
+
+# 8. VIRTUALBOX
+
+## 8.1 Instalar
+
+Instale o VirtualBox normalmente.
+
+Após abrir:
+
+```text
+VirtualBox Manager
+```
+
+Você deverá visualizar a tela principal.
+
+---
+
+# 9. CRIANDO A REDE
+
+## 9.1 Abrir Network Manager
+
+No VirtualBox:
+
+```text
+File
+  ↓
+Tools
+  ↓
+Network Manager
+```
+
+Dependendo da versão:
+
+```text
+Arquivo
+  ↓
+Ferramentas
+  ↓
+Gerenciador de Rede
+```
+
+---
+
+## 9.2 Criar Host-Only
+
+Na janela Network Manager:
+
+```text
+Host-only Networks
+```
+
+Clique:
+
+```text
+Create
+```
+
+Será criada uma rede semelhante a:
+
+```text
+VirtualBox Host-Only Ethernet Adapter
+```
+
+Selecione-a.
+
+---
+
+## 9.3 Configurar IPv4
+
+Procure:
+
+```text
+Adapter
+```
+
+Configure:
+
+```text
+IPv4 Address:
+192.168.56.1
+
+IPv4 Network Mask:
+255.255.255.0
+```
+
+Isso significa:
+
+```text
+Rede:
+192.168.56.0/24
+
+Host:
+192.168.56.1
+```
+
+---
+
+## 9.4 DHCP
+
+Abra:
+
+```text
+DHCP Server
+```
+
+Desmarque:
+
+```text
+Enable DHCP
+```
+
+Deixe:
+
+```text
+DHCP = Disabled
+```
+
+### Por que?
+
+Porque vamos definir os IPs manualmente.
 
 Exemplo:
 
-    ana.silva
+```text
+DC01
+192.168.56.10
 
-## Administradores
+SYNC01
+192.168.56.15
 
-    admin.nome
+WIN11-01
+192.168.56.20
+```
 
-Exemplo:
-
-    admin.iam
-
-## Service Accounts
-
-    svc-nome
-
-Exemplo:
-
-    svc-app
-
-## Grupos
-
-    GG-Finance
-    GG-IT
-    GG-HR
-    GG-Helpdesk
-
-## Aplicações
-
-    APP-Finance
-    APP-Portal
-    APP-IAM
-
-## GPOs
-
-    GPO-Security-Baseline
-    GPO-Workstation
-    GPO-Servers
+Assim não haverá alteração inesperada de IP.
 
 ---
 
-# 6. PREPARAÇÃO DO AMBIENTE
+## 9.5 Resultado
 
-## 6.1 Criar rede virtual
+A rede deverá ficar:
 
-Criar:
+```text
+Host-Only Adapter
+IPv4:
+192.168.56.1
 
-    IAM-LAB
+Mask:
+255.255.255.0
 
-Configurar:
-
-    192.168.100.0/24
-
-A rede deve permitir comunicação entre as VMs.
-
----
-
-## 6.2 Criar DC01
-
-Instalar Windows Server.
-
-Definir hostname:
-
-    DC01
-
-Configurar IP:
-
-    192.168.100.10
-
-Máscara:
-
-    255.255.255.0
-
-Gateway:
-
-    192.168.100.1
-
-DNS:
-
-    192.168.100.10
+DHCP:
+Disabled
+```
 
 ---
 
-## 6.3 Validação
+# 10. CRIANDO DC01
 
-Executar:
+No VirtualBox:
 
-    ipconfig /all
+```text
+New
+```
+
+Preencha:
+
+```text
+Name:
+DC01
+
+ISO Image:
+Windows Server 2025 ISO
+```
+
+Se houver opção:
+
+```text
+Skip Unattended Installation
+```
+
+marque-a.
+
+Isso permite controlar a instalação manualmente.
+
+---
+
+## 10.1 Hardware
+
+RAM:
+
+```text
+3072 MB
+```
+
+CPU:
+
+```text
+2 CPUs
+```
+
+Disco:
+
+```text
+60 GB
+```
+
+Use:
+
+```text
+VDI
+Dynamically allocated
+```
+
+---
+
+# 11. CONFIGURANDO REDE DA VM
+
+Selecione:
+
+```text
+DC01
+  ↓
+Settings
+  ↓
+Network
+```
+
+---
+
+## 11.1 Adapter 1
+
+Marque:
+
+```text
+Enable Network Adapter
+```
+
+Attached to:
+
+```text
+NAT
+```
+
+Objetivo:
+
+```text
+DC01 → Internet
+```
+
+---
+
+## 11.2 Adapter 2
+
+Abra:
+
+```text
+Adapter 2
+```
+
+Marque:
+
+```text
+Enable Network Adapter
+```
+
+Attached to:
+
+```text
+Host-only Adapter
+```
+
+Name:
+
+```text
+VirtualBox Host-Only Ethernet Adapter
+```
+
+Objetivo:
+
+```text
+DC01
+  ↓
+rede IAM
+  ↓
+outros servidores
+```
+
+---
+
+# 12. INSTALANDO WINDOWS SERVER
+
+Inicie:
+
+```text
+DC01
+  ↓
+Start
+```
+
+O instalador iniciará.
+
+---
+
+## 12.1 Selecionar edição
+
+Escolha:
+
+```text
+Windows Server 2025
+Desktop Experience
+```
+
+Não escolha:
+
+```text
+Server Core
+```
+
+neste laboratório.
+
+### Por quê?
+
+Porque o objetivo é aprender IAM e você ainda está construindo a infraestrutura.
+
+A GUI reduz complexidade desnecessária.
+
+---
+
+## 12.2 Instalação
+
+Selecione:
+
+```text
+Custom Install
+```
+
+Escolha o disco.
+
+Clique:
+
+```text
+Next
+```
+
+Aguarde.
+
+---
+
+# 13. CONFIGURANDO DC01
+
+Após o primeiro login:
+
+```text
+Server Manager
+```
+
+---
+
+## 13.1 Alterar hostname
+
+Clique:
+
+```text
+Start
+  ↓
+Settings
+  ↓
+System
+  ↓
+About
+```
+
+Procure:
+
+```text
+Rename this PC
+```
+
+Defina:
+
+```text
+DC01
+```
+
+Reinicie.
+
+---
+
+# 14. CONFIGURANDO IP
+
+Abra:
+
+```text
+Control Panel
+  ↓
+Network and Internet
+  ↓
+Network and Sharing Center
+  ↓
+Change adapter settings
+```
+
+Você verá dois adaptadores.
+
+Algo semelhante a:
+
+```text
+Ethernet
+Ethernet 2
+```
+
+Identifique qual é:
+
+```text
+NAT
+```
+
+e qual é:
+
+```text
+Host-Only
+```
+
+---
+
+## 14.1 Host-Only
+
+Clique com botão direito no adaptador Host-Only:
+
+```text
+Properties
+```
+
+Selecione:
+
+```text
+Internet Protocol Version 4 (TCP/IPv4)
+```
+
+Clique:
+
+```text
+Properties
+```
+
+Selecione:
+
+```text
+Use the following IP address
+```
+
+Preencha:
+
+```text
+IP address:
+192.168.56.10
+
+Subnet mask:
+255.255.255.0
+
+Default gateway:
+deixe vazio
+
+Preferred DNS:
+192.168.56.10
+```
+
+---
+
+## 14.2 Por que gateway vazio?
+
+Porque:
+
+```text
+192.168.56.0/24
+```
+
+é a rede interna.
+
+A Internet será acessada pelo adaptador NAT.
+
+---
+
+## 14.3 NAT
+
+O adaptador NAT deve permanecer:
+
+```text
+DHCP
+```
+
+Ele receberá automaticamente:
+
+```text
+IP
+Gateway
+DNS
+```
+
+Não altere isso.
+
+---
+
+# 15. TESTANDO REDE
+
+Abra PowerShell.
+
+Execute:
+
+```powershell
+ipconfig
+```
+
+Você deverá encontrar:
+
+```text
+192.168.56.10
+```
+
+Teste:
+
+```powershell
+ping 192.168.56.1
+```
 
 Depois:
 
-    ping 192.168.100.10
+```powershell
+ping 8.8.8.8
+```
+
+Se funcionar:
+
+```text
+Host-Only = OK
+Internet = OK
+```
+
+Teste DNS:
+
+```powershell
+nslookup microsoft.com
+```
+
+---
+
+# 16. INSTALANDO AD DS
+
+Abra:
+
+```text
+Server Manager
+```
+
+Clique:
+
+```text
+Manage
+  ↓
+Add Roles and Features
+```
+
+---
+
+## 16.1 Antes de começar
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+## 16.2 Installation Type
+
+Selecione:
+
+```text
+Role-based or feature-based installation
+```
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+## 16.3 Server Selection
+
+Selecione:
+
+```text
+DC01
+```
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+## 16.4 Server Roles
+
+Marque:
+
+```text
+Active Directory Domain Services
+```
+
+Aparecerá uma janela.
+
+Clique:
+
+```text
+Add Features
+```
 
 Depois:
 
-    nslookup dc01
-
-Critério:
-
-    IP correto
-    DNS correto
-    conectividade funcional
+```text
+Next
+```
 
 ---
 
-# 7. MÓDULO AD
+## 16.5 Features
 
-## Objetivo
+Não precisa alterar.
 
-Construir a autoridade de identidade on-premises.
+Clique:
 
----
-
-## 7.1 Instalar AD DS
-
-No Server Manager:
-
-    Add Roles and Features
-        ↓
-    Role-based installation
-        ↓
-    DC01
-        ↓
-    Active Directory Domain Services
-        ↓
-    Add Features
-        ↓
-    Install
+```text
+Next
+```
 
 ---
 
-## 7.2 Promover DC01
+## 16.6 AD DS
 
-Depois da instalação:
+Leia.
 
-    Server Manager
-        ↓
-    Notifications
-        ↓
-    Promote this server to a domain controller
+Clique:
 
-Selecionar:
-
-    Add a new forest
-
-Domain:
-
-    corp.lab
-
-Configurar:
-
-    DNS
-    Global Catalog
-    DSRM Password
-    Database
-    SYSVOL
-
-Concluir.
+```text
+Next
+```
 
 ---
 
-## 7.3 Validação
+## 16.7 Confirmation
 
-Executar:
+Clique:
 
-    whoami
+```text
+Install
+```
 
-Esperado:
-
-    CORP\Administrator
-
-Executar:
-
-    dcdiag
-
-Executar:
-
-    nslookup corp.lab
-
-Executar:
-
-    nslookup dc01.corp.lab
-
-Verificar:
-
-    DNS
-    SYSVOL
-    NETLOGON
-    AD DS
+Aguarde.
 
 ---
 
-# 8. MÓDULO USUÁRIOS E GRUPOS
+# 17. PROMOVER DC01
 
-## 8.1 Criar OUs
+Após a instalação:
 
-Criar:
+```text
+Server Manager
+  ↓
+Notifications
+```
 
-    OU=Users
-    OU=Groups
-    OU=Servers
-    OU=Workstations
-    OU=Admins
-    OU=Service Accounts
-    OU=Disabled
-    OU=IAM-Lab
+Você verá:
 
-Dentro de Users:
+```text
+Promote this server to a domain controller
+```
 
-    OU=Finance
-    OU=IT
-    OU=HR
-    OU=Helpdesk
+Clique.
 
 ---
 
-## 8.2 Criar usuários
+# 18. CRIAR FLORESTA
 
-Criar:
+Na tela:
 
-    ana.silva
-    bruno.santos
-    carlos.oliveira
-    diana.souza
+```text
+Deployment Configuration
+```
+
+Selecione:
+
+```text
+Add a new forest
+```
+
+Root domain:
+
+```text
+corp.lab
+```
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+# 19. DOMAIN CONTROLLER OPTIONS
+
+Selecione:
+
+```text
+Domain Name System (DNS)
+Global Catalog (GC)
+```
+
+Não selecione:
+
+```text
+Read only domain controller
+```
+
+Defina a senha DSRM.
+
+Exemplo:
+
+```text
+Senha forte armazenada no gerenciador de senhas.
+```
+
+Não coloque a senha no Git.
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+# 20. DNS OPTIONS
+
+Você pode receber um aviso de delegação DNS.
+
+Isso é esperado.
+
+Continue.
+
+---
+
+# 21. PATHS
+
+Deixe:
+
+```text
+Database:
+C:\Windows\NTDS
+
+Log files:
+C:\Windows\NTDS
+
+SYSVOL:
+C:\Windows\SYSVOL
+```
+
+Clique:
+
+```text
+Next
+```
+
+---
+
+# 22. PREREQUISITE CHECK
+
+Aguarde.
+
+Se estiver tudo correto:
+
+```text
+All prerequisite checks passed successfully
+```
+
+Clique:
+
+```text
+Install
+```
+
+O servidor será reiniciado.
+
+---
+
+# 23. PRIMEIRO LOGIN NO DOMÍNIO
+
+Após reiniciar:
+
+```text
+CORP\Administrator
+```
+
+ou:
+
+```text
+Administrator@corp.lab
+```
+
+---
+
+# 24. VALIDANDO AD
+
+Abra PowerShell como administrador.
+
+Execute:
+
+```powershell
+Get-ADDomain
+```
+
+Resultado esperado:
+
+```text
+DNSRoot : corp.lab
+```
+
+Execute:
+
+```powershell
+Get-ADForest
+```
+
+Deve retornar:
+
+```text
+RootDomain : corp.lab
+```
+
+---
+
+# 25. VALIDANDO DNS
+
+Execute:
+
+```powershell
+nslookup corp.lab
+```
+
+Deve retornar:
+
+```text
+192.168.56.10
+```
+
+Teste:
+
+```powershell
+nslookup dc01.corp.lab
+```
+
+Resultado esperado:
+
+```text
+192.168.56.10
+```
+
+---
+
+# 26. VALIDANDO DC
+
+Execute:
+
+```powershell
+dcdiag
+```
+
+Se houver erros:
+
+```text
+não avance
+```
+
+Primeiro corrija o DC.
+
+---
+
+# 27. CRIANDO OUS
+
+Abra:
+
+```text
+Server Manager
+  ↓
+Tools
+  ↓
+Active Directory Users and Computers
+```
+
+Expanda:
+
+```text
+corp.lab
+```
+
+Botão direito no domínio:
+
+```text
+New
+  ↓
+Organizational Unit
+```
+
+Crie:
+
+```text
+Users
+Groups
+Admins
+Service Accounts
+Workstations
+Servers
+Disabled
+IAM-Lab
+```
+
+---
+
+# 28. ESTRUTURA FINAL
+
+```text
+corp.lab
+│
+├── Users
+│   ├── Finance
+│   ├── IT
+│   ├── HR
+│   └── Helpdesk
+│
+├── Groups
+│
+├── Admins
+│
+├── Service Accounts
+│
+├── Workstations
+│
+├── Servers
+│
+├── Disabled
+│
+└── IAM-Lab
+```
+
+---
+
+# 29. CRIANDO USUÁRIOS
+
+Abra:
+
+```text
+Active Directory Users and Computers
+```
+
+Entre em:
+
+```text
+Users
+  ↓
+Finance
+```
+
+Botão direito:
+
+```text
+New
+  ↓
+User
+```
+
+Crie:
+
+```text
+Ana Silva
+
+User logon:
+ana.silva
+```
+
+---
+
+# 30. UPN
+
+Por enquanto:
+
+```text
+ana.silva@corp.lab
+```
+
+Isso funciona dentro do AD.
+
+Para sincronização com Entra, posteriormente será necessário utilizar um sufixo de domínio verificado no tenant ou aceitar o comportamento de fallback para `onmicrosoft.com`.
+
+Não tente resolver isso agora.
+
+Primeiro construa o AD.
+
+---
+
+# 31. CRIAR USUÁRIOS DE TESTE
+
+Crie:
+
+```text
+ana.silva
+bruno.santos
+carlos.oliveira
+diana.souza
+joao.silva
+```
 
 Departamentos:
 
-    ana.silva → Finance
-    bruno.santos → IT
-    carlos.oliveira → Helpdesk
-    diana.souza → HR
+```text
+ana.silva       Finance
+bruno.santos    IT
+carlos.oliveira Helpdesk
+diana.souza     HR
+joao.silva      Finance
+```
 
 ---
 
-## 8.3 Criar contas administrativas
+# 32. CONTAS ADMINISTRATIVAS
 
-    admin.iam
-    admin.infra
+Crie:
 
-Não utilizar contas administrativas para atividades cotidianas.
+```text
+admin.iam
+admin.infra
+```
 
----
+Essas contas não devem ser utilizadas para navegação cotidiana.
 
-## 8.4 Criar service accounts
+Modelo:
 
-    svc-app
-    svc-backup
+```text
+usuario normal
+    ↓
+atividade cotidiana
 
-Documentar:
-
-    Owner
-    Purpose
-    Application
-    Privileges
-    Password Management
-    Rotation
-
----
-
-## 8.5 Criar grupos
-
-    GG-Finance
-    GG-IT
-    GG-HR
-    GG-Helpdesk
-
-    GG-IAM-Admins
-    GG-IAM-Readers
-    GG-Server-Admins
-
-    GG-App-Finance
-    GG-App-IT
-    GG-App-HR
+admin.iam
+    ↓
+atividade administrativa
+```
 
 ---
 
-## 8.6 Modelo de autorização
+# 33. SERVICE ACCOUNTS
 
-Utilizar:
+Crie:
 
-    USER
-      ↓
-    GROUP
-      ↓
-    RESOURCE
+```text
+svc-app
+svc-backup
+```
 
-Evitar:
+Coloque em:
 
-    USER
-      ↓
-    RESOURCE
+```text
+Service Accounts
+```
 
-Objetivo:
-
-    Least Privilege
-    Centralized Access Management
-    Easier Review
+Não conceda privilégios administrativos por padrão.
 
 ---
 
-# 9. MÓDULO GPO E HARDENING
+# 34. CRIANDO GRUPOS
 
-## Objetivo
+Entre em:
 
-Entender como políticas de identidade e endpoint são aplicadas no AD.
+```text
+Groups
+```
 
-Criar:
+Crie:
 
-    GPO-Security-Baseline
+```text
+GG-Finance
+GG-IT
+GG-HR
+GG-Helpdesk
 
-Configurar:
+GG-IAM-Admins
+GG-IAM-Readers
+GG-Server-Admins
 
-    Password Policy
-    Account Lockout
-    Audit Policy
-    Windows Firewall
-    Screen Lock
-    Security Options
+GG-App-Finance
+GG-App-IT
+GG-App-HR
+```
+
+Tipo:
+
+```text
+Security
+```
 
 ---
 
-## 9.1 Aplicar primeiro em laboratório
+# 35. ADICIONANDO MEMBROS
 
-Não aplicar diretamente em todo o domínio.
+Exemplo:
 
-Utilizar:
+```text
+GG-Finance
+```
 
-    OU=IAM-Lab
+Adicione:
 
----
-
-## 9.2 Atualizar política
-
-No Windows:
-
-    gpupdate /force
+```text
+ana.silva
+joao.silva
+```
 
 Depois:
 
-    gpresult /r
+```text
+GG-IT
+```
 
-Validar:
+Adicione:
 
-    GPO-Security-Baseline
-
----
-
-## 9.3 Exercício
-
-Modificar uma política.
-
-Executar:
-
-    gpupdate /force
-
-Validar a alteração.
-
-Depois reverter.
-
-Objetivo:
-
-    Configuration
-    Propagation
-    Validation
-    Rollback
+```text
+bruno.santos
+```
 
 ---
 
-# 10. MÓDULO JML ON-PREMISES
+# 36. VALIDANDO GRUPOS
 
-JML:
+PowerShell:
 
-    JOINER
-    MOVER
-    LEAVER
-
----
-
-## 10.1 JOINER
-
-Criar:
-
-    novo.finance
-
-Atributos:
-
-    Department = Finance
-
-Mover para:
-
-    OU=Finance
-
-Adicionar:
-
-    GG-Finance
-    GG-App-Finance
-
-Validar:
-
-    Get-ADUser novo.finance -Properties Department
+```powershell
+Get-ADGroupMember GG-Finance
+```
 
 Depois:
 
-    Get-ADPrincipalGroupMembership novo.finance
+```powershell
+Get-ADPrincipalGroupMembership ana.silva
+```
 
 ---
 
-## 10.2 MOVER
+# 37. DELEGAÇÃO
 
-Alterar departamento:
+Não utilize Domain Admin para tudo.
 
-    Finance
-        ↓
-    IT
+Crie:
 
-Executar:
+```text
+Helpdesk
+```
 
-    Remove-ADGroupMember GG-Finance novo.finance
+O objetivo será permitir que o Helpdesk execute somente operações necessárias.
+
+Exemplo:
+
+```text
+Reset password
+Unlock account
+Read users
+```
+
+Não:
+
+```text
+Create Domain Controller
+Modify Domain Admins
+Change GPO
+```
+
+---
+
+# 38. GPO
+
+Abra:
+
+```text
+Server Manager
+  ↓
+Tools
+  ↓
+Group Policy Management
+```
+
+Crie:
+
+```text
+GPO-Security-Baseline
+```
+
+Vincule primeiro:
+
+```text
+IAM-Lab
+```
+
+Não vincule imediatamente ao domínio inteiro.
+
+---
+
+# 39. CONFIGURANDO PASSWORD POLICY
+
+Edite:
+
+```text
+GPO-Security-Baseline
+  ↓
+Computer Configuration
+  ↓
+Policies
+  ↓
+Windows Settings
+  ↓
+Security Settings
+  ↓
+Account Policies
+  ↓
+Password Policy
+```
+
+Configure uma política de laboratório coerente.
+
+Exemplo:
+
+```text
+Minimum password length:
+12
+
+Password complexity:
+Enabled
+```
+
+Evite copiar políticas de produção sem entender o impacto.
+
+---
+
+# 40. ACCOUNT LOCKOUT
+
+Caminho:
+
+```text
+Account Policies
+  ↓
+Account Lockout Policy
+```
+
+Configure:
+
+```text
+Account lockout threshold:
+5
+
+Account lockout duration:
+15 minutes
+```
+
+O objetivo é entender:
+
+```text
+Authentication failure
+       ↓
+Threshold
+       ↓
+Lockout
+       ↓
+Recovery
+```
+
+---
+
+# 41. TESTANDO GPO
+
+Na máquina cliente:
+
+```powershell
+gpupdate /force
+```
 
 Depois:
 
-    Add-ADGroupMember GG-IT novo.finance
+```powershell
+gpresult /r
+```
 
-Validar:
+Procure:
 
-    Get-ADPrincipalGroupMembership novo.finance
-
-Resultado:
-
-    GG-IT = presente
-    GG-Finance = ausente
-
----
-
-## 10.3 LEAVER
-
-Executar:
-
-    Disable-ADAccount novo.finance
-
-Remover grupos:
-
-    Remove-ADGroupMember GG-IT novo.finance
-
-Mover para:
-
-    OU=Disabled
-
-Validar:
-
-    Get-ADUser novo.finance
-
-Registrar evidência.
+```text
+GPO-Security-Baseline
+```
 
 ---
 
-# 11. MÓDULO ENTRA ID
+# 42. JML ON-PREMISES
 
-## Objetivo
+JML significa:
 
-Construir a camada de identidade cloud.
-
-Criar usuários de laboratório:
-
-    cloud.user01
-    cloud.user02
-
-Criar administrador de laboratório:
-
-    cloud.iam
-
-Criar conta de emergência:
-
-    breakglass01
-
-Idealmente manter duas contas de emergência cloud-only no ambiente real; no laboratório, utilize pelo menos uma para compreender o conceito, sem utilizá-la no cotidiano.
+```text
+JOINER
+MOVER
+LEAVER
+```
 
 ---
-
-## 11.1 Breakglass
-
-Características:
-
-    Cloud-only
-    Não utilizada diariamente
-    Credencial protegida
-    Monitorada
-    Uso emergencial
-
-Criar um caso de detecção:
-
-    BREAKGLASS LOGIN
-        ↓
-    HIGH PRIORITY
-        ↓
-    INVESTIGATION
-
----
-
-# 12. MÓDULO MFA E AUTHENTICATION
-
-## Objetivo
-
-Entender:
-
-    Authentication
-    Authentication Methods
-    MFA
-    Passwordless
-    Authentication Strength
-
----
-
-## 12.1 MFA
-
-Registrar:
-
-    cloud.user01
-
-Utilizar método MFA disponível no tenant.
-
-Testar:
-
-    Login
-      ↓
-    MFA
-      ↓
-    Access
-
-Registrar:
-
-    Authentication Method
-    Timestamp
-    Result
-
----
-
-## 12.2 Authentication Strength
-
-Estudar a diferença entre:
-
-    MFA genérico
-
-e:
-
-    Authentication Strength
-
-Depois estudar métodos resistentes a phishing quando disponíveis no tenant/licenciamento.
-
----
-
-## 12.3 SSPR
-
-Configurar o Password Reset conforme os recursos disponíveis.
-
-Testar:
-
-    User
-      ↓
-    Forgot Password
-      ↓
-    Verification
-      ↓
-    Reset
-
-Registrar o fluxo.
-
----
-
-# 13. MÓDULO CONDITIONAL ACCESS
-
-Conditional Access exige Microsoft Entra ID P1 ou uma licença que inclua essa capacidade; políticas baseadas em risco dependem de Identity Protection/P2. :contentReference[oaicite:0]{index=0}
-
-## Regra operacional
-
-Nunca começar com uma política ampla em modo obrigatório.
-
-Utilizar:
-
-    REPORT-ONLY
-        ↓
-    TEST
-        ↓
-    WHAT IF
-        ↓
-    VALIDATE
-        ↓
-    ENABLE
-
----
-
-## 13.1 CA01 — MFA para administradores
-
-Criar:
-
-    CA01-Require-MFA-Admins
-
-Target:
-
-    Administrative Roles
-
-Apps:
-
-    All cloud apps
-
-Grant:
-
-    Require MFA
-
-Modo inicial:
-
-    Report-only
-
-Testar.
-
----
-
-## 13.2 CA02 — Legacy Authentication
-
-Criar:
-
-    CA02-Block-Legacy-Authentication
-
-Condition:
-
-    Legacy Authentication Clients
-
-Control:
-
-    Block Access
-
-Primeiro:
-
-    Report-only
-
-Validar impacto.
-
----
-
-## 13.3 CA03 — Aplicação
-
-Criar:
-
-    CA03-Finance-App-MFA
-
-Target:
-
-    APP-Finance
-
-Grant:
-
-    MFA
-
-Testar com:
-
-    cloud.user01
-
----
-
-## 13.4 CA04 — Contexto de dispositivo
-
-Estudar políticas condicionadas por:
-
-    Device
-    User
-    Application
-    Location
-    Authentication
-    Risk
-
----
-
-## 13.5 What If
-
-Executar o simulador para responder:
-
-    Qual política seria aplicada?
-
-    Qual condição foi satisfeita?
-
-    Qual política não foi aplicada?
-
-    Qual seria o resultado?
-
-Registrar evidência.
-
----
-
-# 14. MÓDULO RBAC
-
-Separar claramente:
-
-    Entra Directory Roles
-
-de:
-
-    Azure RBAC
-
----
-
-## 14.1 Azure RBAC
-
-Criar:
-
-    Resource Group:
-    rg-iam-lab
-
-Criar recurso de teste.
-
-Atribuir:
-
-    Reader
-
-Testar:
-
-    Read = ALLOWED
-    Modify = DENIED
-
-Depois testar uma função com mais privilégios.
-
-Documentar:
-
-    Role
-    Scope
-    Principal
-    Permission
-
----
-
-## 14.2 Least Privilege
-
-Perguntar para cada atribuição:
-
-    O usuário precisa dessa permissão?
-
-    Precisa no recurso inteiro?
-
-    Pode ser no Resource Group?
-
-    Pode ser apenas no recurso?
-
-    Pode ser temporária?
-
----
-
-# 15. MÓDULO DEVICE IDENTITY
-
-Criar:
-
-    WIN11-01
-
-Ingressar no domínio:
-
-    corp.lab
-
-Validar:
-
-    Domain Join
-
-Depois estudar:
-
-    Entra Registered
-    Entra Joined
-    Hybrid Joined
-
-Objetivo:
-
-    User Identity
-        +
-    Device Identity
-        +
-    Conditional Access
-
----
-
-# 16. MÓDULO CLOUD SYNC
-
-## Objetivo
-
-Construir:
-
-    AD
-      ↓
-    Cloud Sync
-      ↓
-    Entra ID
-
-O Cloud Sync utiliza um agente local e um serviço de provisionamento em nuvem. A Microsoft recomenda atualmente Windows Server 2025 ou 2022 para o agente; a instalação em servidor ingressado no domínio é requisito. :contentReference[oaicite:1]{index=1}
-
----
-
-## 16.1 VMs necessárias
-
-Ligar:
-
-    DC01
-    SYNC01
-
-Para Hybrid Join:
-
-    DC01
-    SYNC01
-    WIN11-01
-
----
-
-## 16.2 SYNC01
-
-Instalar Windows Server.
-
-Hostname:
-
-    SYNC01
-
-IP:
-
-    192.168.100.15
-
-DNS:
-
-    192.168.100.10
-
-Ingressar no domínio:
-
-    corp.lab
-
----
-
-## 16.3 Provisioning Agent
-
-No Entra Admin Center:
-
-    Entra ID
-        ↓
-    Entra Connect
-        ↓
-    Cloud Sync
-        ↓
-    Agent
-        ↓
-    Download
-
-Instalar no SYNC01.
-
-A instalação exige que o servidor esteja ingressado no domínio e que sejam atendidos os pré-requisitos do agente. :contentReference[oaicite:2]{index=2}
-
----
-
-## 16.4 Agente
-
-Executar o instalador.
-
-Realizar:
-
-    Sign in
-    Register Agent
-    Verify Agent
-
-No portal:
-
-    Cloud Sync
-        ↓
-    Agents
-
-Resultado:
-
-    Active
-
----
-
-## 16.5 Escopo
-
-Não começar sincronizando todo o domínio.
-
-Criar:
-
-    OU=IAM-Lab
-
-Configurar somente essa OU inicialmente.
-
----
-
-## 16.6 Configuração
-
-Seguir:
-
-    Scope
-      ↓
-    Attribute Mapping
-      ↓
-    Test
-      ↓
-    Review
-      ↓
-    Enable
-
-Esse fluxo corresponde à configuração atual documentada pela Microsoft para Cloud Sync. :contentReference[oaicite:3]{index=3}
-
----
-
-## 16.7 Teste
-
-No AD:
-
-    sync.test
-
-Colocar em:
-
-    OU=IAM-Lab
-
-Aguardar sincronização.
-
-No Entra:
-
-    Users
-      ↓
-    sync.test
-
-Validar:
-
-    UPN
-    Display Name
-    Department
-    Source
-    Object
-
----
-
-## 16.8 Teste de alteração
-
-Alterar no AD:
-
-    Department = IT
-
-Depois:
-
-    Department = Finance
-
-Validar a propagação.
-
----
-
-## 16.9 Teste de desprovisionamento
-
-No AD:
-
-    Disable-ADAccount sync.test
-
-Aguardar sincronização.
-
-Validar o estado no Entra.
-
-Documentar:
-
-    AD State
-    Sync State
-    Entra State
-
----
-
-## 16.10 Troubleshooting
-
-Se não sincronizar:
-
-    1. Verificar Agent
-    2. Verificar Scope
-    3. Verificar OU
-    4. Verificar Attribute
-    5. Verificar Logs
-    6. Verificar conectividade
-    7. Verificar permissões
-    8. Verificar estado da configuração
-
-Nunca alterar várias coisas simultaneamente.
-
----
-
-# 17. MÓDULO HYBRID JOIN
-
-O cenário de sincronização de dispositivos pelo Cloud Sync possui requisitos próprios e a documentação atual o identifica como recurso em prévia; portanto, tratar esta etapa como laboratório experimental e validar a disponibilidade no tenant antes de depender dela. :contentReference[oaicite:4]{index=4}
-
-Ligar:
-
-    DC01
-    SYNC01
-    WIN11-01
-
-Configurar a sincronização de dispositivos conforme a documentação atual do tenant.
-
-Validar no Entra:
-
-    Devices
-
-Procurar:
-
-    WIN11-01
-
-Registrar:
-
-    Device ID
-    Join Type
-    Enabled
-    Activity
-
----
-
-# 18. MÓDULO JML HÍBRIDO
 
 ## JOINER
 
-No AD:
+Criar:
 
-    joao.silva
+```text
+novo.finance
+```
 
-Atribuir:
+Definir:
 
-    Department = Finance
+```text
+Department:
+Finance
+```
 
-Grupo:
+Adicionar:
 
-    GG-Finance
-
-Fluxo:
-
-    AD
-      ↓
-    Cloud Sync
-      ↓
-    Entra
-      ↓
-    MFA
-      ↓
-    Conditional Access
-      ↓
-    Application
+```text
+GG-Finance
+GG-App-Finance
+```
 
 ---
 
@@ -1321,17 +1665,29 @@ Fluxo:
 
 Alterar:
 
-    Finance
-      ↓
-    IT
+```text
+Finance
+↓
+IT
+```
 
-No AD:
+Remover:
 
-    Remove Finance
+```text
+GG-Finance
+```
 
-    Add IT
+Adicionar:
 
-Validar no Entra.
+```text
+GG-IT
+```
+
+Validar:
+
+```powershell
+Get-ADPrincipalGroupMembership novo.finance
+```
 
 ---
 
@@ -1339,1214 +1695,3009 @@ Validar no Entra.
 
 Executar:
 
-    Disable AD
+```powershell
+Disable-ADAccount novo.finance
+```
 
-Depois validar:
+Depois:
 
-    Cloud Sync
-    Entra
-    Groups
-    Applications
-    Privileged Access
-    Sessions
+```powershell
+Move-ADObject `
+    -Identity "CN=novo.finance,OU=Finance,OU=Users,DC=corp,DC=lab" `
+    -TargetPath "OU=Disabled,DC=corp,DC=lab"
+```
 
-Registrar evidência.
+Validar:
+
+```powershell
+Get-ADUser novo.finance
+```
 
 ---
 
-# 19. MÓDULO APP REGISTRATION
+# 43. CRIANDO WIN11-01
+
+No VirtualBox:
+
+```text
+New
+```
+
+Nome:
+
+```text
+WIN11-01
+```
+
+ISO:
+
+```text
+Windows 11 Enterprise Evaluation
+```
+
+RAM:
+
+```text
+4096 MB
+```
+
+CPU:
+
+```text
+2
+```
+
+Disco:
+
+```text
+64 GB
+```
+
+---
+
+# 44. REDE WIN11-01
+
+Adapter 1:
+
+```text
+NAT
+```
+
+Adapter 2:
+
+```text
+Host-only
+```
+
+---
+
+# 45. IP WIN11-01
+
+No Windows:
+
+```text
+Settings
+  ↓
+Network & Internet
+  ↓
+Advanced network settings
+  ↓
+More network adapter options
+```
+
+Identifique Host-Only.
+
+IPv4:
+
+```text
+IP:
+192.168.56.20
+
+Mask:
+255.255.255.0
+
+Gateway:
+vazio
+
+DNS:
+192.168.56.10
+```
+
+---
+
+# 46. TESTAR DNS NO CLIENTE
+
+PowerShell:
+
+```powershell
+ping 192.168.56.10
+```
+
+Depois:
+
+```powershell
+nslookup corp.lab
+```
+
+Depois:
+
+```powershell
+nslookup dc01.corp.lab
+```
+
+Se o DNS falhar:
+
+```text
+NÃO faça Domain Join.
+```
+
+Corrija primeiro o DNS.
+
+---
+
+# 47. DOMAIN JOIN
+
+No Windows:
+
+```text
+Settings
+  ↓
+System
+  ↓
+About
+  ↓
+Domain or workgroup
+```
+
+Escolha:
+
+```text
+Join this device to a local Active Directory domain
+```
+
+Digite:
+
+```text
+corp.lab
+```
+
+Quando solicitado:
+
+```text
+CORP\Administrator
+```
+
+Reinicie.
+
+---
+
+# 48. VALIDAR DOMAIN JOIN
+
+Depois do login:
+
+```text
+System
+  ↓
+About
+```
+
+Procure:
+
+```text
+Domain:
+corp.lab
+```
+
+PowerShell:
+
+```powershell
+whoami
+```
+
+Exemplo:
+
+```text
+corp\ana.silva
+```
+
+---
+
+# 49. CRIANDO TENANT ENTRA
+
+Agora a etapa cloud.
+
+Não precisa de nenhuma VM.
+
+Acesse o Microsoft Entra Admin Center.
+
+Crie ou utilize um tenant de laboratório.
+
+Registre:
+
+```text
+Tenant Name:
+________________
+
+Tenant ID:
+________________
+
+Initial Domain:
+________________.onmicrosoft.com
+```
+
+Nunca publique:
+
+```text
+Tenant ID
+```
+
+se não houver necessidade.
+
+O ID não é um segredo, mas não deve ser tratado como credencial.
+
+---
+
+# 50. CONTA BREAKGLASS
+
+Crie:
+
+```text
+breakglass01
+```
+
+Características:
+
+```text
+Cloud-only
+Não sincronizada
+Não usada diariamente
+Credencial armazenada com segurança
+Monitorada
+```
+
+O objetivo é evitar que uma política de IAM bloqueie todos os administradores.
+
+---
+
+# 51. USUÁRIO ADMINISTRATIVO CLOUD
+
+Crie:
+
+```text
+cloud.iam
+```
+
+Use-o para administração do tenant.
+
+Não utilize:
+
+```text
+Global Administrator
+```
+
+para tarefas comuns se uma função mais específica for suficiente.
+
+---
+
+# 52. MFA
+
+Entre no tenant com:
+
+```text
+cloud.iam
+```
+
+Configure MFA.
+
+Depois crie:
+
+```text
+cloud.user01
+cloud.user02
+```
+
+Configure MFA para eles.
+
+---
+
+# 53. ENTENDER MFA
+
+Fluxo:
+
+```text
+Username
+   ↓
+Password
+   ↓
+MFA
+   ↓
+Token
+   ↓
+Access
+```
+
+O MFA reduz o risco de uma senha comprometida ser suficiente para acessar o recurso.
+
+---
+
+# 54. SSPR
+
+Procure:
+
+```text
+Microsoft Entra ID
+  ↓
+Password reset
+```
+
+Configure primeiro para:
+
+```text
+Selected
+```
+
+Selecione:
+
+```text
+cloud.user01
+cloud.user02
+```
+
+Não comece com:
+
+```text
+All
+```
+
+---
+
+# 55. TESTAR SSPR
+
+Use uma janela privada do navegador.
+
+Entre como:
+
+```text
+cloud.user01
+```
+
+Teste o processo de recuperação.
+
+Documente:
+
+```text
+User
+Verification
+Reset
+Result
+```
+
+O SSPR possui recursos gratuitos em determinadas SKUs, mas o benefício pretendido deve respeitar o licenciamento aplicável. 
+
+---
+
+# 56. CONDITIONAL ACCESS
+
+Antes de criar qualquer política:
+
+```text
+MFA
++
+Breakglass
++
+Test User
+```
+
+deve estar preparado.
+
+---
+
+# 57. POLÍTICA CA01
+
+Abra:
+
+```text
+Entra ID
+  ↓
+Conditional Access
+  ↓
+Policies
+  ↓
+New policy
+```
+
+Nome:
+
+```text
+CA01-Require-MFA-Admins
+```
+
+Users:
+
+```text
+Directory roles
+```
+
+Selecione administradores.
+
+Target resources:
+
+```text
+All cloud apps
+```
+
+Grant:
+
+```text
+Require multifactor authentication
+```
+
+---
+
+# 58. REPORT-ONLY
+
+Antes de ativar:
+
+```text
+Enable policy:
+Report-only
+```
+
+Clique:
+
+```text
+Create
+```
+
+---
+
+# 59. TESTAR CA
+
+Entre:
+
+```text
+Entra ID
+  ↓
+Monitoring
+  ↓
+Sign-in logs
+```
+
+Abra um login.
+
+Procure:
+
+```text
+Conditional Access
+```
+
+Analise:
+
+```text
+Applied
+Not applied
+Report-only
+```
+
+---
+
+# 60. CA02 — BLOQUEAR LEGACY AUTH
+
+Crie:
+
+```text
+CA02-Block-Legacy-Authentication
+```
+
+Client apps:
+
+```text
+Legacy authentication clients
+```
+
+Grant:
+
+```text
+Block access
+```
+
+Comece:
+
+```text
+Report-only
+```
+
+---
+
+# 61. WHAT IF
+
+No Conditional Access:
+
+```text
+What If
+```
+
+Selecione:
+
+```text
+User:
+cloud.user01
+
+Application:
+All cloud apps
+```
+
+Execute.
+
+Pergunte:
+
+```text
+Qual política seria aplicada?
+Qual condição foi satisfeita?
+Qual política não foi aplicada?
+Qual seria o resultado?
+```
+
+---
+
+# 62. CA03 — APPLICATION
 
 Criar:
 
-    APP-Finance
+```text
+CA03-FinanceApp-MFA
+```
 
-Tipo:
+Users:
 
-    Single Tenant
+```text
+cloud.user01
+```
 
-Registrar.
+Target:
 
-Documentar:
+```text
+FinanceApp
+```
 
-    Application ID
-    Directory ID
-    Object ID
+Grant:
 
-Estudar:
+```text
+MFA
+```
 
-    Application Object
-    Service Principal
+Modo:
 
----
+```text
+Report-only
+```
 
-# 20. MÓDULO SERVICE PRINCIPAL
+Depois de validar:
 
-Entender:
-
-    App Registration
-        ↓
-    Application Object
-
-e:
-
-    Application
-        ↓
-    Service Principal
-        ↓
-    Enterprise Application
-
-Documentar:
-
-    Application ID
-    Service Principal ID
-    Tenant
-    Owners
-    Permissions
+```text
+On
+```
 
 ---
 
-## 20.1 Secret
-
-Criar somente para laboratório.
-
-Registrar:
-
-    Purpose
-    Created
-    Expiration
-    Owner
-
-Testar:
-
-    Secret
-      ↓
-    Authentication
-      ↓
-    Rotation
-      ↓
-    Revocation
-
-Nunca armazenar:
-
-    Secret
-    Token
-    Private Key
-
-em Git.
-
----
-
-## 20.2 Certificate
-
-Criar certificado de laboratório.
-
-Documentar:
-
-    Thumbprint
-    Expiration
-    Owner
-
-Nunca publicar:
-
-    Private Key
-
----
-
-## 20.3 API Permissions
-
-Adicionar Microsoft Graph conforme o exercício.
-
-Para cada permissão registrar:
-
-    Permission
-    Type
-    Purpose
-    Risk
-    Consent
-
-Diferenciar:
-
-    Delegated
-
-de:
-
-    Application
-
----
-
-# 21. MÓDULO WORKLOAD IDENTITY
-
-Estudar:
-
-    User Identity
-
-versus:
-
-    Workload Identity
-
-e:
-
-    Service Principal
-
-versus:
-
-    Managed Identity
-
----
-
-## 21.1 Managed Identity
-
-Criar recurso Azure de laboratório compatível.
-
-Habilitar:
-
-    System Assigned Managed Identity
-
-Criar:
-
-    Storage Account
-
-Atribuir:
-
-    Storage Blob Data Reader
-
-Fluxo:
-
-    Resource
-      ↓
-    Managed Identity
-      ↓
-    RBAC
-      ↓
-    Storage
-
----
-
-## 21.2 Teste de Least Privilege
-
-Remover a role.
-
-Resultado esperado:
-
-    Access Denied
-
-Documentar:
-
-    Before
-    Permission
-    Test
-    Removal
-    After
-
----
-
-# 22. MÓDULO SAML
-
-Não manter uma VM permanente apenas para estudar SAML.
-
-Utilizar aplicação de laboratório compatível quando disponível.
-
-Fluxo:
-
-    User
-      ↓
-    Service Provider
-      ↓
-    Entra ID
-      ↓
-    Authentication
-      ↓
-    SAML Assertion
-      ↓
-    Service Provider
-
-Estudar:
-
-    IdP
-    SP
-    Entity ID
-    ACS URL
-    NameID
-    Claims
-    Signing Certificate
-
----
-
-## 22.1 Troubleshooting
-
-Quando falhar:
-
-    Entity ID
-    ACS URL
-    Reply URL
-    Claims
-    NameID
-    Certificate
-    Clock
-    User Assignment
-
-Verificar um item por vez.
-
----
-
-# 23. MÓDULO OAUTH 2.0
-
-Dominar:
-
-    Client
-    Authorization Server
-    Resource Server
-    Authorization Code
-    Access Token
-    Refresh Token
-    Scope
-    PKCE
-
-Fluxo:
-
-    User
-      ↓
-    Client
-      ↓
-    Authorization
-      ↓
-    Authorization Code
-      ↓
-    Token Endpoint
-      ↓
-    Access Token
-      ↓
-    API
+# 63. RBAC
 
 Não confundir:
 
-    Authentication
+```text
+Microsoft Entra Roles
+```
 
 com:
 
-    Authorization
+```text
+Azure RBAC
+```
 
 ---
 
-# 24. MÓDULO OIDC
+# 64. AZURE RESOURCE GROUP
 
-OIDC adiciona autenticação sobre OAuth 2.0.
+No Azure Portal:
 
-Estudar:
+```text
+Resource groups
+  ↓
+Create
+```
 
-    ID Token
-    Access Token
-    Issuer
-    Audience
-    Subject
-    Nonce
-    State
-    Redirect URI
+Nome:
 
-Fluxo:
+```text
+rg-iam-lab
+```
 
-    User
-      ↓
-    Client
-      ↓
-    Entra
-      ↓
-    ID Token
-      ↓
-    Application
+Região:
 
----
+```text
+região mais próxima disponível
+```
 
-# 25. MÓDULO JWT
+Clique:
 
-Estrutura:
+```text
+Review + create
+```
 
-    HEADER
-    .
-    PAYLOAD
-    .
-    SIGNATURE
+Depois:
 
-Estudar claims:
-
-    iss
-    sub
-    aud
-    exp
-    iat
-    nonce
-    scp
-    roles
-
-Ao validar um token:
-
-    1. Signature
-    2. Issuer
-    3. Audience
-    4. Expiration
-    5. Required Claims
-
-Nunca confiar em um JWT apenas porque o payload parece correto.
+```text
+Create
+```
 
 ---
 
-# 26. MÓDULO SCIM
+# 65. RBAC READER
 
-Objetivo:
+Abra:
 
-    Provisioning
-    Deprovisioning
+```text
+rg-iam-lab
+  ↓
+Access control (IAM)
+  ↓
+Add
+  ↓
+Add role assignment
+```
 
-Fluxo:
+Role:
 
-    Entra
-      ↓
-    SCIM
-      ↓
-    Application
+```text
+Reader
+```
 
-Testar:
+Assign access:
 
-    CREATE
-    UPDATE
-    DISABLE
-    DEPROVISION
+```text
+User
+```
 
-Estudar:
+Selecione:
 
-    Attribute Mapping
-    Provisioning Scope
-    Matching
-    Provisioning Logs
-
----
-
-# 27. MÓDULO POWERSHELL
-
-Criar:
-
-    C:\IAM-Lab\Scripts
-
-Arquivos:
-
-    New-IAMUser.ps1
-    Disable-IAMUser.ps1
-    Add-IAMGroup.ps1
-    Remove-IAMAccess.ps1
-    Get-PrivilegedUsers.ps1
-    Get-InactiveUsers.ps1
-    Export-IAMReport.ps1
+```text
+cloud.user01
+```
 
 ---
 
-## 27.1 Regras dos scripts
+# 66. TESTAR RBAC
 
-Todo script deve possuir:
+Entre como:
 
-    Validation
-    Error Handling
-    Logging
-    Parameters
-    Documentation
+```text
+cloud.user01
+```
 
-Nunca:
+Tente:
 
-    senha hardcoded
-    secret hardcoded
-    token hardcoded
+```text
+Visualizar recurso
+```
 
----
+Deve funcionar.
 
-## 27.2 Joiner Automation
+Tente:
 
-Entrada:
+```text
+Modificar recurso
+```
 
-    FirstName
-    LastName
-    Department
-    JobTitle
+Deve falhar.
 
-Processo:
+Isso demonstra:
 
-    Validate
-      ↓
-    Create
-      ↓
-    Attributes
-      ↓
-    Group
-      ↓
-    Log
+```text
+Authentication
++
+Authorization
+```
 
 ---
 
-## 27.3 Leaver Automation
+# 67. DEVICE IDENTITY
 
-Entrada:
+No WIN11-01:
 
-    Username
+```text
+Settings
+  ↓
+Accounts
+  ↓
+Access work or school
+```
 
-Processo:
+Estude a diferença entre:
 
-    Validate
-      ↓
-    Disable
-      ↓
-    Remove Access
-      ↓
-    Log
+```text
+Microsoft Entra Registered
+Microsoft Entra Joined
+Hybrid Joined
+```
 
----
+Não confunda:
 
-# 28. MÓDULO MICROSOFT GRAPH
+```text
+User Identity
+```
 
-Utilizar:
+com:
 
-    Microsoft Graph PowerShell SDK
-
-Estudar:
-
-    Users
-    Groups
-    Applications
-    Service Principals
-    Directory Roles
-
-Objetivo:
-
-    Portal
-      ↓
-    Graph
-      ↓
-    Automation
+```text
+Device Identity
+```
 
 ---
 
-## 28.1 Exercício
+# 68. CLOUD SYNC
 
-Criar relatório contendo:
+Agora será necessário:
 
-    User
-    Department
-    Account Status
-    Groups
-    Directory Roles
-
-Exportar:
-
-    CSV
+```text
+DC01
++
+SYNC01
+```
 
 ---
 
-## 28.2 Exercício de auditoria
+# 69. CRIANDO SYNC01
 
-Gerar relatório:
+No VirtualBox:
 
-    Privileged Users
+```text
+New
+```
 
-Campos:
+Nome:
 
-    User
-    Role
-    Assignment
-    Assignment Type
-    Status
+```text
+SYNC01
+```
 
----
+Windows Server 2025.
 
-# 29. MÓDULO IDENTITY PROTECTION
+RAM:
 
-Executar somente se o tenant/licenciamento disponibilizar a funcionalidade.
+```text
+3072 MB
+```
 
-Estudar:
+CPU:
 
-    User Risk
-    Sign-in Risk
-    Risk Detection
-    Risky Users
-    Risky Sign-ins
-    Remediation
+```text
+2
+```
 
-Fluxo:
+Disco:
 
-    Sign-in
-      ↓
-    Detection
-      ↓
-    Risk
-      ↓
-    Policy
-      ↓
-    MFA / Reset / Block
+```text
+50 GB
+```
 
----
+Rede:
 
-# 30. MÓDULO PIM
-
-PIM exige licenciamento apropriado. A Microsoft documenta Microsoft Entra ID Governance ou Microsoft Entra ID P2 para esses cenários. 
-
-A estratégia econômica do laboratório será:
-
-    1 conta licenciada
-    ↓
-    executar exercício
-    ↓
-    remover/reutilizar
-    ↓
-    próximo exercício
-
-Usuário:
-
-    admin.iam
-
-Não é necessário manter vários usuários licenciados apenas para aprender o mecanismo.
+```text
+Adapter 1 = NAT
+Adapter 2 = Host-only
+```
 
 ---
 
-## 30.1 Eligible
+# 70. IP SYNC01
 
-Atribuir:
+Host-Only:
 
-    Eligible
+```text
+IP:
+192.168.56.15
 
-Evitar:
+Mask:
+255.255.255.0
 
-    Permanent Active
+Gateway:
+vazio
 
----
-
-## 30.2 Activation
-
-Executar:
-
-    Activate
-      ↓
-    MFA
-      ↓
-    Justification
-      ↓
-    Approval se configurado
-      ↓
-    Temporary Access
-      ↓
-    Expiration
-
-Registrar:
-
-    Role
-    User
-    Start
-    End
-    Justification
+DNS:
+192.168.56.10
+```
 
 ---
 
-## 30.3 Auditoria
+# 71. TESTAR SYNC01
 
-Consultar:
+```powershell
+ping 192.168.56.10
+```
 
-    Audit History
+Depois:
 
-Responder:
+```powershell
+nslookup corp.lab
+```
 
-    Quem ativou?
+Depois:
 
-    Qual função?
-
-    Quando?
-
-    Por quanto tempo?
-
-    Qual justificativa?
-
----
-
-# 31. MÓDULO ACCESS REVIEWS
-
-Access Reviews atualmente exigem Microsoft Entra ID Governance ou Microsoft Entra Suite nos cenários documentados pela Microsoft. :contentReference[oaicite:5]{index=5}
-
-Criar grupo:
-
-    GG-Finance
-
-Membros:
-
-    ana.silva
-    bruno.santos
-    carlos.oliveira
-
-Criar revisão.
+```powershell
+nslookup dc01.corp.lab
+```
 
 ---
 
-## 31.1 Teste
+# 72. DOMAIN JOIN SYNC01
 
-Decisão:
+Entre em:
 
-    ana.silva
-    APPROVE
+```text
+Settings
+  ↓
+System
+  ↓
+About
+```
 
-    bruno.santos
-    DENY
+Faça:
 
-Aplicar resultado.
+```text
+Join domain
+```
 
-Validar:
+Domínio:
 
-    bruno.santos
-    ↓
-    GG-Finance
+```text
+corp.lab
+```
 
-Resultado:
+Use:
 
-    Membership removed
+```text
+CORP\Administrator
+```
 
----
-
-## 31.2 Perguntas
-
-    Quem é o reviewer?
-
-    Qual é a frequência?
-
-    O que acontece com DENY?
-
-    Quem pode alterar o resultado?
-
-    Qual é a evidência?
+Reinicie.
 
 ---
 
-# 32. MÓDULO ENTITLEMENT MANAGEMENT
+# 73. VALIDAR SYNC01
 
-Executar quando o tenant possuir o recurso/licenciamento necessário.
+```powershell
+whoami
+```
 
-Criar:
+Esperado:
 
-    Catalog:
-    Finance
+```text
+corp\Administrator
+```
+
+Depois:
+
+```powershell
+nltest /dsgetdc:corp.lab
+```
+
+Esperado:
+
+```text
+DC01
+```
+
+---
+
+# 74. CLOUD SYNC — PRÉ-REQUISITOS
+
+O agente Cloud Sync deve estar em servidor ingressado no domínio.
+
+O ambiente também precisa atender aos requisitos de identidade, gMSA, rede e licença definidos pela Microsoft.
+
+Não instale o agente sem antes validar os pré-requisitos.
+
+---
+
+# 75. INSTALAR AGENTE CLOUD SYNC
+
+No portal:
+
+```text
+Entra ID
+  ↓
+Entra Connect
+  ↓
+Cloud Sync
+```
+
+Localize:
+
+```text
+Cloud Sync agents
+```
+
+Baixe o:
+
+```text
+Microsoft Entra Provisioning Agent
+```
+
+No SYNC01:
+
+```text
+Downloads
+  ↓
+Installer
+```
+
+Execute como administrador.
+
+---
+
+# 76. REGISTRAR AGENTE
+
+Durante o assistente:
+
+```text
+Sign in
+```
+
+Utilize uma conta apropriada para Hybrid Identity.
+
+Não use:
+
+```text
+Guest
+```
+
+O agente solicitará informações relacionadas ao AD.
+
+Conclua.
+
+---
+
+# 77. VALIDAR AGENTE
+
+No portal:
+
+```text
+Entra ID
+  ↓
+Entra Connect
+  ↓
+Cloud Sync
+  ↓
+Agents
+```
+
+Procure:
+
+```text
+SYNC01
+```
+
+Estado esperado:
+
+```text
+Active
+```
+
+---
+
+# 78. CRIAR CONFIGURAÇÃO
+
+No Cloud Sync:
+
+```text
+New configuration
+```
+
+Selecione:
+
+```text
+Microsoft Entra ID
+```
+
+como destino.
+
+Selecione:
+
+```text
+corp.lab
+```
+
+como domínio.
+
+---
+
+# 79. ESCOPO
+
+Não sincronize o domínio inteiro.
+
+Use:
+
+```text
+OU=IAM-Lab
+```
+
+Isso permite testar sem colocar todo o ambiente no escopo.
+
+---
+
+# 80. TEST USER
+
+No AD:
+
+```text
+IAM-Lab
+```
+
+Crie:
+
+```text
+sync.test
+```
+
+---
+
+# 81. UPN PARA CLOUD
+
+Para sincronização, o UPN precisa ser compatível com um domínio verificado no tenant.
+
+Exemplo:
+
+```text
+sync.test@SEUTENANT.onmicrosoft.com
+```
+
+Se você possuir um domínio próprio verificado:
+
+```text
+sync.test@seudominio.com
+```
+
+será preferível.
+
+---
+
+# 82. PROVISIONAMENTO SOB DEMANDA
+
+Antes de habilitar tudo:
+
+```text
+Cloud Sync
+  ↓
+Configuration
+  ↓
+Provision on demand
+```
+
+Informe o DN de:
+
+```text
+sync.test
+```
+
+Exemplo:
+
+```text
+CN=sync.test,OU=IAM-Lab,DC=corp,DC=lab
+```
+
+Clique:
+
+```text
+Provision
+```
+
+---
+
+# 83. ANALISAR O RESULTADO
+
+O provisionamento sob demanda mostra:
+
+```text
+Import
+↓
+Scope
+↓
+Match
+↓
+Provision
+```
+
+Se falhar:
+
+```text
+NÃO habilite a sincronização completa.
+```
+
+Corrija primeiro.
+
+---
+
+# 84. VALIDAR NO ENTRA
+
+Abra:
+
+```text
+Entra ID
+  ↓
+Users
+  ↓
+All users
+```
+
+Procure:
+
+```text
+sync.test
+```
+
+Verifique:
+
+```text
+UPN
+Source
+Object ID
+Department
+Account status
+```
+
+---
+
+# 85. HABILITAR CLOUD SYNC
+
+Depois do teste:
+
+```text
+Scope
+↓
+Attribute Mapping
+↓
+Test
+↓
+Review
+↓
+Enable
+```
+
+Somente então:
+
+```text
+Enable
+```
+
+---
+
+# 86. TESTAR ALTERAÇÃO
+
+No AD:
+
+```text
+sync.test
+```
+
+Altere:
+
+```text
+Department:
+IT
+```
+
+Aguarde o ciclo.
+
+Valide no Entra.
+
+Depois altere:
+
+```text
+Department:
+Finance
+```
+
+Valide novamente.
+
+---
+
+# 87. TESTAR LEAVER
+
+No AD:
+
+```powershell
+Disable-ADAccount sync.test
+```
+
+Aguarde sincronização.
+
+Verifique no Entra.
+
+Documente:
+
+```text
+AD:
+Disabled
+
+Cloud:
+estado observado
+
+Timestamp:
+__________
+```
+
+---
+
+# 88. TROUBLESHOOTING CLOUD SYNC
+
+Sempre nesta ordem:
+
+```text
+1. Agent
+2. Network
+3. Domain
+4. Scope
+5. OU
+6. Attribute Mapping
+7. Object Matching
+8. Provisioning Logs
+9. Quarantine
+10. Target
+```
+
+Não altere cinco coisas ao mesmo tempo.
+
+---
+
+# 89. JML HÍBRIDO
+
+Agora execute:
+
+```text
+JOINER
+```
+
+Criar no AD:
+
+```text
+joao.finance
+```
 
 Adicionar:
 
-    FinanceApp
-    GG-Finance
+```text
+GG-Finance
+```
 
-Criar:
-
-    Access Package:
-    Finance Employee
-
-Fluxo:
-
-    User
-      ↓
-    Request
-      ↓
-    Approval
-      ↓
-    Access Package
-      ↓
-    Resources
-      ↓
-    Expiration
-
-Documentar:
-
-    Resource
-    Approval
-    Owner
-    Expiration
-    Access Policy
+Sincronizar.
 
 ---
 
-# 33. MÓDULO LIFECYCLE WORKFLOWS
+# 90. VALIDAR JOINER
 
-Lifecycle Workflows é uma capacidade de Governance e atualmente exige Microsoft Entra ID Governance ou Microsoft Entra Suite. :contentReference[oaicite:6]{index=6}
+Esperado:
 
-O conceito central é:
-
-    JOINER
-    MOVER
-    LEAVER
-
----
-
-## 33.1 JOINER
-
-Criar workflow de laboratório.
-
-Objetivo:
-
-    New Employee
-      ↓
-    Group
-      ↓
-    Access
+```text
+AD User
+↓
+Cloud Sync
+↓
+Entra User
+↓
+MFA
+↓
+CA
+↓
+Application
+```
 
 ---
 
-## 33.2 MOVER
-
-Evento:
-
-    Department Change
-
-Objetivo:
-
-    Remove Old Access
-      ↓
-    Add New Access
-
----
-
-## 33.3 LEAVER
-
-Evento:
-
-    Employee Leaving
-
-Objetivo:
-
-    Remove Access
-      ↓
-    Cleanup
-
-Executar manualmente quando possível antes de utilizar agendamento.
-
----
-
-# 34. MÓDULO B2B
-
-Criar:
-
-    guest.finance
-
-Conceder apenas:
-
-    FinanceApp
-
-Não conceder privilégios administrativos.
-
-Estudar:
-
-    Guest
-    External Identity
-    Invitation
-    Access
-    Review
-    Removal
-
----
-
-## 34.1 Governança
-
-Responder:
-
-    Quem pode convidar?
-
-    Quem aprova?
-
-    Qual aplicação o guest acessa?
-
-    Quando expira?
-
-    Quem revisa?
-
-    Como remover?
-
----
-
-# 35. MÓDULO IAM MONITORING
-
-Monitorar:
-
-    Audit Logs
-    Sign-in Logs
-    Provisioning Logs
-    Conditional Access
-    PIM
-    Applications
-    Service Principals
-    Groups
-
----
-
-## 35.1 Casos de detecção
-
-Criar uma matriz:
-
-| Evento | Severidade | Investigação |
-|---|---|---|
-| Global Admin Assigned | Alta | Quem atribuiu? |
-| PIM Activation | Alta | Quem ativou? |
-| MFA Method Added | Alta | Quem adicionou? |
-| Service Principal Created | Alta | Qual aplicação? |
-| Secret Added | Alta | Qual aplicação? |
-| API Permission Changed | Alta | Qual permissão? |
-| Admin Consent | Alta | Quem concedeu? |
-| Guest Created | Média/Alta | Quem convidou? |
-| CA Modified | Alta | Qual política? |
-| Breakglass Login | Crítica | Investigação imediata |
-
----
-
-# 36. MÓDULO SIEM
-
-O SIEM não precisa ficar ligado durante os outros módulos.
-
-Arquitetura:
-
-    Entra
-      ↓
-    Identity Logs
-      ↓
-    SIEM
-      ↓
-    Detection
-      ↓
-    Alert
-      ↓
-    Investigation
-      ↓
-    Response
-
----
-
-## 36.1 Caso 01 — Privileged Role
-
-Evento:
-
-    Privileged Role Assignment
-
-Investigar:
-
-    User
-    Role
-    Target
-    Source
-    Time
-    PIM
-    Justification
-
----
-
-## 36.2 Caso 02 — MFA Method Added
-
-Investigar:
-
-    User
-    IP
-    Device
-    Time
-    Previous Authentication
-    Risk
-
-Resposta de laboratório:
-
-    Disable
-    Revoke
-    Remove unauthorized method
-    Reset credentials
-    Investigate
-
----
-
-## 36.3 Caso 03 — Breakglass
-
-Evento:
-
-    breakglass01 sign-in
-
-Classificação:
-
-    CRITICAL
-
-Investigar:
-
-    IP
-    Time
-    Device
-    Activity
-
----
-
-# 37. MÓDULO PAM
-
-PAM e PIM não são a mesma coisa.
-
-## PIM
-
-    Privilege
-      ↓
-    JIT
-      ↓
-    Activation
-      ↓
-    Expiration
-
-## PAM
-
-    Privileged Account
-      ↓
-    Vault
-      ↓
-    Checkout
-      ↓
-    Session
-      ↓
-    Recording
-      ↓
-    Rotation
-      ↓
-    Audit
-
----
-
-## 37.1 Infraestrutura
-
-Ligar apenas:
-
-    LINUX01
-
-Não é necessário manter LINUX01 ligada durante os demais módulos.
-
----
-
-## 37.2 Contas
-
-Criar contas de laboratório:
-
-    administrator
-    svc-app
-    svc-backup
-
----
-
-## 37.3 Papéis
-
-Criar conceitualmente:
-
-    PAM-Admin
-    PAM-Operator
-    PAM-Auditor
-
----
-
-## 37.4 Vault
-
-Guardar uma credencial de laboratório.
-
-Registrar:
-
-    Owner
-    Target
-    Purpose
-    Checkout
-    Rotation
-
----
-
-## 37.5 Rotation
-
-Executar:
-
-    Checkout
-      ↓
-    Use
-      ↓
-    Return
-      ↓
-    Rotate
-
-Validar:
-
-    Old Credential = Invalid
-    New Credential = Valid
-
----
-
-## 37.6 Session
-
-Se a ferramenta utilizada suportar:
-
-    User
-      ↓
-    Privileged Session
-      ↓
-    Recording
-      ↓
-    Audit
-
-Registrar:
-
-    User
-    Target
-    Start
-    End
-    Duration
-
----
-
-# 38. MÓDULO SoD
-
-Segregation of Duties.
-
-Criar funções:
-
-    Requester
-    Approver
-    IAM Operator
-    Auditor
-
-Regra:
-
-    REQUESTER
-       ≠
-    APPROVER
-
-E:
-
-    OPERATOR
-       ≠
-    AUDITOR
-
----
-
-## 38.1 Cenário
-
-    Employee
-      ↓
-    Request Access
-      ↓
-    Manager
-      ↓
-    Approval
-      ↓
-    IAM
-      ↓
-    Provision
-      ↓
-    Audit
-
-Teste:
-
-    Employee
-      ↓
-    Self Approval
-
-Resultado:
-
-    DENIED
-
----
-
-# 39. PROJETO FINAL
-
-## Empresa fictícia
-
-    Contoso Lab
-
-Departamentos:
-
-    Finance
-    IT
-    HR
-    Helpdesk
-
-Aplicações:
-
-    FinanceApp
-    ITPortal
-
----
-
-# 39.1 JOINER
-
-Criar:
-
-    joao.silva
-
-Cargo:
-
-    Finance Analyst
-
-Fluxo completo:
-
-    AD
-      ↓
-    OU Finance
-      ↓
-    GG-Finance
-      ↓
-    Cloud Sync
-      ↓
-    Entra
-      ↓
-    MFA
-      ↓
-    Conditional Access
-      ↓
-    FinanceApp
-
----
-
-# 39.2 MOVER
+# 91. MOVER
 
 Alterar:
 
-    Finance
-      ↓
-    IT
+```text
+Finance
+↓
+IT
+```
 
-Executar:
+Remover:
 
-    Remove Finance
-    Add IT
+```text
+GG-Finance
+```
+
+Adicionar:
+
+```text
+GG-IT
+```
+
+Sincronizar.
 
 Validar:
 
-    Old Access = DENIED
-    New Access = ALLOWED
+```text
+Finance access = removed
+IT access = present
+```
 
 ---
 
-# 39.3 PRIVILEGED ACCESS
+# 92. LEAVER
 
-João precisa executar tarefa administrativa.
+Executar:
+
+```text
+Disable AD account
+↓
+Sync
+↓
+Cloud account affected
+↓
+Groups reviewed
+↓
+Application access reviewed
+↓
+Privileged access reviewed
+↓
+Audit
+```
+
+---
+
+# 93. APPLICATION IDENTITY
+
+No Entra:
+
+```text
+Entra ID
+  ↓
+App registrations
+  ↓
+New registration
+```
+
+Nome:
+
+```text
+APP-Finance
+```
+
+Tipo:
+
+```text
+Accounts in this organizational directory only
+```
+
+Registre:
+
+```text
+Application ID
+Directory ID
+Object ID
+```
+
+---
+
+# 94. APP REGISTRATION
+
+Entenda:
+
+```text
+Application Object
+```
+
+como a definição da aplicação.
+
+E:
+
+```text
+Service Principal
+```
+
+como a identidade da aplicação dentro do tenant.
+
+---
+
+# 95. SERVICE PRINCIPAL
+
+No Entra:
+
+```text
+Enterprise applications
+```
+
+Procure:
+
+```text
+APP-Finance
+```
+
+Compare:
+
+```text
+Application ID
+Service Principal ID
+```
+
+---
+
+# 96. API PERMISSIONS
+
+Abra:
+
+```text
+App registrations
+  ↓
+APP-Finance
+  ↓
+API permissions
+```
+
+Você verá permissões como:
+
+```text
+Microsoft Graph
+```
+
+Entenda a diferença:
+
+```text
+Delegated
+```
+
+e:
+
+```text
+Application
+```
+
+---
+
+# 97. DELEGATED
+
+Modelo:
+
+```text
+User
+ ↓
+Application
+ ↓
+Microsoft Graph
+```
+
+A aplicação atua em nome do usuário.
+
+---
+
+# 98. APPLICATION
+
+Modelo:
+
+```text
+Application
+ ↓
+Microsoft Graph
+```
+
+Não existe usuário interativo necessariamente.
+
+Por isso, o risco é maior.
+
+Use somente permissões necessárias.
+
+---
+
+# 99. SECRET
+
+Em:
+
+```text
+Certificates & secrets
+```
+
+Crie um secret de laboratório.
+
+Defina uma expiração curta.
+
+Copie o valor imediatamente.
+
+O valor pode não ser exibido novamente.
+
+Não publique:
+
+```text
+Client Secret
+```
+
+---
+
+# 100. CERTIFICATE
+
+Crie certificado de laboratório.
+
+Documente:
+
+```text
+Subject
+Thumbprint
+Expiration
+Owner
+Purpose
+```
+
+Não publique:
+
+```text
+Private Key
+```
+
+---
+
+# 101. MANAGED IDENTITY
+
+Crie uma VM Azure pequena de laboratório somente quando necessário.
+
+No Azure:
+
+```text
+Virtual machines
+  ↓
+Create
+```
+
+Durante ou depois da criação:
+
+```text
+Identity
+  ↓
+System assigned
+  ↓
+On
+```
+
+Salve.
+
+---
+
+# 102. RBAC PARA MANAGED IDENTITY
+
+Crie:
+
+```text
+Storage Account
+```
+
+Depois:
+
+```text
+Storage
+  ↓
+Access Control (IAM)
+  ↓
+Add role assignment
+```
+
+Role:
+
+```text
+Storage Blob Data Reader
+```
+
+Principal:
+
+```text
+Managed Identity da VM
+```
+
+---
+
+# 103. TESTE
+
+A VM deve conseguir executar a ação permitida.
+
+Não deve conseguir executar uma ação não concedida.
+
+Modelo:
+
+```text
+Managed Identity
+      ↓
+RBAC
+      ↓
+Storage
+```
+
+---
+
+# 104. OAUTH 2.0
+
+Estude o fluxo:
+
+```text
+User
+ ↓
+Client
+ ↓
+Authorization Server
+ ↓
+Authorization Code
+ ↓
+Token Endpoint
+ ↓
+Access Token
+ ↓
+Resource Server
+```
+
+Termos obrigatórios:
+
+```text
+Client
+Scope
+Authorization Code
+Access Token
+Refresh Token
+PKCE
+Redirect URI
+```
+
+---
+
+# 105. OIDC
+
+OIDC utiliza OAuth 2.0 para autenticação.
+
+Estude:
+
+```text
+ID Token
+Access Token
+Issuer
+Audience
+Subject
+Nonce
+State
+Redirect URI
+```
+
+---
+
+# 106. JWT
+
+Um token JWT possui:
+
+```text
+HEADER
+.
+PAYLOAD
+.
+SIGNATURE
+```
+
+Analise:
+
+```text
+iss
+sub
+aud
+exp
+iat
+nonce
+scp
+roles
+```
+
+Nunca confie somente no payload.
+
+Valide:
+
+```text
+Signature
+Issuer
+Audience
+Expiration
+Claims
+```
+
+---
+
+# 107. SAML
+
+Utilize o:
+
+```text
+Microsoft Entra SAML Toolkit
+```
+
+quando disponível.
+
+No Entra:
+
+```text
+Enterprise applications
+  ↓
+New application
+  ↓
+Microsoft Entra SAML Toolkit
+```
+
+---
+
+# 108. CONCEITOS SAML
+
+Estude:
+
+```text
+IdP
+SP
+Entity ID
+ACS URL
+NameID
+Claims
+Signing Certificate
+```
 
 Fluxo:
 
-    PAW / Workstation
-      ↓
-    admin.iam
-      ↓
-    PIM
-      ↓
-    MFA
-      ↓
-    Approval
-      ↓
-    JIT
-      ↓
-    Resource
-      ↓
-    Expiration
+```text
+User
+ ↓
+SP
+ ↓
+Entra IdP
+ ↓
+SAML Assertion
+ ↓
+SP
+```
 
 ---
 
-# 39.4 ACCESS REVIEW
+# 109. TROUBLESHOOTING SAML
 
-Criar revisão.
+Se falhar, verifique:
+
+```text
+Entity ID
+ACS URL
+Reply URL
+NameID
+Claims
+Certificate
+User Assignment
+Clock
+```
+
+---
+
+# 110. SCIM
+
+SCIM será utilizado para praticar:
+
+```text
+Provisioning
+Deprovisioning
+Attribute Mapping
+```
+
+Fluxo:
+
+```text
+Entra
+ ↓
+SCIM
+ ↓
+Application
+```
+
+Teste:
+
+```text
+CREATE
+UPDATE
+DISABLE
+DELETE/DEPROVISION
+```
+
+---
+
+# 111. POWERSHELL
+
+No DC01:
+
+```text
+C:\IAM-Lab
+```
+
+Crie:
+
+```text
+Scripts
+Logs
+Reports
+Evidence
+```
+
+---
+
+# 112. SCRIPT JOINER
+
+Crie:
+
+```text
+New-IAMUser.ps1
+```
+
+Estrutura mínima:
+
+```powershell
+param(
+    [Parameter(Mandatory)]
+    [string]$FirstName,
+
+    [Parameter(Mandatory)]
+    [string]$LastName,
+
+    [Parameter(Mandatory)]
+    [string]$Department
+)
+
+$Username = "$($FirstName.ToLower()).$($LastName.ToLower())"
+
+Write-Host "Creating user: $Username"
+
+# Implementação do exercício
+```
+
+Primeiro entenda.
+
+Depois automatize.
+
+---
+
+# 113. SCRIPT LEAVER
+
+Criar:
+
+```text
+Disable-IAMUser.ps1
+```
+
+Fluxo:
+
+```text
+Input
+ ↓
+Validate
+ ↓
+Disable
+ ↓
+Remove Access
+ ↓
+Move to Disabled OU
+ ↓
+Log
+```
+
+---
+
+# 114. LOGGING
+
+Todo script deve registrar:
+
+```text
+Timestamp
+User
+Action
+Operator
+Result
+Error
+```
+
+Exemplo:
+
+```text
+2026-08-27 21:00
+joao.silva
+Disable Account
+admin.iam
+SUCCESS
+```
+
+---
+
+# 115. MICROSOFT GRAPH
+
+Instalar:
+
+```powershell
+Install-Module Microsoft.Graph -Scope CurrentUser
+```
+
+Conectar:
+
+```powershell
+Connect-MgGraph -Scopes "User.Read.All","Group.Read.All"
+```
+
+Não conceda permissões maiores que o necessário.
+
+---
+
+# 116. CONSULTAR USUÁRIOS
+
+```powershell
+Get-MgUser -All |
+    Select-Object DisplayName,UserPrincipalName,AccountEnabled
+```
+
+---
+
+# 117. RELATÓRIO
+
+Criar:
+
+```text
+Export-IAMReport.ps1
+```
+
+Gerar:
+
+```text
+User
+UPN
+Department
+AccountEnabled
+CreatedDateTime
+```
+
+Exportar:
+
+```powershell
+Export-Csv
+```
+
+---
+
+# 118. PRIVILEGED USERS
+
+Crie relatório específico:
+
+```text
+Get-PrivilegedUsers.ps1
+```
+
+Objetivo:
+
+```text
+User
+Role
+Assignment
+Scope
+Status
+```
+
+---
+
+# 119. PIM
+
+## IMPORTANTE
+
+PIM não é uma funcionalidade gratuita.
+
+Para utilizar PIM e suas configurações, o tenant precisa de licença válida, como:
+
+```text
+Microsoft Entra ID P2
+```
+
+ou:
+
+```text
+Microsoft Entra ID Governance
+```
+
+---
+
+# 120. ESTRATÉGIA DE CUSTO DO LABORATÓRIO
+
+Não crie dez usuários licenciados.
+
+Utilize:
+
+```text
+1 usuário de laboratório licenciado
+```
+
+e reutilize para os exercícios.
+
+Exemplo:
+
+```text
+admin.iam
+```
+
+Atenção:
+
+Se o exercício exigir dois participantes licenciados simultaneamente, uma única licença não cobre os dois usuários.
+
+---
+
+# 121. PIM — ELIGIBLE
+
+No Entra:
+
+```text
+Privileged Identity Management
+  ↓
+Microsoft Entra roles
+```
+
+Selecione uma função de laboratório apropriada.
+
+Configure:
+
+```text
+Eligible
+```
+
+em vez de:
+
+```text
+Permanent active
+```
+
+---
+
+# 122. ATIVAÇÃO PIM
+
+Execute:
+
+```text
+Activate
+```
+
+Informe:
+
+```text
+MFA
+Justification
+Duration
+```
+
+Exemplo:
+
+```text
+Justification:
+Lab test - temporary administrative operation
+```
+
+---
+
+# 123. VALIDAR PIM
+
+Depois da ativação:
+
+```text
+My roles
+```
+
+Verifique:
+
+```text
+Role
+Status
+Start
+Expiration
+```
+
+Depois aguarde a expiração ou encerre a ativação.
+
+---
+
+# 124. PIM — AUDITORIA
+
+Procure:
+
+```text
+Audit history
+```
+
+Responda:
+
+```text
+Quem ativou?
+Qual função?
+Quando?
+Por quanto tempo?
+Qual justificativa?
+```
+
+---
+
+# 125. ACCESS REVIEWS
+
+Access Reviews exige licenciamento apropriado de Governance/Suite nos cenários atuais.
+
+Crie:
+
+```text
+GG-Finance
+```
+
+Membros:
+
+```text
+ana.silva
+joao.silva
+```
+
+---
+
+# 126. CRIAR ACCESS REVIEW
+
+No Entra:
+
+```text
+ID Governance
+  ↓
+Access Reviews
+  ↓
+New access review
+```
+
+Escolha:
+
+```text
+Group
+```
+
+Grupo:
+
+```text
+GG-Finance
+```
 
 Reviewer:
 
-    Manager
+```text
+Specified users
+```
 
-Decidir:
+ou:
 
-    Approve
-    Deny
+```text
+Group owner
+```
+
+---
+
+# 127. TESTE
+
+Faça uma decisão:
+
+```text
+ana.silva
+Approve
+```
+
+e:
+
+```text
+joao.silva
+Deny
+```
+
+Depois aplique.
+
+Verifique:
+
+```text
+GG-Finance
+```
+
+---
+
+# 128. ENTITLEMENT MANAGEMENT
+
+Quando o tenant/licenciamento disponibilizar:
+
+```text
+Identity Governance
+  ↓
+Entitlement Management
+```
+
+Crie:
+
+```text
+Catalog:
+Finance
+```
+
+Adicione:
+
+```text
+GG-Finance
+APP-Finance
+```
+
+---
+
+# 129. ACCESS PACKAGE
+
+Crie:
+
+```text
+Finance Employee
+```
+
+Fluxo:
+
+```text
+User
+ ↓
+Request
+ ↓
+Approval
+ ↓
+Access Package
+ ↓
+Group
+ ↓
+Application
+```
+
+Configure expiração.
+
+---
+
+# 130. LIFECYCLE WORKFLOWS
+
+Quando disponível no licenciamento:
+
+```text
+Identity Governance
+  ↓
+Lifecycle Workflows
+```
+
+Estude:
+
+```text
+Joiner
+Mover
+Leaver
+```
+
+---
+
+# 131. JOINER WORKFLOW
+
+Evento:
+
+```text
+New Employee
+```
+
+Ação:
+
+```text
+Add to group
+```
+
+Exemplo:
+
+```text
+Finance Employee
+```
+
+---
+
+# 132. LEAVER WORKFLOW
+
+Evento:
+
+```text
+Employee leaving
+```
+
+Ações conceituais:
+
+```text
+Remove group
+Remove application access
+Disable account
+```
+
+Não automatize ações destrutivas em produção.
+
+No laboratório:
+
+```text
+manual execution
+```
+
+primeiro.
+
+---
+
+# 133. B2B
+
+Crie um guest:
+
+```text
+guest.finance
+```
+
+Dê acesso somente a:
+
+```text
+FinanceApp
+```
+
+Não dê:
+
+```text
+Global Administrator
+```
+
+---
+
+# 134. GOVERNANÇA B2B
+
+Responda:
+
+```text
+Quem convidou?
+Por quê?
+Qual recurso?
+Por quanto tempo?
+Quem aprovou?
+Quem revisa?
+Quando remover?
+```
+
+---
+
+# 135. PAM
+
+PAM é diferente de PIM.
+
+PIM:
+
+```text
+Privilege
+↓
+JIT
+↓
+Activation
+↓
+Expiration
+```
+
+PAM:
+
+```text
+Privileged Account
+↓
+Vault
+↓
+Checkout
+↓
+Session
+↓
+Rotation
+↓
+Audit
+```
+
+---
+
+# 136. PAM GRATUITO
+
+Para o laboratório, utilize:
+
+```text
+LINUX01
++
+sudo
++
+SSH
++
+HashiCorp Vault Community
+```
+
+Isso não transforma o laboratório em uma solução PAM empresarial.
+
+O objetivo é estudar os fundamentos.
+
+---
+
+# 137. CRIAR LINUX01
+
+No VirtualBox:
+
+```text
+New
+```
+
+Sistema:
+
+```text
+Ubuntu Server LTS
+```
+
+RAM:
+
+```text
+2048 MB
+```
+
+CPU:
+
+```text
+2
+```
+
+Disco:
+
+```text
+25 GB
+```
+
+Rede:
+
+```text
+NAT
++
+Host-only
+```
+
+---
+
+# 138. IP LINUX01
+
+Configure:
+
+```text
+192.168.56.30
+```
+
+DNS:
+
+```text
+192.168.56.10
+```
+
+---
+
+# 139. CRIAR USUÁRIOS
+
+No Linux:
+
+```bash
+sudo adduser pamuser
+sudo adduser pamadmin
+```
+
+---
+
+# 140. SUDO
+
+Edite:
+
+```bash
+sudo visudo
+```
+
+Conceda privilégio somente a:
+
+```text
+pamadmin
+```
+
+Teste:
+
+```bash
+sudo -l
+```
+
+Compare:
+
+```text
+pamuser
+```
+
+com:
+
+```text
+pamadmin
+```
+
+---
+
+# 141. SSH
+
+Instale:
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+```
+
+Verifique:
+
+```bash
+systemctl status ssh
+```
+
+---
+
+# 142. TESTAR SSH
+
+Do host ou outra VM:
+
+```bash
+ssh pamuser@192.168.56.30
+```
+
+Depois:
+
+```bash
+ssh pamadmin@192.168.56.30
+```
+
+---
+
+# 143. VAULT COMMUNITY
+
+Utilize o Vault Community para estudar:
+
+```text
+Secrets
+Authentication
+Policies
+Audit
+Rotation concepts
+```
+
+Não trate:
+
+```text
+Vault Community
+```
+
+como equivalente a:
+
+```text
+CyberArk / BeyondTrust / Delinea
+```
+
+---
+
+# 144. VAULT
+
+Instale conforme a documentação oficial da HashiCorp.
+
+Depois:
+
+```text
+vault
+```
+
+deve responder no terminal.
+
+---
+
+# 145. CONCEITO VAULT
+
+Fluxo:
+
+```text
+User
+ ↓
+Authentication
+ ↓
+Policy
+ ↓
+Secret
+ ↓
+Audit
+```
+
+---
+
+# 146. SEGREDO DE LABORATÓRIO
+
+Crie:
+
+```text
+lab/app
+```
+
+Com:
+
+```text
+username
+password
+```
+
+Não use senha real.
+
+---
+
+# 147. POLICY
+
+Crie uma política permitindo somente:
+
+```text
+read
+```
+
+em:
+
+```text
+lab/app
+```
+
+Teste.
+
+Depois tente:
+
+```text
+write
+```
+
+O acesso deve ser negado.
+
+---
+
+# 148. AUDIT
+
+Habilite o mecanismo de auditoria disponível na edição utilizada.
+
+Depois:
+
+```text
+read secret
+```
+
+Procure o evento correspondente.
+
+Objetivo:
+
+```text
+Who
+What
+When
+Result
+```
+
+---
+
+# 149. SEGREGAÇÃO DE FUNÇÕES
+
+Crie conceitualmente:
+
+```text
+Requester
+Approver
+Operator
+Auditor
+```
+
+Regra:
+
+```text
+Requester != Approver
+```
+
+e:
+
+```text
+Operator != Auditor
+```
+
+---
+
+# 150. IAM MONITORING
+
+Monitore:
+
+```text
+Audit Logs
+Sign-in Logs
+Provisioning Logs
+Conditional Access
+PIM
+Applications
+Service Principals
+Groups
+```
+
+---
+
+# 151. EVENTOS IMPORTANTES
+
+Crie uma matriz:
+
+| Evento | Prioridade |
+|---|---:|
+| Global Admin assigned | CRITICAL |
+| PIM activation | HIGH |
+| MFA method added | HIGH |
+| Service Principal created | HIGH |
+| Client Secret added | HIGH |
+| API permission changed | HIGH |
+| Admin consent | HIGH |
+| Conditional Access changed | HIGH |
+| Breakglass login | CRITICAL |
+| Guest created | MEDIUM/HIGH |
+
+---
+
+# 152. CASO DE INCIDENTE — MFA
+
+Simule:
+
+```text
+MFA method added
+```
+
+Investigue:
+
+```text
+User
+IP
+Device
+Time
+Authentication
+Previous sign-ins
+```
+
+Resposta de laboratório:
+
+```text
+Disable account
+Revoke sessions
+Remove unauthorized method
+Reset credentials
+Investigate
+Document
+```
+
+---
+
+# 153. CASO DE INCIDENTE — PIM
+
+Evento:
+
+```text
+Privileged role activation
+```
+
+Perguntas:
+
+```text
+Quem?
+Qual role?
+Quando?
+Quanto tempo?
+Justificativa?
+IP?
+Foi esperado?
+```
+
+---
+
+# 154. CASO DE INCIDENTE — BREAKGLASS
+
+Evento:
+
+```text
+breakglass01 login
+```
+
+Classificação:
+
+```text
+CRITICAL
+```
+
+Investigação:
+
+```text
+IP
+Timestamp
+Device
+Authentication
+Activity
+```
+
+---
+
+# 155. SIEM
+
+Você já possui Wazuh no seu laboratório pessoal.
+
+Não deixe o Wazuh ligado permanentemente.
+
+Ligue somente quando executar:
+
+```text
+IAM Monitoring
+```
+
+Fluxo:
+
+```text
+Entra
+ ↓
+Logs
+ ↓
+SIEM
+ ↓
+Detection
+ ↓
+Alert
+ ↓
+Investigation
+ ↓
+Response
+```
+
+---
+
+# 156. PROJETO FINAL
+
+Crie uma empresa fictícia:
+
+```text
+Contoso Lab
+```
+
+Departamentos:
+
+```text
+Finance
+IT
+HR
+Helpdesk
+```
+
+Aplicações:
+
+```text
+FinanceApp
+ITPortal
+```
+
+---
+
+# 157. PROJETO FINAL — JOINER
+
+Criar:
+
+```text
+joao.silva
+```
+
+Departamento:
+
+```text
+Finance
+```
+
+Grupo:
+
+```text
+GG-Finance
+```
+
+Fluxo:
+
+```text
+AD
+ ↓
+Cloud Sync
+ ↓
+Entra
+ ↓
+MFA
+ ↓
+Conditional Access
+ ↓
+FinanceApp
+```
+
+---
+
+# 158. PROJETO FINAL — MOVER
+
+Alterar:
+
+```text
+Finance
+↓
+IT
+```
+
+Executar:
+
+```text
+Remove GG-Finance
+Add GG-IT
+```
+
+Validar:
+
+```text
+FinanceApp
+↓
+Access denied
+```
+
+e:
+
+```text
+ITPortal
+↓
+Access allowed
+```
+
+---
+
+# 159. PROJETO FINAL — PRIVILEGED
+
+João precisa executar uma tarefa administrativa.
+
+Fluxo:
+
+```text
+Admin Identity
+ ↓
+PIM
+ ↓
+MFA
+ ↓
+Activation
+ ↓
+Temporary Privilege
+ ↓
+Task
+ ↓
+Expiration
+ ↓
+Audit
+```
+
+---
+
+# 160. PROJETO FINAL — ACCESS REVIEW
+
+Criar:
+
+```text
+Finance Access Review
+```
+
+Reviewer:
+
+```text
+Manager
+```
+
+Resultado:
+
+```text
+Approve
+Deny
+```
 
 Aplicar.
 
@@ -2554,718 +4705,881 @@ Validar acesso efetivo.
 
 ---
 
-# 39.5 LEAVER
+# 161. PROJETO FINAL — LEAVER
 
 João deixa a empresa.
 
 Executar:
 
-    Disable AD
-      ↓
-    Cloud Sync
-      ↓
-    Disable / Restrict Entra
-      ↓
-    Remove Groups
-      ↓
-    Remove Application Access
-      ↓
-    Remove Privileged Access
-      ↓
-    Revoke Sessions quando necessário
-      ↓
-    Audit
+```text
+Disable AD
+ ↓
+Cloud Sync
+ ↓
+Entra
+ ↓
+Remove Groups
+ ↓
+Remove Application Access
+ ↓
+Review Privileges
+ ↓
+Revoke Sessions when appropriate
+ ↓
+Audit
+```
 
 ---
 
-# 39.6 INCIDENTE IAM
+# 162. PROJETO FINAL — INCIDENTE
 
 Simular:
 
-    MFA Method Added
+```text
+MFA method added unexpectedly
+```
 
-Investigar:
-
-    User
-    IP
-    Device
-    Time
-    Authentication History
-
-Responder:
-
-    Disable
-    Revoke
-    Remove unauthorized method
-    Reset
-    Investigate
+Investigar.
 
 Documentar:
 
-    Timeline
-    Root Cause
-    Actions
-    Evidence
+```text
+Timeline
+User
+IP
+Device
+Evidence
+Root Cause
+Response
+Recovery
+Lessons Learned
+```
 
 ---
 
-# 40. PORTFÓLIO
+# 163. DOCUMENTAÇÃO
 
-Criar repositório:
+Crie:
 
-    iam-homelab
+```text
+iam-homelab/
+```
 
 Estrutura:
 
-    iam-homelab/
-    │
-    ├── README.md
-    │
-    ├── architecture/
-    │   └── architecture.md
-    │
-    ├── active-directory/
-    │   ├── users-groups.md
-    │   ├── gpo.md
-    │   └── jml.md
-    │
-    ├── entra/
-    │   ├── authentication.md
-    │   ├── conditional-access.md
-    │   ├── rbac.md
-    │   └── devices.md
-    │
-    ├── hybrid/
-    │   ├── cloud-sync.md
-    │   └── hybrid-join.md
-    │
-    ├── applications/
-    │   ├── app-registration.md
-    │   ├── service-principal.md
-    │   ├── saml.md
-    │   ├── oauth.md
-    │   ├── oidc.md
-    │   └── scim.md
-    │
-    ├── governance/
-    │   ├── pim.md
-    │   ├── access-reviews.md
-    │   ├── entitlement.md
-    │   └── lifecycle.md
-    │
-    ├── automation/
-    │   ├── powershell/
-    │   └── graph/
-    │
-    ├── pam/
-    │   └── pam.md
-    │
-    ├── monitoring/
-    │   └── iam-detections.md
-    │
-    └── evidence/
+```text
+iam-homelab/
+│
+├── README.md
+│
+├── architecture/
+│
+├── active-directory/
+│
+├── entra/
+│
+├── hybrid/
+│
+├── applications/
+│
+├── governance/
+│
+├── pam/
+│
+├── automation/
+│
+├── monitoring/
+│
+├── evidence/
+│
+└── scripts/
+```
 
 ---
 
-# 41. EVIDÊNCIAS
+# 164. DOCUMENTO DE CADA LABORATÓRIO
 
-Para cada laboratório guardar:
+Use:
 
-    Architecture
-    Configuration
-    Test
-    Result
-    Logs
-    Troubleshooting
+```markdown
+# Laboratório
+
+## Objetivo
+
+## Cenário
+
+## Pré-requisitos
+
+## Arquitetura
+
+## Configuração
+
+## Teste
+
+## Resultado esperado
+
+## Resultado obtido
+
+## Troubleshooting
+
+## Evidências
+
+## Boas práticas
+
+## O que aprendi
+```
+
+---
+
+# 165. EVIDÊNCIAS
+
+Guardar:
+
+```text
+Screenshots
+Logs
+Commands
+Outputs
+Diagrams
+Configuration
+```
+
+Nunca guardar:
+
+```text
+Password
+Secret
+Token
+Private Key
+Recovery Code
+API Key
+```
+
+---
+
+# 166. TROUBLESHOOTING
+
+Sempre utilizar:
+
+```text
+SINTOMA
+ ↓
+HIPÓTESE
+ ↓
+TESTE
+ ↓
+RESULTADO
+ ↓
+CAUSA
+ ↓
+CORREÇÃO
+ ↓
+VALIDAÇÃO
+```
 
 Exemplo:
 
-    evidence/
-    └── conditional-access/
-        ├── policy.png
-        ├── what-if.png
-        ├── sign-in.png
-        └── result.md
+```text
+Sintoma:
+User não sincroniza.
 
-Nunca publicar:
+Hipótese:
+OU fora do escopo.
 
-    Password
-    Secret
-    Token
-    Private Key
-    Recovery Code
-    API Key
-    Personal Data
+Teste:
+Provision on demand.
 
----
+Resultado:
+Out of scope.
 
-# 42. PADRÃO DE DOCUMENTAÇÃO
+Causa:
+Scope filter.
 
-Cada exercício deve possuir:
+Correção:
+Adicionar OU.
 
-    # Objetivo
-
-    # Cenário
-
-    # Pré-requisitos
-
-    # Arquitetura
-
-    # Configuração
-
-    # Teste
-
-    # Resultado esperado
-
-    # Resultado obtido
-
-    # Troubleshooting
-
-    # Evidências
-
-    # Boas práticas
-
-    # Conclusão técnica
+Validação:
+Provisionamento bem-sucedido.
+```
 
 ---
 
-# 43. TROUBLESHOOTING
+# 167. CHECKPOINTS
 
-Nunca registrar:
+Após cada fase, crie um Snapshot da VM.
 
-    "Não funcionou."
+Exemplo:
 
-Utilizar:
+```text
+DC01-AD-BASE
+DC01-GPO
+WIN11-DOMAIN
+SYNC01-AGENT
+```
 
-    SINTOMA
-       ↓
-    HIPÓTESE
-       ↓
-    TESTE
-       ↓
-    RESULTADO
-       ↓
-    CAUSA
-       ↓
-    CORREÇÃO
-       ↓
-    VALIDAÇÃO
+Antes de mudanças grandes:
 
----
+```text
+Snapshot
+```
 
-# 44. CHECKLIST DE COMPETÊNCIAS
-
-## Active Directory
-
-- [ ] AD DS
-- [ ] DNS
-- [ ] OU
-- [ ] Users
-- [ ] Groups
-- [ ] GPO
-- [ ] Delegation
-- [ ] Service Accounts
-- [ ] Admin Accounts
-- [ ] JML
-- [ ] Audit
-- [ ] Hardening
-
-## Entra ID
-
-- [ ] Users
-- [ ] Groups
-- [ ] Directory Roles
-- [ ] RBAC
-- [ ] Breakglass
-- [ ] Authentication Methods
-- [ ] MFA
-- [ ] SSPR
-- [ ] Device Identity
-
-## Conditional Access
-
-- [ ] MFA
-- [ ] Admin Protection
-- [ ] Legacy Authentication
-- [ ] Application
-- [ ] Device
-- [ ] Location
-- [ ] Report-only
-- [ ] What If
-- [ ] Authentication Strength
-
-## Hybrid Identity
-
-- [ ] Cloud Sync
-- [ ] Provisioning Agent
-- [ ] Scope
-- [ ] Attribute Mapping
-- [ ] Provisioning
-- [ ] Deprovisioning
-- [ ] Troubleshooting
-- [ ] Device Sync
-- [ ] Hybrid Join
-
-## Application IAM
-
-- [ ] App Registration
-- [ ] Service Principal
-- [ ] Enterprise Application
-- [ ] API Permissions
-- [ ] Delegated Permissions
-- [ ] Application Permissions
-- [ ] Admin Consent
-- [ ] Secret
-- [ ] Certificate
-- [ ] SAML
-- [ ] OAuth 2.0
-- [ ] OIDC
-- [ ] JWT
-- [ ] SCIM
-- [ ] PKCE
-
-## Workload Identity
-
-- [ ] Service Principal
-- [ ] Managed Identity
-- [ ] RBAC
-- [ ] Least Privilege
-
-## Automation
-
-- [ ] PowerShell
-- [ ] Microsoft Graph
-- [ ] JML Automation
-- [ ] Reporting
-- [ ] Logging
-- [ ] Error Handling
-
-## Governance
-
-- [ ] PIM
-- [ ] Access Reviews
-- [ ] Entitlement Management
-- [ ] Lifecycle Workflows
-- [ ] B2B
-- [ ] SoD
-
-## PAM
-
-- [ ] Privileged Accounts
-- [ ] Vault
-- [ ] Checkout
-- [ ] Approval
-- [ ] Rotation
-- [ ] Session
-- [ ] Audit
-
-## Monitoring
-
-- [ ] Audit Logs
-- [ ] Sign-in Logs
-- [ ] Provisioning Logs
-- [ ] PIM Logs
-- [ ] Conditional Access Logs
-- [ ] Application Events
-- [ ] Service Principal Events
-- [ ] SIEM
-- [ ] Detection
-- [ ] Investigation
+Isso reduz o tempo de recuperação do laboratório.
 
 ---
 
-# 45. CRITÉRIO DE DOMÍNIO
+# 168. NÃO SNAPSHOTE O QUE ESTÁ EM PRODUÇÃO
 
-## Nível 1 — Explicar
+Este laboratório é:
 
-Consegue explicar o conceito sem consultar documentação.
+```text
+LABORATÓRIO
+```
 
----
+Nunca conecte:
 
-## Nível 2 — Configurar
+```text
+AD real
+```
 
-Consegue construir o recurso no laboratório.
+ao:
 
----
+```text
+tenant corporativo real
+```
 
-## Nível 3 — Operar
-
-Consegue executar operações cotidianas.
-
----
-
-## Nível 4 — Troubleshoot
-
-Consegue identificar:
-
-    Sintoma
-    Causa
-    Evidência
-    Correção
+sem planejamento e autorização.
 
 ---
 
-## Nível 5 — Automatizar
+# 169. CHECKLIST AD
 
-Consegue utilizar:
-
-    PowerShell
-    Graph
-    APIs
-    Workflows
-
----
-
-## Nível 6 — Governar
-
-Consegue responder:
-
-    Quem tem acesso?
-
-    Por que possui?
-
-    Quem aprovou?
-
-    Até quando?
-
-    Qual privilégio?
-
-    Quem revisa?
-
-    Como auditar?
-
-    Como remover?
+```text
+[ ] VirtualBox
+[ ] Host-only
+[ ] DHCP disabled
+[ ] DC01
+[ ] Static IP
+[ ] DNS
+[ ] AD DS
+[ ] Domain
+[ ] OUs
+[ ] Users
+[ ] Groups
+[ ] Admin accounts
+[ ] Service accounts
+[ ] Delegation
+[ ] GPO
+[ ] Password policy
+[ ] Lockout
+[ ] Audit
+[ ] JML
+```
 
 ---
 
-# 46. META FINAL
+# 170. CHECKLIST ENTRA
 
-Ao concluir o laboratório, executar este fluxo sem consultar o manual:
-
-    CREATE USER
-        ↓
-    ASSIGN DEPARTMENT
-        ↓
-    ASSIGN GROUP
-        ↓
-    SYNCHRONIZE
-        ↓
-    AUTHENTICATE
-        ↓
-    MFA
-        ↓
-    CONDITIONAL ACCESS
-        ↓
-    APPLICATION ACCESS
-        ↓
-    PRIVILEGED REQUEST
-        ↓
-    PIM ACTIVATION
-        ↓
-    JIT ACCESS
-        ↓
-    AUDIT
-        ↓
-    ACCESS REVIEW
-        ↓
-    DEPARTMENT CHANGE
-        ↓
-    REMOVE OLD ACCESS
-        ↓
-    ADD NEW ACCESS
-        ↓
-    LEAVER
-        ↓
-    DISABLE
-        ↓
-    DEPROVISION
-        ↓
-    LOG
-        ↓
-    INVESTIGATE
-        ↓
-    DOCUMENT
+```text
+[ ] Tenant
+[ ] Cloud admin
+[ ] Breakglass
+[ ] Users
+[ ] Groups
+[ ] MFA
+[ ] SSPR
+[ ] Conditional Access
+[ ] What If
+[ ] Report-only
+[ ] RBAC
+[ ] Device Identity
+[ ] Logs
+```
 
 ---
 
-# 47. ORDEM DE EXECUÇÃO
-
-Não estudar todos os módulos simultaneamente.
-
-Executar nesta ordem:
-
-    FASE 01
-    AD + DNS
-
-    ↓
-
-    FASE 02
-    Users + Groups
-
-    ↓
-
-    FASE 03
-    GPO + Hardening
-
-    ↓
-
-    FASE 04
-    JML On-Premises
-
-    ↓
-
-    FASE 05
-    Entra ID
-
-    ↓
-
-    FASE 06
-    Authentication + MFA + SSPR
-
-    ↓
-
-    FASE 07
-    Conditional Access
-
-    ↓
-
-    FASE 08
-    RBAC
-
-    ↓
-
-    FASE 09
-    Device Identity
-
-    ↓
-
-    FASE 10
-    Cloud Sync
-
-    ↓
-
-    FASE 11
-    Hybrid Join
-
-    ↓
-
-    FASE 12
-    JML Hybrid
-
-    ↓
-
-    FASE 13
-    App Registration
-
-    ↓
-
-    FASE 14
-    Service Principal
-
-    ↓
-
-    FASE 15
-    Workload Identity
-
-    ↓
-
-    FASE 16
-    SAML
-
-    ↓
-
-    FASE 17
-    OAuth 2.0
-
-    ↓
-
-    FASE 18
-    OIDC
-
-    ↓
-
-    FASE 19
-    JWT
-
-    ↓
-
-    FASE 20
-    SCIM
-
-    ↓
-
-    FASE 21
-    PowerShell
-
-    ↓
-
-    FASE 22
-    Microsoft Graph
-
-    ↓
-
-    FASE 23
-    Identity Protection
-
-    ↓
-
-    FASE 24
-    PIM
-
-    ↓
-
-    FASE 25
-    Access Reviews
-
-    ↓
-
-    FASE 26
-    Entitlement Management
-
-    ↓
-
-    FASE 27
-    Lifecycle Workflows
-
-    ↓
-
-    FASE 28
-    B2B
-
-    ↓
-
-    FASE 29
-    IAM Monitoring
-
-    ↓
-
-    FASE 30
-    PAM
-
-    ↓
-
-    FASE 31
-    SoD
-
-    ↓
-
-    FASE 32
-    PROJETO FINAL
+# 171. CHECKLIST HYBRID
+
+```text
+[ ] SYNC01
+[ ] Domain Join
+[ ] Provisioning Agent
+[ ] Agent Active
+[ ] Scope
+[ ] Attribute Mapping
+[ ] Provision on demand
+[ ] Test User
+[ ] Sync
+[ ] Update
+[ ] Disable
+[ ] Troubleshooting
+```
 
 ---
 
-# 48. REGRA DE LICENCIAMENTO DO LABORATÓRIO
+# 172. CHECKLIST APPLICATION IAM
 
-Antes de executar qualquer módulo pago:
-
-    1. Verificar licença atual
-    2. Verificar recurso disponível
-    3. Verificar quantidade de usuários necessária
-    4. Executar somente o exercício
-    5. Remover/reutilizar a licença quando possível
-    6. Registrar a limitação
-
-Recursos que merecem atenção especial:
-
-    Conditional Access
-    Identity Protection
-    PIM
-    Access Reviews
-    Entitlement Management
-    Lifecycle Workflows
-
-Cloud Sync também possui requisitos específicos de licenciamento para determinados cenários; não assumir que toda funcionalidade de sincronização possui o mesmo requisito. :contentReference[oaicite:7]{index=7}
-
-Lifecycle Workflows requer atualmente Microsoft Entra ID Governance ou Microsoft Entra Suite. :contentReference[oaicite:8]{index=8}
-
-Access Reviews requer atualmente Microsoft Entra ID Governance ou Microsoft Entra Suite nos cenários documentados. :contentReference[oaicite:9]{index=9}
+```text
+[ ] App Registration
+[ ] Enterprise Application
+[ ] Service Principal
+[ ] Client ID
+[ ] Tenant ID
+[ ] Secret
+[ ] Certificate
+[ ] Delegated Permission
+[ ] Application Permission
+[ ] Admin Consent
+[ ] OAuth
+[ ] OIDC
+[ ] JWT
+[ ] SAML
+[ ] SCIM
+```
 
 ---
 
-# 49. PRINCÍPIO PROFISSIONAL
+# 173. CHECKLIST GOVERNANCE
 
-O laboratório não deve demonstrar apenas:
-
-    "Eu sei criar usuário."
-
-Deve demonstrar:
-
-    IDENTIDADE
-        ↓
-    ACESSO
-        ↓
-    JUSTIFICATIVA
-        ↓
-    AUTORIZAÇÃO
-        ↓
-    PRIVILÉGIO
-        ↓
-    GOVERNANÇA
-        ↓
-    MONITORAMENTO
-        ↓
-    AUDITORIA
-        ↓
-    REVOGAÇÃO
-
-Esse é o modelo que deve orientar todas as atividades do laboratório.
+```text
+[ ] PIM
+[ ] Eligible
+[ ] Activation
+[ ] MFA
+[ ] Justification
+[ ] Expiration
+[ ] Audit
+[ ] Access Review
+[ ] Entitlement Management
+[ ] Lifecycle Workflow
+[ ] B2B
+[ ] SoD
+```
 
 ---
 
-# 50. RESULTADO ESPERADO
+# 174. CHECKLIST PAM
 
-Ao concluir o projeto, o laboratório deverá demonstrar domínio prático de:
+```text
+[ ] Linux
+[ ] Users
+[ ] sudo
+[ ] SSH
+[ ] Vault
+[ ] Secrets
+[ ] Policy
+[ ] Audit
+[ ] Rotation concept
+[ ] Privileged workflow
+```
 
-    Microsoft Active Directory
-    Microsoft Entra ID
-    Hybrid Identity
-    Cloud Sync
-    Authentication
-    MFA
-    SSPR
-    Conditional Access
-    RBAC
-    Device Identity
-    JML
-    Application Identity
-    Service Principal
-    Managed Identity
-    SAML
-    OAuth 2.0
-    OIDC
-    JWT
-    SCIM
-    PowerShell
-    Microsoft Graph
-    Identity Protection
-    PIM
-    Access Reviews
-    Entitlement Management
-    Lifecycle Workflows
-    B2B
-    PAM
-    SoD
-    IAM Monitoring
-    SIEM Integration
+---
 
-A infraestrutura necessária para isso permanece modular:
+# 175. CHECKLIST AUTOMATION
 
-    NORMAL
-    0–1 VM
+```text
+[ ] PowerShell
+[ ] Parameters
+[ ] Validation
+[ ] Error handling
+[ ] Logging
+[ ] Graph
+[ ] User report
+[ ] Group report
+[ ] Privileged report
+[ ] Joiner automation
+[ ] Leaver automation
+```
 
-    AD
-    1 VM
+---
 
-    AD + CLIENT
-    2 VMs
+# 176. CHECKLIST MONITORING
 
-    HYBRID
-    3 VMs
+```text
+[ ] Sign-in logs
+[ ] Audit logs
+[ ] Provisioning logs
+[ ] CA logs
+[ ] PIM logs
+[ ] Application events
+[ ] Service Principal events
+[ ] MFA changes
+[ ] Breakglass
+[ ] SIEM
+[ ] Detection
+[ ] Investigation
+```
 
-    PAM
-    1 VM
+---
 
-    SIEM
-    SOMENTE QUANDO NECESSÁRIO
+# 177. CRITÉRIO DE DOMÍNIO
 
-A arquitetura reduz o consumo de RAM sem remover os principais domínios técnicos necessários para uma preparação consistente para carreira em IAM.
+Um módulo só está concluído quando você consegue:
+
+```text
+EXPLICAR
+↓
+CONFIGURAR
+↓
+TESTAR
+↓
+FALHAR
+↓
+INVESTIGAR
+↓
+CORRIGIR
+↓
+AUTOMATIZAR
+↓
+DOCUMENTAR
+```
+
+---
+
+# 178. NÍVEL 1 — EXPLICAR
+
+Você consegue explicar sem consultar documentação:
+
+```text
+O que é IAM?
+O que é Authentication?
+O que é Authorization?
+O que é RBAC?
+O que é JML?
+O que é PIM?
+O que é PAM?
+O que é Service Principal?
+O que é Managed Identity?
+O que é OAuth?
+O que é OIDC?
+O que é SAML?
+```
+
+---
+
+# 179. NÍVEL 2 — CONFIGURAR
+
+Você consegue construir:
+
+```text
+AD
+Entra
+MFA
+CA
+RBAC
+Cloud Sync
+Application
+PIM
+Governance
+PAM
+```
+
+---
+
+# 180. NÍVEL 3 — OPERAR
+
+Você consegue executar:
+
+```text
+Create
+Modify
+Disable
+Remove
+Review
+Audit
+```
+
+---
+
+# 181. NÍVEL 4 — TROUBLESHOOT
+
+Você consegue descobrir:
+
+```text
+Por que o usuário não sincronizou?
+Por que o login foi bloqueado?
+Por que o RBAC negou acesso?
+Por que a aplicação não autenticou?
+Por que o SAML falhou?
+Por que o token foi rejeitado?
+```
+
+---
+
+# 182. NÍVEL 5 — AUTOMATIZAR
+
+Você consegue transformar:
+
+```text
+Manual Process
+```
+
+em:
+
+```text
+PowerShell
+Graph
+API
+Workflow
+```
+
+---
+
+# 183. NÍVEL 6 — GOVERNAR
+
+Você consegue responder:
+
+```text
+Quem possui acesso?
+Por que possui?
+Quem aprovou?
+Qual privilégio?
+Qual escopo?
+Até quando?
+Quem revisa?
+Como revogar?
+Como provar?
+```
+
+---
+
+# 184. ORDEM OFICIAL DO LABORATÓRIO
+
+Não tente fazer tudo de uma vez.
+
+Execute:
+
+```text
+FASE 01
+VirtualBox
+↓
+Rede
+↓
+DC01
+
+FASE 02
+AD DS
+↓
+DNS
+↓
+Domain
+
+FASE 03
+Users
+↓
+Groups
+↓
+OUs
+
+FASE 04
+GPO
+↓
+Hardening
+↓
+Audit
+
+FASE 05
+JML
+↓
+Joiner
+↓
+Mover
+↓
+Leaver
+
+FASE 06
+WIN11
+↓
+Domain Join
+
+FASE 07
+Entra
+↓
+Users
+↓
+Groups
+↓
+MFA
+↓
+SSPR
+
+FASE 08
+Conditional Access
+↓
+Report-only
+↓
+What If
+↓
+Enforcement
+
+FASE 09
+RBAC
+↓
+Least Privilege
+
+FASE 10
+SYNC01
+↓
+Cloud Sync
+↓
+Provision on demand
+↓
+Synchronization
+
+FASE 11
+Hybrid JML
+
+FASE 12
+Application Identity
+↓
+Service Principal
+↓
+API Permissions
+
+FASE 13
+OAuth
+↓
+OIDC
+↓
+JWT
+↓
+SAML
+↓
+SCIM
+
+FASE 14
+PowerShell
+↓
+Graph
+↓
+Automation
+
+FASE 15
+PIM
+↓
+JIT
+↓
+Audit
+
+FASE 16
+Access Reviews
+↓
+Entitlement
+↓
+Lifecycle
+
+FASE 17
+B2B
+↓
+SoD
+
+FASE 18
+PAM
+↓
+Linux
+↓
+Vault
+
+FASE 19
+Monitoring
+↓
+SIEM
+↓
+Detection
+
+FASE 20
+FINAL PROJECT
+```
+
+---
+
+# 185. ARQUITETURA FINAL
+
+```text
+                         INTERNET
+                             │
+                             │
+                           NAT
+                             │
+                  ┌──────────┴──────────┐
+                  │                     │
+                DC01                  SYNC01
+             192.168.56.10        192.168.56.15
+                  │                     │
+                  │                     │
+                  └──────────┬──────────┘
+                             │
+                        HOST-ONLY
+                      192.168.56.0/24
+                             │
+                     ┌───────┴────────┐
+                     │                │
+                 WIN11-01          LINUX01
+                .56.20             .56.30
+
+
+                         CLOUD
+                           │
+                           ▼
+                  MICROSOFT ENTRA ID
+                           │
+          ┌────────────────┼─────────────────┐
+          │                │                 │
+       Identity       Authentication     Authorization
+          │                │                 │
+       Users             MFA                RBAC
+       Groups            SSPR               PIM
+       Devices           CA                 Apps
+          │                │                 │
+          └────────────────┼─────────────────┘
+                           │
+                       Governance
+                           │
+              ┌────────────┼────────────┐
+              │            │            │
+          Reviews      Entitlement   Lifecycle
+              │            │            │
+              └────────────┼────────────┘
+                           │
+                        Audit
+                           │
+                           ▼
+                          SIEM
+```
+
+---
+
+# 186. PRINCÍPIO CENTRAL DO LABORATÓRIO
+
+Não pense:
+
+```text
+"Eu sei administrar usuários."
+```
+
+Pense:
+
+```text
+IDENTITY
+    ↓
+AUTHENTICATION
+    ↓
+CONTEXT
+    ↓
+AUTHORIZATION
+    ↓
+ACCESS
+    ↓
+PRIVILEGE
+    ↓
+GOVERNANCE
+    ↓
+MONITORING
+    ↓
+AUDIT
+    ↓
+REVOCATION
+```
+
+Esse é o modelo mental que deve orientar sua formação em IAM.
+
+---
+
+# 187. RESULTADO FINAL
+
+Ao terminar o laboratório você deverá possuir evidências práticas de:
+
+```text
+Active Directory
+Microsoft Entra ID
+Hybrid Identity
+Cloud Sync
+Authentication
+MFA
+SSPR
+Conditional Access
+RBAC
+Device Identity
+JML
+Application Identity
+Service Principal
+Managed Identity
+OAuth 2.0
+OIDC
+JWT
+SAML
+SCIM
+PowerShell
+Microsoft Graph
+PIM
+Access Reviews
+Entitlement Management
+Lifecycle Workflows
+B2B
+PAM
+SoD
+IAM Monitoring
+SIEM
+Incident Response
+```
+
+E, principalmente, deverá conseguir demonstrar o seguinte fluxo de negócio:
+
+```text
+EMPLOYEE JOINER
+      ↓
+IDENTITY CREATED
+      ↓
+GROUP MEMBERSHIP
+      ↓
+CLOUD PROVISIONING
+      ↓
+AUTHENTICATION
+      ↓
+MFA
+      ↓
+CONDITIONAL ACCESS
+      ↓
+APPLICATION ACCESS
+      ↓
+PRIVILEGED ACCESS WHEN NEEDED
+      ↓
+PIM / JIT
+      ↓
+AUDIT
+      ↓
+ACCESS REVIEW
+      ↓
+DEPARTMENT CHANGE
+      ↓
+ACCESS RECALCULATION
+      ↓
+LEAVER
+      ↓
+DISABLE
+      ↓
+DEPROVISION
+      ↓
+AUDIT
+      ↓
+EVIDENCE
+```
+
+---
+
+# 188. REGRA DE OURO
+
+Em todos os laboratórios, faça sempre estas cinco perguntas:
+
+```text
+1. QUEM é a identidade?
+
+2. COMO ela foi autenticada?
+
+3. O QUE ela pode acessar?
+
+4. POR QUE ela possui esse acesso?
+
+5. COMO o acesso será removido?
+```
+
+Se você conseguir responder essas cinco perguntas tecnicamente, operacionalmente e com evidências, estará estudando IAM da forma correta.
