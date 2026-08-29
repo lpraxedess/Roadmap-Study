@@ -1,275 +1,385 @@
 # 🛡️ Microsoft Entra ID — IAM Study Lab
 
-> Laboratório prático, progressivo e otimizado para aprender Microsoft Entra ID do básico ao avançado. Cada módulo explica **o que é, por que existe, quando usar, onde configurar, como testar, como investigar e como desfazer**.
+> **Laboratório prático do básico ao avançado, orientado a carreira em IAM.**
+>
+> A regra deste manual é simples: **entender → preparar → configurar → testar → quebrar de propósito → investigar → corrigir → revogar → documentar**.
+>
+> O objetivo não é decorar telas do portal. É aprender a transformar um requisito de segurança em **identidade, autenticação, autorização, governança, privilégio, automação e evidência**.
 
-**Método:** entender → preparar → configurar → testar positivo → testar negativo → investigar logs → corrigir → evidenciar → revogar.
-
-> **Foco:** Microsoft Entra ID. Active Directory, híbrido e VMs entram somente quando forem necessários para demonstrar um cenário de identidade.
-
----
-
-## 🧭 Navegação
-
-- [1. Como estudar](#1-como-estudar)
-- [2. Arquitetura mínima](#2-arquitetura-mínima)
-- [3. Licenciamento e custo](#3-licenciamento-e-custo)
-- [4. Identidades e convenções](#4-identidades-e-convenções)
-- [5. Preparação e segurança](#5-preparação-e-segurança)
-- [6. Fundamentos do Entra](#6-fundamentos-do-entra)
-- [7. Usuários](#7-usuários)
-- [8. Grupos](#8-grupos)
-- [9. Funções e RBAC](#9-funções-e-rbac)
-- [10. Autenticação e MFA](#10-autenticação-e-mfa)
-- [11. SSPR](#11-sspr)
-- [12. Conditional Access básico](#12-conditional-access-básico)
-- [13. Conditional Access avançado](#13-conditional-access-avançado)
-- [14. Logs e investigação](#14-logs-e-investigação)
-- [15. Guest e B2B](#15-guest-e-b2b)
-- [16. Enterprise Applications e SSO](#16-enterprise-applications-e-sso)
-- [17. App Registration](#17-app-registration)
-- [18. Permissões de API e consentimento](#18-permissões-de-api-e-consentimento)
-- [19. Service Principal](#19-service-principal)
-- [20. Managed Identity](#20-managed-identity)
-- [21. Workload Identity Federation](#21-workload-identity-federation)
-- [22. PIM e JIT](#22-pim-e-jit)
-- [23. Access Reviews](#23-access-reviews)
-- [24. Entitlement Management](#24-entitlement-management)
-- [25. Lifecycle Workflows](#25-lifecycle-workflows)
-- [26. Identity Protection](#26-identity-protection)
-- [27. Microsoft Graph e PowerShell](#27-microsoft-graph-e-powershell)
-- [28. JML completo](#28-jml-completo)
-- [29. PAM, JEA e PAW](#29-pam-jea-e-paw)
-- [30. Cenários de investigação](#30-cenários-de-investigação)
-- [31. Projeto final](#31-projeto-final)
-- [32. Matriz de validação](#32-matriz-de-validação)
-- [33. Evidências](#33-evidências)
-- [34. Critérios de conclusão](#34-critérios-de-conclusão)
-- [35. Fontes oficiais](#35-fontes-oficiais)
+![Microsoft Entra](https://img.shields.io/badge/Microsoft-Entra%20ID-0078D4?style=for-the-badge&logo=microsoft)
+![IAM](https://img.shields.io/badge/Focus-IAM-6f42c1?style=for-the-badge)
+![Hands On](https://img.shields.io/badge/Lab-Hands--On-2ea44f?style=for-the-badge)
+![Level](https://img.shields.io/badge/Level-Basic%20%E2%86%92%20Advanced-orange?style=for-the-badge)
 
 ---
 
-# 1. Como estudar
+## 🧭 Como usar este manual
 
-## 1.1 Regra do laboratório
+Não execute tudo de uma vez.
 
-Não considere uma configuração concluída porque o portal aceitou o formulário.
+Cada módulo foi desenhado para funcionar como uma pequena missão independente. Quando o módulo terminar, você deve conseguir explicar o conceito e provar o comportamento sem olhar novamente para o tutorial.
 
-Um exercício está concluído somente quando você consegue explicar:
-
-1. **O que** foi configurado.
-2. **Por que** o controle existe.
-3. **Quando** uma empresa usaria esse controle.
-4. **Quem** é afetado.
-5. **Qual recurso** será protegido.
-6. **Qual resultado** deveria ocorrer.
-7. **Como provar** o resultado.
-8. **Como detectar uma falha**.
-9. **Como revogar ou desfazer** a alteração.
-
-O Microsoft Entra centraliza identidade e controle de acesso a usuários, aplicativos, dados e recursos. citehttps://learn.microsoft.com/pt-br/entra/identity/
-
-## 1.2 Padrão de todos os módulos
-
-Use sempre esta sequência:
-
-**CONCEITO** → entenda o mecanismo.
-
-**POR QUE** → associe o mecanismo a um problema real.
-
-**QUANDO** → identifique o cenário de uso.
-
-**PRÉ-REQUISITOS** → confirme licença, função e recurso.
-
-**CONFIGURAÇÃO** → siga o caminho indicado no portal.
-
-**TESTE POSITIVO** → confirme o comportamento permitido.
-
-**TESTE NEGATIVO** → confirme o comportamento proibido.
-
-**LOG** → encontre a evidência técnica.
-
-**TROUBLESHOOTING** → descubra por que algo não funcionou.
-
-**REVOGAÇÃO** → remova o acesso ou volte ao estado anterior.
-
-**EVIDÊNCIA** → registre somente dados sanitizados.
-
-## 1.3 Regra para políticas de segurança
-
-Para Conditional Access e controles potencialmente destrutivos:
-
-`Report-only → teste com conta de laboratório → Sign-in Logs → What If → ajuste → Enable`
-
-Não crie uma política global de bloqueio como primeiro exercício.
-
----
-
-# 2. Arquitetura mínima
-
-Você não precisa manter várias VMs ligadas.
+### 🔁 Ciclo obrigatório
 
 ```text
-PC
-├── Navegador
-├── PowerShell
-└── Microsoft Graph PowerShell
-        │
-        ▼
-Microsoft Entra ID — Tenant LAB
-├── Users / Groups
-├── Roles / RBAC
-├── Authentication
-├── Conditional Access
-├── Logs
-├── Applications
-├── Workload Identities
-└── Identity Governance
-        │
-        └── Azure Subscription
-             └── somente módulos Azure
+📖 CONCEITO
+   ↓
+🎯 POR QUE?
+   ↓
+🕐 QUANDO?
+   ↓
+🧰 PRÉ-REQUISITOS
+   ↓
+⚙️ CONFIGURAÇÃO
+   ↓
+✅ TESTE POSITIVO
+   ↓
+⛔ TESTE NEGATIVO
+   ↓
+🔎 LOG / EVIDÊNCIA
+   ↓
+🧯 TROUBLESHOOTING
+   ↓
+↩️ REVOGAÇÃO / ROLLBACK
+   ↓
+📝 DOCUMENTAÇÃO
 ```
 
-### Por que essa arquitetura?
+> **Regra de ouro:** se você apenas configurou e funcionou, você fez um tutorial. Se você configurou, testou, provocou uma falha, encontrou a causa nos logs, corrigiu e revogou, você fez um laboratório de IAM.
 
-A maior parte do estudo de Entra ocorre no tenant e não exige uma infraestrutura local. Isso reduz RAM, CPU e tempo de administração.
+---
+
+## 🗺️ Mapa do laboratório
+
+| Fase | Tema | Resultado |
+|---|---|---|
+| 🟢 01 | Fundamentos | Modelo mental de IAM/Entra |
+| 🟢 02 | Tenant e identidades | Ambiente de laboratório seguro |
+| 🟢 03 | Users e Groups | Administração básica |
+| 🟢 04 | Roles e RBAC | Least privilege |
+| 🟢 05 | Authentication | MFA e métodos |
+| 🟢 06 | SSPR | Recuperação controlada |
+| 🟡 07 | Conditional Access | Política Zero Trust |
+| 🟡 08 | Logs | Investigação IAM |
+| 🟡 09 | B2B/Guest | Identidade externa |
+| 🟡 10 | Enterprise Apps / SSO | Federação de aplicações |
+| 🟡 11 | App Registration | Identidade de aplicação |
+| 🟡 12 | API Permissions | Delegated/Application permissions |
+| 🟡 13 | Service Principal | Workload identity |
+| 🟡 14 | Managed Identity | Acesso sem secret |
+| 🟠 15 | Workload Federation | CI/CD sem secret persistente |
+| 🟠 16 | PIM/JIT | Privilégio temporário |
+| 🟠 17 | Access Reviews | Recertificação de acesso |
+| 🟠 18 | Entitlement Management | Solicitação/aprovação/expiração |
+| 🟠 19 | Lifecycle Workflows | JML automatizado |
+| 🟠 20 | Identity Protection | IAM baseado em risco |
+| 🟠 21 | Graph/PowerShell | Automação |
+| 🔴 22 | PAM/JEA/PAW | Modelo privilegiado |
+| 🔴 23 | Incidentes IAM | Investigação ponta a ponta |
+| 🔴 24 | Projeto final | Simulação corporativa |
+
+---
+
+# 1. 🎯 Objetivo profissional
+
+Este laboratório foi desenhado para desenvolver competências esperadas de um profissional de IAM Microsoft:
+
+- administração de identidades;
+- autenticação e MFA;
+- autorização e RBAC;
+- Conditional Access;
+- Identity Governance;
+- PIM e privilégio just-in-time;
+- aplicações e SSO;
+- Service Principals e Workload Identities;
+- Managed Identity;
+- Microsoft Graph;
+- automação com PowerShell;
+- investigação por logs;
+- JML — Joiner, Mover, Leaver;
+- least privilege;
+- segregação de funções;
+- PAM/JIT/JEA/PAW;
+- documentação e evidência.
+
+O [Microsoft Entra ID](https://learn.microsoft.com/pt-br/entra/identity/) é usado para gerenciar identidades e controlar acesso a aplicações, dados e recursos. O laboratório usa essa plataforma como eixo central. citeturn0search6
+
+---
+
+# 2. 🧠 Modelo mental de IAM
+
+Antes do portal, memorize o fluxo:
+
+```text
+IDENTIDADE
+    ↓
+AUTENTICAÇÃO
+    ↓
+CONTEXTO / SINAIS
+    ↓
+POLÍTICA
+    ↓
+AUTORIZAÇÃO
+    ↓
+RECURSO
+    ↓
+LOG
+    ↓
+GOVERNANÇA
+    ↓
+REVOGAÇÃO
+```
+
+### Quatro perguntas de IAM
+
+| Pergunta | Área |
+|---|---|
+| Quem é? | Identity |
+| Como prova? | Authentication |
+| O que pode fazer? | Authorization / RBAC |
+| Como garantir que continue correto? | Governance |
+
+### Exemplo corporativo
+
+> Um analista financeiro precisa acessar uma aplicação de RH somente durante o período em que trabalha no projeto.
+
+A solução não é simplesmente "dar acesso".
+
+Ela pode envolver:
+
+```text
+Usuário
+  ↓
+Grupo / Access Package
+  ↓
+Aplicação
+  ↓
+RBAC
+  ↓
+Conditional Access
+  ↓
+MFA
+  ↓
+Expiração
+  ↓
+Access Review
+  ↓
+Revogação
+  ↓
+Logs
+```
+
+É esse raciocínio que o laboratório quer desenvolver.
+
+---
+
+# 3. 💻 Arquitetura mínima e otimizada
+
+## 3.1 O princípio
+
+Você **não precisa manter várias VMs ligadas** para estudar Entra ID.
+
+A arquitetura principal é:
+
+```text
+┌──────────────────────────────┐
+│          SEU PC              │
+│                              │
+│  🌐 Browser                  │
+│  💻 PowerShell               │
+│  🔌 Microsoft Graph          │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│      Microsoft Entra ID      │
+│                              │
+│ Users / Groups               │
+│ Roles / RBAC                 │
+│ Authentication               │
+│ Conditional Access           │
+│ Applications                 │
+│ Workload Identities          │
+│ Governance                   │
+│ Logs                         │
+└──────────────┬───────────────┘
+               │
+               ▼
+┌──────────────────────────────┐
+│      Azure Subscription      │
+│   somente quando necessário  │
+└──────────────────────────────┘
+```
 
 ### Quando usar VM?
 
-Somente para:
+Somente quando o exercício exigir:
 
-- testar PowerShell isolado;
-- hospedar aplicação de laboratório;
-- testar dispositivo Windows em cenários de Conditional Access;
-- demonstrar identidade híbrida;
-- criar um cliente para testes específicos.
+- Windows Device para Conditional Access;
+- aplicação de laboratório;
+- identidade híbrida;
+- AD DS/Entra Connect;
+- testes de PowerShell isolados.
 
-Desligue a VM quando o módulo não depender dela.
+### Regra de economia
 
----
+> **VM desligada não participa do laboratório.**
 
-# 3. Licenciamento e custo
-
-Licenciamento muda com o tempo. Antes de ativar uma funcionalidade, confirme a documentação oficial e a licença atribuída ao usuário/recurso.
-
-Conditional Access exige Microsoft Entra ID P1 ou licença que inclua P1; políticas baseadas em risco dependem de Microsoft Entra ID Protection/P2. Security Defaults fornecem proteção básica sem exigir Conditional Access. citehttps://learn.microsoft.com/pt-br/entra/identity/conditional-access/overview
-
-PIM é recurso de acesso privilegiado do Microsoft Entra ID Governance/P2 conforme o cenário de licenciamento. citehttps://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-getting-started
-
-### Estratégia econômica
-
-**Sem licença Premium:**
-
-- tenant;
-- usuários;
-- grupos;
-- funções básicas;
-- Security Defaults;
-- MFA básico;
-- aplicações disponíveis;
-- Graph dentro das permissões disponíveis.
-
-**P1/trial:**
-
-- Conditional Access;
-- bloqueio de autenticação legada;
-- políticas por aplicação;
-- políticas administrativas;
-- controles por localização/dispositivo quando disponíveis.
-
-**P2/Governance/trial:**
-
-- PIM;
-- Identity Protection baseada em risco;
-- recursos avançados de governança conforme licença.
-
-> Não atribua licença a todos os usuários automaticamente. Crie somente as identidades de teste necessárias e valide o requisito da funcionalidade antes de ativá-la.
+Não mantenha `DC01`, `WIN11`, `LINUX01` e outras máquinas ligadas enquanto trabalha apenas no portal Entra.
 
 ---
 
-# 4. Identidades e convenções
+# 4. 💰 Licenciamento e estratégia de custo
 
-Crie um conjunto pequeno de identidades.
+Licenciamento da Microsoft muda ao longo do tempo. Sempre valide a funcionalidade no [Microsoft Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing) antes do exercício.
 
-| Nome | Tipo | Uso |
+Atualmente, Conditional Access exige Microsoft Entra ID P1 ou uma licença que o inclua; políticas baseadas em risco dependem de Microsoft Entra ID Protection/P2. Security Defaults fornecem proteção básica para tenants sem Conditional Access. citeturn0search2turn0search14
+
+PIM e recursos avançados de Identity Governance dependem do licenciamento correspondente, como Microsoft Entra ID Governance/P2 conforme o cenário. citeturn0search8turn0search16
+
+## 4.1 Estratégia prática
+
+| Recurso | Laboratório |
+|---|---|
+| Users / Groups | Base |
+| MFA / Security Defaults | Base |
+| Conditional Access | P1/trial ou licença equivalente |
+| CA baseado em risco | P2/trial |
+| PIM | P2/Governance/trial |
+| Access Reviews | Governance/licença correspondente |
+| Entitlement Management | Governance/licença correspondente |
+| Lifecycle Workflows | Governance/licença correspondente |
+| Workload Identity | Conforme recurso/licença |
+
+> Não compre várias licenças apenas para criar vários usuários de laboratório. Quando uma funcionalidade exigir licença, use o menor conjunto de identidades necessário para demonstrar o cenário e valide os requisitos atuais antes de ativar o recurso.
+
+---
+
+# 5. 🔐 Preparação segura do tenant
+
+## 5.1 Antes de qualquer configuração
+
+Registre localmente:
+
+- Tenant ID;
+- domínio inicial;
+- nome da assinatura Azure, se existir;
+- licenças disponíveis;
+- usuário administrativo utilizado;
+- data de início do laboratório.
+
+### Por quê?
+
+Porque uma investigação profissional começa comparando o **estado anterior** com o **estado posterior**.
+
+---
+
+## 5.2 Conta de emergência
+
+Crie uma conta de emergência separada da conta administrativa utilizada no dia a dia.
+
+### Por que?
+
+Se uma política de Conditional Access impedir o acesso administrativo normal, a conta de emergência serve como caminho controlado de recuperação.
+
+### Regra
+
+A conta não deve ser usada para tarefas rotineiras.
+
+### Teste obrigatório
+
+Antes de criar políticas:
+
+1. confirme que a conta existe;
+2. confirme que você sabe como recuperar o acesso;
+3. confirme que o método de autenticação funciona;
+4. registre como a conta será monitorada.
+
+As boas práticas da Microsoft recomendam monitorar atividades de contas privilegiadas e de emergência. citeturn0search15
+
+---
+
+## 5.3 Identidades do laboratório
+
+Crie somente as seguintes identidades inicialmente:
+
+| Nome | Tipo | Função |
 |---|---|---|
 | `LAB-BREAKGLASS` | emergência | recuperação |
 | `LAB-IAM-ADMIN` | administrativa | administração |
 | `LAB-IAM-READER` | leitura | auditoria |
-| `LAB-USER-ANA` | usuário | teste normal |
-| `LAB-USER-JOAO` | usuário | teste negativo |
+| `LAB-USER-ANA` | usuário | cenário permitido |
+| `LAB-USER-JOAO` | usuário | cenário negado |
 | `LAB-USER-MARIA` | usuário | JML |
 | `LAB-GUEST-PARTNER` | guest | B2B |
-| `LAB-APP-GRAPH` | aplicação | workload |
 
-### Convenções
+Não crie dezenas de usuários. O objetivo é reutilizar as mesmas identidades em diferentes cenários.
+
+---
+
+# 6. 🏷️ Convenções
+
+Use nomes previsíveis:
 
 ```text
 LAB-USER-*
 LAB-GRP-*
-LAB-APP-*
+LAB-ROLE-*
 LAB-CA-*
-LAB-RBAC-*
+LAB-APP-*
+LAB-SP-*
 LAB-PIM-*
 LAB-AR-*
 LAB-PACK-*
+LAB-JML-*
 ```
 
-Nunca publique senha, secret, token, cookie, recovery code ou código MFA.
+Exemplos:
+
+```text
+LAB-GRP-FINANCE
+LAB-GRP-IAM-READERS
+LAB-CA-001-MFA
+LAB-CA-002-BLOCK-LEGACY
+LAB-APP-GRAPH
+LAB-PIM-IAM-ADMIN
+LAB-AR-FINANCE
+```
+
+### Regra de segurança
+
+Nunca coloque no GitHub:
+
+- senha;
+- client secret;
+- certificado privado;
+- access token;
+- refresh token;
+- cookie;
+- recovery code;
+- código MFA;
+- dados pessoais reais.
 
 ---
 
-# 5. Preparação e segurança
-
-## 5.1 Inventário
-
-Antes de alterar o tenant, registre localmente:
-
-- Tenant ID;
-- domínio inicial;
-- assinatura Azure, se existir;
-- licenças/trials;
-- administradores;
-- recursos existentes.
-
-### Por que?
-
-Você precisa saber o estado inicial para conseguir explicar o que mudou.
-
-## 5.2 Conta de emergência
-
-Tenha uma conta de emergência separada da conta administrativa normal. Ela deve ser usada somente para recuperação controlada.
-
-### Teste
-
-Confirme que você consegue autenticar nela antes de criar políticas que possam causar lockout.
-
-### Depois
-
-Não use essa conta no trabalho diário. Monitore qualquer utilização.
-
-## 5.3 MFA antes de políticas
-
-Cadastre o método de autenticação da conta administrativa e das contas de teste antes de exigir MFA por Conditional Access.
-
----
-
-# 6. Fundamentos do Entra
+# 7. 🟢 Fase 01 — Fundamentos do Entra ID
 
 ## O que é?
 
-É o diretório de identidades da Microsoft para usuários, grupos, aplicações, dispositivos, funções e outros objetos de identidade.
+O Microsoft Entra ID é o serviço de identidade e acesso usado para usuários, grupos, aplicações, dispositivos, funções e políticas.
 
-## Por que importa para IAM?
+## Por que usar?
 
-IAM precisa responder quatro perguntas:
+Porque IAM moderno não depende apenas de rede. A identidade passa a ser um dos principais elementos de controle.
 
-`Quem é? → Como prova quem é? → O que pode fazer? → Como controlar/revogar?`
+## Quando usar?
 
-## Como explorar
+Sempre que você precisar controlar **quem acessa o quê, como, de onde e em quais condições**.
 
-Abra o **Microsoft Entra admin center** e localize:
+## Onde estudar
 
-- Microsoft Entra ID → Overview;
+No [Microsoft Entra admin center](https://entra.microsoft.com/), localize:
+
 - Users;
 - Groups;
 - Roles and administrators;
@@ -280,86 +390,144 @@ Abra o **Microsoft Entra admin center** e localize:
 - Monitoring;
 - Identity Governance.
 
-### Exercício
+## Exercício
 
-Escolha um usuário e descubra:
+Escolha `LAB-USER-ANA` e responda:
 
-`identidade → grupos → licenças → roles → aplicações → sign-ins → alterações`
+```text
+Quem é?
+↓
+Está habilitada?
+↓
+Quais grupos possui?
+↓
+Quais roles possui?
+↓
+Quais aplicações utiliza?
+↓
+Como autenticou?
+↓
+Quais políticas foram aplicadas?
+↓
+Quais alterações foram feitas nessa identidade?
+```
 
-Esse exercício cria o modelo mental que será usado em todo o manual.
+### Resultado esperado
+
+Você consegue localizar a identidade e explicar seu caminho de acesso.
 
 ---
 
-# 7. Usuários
+# 8. 🟢 Fase 02 — Users
 
-## O que são?
+## O que é?
 
-Identidades humanas usadas para autenticação e acesso.
+Uma identidade humana usada para autenticação e acesso.
 
-## Quando usar?
+## Por que?
 
-Para pessoas: funcionários, terceiros, convidados e administradores.
+É a unidade básica para testar autenticação, autorização e ciclo de vida.
 
-## 7.1 Criar usuário
+## Quando?
+
+Funcionários, administradores, terceiros e convidados, respeitando o tipo de identidade adequado.
+
+## Criar usuário
 
 Caminho:
 
 **Entra ID → Users → All users → New user → Create new user**
 
-Crie `LAB-USER-ANA`.
+Crie:
 
-Preencha somente dados fictícios necessários.
+```text
+LAB-USER-ANA
+LAB-USER-JOAO
+LAB-USER-MARIA
+```
 
-### Por que?
+Use dados fictícios.
 
-Precisamos de uma identidade controlada para observar autenticação, autorização e logs.
+## Teste positivo
 
-### Teste positivo
+1. Abra uma janela privada.
+2. Acesse um recurso de teste disponível.
+3. Entre com `LAB-USER-ANA`.
+4. Confirme o acesso.
 
-Abra janela privada → `https://myapps.microsoft.com` ou recurso disponível → autentique `LAB-USER-ANA`.
+## Teste negativo
 
-### Teste negativo
+1. Use `LAB-USER-ANA`.
+2. Tente acessar uma função administrativa.
+3. Confirme que não possui privilégios administrativos.
 
-Entre no centro administrativo. A conta não deve possuir privilégios administrativos.
+## Investigar
 
-### Validação
+Abra:
 
-**Entra ID → Monitoring & health → Sign-in logs**.
+**Entra ID → Monitoring & health → Sign-in logs**
 
-Confirme:
+Verifique:
 
 - usuário;
 - aplicação;
 - data/hora;
 - resultado;
-- IP/localização conforme disponível;
-- Conditional Access quando aplicável.
+- IP/localização quando disponível;
+- dispositivo;
+- Conditional Access;
+- autenticação.
 
-### Falhas comuns
+## Troubleshooting
 
-**Senha rejeitada:** confirme usuário/UPN e estado `Account enabled`.
+| Sintoma | Verificação |
+|---|---|
+| Login falha | usuário habilitado, senha e método |
+| MFA inesperado | Security Defaults / CA |
+| Acesso administrativo | roles e memberships |
+| Aplicação não aparece | atribuição da aplicação |
 
-**MFA inesperado:** verifique Security Defaults/Conditional Access.
+## Revogação
 
-**Acesso administrativo:** investigue memberships e roles.
+Desabilite temporariamente o usuário e repita o login.
+
+### O que aprender
+
+```text
+Identity ≠ Access
+```
+
+Criar uma identidade não significa conceder privilégio.
 
 ---
 
-# 8. Grupos
+# 9. 🟢 Fase 03 — Groups
 
 ## O que são?
 
-Coleções de identidades usadas para administrar acesso, aplicações, licenças e políticas.
+Grupos permitem administrar acesso de forma coletiva.
 
-## Por que usar grupos?
+## Por que?
 
-Evita atribuir permissões usuário por usuário.
+Em vez de:
 
-Modelo recomendado:
+```text
+Ana → aplicação
+João → aplicação
+Maria → aplicação
+```
 
-`Usuário → Grupo → Acesso`
+prefira:
 
-## 8.1 Criar grupos
+```text
+Ana ─┐
+João ├→ LAB-GRP-APP-USERS → aplicação
+Maria┘
+```
+
+Isso facilita governança e revogação.
+
+## Criar grupo
 
 Caminho:
 
@@ -369,181 +537,248 @@ Crie:
 
 ```text
 LAB-GRP-USERS
-LAB-GRP-IAM-READERS
-LAB-GRP-IAM-ADMINS
 LAB-GRP-FINANCE
+LAB-GRP-IAM-READERS
 LAB-GRP-APP-USERS
 ```
 
-Use **Security** para grupos de segurança.
+Tipo:
 
-### Teste
+`Security`
 
-Adicione `LAB-USER-ANA` a `LAB-GRP-FINANCE`.
+## Exercício
 
-Remova e confirme que o acesso concedido pelo grupo desapareceu.
+1. Adicione `LAB-USER-ANA` a `LAB-GRP-FINANCE`.
+2. Conceda acesso de laboratório ao grupo.
+3. Teste o acesso.
+4. Remova Ana.
+5. Teste novamente.
 
-### O que aprender
+## O que provar?
 
-O grupo não é apenas organização. Ele pode ser o elo entre identidade e autorização.
+```text
+Membership presente → acesso
+Membership removido → acesso revogado
+```
+
+### Boas práticas
+
+- use grupos por função/necessidade;
+- evite grupos administrativos gigantes;
+- documente finalidade;
+- revise memberships;
+- evite atribuições diretas desnecessárias.
 
 ---
 
-# 9. Funções e RBAC
+# 10. 🟢 Fase 04 — Microsoft Entra Roles e RBAC
 
-## O que é RBAC?
+## Conceito
 
-Role-Based Access Control associa uma identidade a uma função que concede operações em determinado escopo.
+RBAC associa uma identidade a uma função com permissões em determinado escopo.
 
-Modelo:
+```text
+Principal → Role → Scope → Permission
+```
 
-`Principal → Role → Scope → Permission`
+## Por que?
 
-## Quando usar?
+Para aplicar **least privilege**.
 
-Quando a organização precisa conceder administração sem transformar todo administrador em Global Administrator.
+A Microsoft recomenda funções com o menor nível de privilégio necessário e, para privilégios elevados, acesso temporário/JIT quando possível. citeturn0search1turn0search13
 
-## 9.1 Criar leitor
+## Quando?
+
+Quando alguém precisa administrar um recurso sem receber permissões globais.
+
+## Exercício 1 — Reader
 
 Caminho:
 
 **Entra ID → Roles and administrators**
 
-Escolha uma função de leitura adequada ao exercício.
+Escolha uma função de leitura apropriada ao cenário.
 
 Atribua a `LAB-IAM-READER`.
 
 ### Teste positivo
 
-Como `LAB-IAM-READER`, consulte o recurso permitido.
+Consulte o recurso permitido.
 
 ### Teste negativo
 
-Tente modificar um objeto.
+Tente alterá-lo.
 
-Resultado esperado: operação negada.
+### Resultado esperado
 
-## 9.2 Exercício de excesso de privilégio
+Consulta permitida; alteração negada.
 
-1. Atribua temporariamente uma role administrativa de baixo impacto.
+## Exercício 2 — excesso de privilégio
+
+1. Conceda temporariamente uma função administrativa de baixo impacto.
 2. Faça uma alteração controlada.
-3. Observe o Audit Log.
-4. Remova a role.
-5. Tente repetir a alteração.
-
-### O que provar?
-
-`role presente → ação permitida`
-
-`role removida → ação negada`
-
-Esse é o fundamento de least privilege.
-
----
-
-# 10. Autenticação e MFA
-
-## Conceito
-
-Autenticação comprova a identidade. MFA adiciona um fator adicional.
-
-Não confunda:
-
-`Autenticação ≠ Autorização`
-
-MFA responde **quem é**; RBAC/CA responde **se pode acessar e sob quais condições**.
-
-## 10.1 Security Defaults
-
-Use quando o tenant não estiver usando Conditional Access e você quiser aprender o mecanismo básico de proteção.
-
-Caminho administrativo: procure **Properties → Manage security defaults** conforme o centro de administração atual.
-
-### Teste
-
-1. Use usuário de laboratório.
-2. Faça registro do Authenticator.
-3. Saia.
-4. Entre novamente.
-5. Confirme o segundo fator.
-
-### Falha comum
-
-Se o tenant já usa Conditional Access, não tente habilitar Security Defaults simultaneamente. O desenho deve usar uma estratégia coerente.
-
-## 10.2 Métodos de autenticação
-
-Quando disponíveis, pratique:
-
-- Microsoft Authenticator;
-- passkey/FIDO2;
-- Temporary Access Pass;
-- política de métodos de autenticação.
-
-### Cenário
-
-`usuário novo → registra método → login → método perdido → recuperação`
+3. Abra Audit Logs.
+4. Identifique o ator.
+5. Remova a função.
+6. Repita a alteração.
 
 ### Pergunta
 
-Como recuperar a identidade sem criar um bypass permanente?
+> O que aconteceu quando a função foi removida?
+
+### Objetivo
+
+Aprender que autorização é dinâmica e auditável.
 
 ---
 
-# 11. SSPR
+# 11. 🟢 Fase 05 — Authentication e MFA
 
-## O que é?
+## Conceito
 
-Self-Service Password Reset permite ao usuário recuperar/redefinir a senha conforme a política configurada.
+Autenticação responde:
 
-## Quando usar?
+> "Como a identidade prova que é quem diz ser?"
 
-Para reduzir dependência do help desk e controlar recuperação de conta.
+MFA adiciona fatores adicionais.
 
-## Como testar
+Não confunda:
 
-1. Configure SSPR conforme o plano/licença do tenant.
-2. Defina o grupo de teste.
-3. Registre os métodos necessários.
-4. Abra uma sessão privada.
-5. Inicie o fluxo de redefinição.
-6. Complete a verificação.
-7. Defina nova senha.
-8. Faça login novamente.
+```text
+Authentication → quem é?
+Authorization  → o que pode fazer?
+```
+
+## 11.1 Security Defaults
+
+Use para conhecer a camada básica de proteção quando Conditional Access não estiver sendo usado.
+
+Não misture a estratégia de Security Defaults com um desenho de Conditional Access sem entender a interação entre eles.
+
+### Teste
+
+1. Use `LAB-USER-ANA`.
+2. Registre o Microsoft Authenticator quando solicitado.
+3. Saia.
+4. Entre novamente.
+5. Confirme o desafio adicional.
+
+## 11.2 Authentication Methods
+
+Quando disponíveis, estude e teste:
+
+- Microsoft Authenticator;
+- passkeys/FIDO2;
+- Temporary Access Pass;
+- políticas de métodos de autenticação.
+
+### Cenário
+
+```text
+Usuário novo
+   ↓
+Registro
+   ↓
+MFA
+   ↓
+Login
+   ↓
+Perda do método
+   ↓
+Recuperação controlada
+```
 
 ### Teste negativo
 
-Não forneça o fator de verificação correto.
-
-Resultado esperado: reset não autorizado.
-
-### Validação
-
-Investigue os logs de autenticação e os eventos administrativos disponíveis.
+Use um usuário que não esteja corretamente registrado e confirme que o acesso não pode ser concluído quando a política exigir o método.
 
 ---
 
-# 12. Conditional Access básico
+# 12. 🟢 Fase 06 — SSPR
 
 ## O que é?
 
-É um mecanismo de decisão `if/then` que combina sinais e aplica uma decisão de acesso. A Microsoft o posiciona como mecanismo de política Zero Trust. citehttps://learn.microsoft.com/pt-br/entra/identity/conditional-access/overview
+Self-Service Password Reset permite recuperação da senha pelo próprio usuário, conforme configuração e licenciamento.
 
-## Quando usar?
+## Por que?
 
-Quando MFA global não é suficiente e a empresa precisa considerar usuário, aplicação, dispositivo, localização, risco ou outros sinais.
+Reduz chamados e cria um processo controlado de recuperação.
 
-## 12.1 Antes de criar a política
+## Quando?
 
-Tenha:
+Quando a organização deseja permitir recuperação sem intervenção manual para todos os casos elegíveis.
 
-- usuário de teste;
-- grupo de teste;
-- método MFA registrado;
-- conta de emergência protegida;
-- plano de rollback.
+## Cenário positivo
 
-## 12.2 Criar política MFA
+```text
+Senha esquecida
+↓
+Usuário valida identidade
+↓
+Nova senha
+↓
+Login
+```
+
+## Cenário negativo
+
+Falhe deliberadamente na validação.
+
+Resultado esperado: redefinição não deve ocorrer sem a comprovação necessária.
+
+## Evidência
+
+Registre apenas evidências sanitizadas do processo e do resultado.
+
+---
+
+# 13. 🟡 Fase 07 — Conditional Access básico
+
+## Conceito
+
+Conditional Access é um mecanismo de política do tipo **se-então**:
+
+```text
+SE
+usuário + aplicação + sinais
+
+ENTÃO
+permitir / exigir controle / bloquear
+```
+
+Ele é o mecanismo de política Zero Trust do Entra. citeturn0search2turn0search10
+
+## Por que?
+
+Porque MFA sozinho não responde a todos os cenários.
+
+Exemplo:
+
+> "Administradores precisam de autenticação forte quando acessam recursos administrativos."
+
+## Quando?
+
+Quando o acesso precisa depender de contexto: usuário, aplicação, localização, dispositivo, risco ou outros sinais suportados.
+
+## Regra de implantação
+
+```text
+Report-only
+↓
+Usuário de teste
+↓
+Sign-in Logs
+↓
+What If
+↓
+Ajustar
+↓
+Enable
+```
+
+A Microsoft recomenda planejamento cuidadoso e uso de usuários/grupos de teste antes de implantação ampla. citeturn0search5
+
+## 13.1 Política MFA
 
 Caminho:
 
@@ -551,284 +786,311 @@ Caminho:
 
 Nome:
 
-`LAB-CA-001-REQUIRE-MFA`
+```text
+LAB-CA-001-REQUIRE-MFA
+```
 
-Configure:
+### Configuração
 
-**Users:** grupo `LAB-GRP-USERS`.
+**Users:** somente `LAB-USER-ANA` inicialmente.
 
-**Target resources:** um recurso de laboratório.
+**Target resources:** recurso de laboratório.
 
-**Grant:** Require multifactor authentication.
+**Grant:** Require multifactor authentication ou controle equivalente disponível.
 
 **Enable:** Report-only.
 
-### Por que Report-only?
-
-Permite observar o impacto sem bloquear o acesso.
-
 ### Teste
 
-Faça login com `LAB-USER-ANA`.
+Faça login com Ana.
 
 ### Validação
 
-Abra o Sign-in Log e examine a seção de Conditional Access.
+Abra **Sign-in logs** e observe o resultado da política.
 
-Procure o resultado da política.
+### Ativação
 
-### Ativar
+Somente depois de confirmar o comportamento, altere para `On`.
 
-Somente depois de confirmar o resultado esperado, altere para **On**.
+## 13.2 Teste negativo
 
-### Rollback
+Crie uma situação na qual a condição não seja atendida e confirme o bloqueio ou desafio esperado.
 
-Se o resultado estiver errado:
+## 13.3 Rollback
 
-1. desabilite a política;
-2. confirme acesso da conta de teste;
-3. analise os sinais e exclusões;
-4. corrija;
-5. repita em Report-only.
+Se a política causar comportamento inesperado:
+
+1. volte para Report-only ou desabilite conforme o plano de recuperação;
+2. mantenha a conta de emergência fora do escopo planejado;
+3. investigue Sign-in Logs;
+4. use What If;
+5. corrija;
+6. repita o teste.
 
 ---
 
-# 13. Conditional Access avançado
+# 14. 🟡 Fase 08 — Conditional Access avançado
 
-Aplique sempre um cenário por vez.
+## Objetivo
 
-## 13.1 Bloquear autenticação legada
+Sair de "MFA para todos" e aprender política baseada em contexto.
 
-### Por que?
+Aplique somente os sinais que realmente resolvem o requisito.
 
-Protocolos antigos podem não suportar controles modernos como MFA.
+## Cenário A — Administradores
 
-### Como
+```text
+SE usuário é administrativo
+E acessa recurso administrativo
+ENTÃO exigir autenticação forte
+```
+
+## Cenário B — Aplicação
+
+```text
+SE usuário acessa aplicação X
+ENTÃO aplicar controle Y
+```
+
+## Cenário C — Localização
+
+```text
+SE acesso vem de localização não permitida
+ENTÃO bloquear
+```
+
+Use dados reais do laboratório e valide como o Entra interpreta a localização. Não presuma que o IP residencial terá o comportamento que você imagina.
+
+## Cenário D — Legacy Authentication
 
 Crie:
 
-`LAB-CA-002-BLOCK-LEGACY`
-
-Condição: clientes de autenticação legada.
-
-Ação: Block access.
+```text
+LAB-CA-002-BLOCK-LEGACY
+```
 
 Primeiro Report-only.
 
-### Teste
+Depois provoque ou simule um cenário compatível com autenticação legada e confirme a decisão nos logs.
 
-Use somente cliente/protocolo de laboratório que permita demonstrar o comportamento.
+## Cenário E — Dispositivo
 
-### Validação
+Quando você possuir uma máquina de teste adequada, explore:
 
-Sign-in Logs → detalhes da autenticação → Conditional Access.
+```text
+dispositivo compatível → acesso
 
-## 13.2 Política para administradores
+dispositivo não compatível → bloqueio
+```
 
-Crie:
+## Cenário F — Risco
 
-`LAB-CA-003-ADMIN-MFA`
+Quando houver licença compatível, teste:
 
-Escopo: funções administrativas de teste.
+- sign-in risk;
+- user risk;
+- remediação;
+- MFA;
+- bloqueio.
 
-Ação: MFA/autenticação forte conforme a licença.
+Políticas baseadas em risco exigem recursos de Microsoft Entra ID Protection/P2. citeturn0search2
 
-### Por que?
+## What If
 
-O comprometimento de uma conta privilegiada possui impacto muito maior.
+Use a ferramenta **What If** para responder:
 
-## 13.3 Política por aplicação
-
-Crie uma Enterprise Application de laboratório e aplique CA somente a ela.
-
-Teste:
-
-`app + usuário permitido → MFA`
-
-`app + usuário excluído → comportamento esperado`
-
-## 13.4 Localização
-
-Defina um Named Location somente se você compreender o IP de origem do laboratório.
-
-Teste:
-
-`localização A → permitido`
-
-`localização B → bloqueado`
-
-Não confunda endereço privado de VM com IP público observado pelo serviço.
-
-## 13.5 Dispositivo
-
-Quando houver Windows/Intune ou recurso compatível, teste:
-
-`dispositivo em conformidade → acesso`
-
-`dispositivo fora de conformidade → bloqueio/requisito`
-
-## 13.6 What If
-
-Abra a ferramenta **What If**.
-
-Informe usuário, aplicação e condições.
-
-Use-a para responder:
-
-- quais políticas aplicariam?
-- qual bloquearia?
-- qual exclusão alteraria o resultado?
+- qual política seria aplicada?
+- qual condição causaria bloqueio?
+- qual exclusão mudou o resultado?
+- quais políticas não seriam aplicadas?
 
 ### Exercício
 
-Crie uma política de teste conflitante em Report-only e explique o resultado antes de habilitá-la.
+Crie uma política de laboratório em Report-only, execute What If e compare a previsão com o Sign-in Log real.
+
+### Objetivo profissional
+
+Aprender a diferenciar:
+
+```text
+"A política deveria aplicar"
+
+vs.
+
+"A política realmente aplicou"
+```
 
 ---
 
-# 14. Logs e investigação
+# 15. 🟡 Fase 09 — Logs e investigação
 
-## 14.1 Sign-in Logs
+## Por que logs são essenciais?
+
+IAM sem evidência não permite responder corretamente a uma investigação.
+
+A Microsoft recomenda estratégia de monitoramento envolvendo, entre outros, Sign-in activity, Audit Logs e eventos de risco quando disponíveis. citeturn0search4turn0search17
+
+## 15.1 Sign-in Logs
 
 Caminho:
 
-**Entra ID → Monitoring & health → Sign-in logs**.
+**Entra ID → Monitoring & health → Sign-in logs**
 
 Investigue:
 
-- usuário;
-- aplicação;
-- resultado;
-- IP;
-- localização;
+- sucesso;
+- falha;
 - MFA;
 - Conditional Access;
-- detalhes de autenticação.
+- aplicação;
+- dispositivo;
+- localização;
+- risco;
+- código de erro.
 
-## 14.2 Audit Logs
+## 15.2 Audit Logs
 
 Caminho:
 
-**Entra ID → Monitoring & health → Audit logs**.
+**Entra ID → Monitoring & health → Audit logs**
 
 Procure alterações em:
 
 - usuários;
 - grupos;
-- memberships;
 - roles;
 - aplicações;
 - credenciais;
 - políticas.
 
-## 14.3 Exercício de investigação
+## 15.3 Exercício de timeline
 
 Execute:
 
-1. criar usuário;
-2. adicionar grupo;
-3. atribuir role;
-4. remover role;
-5. remover grupo;
-6. desabilitar usuário.
+```text
+Criar usuário
+↓
+Adicionar grupo
+↓
+Atribuir role
+↓
+Alterar objeto
+↓
+Remover role
+↓
+Remover grupo
+↓
+Desabilitar usuário
+```
 
-Depois não use sua memória: reconstrua tudo a partir dos logs.
+Depois reconstrua tudo somente com os logs.
 
-Responda:
+Você precisa conseguir responder:
 
-`Quem → o quê → quando → qual objeto → resultado`
-
-### Falha comum
-
-Pesquisar somente por nome. Pesquise também por operação, objeto e janela de tempo.
+```text
+QUEM?
+O QUÊ?
+QUANDO?
+QUAL OBJETO?
+QUAL RESULTADO?
+```
 
 ---
 
-# 15. Guest e B2B
+# 16. 🟡 Fase 10 — Guest / B2B
 
-## Conceito
+## O que é?
 
-Guest permite colaboração com identidade externa sem transformar a pessoa em funcionário interno.
+Permite colaboração com identidades externas sem transformar o convidado em uma identidade interna comum.
 
 ## Quando usar?
 
-Parceiros, fornecedores, consultores e colaboradores externos.
+- parceiros;
+- fornecedores;
+- consultores;
+- colaboração externa.
 
-## Criar
+## Criar guest
 
 Caminho:
 
 **Entra ID → Users → New user → Invite external user**
 
-Use uma identidade externa controlada.
+Use uma identidade de teste controlada.
 
-## Teste
+## Cenários
 
-1. Convide o guest.
-2. Conceda acesso somente a um grupo/aplicação de laboratório.
-3. Teste acesso.
-4. Remova o acesso.
-5. Teste novamente.
-6. Remova o guest.
+### Positivo
 
-### Cenário importante
+Guest convidado e autorizado → acesso permitido.
 
-Conceda acesso por grupo e aplicação separadamente. Remova somente um caminho e descubra se o usuário ainda possui acesso pelo segundo caminho.
+### Negativo
 
-Esse exercício ensina **access path analysis**.
+Guest sem autorização → acesso negado.
+
+### Revogação
+
+Remova o acesso e confirme que o acesso desapareceu.
+
+### Investigação
+
+Procure criação, convite, alterações de membership e autenticação nos logs.
 
 ---
 
-# 16. Enterprise Applications e SSO
+# 17. 🟡 Fase 11 — Enterprise Applications e SSO
 
 ## Conceito
 
-Enterprise Application representa a instância do aplicativo consumida pelo tenant e seus controles de acesso.
+Enterprise Application representa a aplicação consumida/integradada pelo tenant.
 
-SSO permite que o Entra participe da autenticação do aplicativo.
+SSO reduz múltiplos processos de autenticação e centraliza políticas de acesso.
 
 ## Quando usar?
 
-SaaS, aplicações corporativas e sistemas que suportam SAML/OIDC/OAuth conforme o cenário.
+Quando uma organização precisa integrar aplicações SaaS ou corporativas ao Entra.
 
 ## Laboratório
 
-Escolha uma aplicação de teste compatível.
+Use uma aplicação de teste compatível com o método de SSO disponível.
 
 Caminho:
 
 **Entra ID → Enterprise applications → New application**
 
-Atribua `LAB-USER-ANA`.
+## Exercício
 
-Se a aplicação exigir atribuição, habilite o controle correspondente.
+1. Adicione a aplicação.
+2. Configure o método suportado.
+3. Exija atribuição de usuário/grupo quando aplicável.
+4. Atribua `LAB-USER-ANA`.
+5. Teste.
+6. Remova a atribuição.
+7. Teste novamente.
 
-### Testes
+## Objetivo
 
-`usuário atribuído → acesso`
+Provar:
 
-`usuário não atribuído → negado`
-
-`CA aplicada → MFA/controle esperado`
-
-### O que investigar?
-
-- atribuição;
-- autenticação;
-- CA;
-- logs;
-- grupos.
+```text
+Identidade + Aplicação + Atribuição + Política = Decisão de acesso
+```
 
 ---
 
-# 17. App Registration
+# 18. 🟡 Fase 12 — App Registration
 
-## Conceito
+## O que é?
 
-App Registration descreve uma aplicação conhecida pelo Entra. A aplicação pode usar OAuth 2.0/OpenID Connect e receber identidade/credenciais para chamar recursos.
+Define a identidade/configuração de uma aplicação que utiliza o Entra para autenticação ou acesso a APIs.
 
-## Quando usar?
+## Por que?
 
-Quando você precisa registrar uma aplicação própria ou integração que autentique contra o Entra.
+Porque aplicações também são identidades.
+
+## Quando?
+
+Quando você desenvolve ou integra uma aplicação que precisa autenticar usuários ou atuar como workload.
 
 ## Criar
 
@@ -838,163 +1100,214 @@ Caminho:
 
 Nome:
 
-`LAB-APP-GRAPH`
+```text
+LAB-APP-GRAPH
+```
 
-Escolha o tipo de contas somente de acordo com o cenário de laboratório.
+## O que observar
 
-### Resultado esperado
+- Application/Client ID;
+- Directory/Tenant ID;
+- Redirect URI quando aplicável;
+- Authentication;
+- API permissions;
+- Certificates & secrets;
+- Manifest.
 
-A aplicação terá um registro e um identificador de aplicação/client ID.
+### Exercício
 
-### Exercício de credencial
+Registre uma aplicação de laboratório e identifique os objetos associados.
 
-Se precisar demonstrar secret:
+### Pergunta obrigatória
 
-1. crie secret com validade curta;
-2. copie o valor somente para local seguro;
-3. teste a autenticação;
-4. revogue/delete;
-5. teste novamente.
+> Qual é a diferença entre Application Object e Service Principal?
 
-### O que aprender?
-
-Secret é uma credencial. Se o workload puder usar Managed Identity ou Federation, prefira eliminar segredo persistente.
-
----
-
-# 18. Permissões de API e consentimento
-
-## Conceitos
-
-**Delegated permission:** aplicação age em nome do usuário.
-
-`Usuário → App → API`
-
-**Application permission:** aplicação age como workload, sem usuário interativo.
-
-`App → API`
-
-## Quando usar?
-
-Integrações automatizadas e aplicações que precisam consultar/modificar dados.
-
-## Como praticar
-
-No App Registration:
-
-**API permissions → Add a permission**
-
-Escolha somente a permissão mínima necessária.
-
-### Teste
-
-1. conceda permissão;
-2. execute operação permitida;
-3. remova a permissão;
-4. repita;
-5. confirme falha.
-
-### Exercício de least privilege
-
-Dê inicialmente uma permissão excessiva em laboratório, prove que funciona, reduza para a mínima e prove novamente.
-
-O objetivo não é decorar permissões; é aprender a raciocinar:
-
-`qual dado → qual operação → qual identidade → qual permissão mínima`
+Você deve saber responder antes de continuar.
 
 ---
 
-# 19. Service Principal
+# 19. 🟡 Fase 13 — API Permissions e consentimento
+
+## Dois modelos fundamentais
+
+### Delegated permissions
+
+```text
+Usuário
+  ↓
+Aplicação
+  ↓
+API
+```
+
+A aplicação atua em contexto de usuário.
+
+### Application permissions
+
+```text
+Aplicação
+  ↓
+API
+```
+
+O workload atua sem usuário interativo.
+
+## Por que isso importa?
+
+Application permissions podem ter impacto elevado porque o workload pode atuar autonomamente.
+
+## Exercício least privilege
+
+1. Conceda somente uma permissão necessária.
+2. Teste.
+3. Remova a permissão.
+4. Teste novamente.
+5. Registre o resultado.
+
+## Teste negativo
+
+Conceda deliberadamente uma permissão excessiva em ambiente de laboratório.
+
+Depois:
+
+```text
+identificar
+↓
+justificar o risco
+↓
+remover
+↓
+validar funcionamento
+```
+
+---
+
+# 20. 🟡 Fase 14 — Service Principal
 
 ## Conceito
 
-O Service Principal é a identidade da aplicação dentro de um tenant.
+O Service Principal é a representação da aplicação dentro de um tenant.
 
-Não confunda:
+Modelo mental:
 
-`Application object ≠ Service Principal`
+```text
+Application Object
+        ↓
+Service Principal
+        ↓
+Tenant
+        ↓
+Permissions / Roles
+```
 
-O primeiro descreve a aplicação; o segundo é a representação dessa aplicação no tenant.
+## Por que?
 
-## Laboratório
+Permite controlar como a aplicação atua dentro daquele tenant.
 
-Crie App Registration e observe o Service Principal correspondente em **Enterprise applications**.
+## Exercício
 
-### Teste
+Localize o Service Principal da aplicação `LAB-APP-GRAPH`.
 
-Conceda uma função de baixo impacto ao Service Principal em um recurso de laboratório.
+Compare:
 
-Teste acesso.
+- identidade da aplicação;
+- identidade no tenant;
+- permissões;
+- roles;
+- credenciais.
 
-Remova a função.
+## Segurança
 
-Teste novamente.
+Revise regularmente:
 
-### Pergunta de entrevista
+- aplicações sem uso;
+- credenciais antigas;
+- permissões excessivas;
+- Service Principals privilegiados.
 
-Por que um Service Principal com Owner/Contributor/Global Administrator pode ser mais perigoso do que um usuário comum?
+A documentação atual do Workload ID recomenda remover aplicações não utilizadas, remover credenciais desnecessárias e revisar identidades de workload privilegiadas. citeturn0search11
 
 ---
 
-# 20. Managed Identity
+# 21. 🟡 Fase 15 — Managed Identity
 
-## Conceito
+## O que é?
 
-É uma identidade gerenciada pela plataforma Azure para um recurso, permitindo autenticação sem você armazenar um secret da aplicação.
+Identidade gerenciada pelo Azure para um recurso.
 
-## Quando usar?
+## Por que?
 
-Quando o workload roda em Azure e o serviço suporta Managed Identity.
+Evita armazenar credenciais persistentes em código/configuração quando o serviço suportar Managed Identity.
+
+## Quando?
+
+Quando um workload Azure precisa acessar outro recurso Azure e o cenário suporta identidade gerenciada.
+
+## Arquitetura
+
+```text
+Azure Resource
+      ↓
+Managed Identity
+      ↓
+RBAC
+      ↓
+Resource
+```
 
 ## Laboratório
 
-Crie um recurso Azure temporário compatível.
+Crie um recurso temporário compatível.
 
-Habilite **System assigned managed identity**.
+Habilite Managed Identity.
 
-### Por que?
-
-A identidade passa a existir junto com o recurso e pode obter tokens para acessar recursos autorizados.
-
-## RBAC
-
-Conceda à Managed Identity somente a role mínima necessária no recurso de destino.
-
-Modelo:
-
-`VM/App Service → Managed Identity → Role → Resource`
+Conceda somente a role necessária.
 
 ### Teste positivo
 
-`role presente → operação permitida`
+Managed Identity + role correta → acesso permitido.
 
 ### Teste negativo
 
-Remova a role → repita → operação negada.
+Remova a role → acesso negado.
 
-### O que comparar?
+### Objetivo
 
-`secret armazenado manualmente` versus `identidade gerenciada`.
+Provar que o workload pode autenticar sem um secret armazenado pela aplicação.
 
 ---
 
-# 21. Workload Identity Federation
+# 22. 🟠 Fase 16 — Workload Identity Federation
 
 ## Conceito
 
-Permite que um workload externo apresente uma identidade federada em vez de guardar um secret permanente. Workload identities no Entra incluem aplicações, service principals e managed identities. citehttps://learn.microsoft.com/en-us/entra/workload-id/workload-identities-overview
+Permite que um workload externo estabeleça confiança com o Entra sem depender de um secret persistente tradicional.
 
 ## Quando usar?
 
-CI/CD, GitHub Actions e outros provedores que suportem OIDC/federação.
+Cenários como CI/CD e workloads externos que suportam federação.
+
+A documentação atual do Workload ID cobre federação, Managed Identity, proteção de Service Principals e Conditional Access para workload identities. citeturn0search11
 
 ## Modelo
 
-`Workload externo → OIDC token → Entra confere trust → token de acesso → recurso`
+```text
+Workload externo
+      ↓
+Token
+      ↓
+Entra
+      ↓
+Trust / Federation
+      ↓
+Role / Permission
+      ↓
+Recurso
+```
 
-## Testes negativos
+## Testes negativos obrigatórios
 
-Altere uma condição de confiança em laboratório:
+Altere um elemento por vez:
 
 - issuer incorreto;
 - subject incorreto;
@@ -1003,222 +1316,306 @@ Altere uma condição de confiança em laboratório:
 
 Resultado esperado: autenticação/autorização falha.
 
-### Por que isso é importante?
+### Objetivo profissional
 
-Você aprende que autenticar o workload e autorizar o workload são problemas diferentes.
+Aprender que uma workload identity também precisa de:
+
+```text
+identidade
++ confiança
++ privilégio mínimo
++ ciclo de vida
++ monitoramento
+```
 
 ---
 
-# 22. PIM e JIT
+# 23. 🟠 Fase 17 — PIM e JIT
 
 ## Conceito
 
-PIM controla acesso privilegiado com elegibilidade, ativação e duração. Ele reduz privilégio permanente e permite monitoramento das ativações. citehttps://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-getting-started
+PIM controla acesso privilegiado usando elegibilidade, ativação temporária, aprovação e outros controles conforme o cenário.
 
-## Quando usar?
-
-Administradores, funções críticas e recursos onde privilégio permanente não é aceitável.
-
-## Pré-requisito
-
-Confirme licença compatível antes do exercício.
-
-## Laboratório econômico
-
-Não crie vários usuários licenciados. Use o menor conjunto de identidades necessário para demonstrar:
-
-`eligible → activate → use → expire → revoke`
-
-## Configuração
-
-Caminho:
-
-**Identity Governance → Privileged Identity Management → Microsoft Entra roles**
-
-Escolha uma role de laboratório de baixo impacto.
-
-Configure elegibilidade para a conta administrativa de teste.
-
-Se disponível, configure:
-
-- MFA;
-- justificativa;
-- duração curta;
-- aprovação.
-
-### Testes
-
-**Sem ativação:** ação administrativa deve falhar.
-
-**Após ativação:** ação deve funcionar durante a janela.
-
-**Após expiração:** ação deve falhar novamente.
-
-### Investigação
-
-Verifique:
-
-`eligible → activation → role active → operation → expiration`
-
-### O que você deve saber explicar?
-
-Diferença entre:
-
-`Permanent assignment`
-
-`Eligible assignment`
-
-`Activated assignment`
-
-`JIT`
-
----
-
-# 23. Access Reviews
-
-## Conceito
-
-Access Review pergunta se uma identidade ainda precisa de determinado acesso.
-
-## Quando usar?
-
-Acessos de alto impacto, guests, grupos, aplicações e privilégios.
-
-## Laboratório
-
-Crie um grupo:
-
-`LAB-GRP-REVIEW`
-
-Adicione `LAB-USER-ANA`.
-
-Quando o recurso estiver disponível, crie uma revisão.
-
-### Cenário
-
-1. usuário recebe acesso;
-2. revisão começa;
-3. reviewer decide `Deny`;
-4. acesso é removido;
-5. valide.
-
-### Pergunta
-
-Por que uma revisão de acesso não substitui o controle preventivo?
-
-Resposta esperada: revisão é controle de governança/detecção/correção; não impede necessariamente a concessão inicial.
-
----
-
-# 24. Entitlement Management
-
-## Conceito
-
-Governança do ciclo de acesso por pacotes, políticas, solicitação, aprovação, expiração e revisão.
-
-## Quando usar?
-
-Quando a empresa quer transformar acesso em um processo controlado em vez de concedê-lo manualmente.
-
-## Modelo
-
-`Access Package → Policy → Request → Approval → Assignment → Expiration → Review`
-
-## Laboratório
-
-Quando disponível:
-
-1. crie `LAB-PACK-FINANCE`;
-2. inclua grupo de laboratório;
-3. configure solicitante;
-4. configure aprovador;
-5. solicite acesso;
-6. aprove;
-7. confirme acesso;
-8. remova/expire;
-9. confirme revogação.
-
-### O que aprender?
-
-Autorização técnica responde **pode acessar?**
-
-Governança responde **como esse acesso foi solicitado, aprovado, revisado e retirado?**
-
----
-
-# 25. Lifecycle Workflows
-
-## Conceito
-
-Automação de tarefas de ciclo de vida de identidade.
-
-## Quando usar?
-
-Joiner, mover e leaver em ambientes onde o ciclo pode ser automatizado.
-
-## Exercício Joiner
-
-Crie uma identidade de teste com atributos de departamento.
-
-Fluxo esperado:
-
-`identidade → grupo → acesso → autenticação`
-
-## Exercício Mover
-
-Altere:
-
-`Finance → RH`
-
-Esperado:
-
-`grupo Finance removido → grupo RH concedido → acessos antigos revistos`
-
-## Exercício Leaver
-
-Fluxo:
-
-`desabilitar → remover acesso → remover privilégio → revisar aplicações → preservar evidências`
-
-### Pergunta
-
-Por que somente desabilitar o login não é um offboarding completo?
-
-Porque memberships, aplicações, credenciais, grupos, ownership e privilégios podem permanecer.
-
----
-
-# 26. Identity Protection
-
-## Conceito
-
-Usa sinais de risco para identificar usuários/entradas potencialmente comprometidos.
-
-## Quando usar?
-
-Quando a organização possui licença/recurso compatível e quer combinar risco com Conditional Access.
-
-## Estude
-
-- user risk;
-- sign-in risk;
-- risk detections;
-- risky users;
-- remediation.
-
-## Modelo
-
-`Sinal de risco → avaliação → política → MFA/bloqueio/remediação → investigação`
-
-Não tente provocar ataques reais para gerar risco. Use simulação/documentação quando disponível.
-
----
-
-# 27. Microsoft Graph e PowerShell
+A Microsoft descreve PIM como mecanismo para reduzir acesso excessivo e permanente por meio de acesso privilegiado just-in-time e controles de ativação. citeturn0search9turn0search16
 
 ## Por que?
 
-Portal é ótimo para aprender o conceito; automação é necessária para operação em escala.
+Evitar:
+
+```text
+Administrador
+↓
+Privilegio permanente
+↓
+Conta comprometida
+↓
+Impacto elevado
+```
+
+Preferir:
+
+```text
+Usuário elegível
+↓
+Solicita ativação
+↓
+MFA / aprovação / justificativa
+↓
+Privilégio temporário
+↓
+Expiração
+```
+
+## Licenciamento
+
+PIM exige licenciamento compatível. Se o tenant não possuir o recurso, não tente transformar a ausência de licença em uma configuração falsa. Estude o fluxo conceitualmente e execute quando houver trial/licença adequada.
+
+## Laboratório
+
+Escolha uma role de baixo impacto.
+
+1. Configure elegibilidade.
+2. Defina duração curta.
+3. Exija justificativa/MFA/aprovação quando disponível.
+4. Ative.
+5. Execute uma ação permitida.
+6. Aguarde/force expiração conforme o recurso permitir.
+7. Repita a ação.
+
+### Testes
+
+```text
+Sem ativação → negado
+Ativado → permitido
+Expirado → negado
+```
+
+### Investigação
+
+Procure:
+
+- atribuição;
+- ativação;
+- aprovador;
+- justificativa;
+- alteração realizada;
+- expiração.
+
+---
+
+# 24. 🟠 Fase 18 — Access Reviews
+
+## O que é?
+
+Recertificação de acesso.
+
+## Pergunta que resolve
+
+> "Esta identidade ainda precisa deste acesso?"
+
+## Quando usar?
+
+- grupos privilegiados;
+- convidados;
+- aplicações;
+- acessos temporários;
+- funções administrativas.
+
+## Exercício
+
+1. Dê acesso a `LAB-USER-ANA`.
+2. Crie uma Access Review quando disponível.
+3. Faça a revisão como reviewer.
+4. Escolha `Deny`.
+5. Execute a remoção/ação configurada.
+6. Confirme o acesso.
+
+### Resultado
+
+```text
+Acesso concedido
+↓
+Revisão
+↓
+Deny
+↓
+Revogação
+```
+
+Identity Governance existe justamente para controlar, monitorar e auditar quem possui acesso e se esse acesso continua adequado. citeturn0search3turn0search8
+
+---
+
+# 25. 🟠 Fase 19 — Entitlement Management
+
+## Conceito
+
+Organiza recursos em Access Packages com políticas de solicitação, aprovação, duração e revisão conforme disponibilidade/licenciamento.
+
+## Por que?
+
+Evita que cada acesso seja tratado como exceção manual.
+
+## Modelo
+
+```text
+Usuário
+ ↓
+Request
+ ↓
+Approval
+ ↓
+Access Package
+ ↓
+Resource
+ ↓
+Expiration / Review
+```
+
+## Exercício
+
+Crie:
+
+```text
+LAB-PACK-FINANCE
+```
+
+Inclua um grupo de laboratório.
+
+Simule:
+
+```text
+Solicitação
+↓
+Aprovação
+↓
+Concessão
+↓
+Uso
+↓
+Expiração / revisão
+↓
+Revogação
+```
+
+### Objetivo
+
+Diferenciar **autorização técnica** de **governança do ciclo de acesso**.
+
+---
+
+# 26. 🟠 Fase 20 — Lifecycle Workflows
+
+## Conceito
+
+Automatiza ações do ciclo de vida da identidade conforme os recursos disponíveis.
+
+## Modelo
+
+```text
+JOINER
+ ↓
+identidade + acesso inicial
+
+MOVER
+ ↓
+remover acesso antigo + conceder novo
+
+LEAVER
+ ↓
+desativar + remover acesso + preservar evidência
+```
+
+## Cenário Joiner
+
+Maria entra na empresa.
+
+Resultado esperado:
+
+- identidade criada;
+- grupo correto;
+- acesso correto;
+- MFA configurado conforme política.
+
+## Cenário Mover
+
+Maria muda de Finance para RH.
+
+Resultado esperado:
+
+```text
+Finance access → removido
+RH access      → concedido
+```
+
+## Cenário Leaver
+
+Maria deixa a empresa.
+
+Resultado esperado:
+
+```text
+Login → bloqueado
+Groups → revisados
+Applications → revisadas
+Roles → removidas
+Evidence → preservada
+```
+
+A Microsoft descreve Identity Governance como uma camada para controlar o ciclo de vida de identidade, acesso e privilégios. citeturn0search8
+
+---
+
+# 27. 🟠 Fase 21 — Identity Protection
+
+## Conceito
+
+Adiciona sinais de risco à decisão de identidade.
+
+## Quando?
+
+Quando a organização precisa responder a situações em que o comportamento de autenticação indica risco elevado.
+
+## Dependência
+
+Recursos baseados em risco exigem licenciamento compatível, normalmente Microsoft Entra ID P2. citeturn0search2
+
+## Fluxo
+
+```text
+Evento
+ ↓
+Detecção de risco
+ ↓
+Classificação
+ ↓
+Conditional Access
+ ↓
+MFA / remediação / bloqueio
+ ↓
+Investigação
+```
+
+## Laboratório
+
+Use eventos de teste/simulação suportados pelo produto. Não tente produzir ataques reais contra o tenant.
+
+### O que investigar
+
+- risky users;
+- risk detections;
+- sign-in risk;
+- user risk;
+- política aplicada;
+- ação de remediação.
+
+---
+
+# 28. 🟠 Fase 22 — Microsoft Graph + PowerShell
+
+## Por que?
+
+Portal é ótimo para aprender. Automação é necessária para escala.
 
 ## Instalar
 
@@ -1228,321 +1625,375 @@ No PowerShell:
 Install-Module Microsoft.Graph -Scope CurrentUser
 ```
 
-Se solicitado, confirme instalação do módulo.
-
 ## Conectar
 
-Use somente scopes necessários.
+Use autenticação interativa e o menor conjunto de scopes necessário.
 
 ```powershell
 Connect-MgGraph -Scopes "User.Read.All"
 ```
 
-O navegador solicitará autenticação/consentimento conforme o cenário.
-
 ## Consultar usuários
 
 ```powershell
 Get-MgUser -All |
-    Select-Object DisplayName, UserPrincipalName, AccountEnabled
+    Select-Object DisplayName,UserPrincipalName,AccountEnabled
 ```
 
-## Criar usuário de laboratório
+## Exercício 1 — relatório
 
-Antes de automatizar criação, descubra no portal quais propriedades são realmente necessárias.
+Gere relatório com:
 
-Depois implemente:
+- DisplayName;
+- UPN;
+- AccountEnabled;
+- Id;
+- criação quando disponível.
 
-`CSV → validação → criação → grupo → relatório`
+## Exercício 2 — JML
 
-## Leaver automatizado
+Modele:
 
-Implemente de forma controlada:
+```text
+CSV
+ ↓
+Validação
+ ↓
+Create User
+ ↓
+Group Membership
+ ↓
+Relatório
+```
 
-`entrada UPN → validar → desabilitar → consultar memberships → registrar → relatório`
+## Exercício 3 — Leaver
 
-Não automatize exclusão irreversível como primeiro exercício.
+Automatize em ambiente controlado:
+
+```text
+Disable
+ ↓
+Membership review
+ ↓
+Role review
+ ↓
+Report
+```
 
 ### Regra de segurança
 
-Automação IAM deve ter:
-
-- validação de entrada;
-- menor privilégio;
-- logging;
-- modo dry-run quando possível;
-- tratamento de erro;
-- confirmação para ações destrutivas.
+Nunca coloque client secret, senha ou token dentro do `.ps1`.
 
 ---
 
-# 28. JML completo
-
-## Caso
-
-`LAB-USER-MARIA`
-
-Departamento inicial: Finance.
-
-## Joiner
-
-1. criar usuário;
-2. habilitar autenticação;
-3. adicionar grupo Finance;
-4. conceder aplicação Finance;
-5. confirmar acesso;
-6. confirmar logs.
-
-## Mover
-
-1. alterar departamento para RH;
-2. remover grupo Finance;
-3. remover acesso Finance;
-4. adicionar grupo RH;
-5. conceder aplicação RH;
-6. testar acesso antigo;
-7. testar acesso novo.
-
-## Leaver
-
-1. desabilitar conta;
-2. confirmar login negado;
-3. revisar grupos;
-4. revisar aplicações;
-5. revisar roles;
-6. revisar ownership quando aplicável;
-7. registrar evidência.
-
-### Teste final
-
-O usuário não deve conseguir recuperar acesso apenas porque ainda existe membership residual.
-
----
-
-# 29. PAM, JEA e PAW
+# 29. 🔴 Fase 23 — PAM, JEA e PAW
 
 ## PAM
 
-Privileged Access Management é a disciplina de proteger contas, sessões, credenciais e acessos privilegiados.
+Privileged Access Management é a disciplina de controlar contas, credenciais, sessões e privilégios administrativos.
 
-Não é necessário instalar um produto PAM comercial para aprender os fundamentos.
+Nem todo laboratório precisa de um produto PAM comercial.
 
-## O que praticar
+## O que você pode simular
 
-`conta administrativa separada → least privilege → JIT/PIM → MFA → auditoria → revogação`
+```text
+Conta normal
+      ↓
+Conta administrativa separada
+      ↓
+JIT / PIM
+      ↓
+PAW / estação controlada
+      ↓
+Recurso privilegiado
+      ↓
+Auditoria
+```
 
 ## JEA
 
-Just Enough Administration restringe quais operações administrativas uma identidade pode executar.
+Just Enough Administration limita o que uma conta administrativa pode executar.
 
-### Laboratório
+### Exercício conceitual
 
-Se usar PowerShell em VM, crie uma função administrativa limitada que permita somente operações específicas.
+Defina uma função administrativa que precisa apenas de três operações.
 
-Teste:
+Compare:
 
-`comando permitido → sucesso`
-
-`comando não permitido → bloqueio`
+```text
+Administração ampla
+vs.
+Administração mínima
+```
 
 ## PAW
 
-Privileged Access Workstation é uma estação dedicada a operações administrativas sensíveis.
+Privileged Access Workstation é uma estação dedicada/controlada para tarefas privilegiadas.
 
-No laboratório, simule com uma VM Windows separada ou perfil administrativo dedicado.
+### Laboratório otimizado
 
-### Regra
+Não mantenha uma PAW virtual permanentemente ligada.
 
-Não use a estação administrativa para navegação diária e tarefas pessoais no exercício.
+Use uma VM somente durante o exercício de acesso administrativo controlado.
 
----
+### Objetivo
 
-# 30. Cenários de investigação
-
-Todos os testes são feitos somente no tenant de laboratório.
-
-## C01 — Privilégio excessivo
-
-1. conceda role controlada;
-2. execute alteração;
-3. pesquise Audit Logs;
-4. identifique ator;
-5. remova role;
-6. valide bloqueio.
-
-## C02 — Membership privilegiado
-
-1. adicione usuário a grupo privilegiado;
-2. faça login;
-3. investigue alteração;
-4. remova membership.
-
-## C03 — Conditional Access incorreto
-
-1. crie política em Report-only;
-2. execute login;
-3. analise Sign-in Log;
-4. use What If;
-5. corrija.
-
-## C04 — Guest residual
-
-1. conceda acesso por grupo;
-2. conceda acesso por aplicação;
-3. remova o grupo;
-4. descubra se o guest ainda acessa pela aplicação;
-5. remova o segundo caminho.
-
-## C05 — Leaver incompleto
-
-1. crie acessos por múltiplos caminhos;
-2. desabilite usuário;
-3. audite memberships e aplicações;
-4. documente tudo que permaneceria residual;
-5. corrija.
-
-## C06 — Service Principal excessivo
-
-1. crie SP;
-2. conceda role maior que necessária;
-3. identifique risco;
-4. reduza role;
-5. teste novamente.
-
-## C07 — Secret revogado
-
-1. crie secret temporário;
-2. autentique;
-3. revogue;
-4. repita;
-5. confirme falha.
-
-## C08 — PIM
-
-`eligible → activate → operation → expire → operation denied`
+Entender que proteger privilégio não significa apenas proteger a role; significa proteger também o **caminho usado para exercer a role**.
 
 ---
 
-# 31. Projeto final
+# 30. 🔴 Fase 24 — Cenários de investigação
+
+Agora pare de seguir o tutorial.
+
+Você receberá um incidente e deverá investigar.
+
+## Incidente 01 — Privilégio inesperado
+
+### Situação
+
+`LAB-USER-ANA` aparece com privilégio que não deveria possuir.
+
+### Sua missão
+
+Descobrir:
+
+```text
+Quem concedeu?
+Quando?
+Qual role?
+Direto ou via grupo?
+Qual ação foi executada?
+O acesso continua ativo?
+```
+
+### Resposta esperada
+
+Audit Logs + Users + Groups + Roles.
+
+---
+
+## Incidente 02 — Conditional Access bloqueando usuário
+
+### Situação
+
+Ana não consegue acessar uma aplicação.
+
+### Investigue
+
+1. Sign-in Logs.
+2. Conditional Access.
+3. What If.
+4. Condições.
+5. Exclusions.
+6. Grant/session controls.
+
+### Objetivo
+
+Não desabilite a política imediatamente.
+
+Primeiro descubra **qual regra causou o resultado**.
+
+---
+
+## Incidente 03 — Guest residual
+
+### Situação
+
+O guest foi removido de um grupo, mas ainda possui acesso.
+
+### Investigue
+
+```text
+Direct assignment?
+Group 1?
+Group 2?
+Application assignment?
+Access Package?
+```
+
+### Objetivo
+
+Descobrir caminhos de acesso indiretos.
+
+---
+
+## Incidente 04 — Secret comprometido
+
+### Situação
+
+Uma aplicação possui um secret que não deveria existir.
+
+### Ação
+
+```text
+Identificar
+↓
+Registrar evidência
+↓
+Revogar secret
+↓
+Testar falha
+↓
+Migrar para mecanismo adequado
+↓
+Validar
+```
+
+Nunca publique o secret como evidência.
+
+---
+
+## Incidente 05 — Leaver incompleto
+
+### Situação
+
+Usuário foi desabilitado, mas ainda existe acesso residual.
+
+### Investigue
+
+- groups;
+- roles;
+- applications;
+- guest relationships;
+- workload access;
+- tokens/sessões conforme mecanismo suportado.
+
+### Pergunta de entrevista
+
+> Por que desabilitar o usuário não é automaticamente sinônimo de offboarding completo?
+
+---
+
+# 31. 🔴 Fase 25 — Projeto corporativo final
 
 ## Empresa fictícia
 
-`ACME Brasil`
+**ACME Brasil**
 
 Departamentos:
 
-- IAM;
-- SOC;
-- TI;
-- Financeiro;
-- RH.
+```text
+TI
+IAM
+SOC
+Financeiro
+RH
+```
 
 ## Requisitos
 
-### Identidade
+### Identidades
 
 - usuários;
 - grupos;
-- guests;
+- convidados;
 - contas administrativas;
-- break-glass.
+- conta de emergência.
 
 ### Autenticação
 
 - MFA;
-- método moderno quando disponível;
+- método de autenticação adequado;
 - SSPR.
 
 ### Autorização
 
-- grupos;
 - RBAC;
+- grupos;
 - least privilege;
 - segregação de funções.
 
 ### Conditional Access
 
-- MFA administrativo;
+- MFA para cenário definido;
 - bloqueio de autenticação legada;
-- política por aplicação;
-- localização/dispositivo quando disponíveis.
+- aplicação específica;
+- administração privilegiada;
+- risco quando licenciado.
 
-### Privilégio
+### Governança
+
+- Access Review;
+- Access Package;
+- JML;
+- revisão de guest.
+
+### Privilege
 
 - PIM/JIT quando licenciado;
-- duração curta;
-- MFA/justificativa/aprovação quando disponível;
+- ativação;
+- expiração;
 - auditoria.
 
-### Aplicações
+### Applications
 
 - Enterprise Application;
 - SSO;
 - App Registration;
 - Service Principal;
-- delegated/application permissions.
+- API permissions.
 
 ### Workload
 
 - Managed Identity;
-- Federation quando possível.
-
-### Governança
-
-- Access Review;
-- Access Package quando disponível;
-- JML;
-- revisão de guests.
+- Workload Federation quando possível.
 
 ### Automação
 
 - Graph;
+- PowerShell;
 - relatório;
-- Joiner;
-- Leaver.
+- JML.
 
-### Investigação
+### Monitoramento
 
-Você deve conseguir explicar:
-
-`quem autenticou → qual aplicação → qual recurso → de onde → quais políticas → qual privilégio → qual alteração → qual evidência → como revogar`
-
----
-
-# 32. Matriz de validação
-
-| ID | Cenário | Positivo | Negativo | Log |
-|---|---|---|---|---|
-| T01 | Login | permitido | credencial inválida | Sign-in |
-| T02 | Grupo | acesso concedido | membership removido | Audit |
-| T03 | RBAC Reader | leitura | alteração | Audit |
-| T04 | MFA | MFA solicitado | fator inválido | Sign-in |
-| T05 | SSPR | reset concluído | validação falha | logs |
-| T06 | CA MFA | acesso + MFA | política sem requisito | Sign-in |
-| T07 | CA Legacy | moderno permitido | legado bloqueado | Sign-in |
-| T08 | CA Location | local permitido | local bloqueado | Sign-in |
-| T09 | CA Admin | admin protegido | condição ausente | Sign-in |
-| T10 | What If | política identificada | conflito | What If |
-| T11 | Guest | acesso | guest removido | Audit/Sign-in |
-| T12 | SSO | login | assignment removido | Sign-in |
-| T13 | API delegated | operação | permission removida | logs |
-| T14 | API application | operação | permission removida | logs |
-| T15 | Managed Identity | acesso | role removida | Azure logs |
-| T16 | Federation | token aceito | claim inválida | logs |
-| T17 | PIM | ativação | sem ativação/expirado | PIM/Audit |
-| T18 | Access Review | acesso mantido | deny remove | Review |
-| T19 | JML Joiner | acesso correto | grupo ausente | Audit |
-| T20 | JML Mover | novo acesso | antigo removido | Audit |
-| T21 | JML Leaver | login bloqueado | acesso residual | Audit |
-| T22 | SP | operação | role removida | Audit |
-| T23 | Secret | autentica | revogado falha | logs |
-| T24 | Privilege escalation | detectado | removido | Audit |
+- Sign-in Logs;
+- Audit Logs;
+- investigação de alteração privilegiada.
 
 ---
 
-# 33. Evidências
+# 32. 🧪 Matriz de testes
 
-Use uma estrutura local:
+| ID | Cenário | Resultado esperado | Evidência |
+|---|---|---|---|
+| T01 | Login normal | Permitido | Sign-in Log |
+| T02 | Usuário sem acesso | Negado | Sign-in Log |
+| T03 | MFA | Desafio | Sign-in Log |
+| T04 | CA Report-only | Impacto registrado | CA/Log |
+| T05 | CA bloqueio | Negado | Log |
+| T06 | What If | Política identificada | Screenshot |
+| T07 | RBAC Reader | Leitura | Evidência |
+| T08 | RBAC sem permissão | Negado | Evidência |
+| T09 | Grupo concede acesso | Permitido | Evidência |
+| T10 | Grupo removido | Negado | Evidência |
+| T11 | Guest | Acesso controlado | Log |
+| T12 | Guest removido | Negado | Log |
+| T13 | SSO | Login funcional | Log |
+| T14 | App Registration | Identidade criada | Evidência |
+| T15 | API permission | Acesso autorizado | Log |
+| T16 | API permission removida | Negado | Log |
+| T17 | Service Principal | Identidade encontrada | Evidência |
+| T18 | Managed Identity | Acesso sem secret | Log |
+| T19 | Role removida | Negado | Evidência |
+| T20 | Federation válida | Permitido | Log |
+| T21 | Federation inválida | Negado | Log |
+| T22 | PIM sem ativação | Negado | Log |
+| T23 | PIM ativado | Permitido | Log |
+| T24 | PIM expirado | Negado | Log |
+| T25 | Access Review deny | Revogado | Review |
+| T26 | Joiner | Acesso correto | Evidência |
+| T27 | Mover | Acesso antigo removido | Evidência |
+| T28 | Leaver | Identidade bloqueada | Evidência |
+| T29 | Secret revogado | Falha esperada | Log |
+| T30 | Privilégio excessivo | Detectado/removido | Audit Log |
+
+---
+
+# 33. 📸 Evidências
+
+Crie localmente:
 
 ```text
 01-IAM/
@@ -1553,141 +2004,263 @@ Use uma estrutura local:
     ├── 04-authentication/
     ├── 05-conditional-access/
     ├── 06-logs/
-    ├── 07-guests/
+    ├── 07-guest/
     ├── 08-applications/
-    ├── 09-workload/
+    ├── 09-workload-identity/
     ├── 10-pim/
     ├── 11-governance/
     ├── 12-automation/
-    └── 13-investigation/
+    └── 13-incidents/
 ```
 
-Nomeie evidências:
+## Modelo de evidência
 
-`T07-CA-Legacy-blocked.png`
+Para cada exercício registre:
 
-`T17-PIM-expired.png`
+```text
+ID:
+Objetivo:
+Data:
+Pré-requisito:
+Configuração:
+Teste positivo:
+Teste negativo:
+Resultado:
+Log consultado:
+Problema encontrado:
+Correção:
+Rollback:
+Lição aprendida:
+```
 
-`C01-Privilege-escalation-audit.png`
+### Sanitização
 
-Antes de publicar, remova:
+Antes de colocar qualquer screenshot no GitHub:
 
-- senhas;
-- secrets;
-- tokens;
-- cookies;
-- recovery codes;
-- QR codes;
-- dados pessoais reais;
-- IPs públicos desnecessários.
-
----
-
-# 34. Critérios de conclusão
-
-Você concluiu o laboratório quando consegue, sem copiar o passo a passo:
-
-- criar e administrar usuários;
-- modelar grupos;
-- explicar RBAC e least privilege;
-- configurar/testar MFA;
-- executar SSPR;
-- construir Conditional Access com Report-only;
-- usar What If;
-- investigar Sign-in Logs;
-- investigar Audit Logs;
-- administrar guest/B2B;
-- explicar Enterprise Application e SSO;
-- criar App Registration;
-- diferenciar Application e Service Principal;
-- explicar delegated vs application permissions;
-- testar Managed Identity;
-- explicar Workload Identity Federation;
-- usar PIM/JIT quando licenciado;
-- executar Access Review quando disponível;
-- explicar Entitlement Management;
-- modelar JML;
-- explicar Identity Protection;
-- automatizar tarefas simples com Graph;
-- investigar privilege escalation;
-- revogar acesso;
-- explicar o caminho completo de uma autorização.
-
-## Teste de maturidade
-
-Escolha uma solicitação corporativa:
-
-> “Somente o time Finance deve acessar a aplicação financeira, administradores devem usar privilégio temporário e todo acesso precisa ser revisável.”
-
-Você deve conseguir desenhar e implementar:
-
-`Usuário → Grupo → App → CA/MFA → RBAC → PIM → Access Review → Logs → Revogação`
-
-Se consegue fazer isso e explicar cada decisão, o laboratório cumpriu seu objetivo.
+- remova e-mails reais;
+- remova Tenant ID quando não for necessário;
+- remova IP público;
+- remova secrets;
+- remova tokens;
+- remova cookies;
+- remova recovery codes;
+- remova dados pessoais.
 
 ---
 
-# 35. Fontes oficiais
+# 34. 🧩 Troubleshooting padrão
 
-- Microsoft Entra ID: https://learn.microsoft.com/pt-br/entra/identity/
-- Usuários e grupos: https://learn.microsoft.com/pt-br/entra/identity/users/
-- Conditional Access: https://learn.microsoft.com/pt-br/entra/identity/conditional-access/
-- Planejamento de Conditional Access: https://learn.microsoft.com/pt-br/entra/identity/conditional-access/plan-conditional-access
-- PIM: https://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-getting-started
-- PIM deployment: https://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-deployment-plan
-- Identity Governance: https://learn.microsoft.com/pt-br/entra/id-governance/identity-governance-overview
-- Workload Identity: https://learn.microsoft.com/en-us/entra/workload-id/
-- Workload identities overview: https://learn.microsoft.com/en-us/entra/workload-id/workload-identities-overview
-- Microsoft Graph PowerShell: https://learn.microsoft.com/en-us/powershell/microsoftgraph/
+Quando algo falhar, não altere dez coisas ao mesmo tempo.
+
+Use:
+
+```text
+1. Reproduzir
+2. Registrar horário
+3. Identificar usuário
+4. Identificar aplicação
+5. Verificar Sign-in Log
+6. Verificar Audit Log
+7. Verificar Conditional Access
+8. Usar What If quando aplicável
+9. Isolar uma variável
+10. Corrigir
+11. Repetir
+12. Documentar
+```
+
+## Regra
+
+> **Um problema de IAM deve gerar uma hipótese testável.**
+
+Exemplo:
+
+> "Acesso foi negado porque a política `LAB-CA-001` exigiu MFA e o usuário não concluiu o requisito."
+
+Isso é melhor do que:
+
+> "O Entra bloqueou."
 
 ---
 
-# 🏁 Modelo mental final
+# 35. 📊 Checklist de competência
 
-IAM no Entra não é decorar menus.
+## Básico
 
-O raciocínio profissional é:
+- [ ] explicar tenant;
+- [ ] criar usuário;
+- [ ] criar grupo;
+- [ ] administrar membership;
+- [ ] explicar authentication vs authorization;
+- [ ] explicar RBAC;
+- [ ] aplicar least privilege.
 
-`IDENTIDADE`
+## Intermediário
 
-↓
+- [ ] configurar MFA;
+- [ ] testar SSPR;
+- [ ] criar Conditional Access;
+- [ ] usar Report-only;
+- [ ] usar What If;
+- [ ] interpretar Sign-in Logs;
+- [ ] interpretar Audit Logs;
+- [ ] administrar guest;
+- [ ] configurar SSO.
 
-`AUTENTICAÇÃO`
+## Avançado
 
-↓
+- [ ] explicar Application vs Service Principal;
+- [ ] diferenciar delegated/application permissions;
+- [ ] aplicar least privilege a API permissions;
+- [ ] usar Managed Identity;
+- [ ] explicar Workload Federation;
+- [ ] configurar/testar PIM quando licenciado;
+- [ ] executar Access Review;
+- [ ] modelar Access Package;
+- [ ] modelar JML;
+- [ ] investigar identidade de workload;
+- [ ] automatizar com Graph;
+- [ ] explicar PAM/JEA/PAW.
 
-`SINAIS / CONTEXTO`
+## Profissional
 
-↓
+Você terminou quando consegue responder sem o manual:
 
-`CONDITIONAL ACCESS`
+> **Quem acessou?**
+>
+> **Como autenticou?**
+>
+> **Qual aplicação acessou?**
+>
+> **Qual política foi aplicada?**
+>
+> **Qual privilégio possuía?**
+>
+> **Por que a autorização foi permitida ou negada?**
+>
+> **Quem concedeu o acesso?**
+>
+> **Esse acesso deveria continuar existindo?**
+>
+> **Como revogar?**
+>
+> **Qual evidência prova o que aconteceu?**
 
-↓
+---
 
-`AUTORIZAÇÃO / RBAC`
+# 36. 🏆 Desafio final sem tutorial
 
-↓
+Crie o cenário abaixo sem consultar as etapas anteriores.
 
-`PRIVILÉGIO / PIM`
+> A empresa precisa integrar uma aplicação SaaS. Somente usuários do grupo Finance podem acessá-la. Administradores devem utilizar autenticação forte. O acesso deve ser revisado periodicamente. Uma aplicação de backend precisa acessar um recurso Azure sem armazenar secret. Um administrador não pode permanecer permanentemente privilegiado.
 
-↓
+Você deverá montar:
 
-`APLICAÇÃO / WORKLOAD`
+```text
+Users
+  ↓
+Groups
+  ↓
+Application
+  ↓
+RBAC / Assignment
+  ↓
+Conditional Access
+  ↓
+MFA
+  ↓
+Access Review
+  ↓
+PIM/JIT
+  ↓
+Managed Identity
+  ↓
+Logs
+  ↓
+Investigation
+  ↓
+Revocation
+```
 
-↓
+### Critério de aprovação
 
-`GOVERNANÇA`
+Não basta funcionar.
 
-↓
+Você precisa entregar:
 
-`LOG / AUDITORIA`
+1. arquitetura;
+2. requisitos;
+3. matriz de acesso;
+4. configurações;
+5. testes positivos;
+6. testes negativos;
+7. evidências;
+8. logs;
+9. troubleshooting;
+10. rollback;
+11. riscos identificados;
+12. melhorias recomendadas.
 
-↓
+---
 
-`AUTOMAÇÃO`
+# 37. 📚 Referências oficiais
 
-↓
+Priorize documentação oficial e valide licenciamento antes de executar recursos avançados.
 
-`REVOGAÇÃO`
+- [Microsoft Entra ID](https://learn.microsoft.com/pt-br/entra/identity/)
+- [Conditional Access](https://learn.microsoft.com/pt-br/entra/identity/conditional-access/)
+- [Planejamento de Conditional Access](https://learn.microsoft.com/pt-br/entra/identity/conditional-access/plan-conditional-access)
+- [Conditional Access — visão geral e licenciamento](https://learn.microsoft.com/pt-br/entra/identity/conditional-access/overview)
+- [Microsoft Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing)
+- [Identity Governance](https://learn.microsoft.com/pt-br/entra/id-governance/)
+- [Identity Governance — visão geral](https://learn.microsoft.com/pt-br/entra/id-governance/identity-governance-overview)
+- [Boas práticas de Identity Governance](https://learn.microsoft.com/en-us/entra/id-governance/best-practices-secure-id-governance)
+- [Privileged Identity Management](https://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/)
+- [Planejamento de PIM](https://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-deployment-plan)
+- [Microsoft Entra Workload ID](https://learn.microsoft.com/en-us/entra/workload-id/)
+- [Conditional Access para Workload Identities](https://learn.microsoft.com/pt-br/entra/identity/conditional-access/workload-identity)
+- [Boas práticas de segurança do Entra](https://learn.microsoft.com/en-us/entra/architecture/secure-best-practices)
+- [Operações de segurança do Entra](https://learn.microsoft.com/pt-br/entra/architecture/security-operations-introduction)
+- [Contas privilegiadas](https://learn.microsoft.com/en-us/entra/architecture/security-operations-privileged-accounts)
 
-O objetivo do laboratório é conseguir implementar, testar, investigar e explicar esse fluxo de ponta a ponta.
+---
+
+# 🚀 Resultado final
+
+Ao concluir este laboratório, o objetivo não é apenas saber navegar pelo Microsoft Entra.
+
+Você deverá conseguir pegar um requisito como:
+
+> **"Somente pessoas autorizadas devem acessar o recurso, com privilégio mínimo, autenticação adequada, acesso privilegiado temporário, governança contínua e evidência auditável."**
+
+E transformá-lo em:
+
+```text
+REQUISITO
+   ↓
+IDENTIDADE
+   ↓
+GRUPO / ROLE
+   ↓
+AUTENTICAÇÃO
+   ↓
+CONDITIONAL ACCESS
+   ↓
+RBAC
+   ↓
+PIM / JIT
+   ↓
+APLICAÇÃO / WORKLOAD
+   ↓
+GOVERNANÇA
+   ↓
+LOG
+   ↓
+INVESTIGAÇÃO
+   ↓
+REVOGAÇÃO
+   ↓
+EVIDÊNCIA
+```
+
+> 🛡️ **Esse é o objetivo do Study IAM: sair do "sei configurar Entra" para "sei projetar, implementar, testar, investigar e governar identidade e acesso".**
