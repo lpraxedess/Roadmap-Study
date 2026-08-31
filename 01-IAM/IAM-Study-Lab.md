@@ -1,299 +1,151 @@
-# 🛡️ IAM Study Lab — Microsoft Entra ID do Básico ao Avançado
+# 🛡️ IAM Study Lab — Microsoft Entra ID + IGA + PAM
 
-> **Manual prático para evolução profissional em IAM.**
->
-> Eixo principal: Microsoft Entra ID. Trilhas complementares: Active Directory, JML, RBAC/ABAC, MFA, Conditional Access, SSO, SAML, OIDC, OAuth2, SCIM, workload identity, IGA, PIM, PAM, Teleport CE, PowerShell, Graph, KQL, cloud, ITSM, auditoria e arquitetura.
->
-> **Método:** entender → preparar → configurar → testar → quebrar → investigar → corrigir → revogar → documentar → explicar.
+> **Manual prático.** Faça, teste, quebre, investigue, corrija, revogue e documente.
 
-![Microsoft Entra](https://img.shields.io/badge/Microsoft-Entra%20ID-0078D4?style=for-the-badge&logo=microsoft)
-![IAM](https://img.shields.io/badge/Focus-IAM-6f42c1?style=for-the-badge)
-![Hands On](https://img.shields.io/badge/Lab-Hands--On-2ea44b?style=for-the-badge)
-![Career](https://img.shields.io/badge/Career-Junior%20%E2%86%92%20Senior-orange?style=for-the-badge)
-
----
+![Entra](https://img.shields.io/badge/Microsoft-Entra%20ID-0078D4?style=for-the-badge&logo=microsoft)
+![IAM](https://img.shields.io/badge/IAM-Hands--On-6f42c1?style=for-the-badge)
+![PAM](https://img.shields.io/badge/PAM-Teleport%20CE-2ea44f?style=for-the-badge)
 
 ## 🧭 Navegação
 
-- [1. Objetivo](#1--objetivo)
-- [2. Método de estudo](#2--método-de-estudo)
-- [3. Arquitetura mínima](#3--arquitetura-mínima)
-- [4. Estratégia para 1 P2](#4--estratégia-para-1-p2)
-- [5. Preparação](#5--preparação)
-- [6. Mapa de carreira](#6--mapa-de-carreira)
-- [7. IAM Fundamentals](#7--iam-fundamentals)
-- [8. Active Directory](#8--active-directory)
-- [9. Users e Groups](#9--users-e-groups)
-- [10. RBAC / ABAC / Least Privilege](#10--rbac--abac--least-privilege)
-- [11. MFA / SSPR](#11--mfa--sspr)
-- [12. Conditional Access](#12--conditional-access)
-- [13. Logs / KQL / Investigação](#13--logs--kql--investigação)
-- [14. B2B / External Identity](#14--b2b--external-identity)
-- [15. SSO / SAML](#15--sso--saml)
-- [16. OIDC / OAuth2](#16--oidc--oauth2)
-- [17. Applications / APIs / Service Principals](#17--applications--apis--service-principals)
-- [18. Managed Identity / Workload Federation](#18--managed-identity--workload-federation)
-- [19. JML](#19--jml)
-- [20. IGA / SoD / Access Reviews](#20--iga--sod--access-reviews)
-- [21. Entitlement Management](#21--entitlement-management)
-- [22. Lifecycle Workflows](#22--lifecycle-workflows)
-- [23. PIM / JIT](#23--pim--jit)
-- [24. PAM Fundamentals](#24--pam-fundamentals)
-- [25. Teleport Community Edition](#25--teleport-community-edition)
-- [26. JEA / PAW / Break-glass](#26--jea--paw--break-glass)
-- [27. PowerShell / Graph / REST](#27--powershell--graph--rest)
-- [28. Hybrid Identity](#28--hybrid-identity)
-- [29. Cloud IAM](#29--cloud-iam)
-- [30. IGA / SailPoint](#30--iga--sailpoint)
-- [31. PAM Enterprise](#31--pam-enterprise)
-- [32. ITSM](#32--itsm)
-- [33. Auditoria / Compliance](#33--auditoria--compliance)
-- [34. Arquitetura IAM](#34--arquitetura-iam)
-- [35. Projeto final](#35--projeto-final)
-- [36. Evidências](#36--evidências)
-- [37. Portfólio / Entrevistas](#37--portfólio--entrevistas)
-- [38. Evolução de carreira](#38--evolução-de-carreira)
-- [39. Checklist](#39--checklist)
-- [40. Referências](#40--referências)
+- [0. Método](#0-método)
+- [1. Ambiente](#1-ambiente)
+- [2. IAM Fundamentals](#2-iam-fundamentals)
+- [3. Active Directory](#3-active-directory)
+- [4. Entra ID](#4-entra-id)
+- [5. MFA e SSPR](#5-mfa-e-sspr)
+- [6. Conditional Access](#6-conditional-access)
+- [7. RBAC e ABAC](#7-rbac-e-abac)
+- [8. Logs e KQL](#8-logs-e-kql)
+- [9. B2B](#9-b2b)
+- [10. SSO, SAML, OIDC e OAuth2](#10-sso-saml-oidc-e-oauth2)
+- [11. Applications, APIs e SCIM](#11-applications-apis-e-scim)
+- [12. Workload Identity](#12-workload-identity)
+- [13. JML](#13-jml)
+- [14. IGA, SoD e Access Reviews](#14-iga-sod-e-access-reviews)
+- [15. Entitlement Management](#15-entitlement-management)
+- [16. Lifecycle Workflows](#16-lifecycle-workflows)
+- [17. PIM](#17-pim)
+- [18. PAM](#18-pam)
+- [19. Teleport Community Edition](#19-teleport-community-edition)
+- [20. JEA, PAW e Break-glass](#20-jea-paw-e-break-glass)
+- [21. PowerShell, Graph e REST](#21-powershell-graph-e-rest)
+- [22. Hybrid Identity](#22-hybrid-identity)
+- [23. Cloud IAM](#23-cloud-iam)
+- [24. SailPoint e IGA Enterprise](#24-sailpoint-e-iga-enterprise)
+- [25. PAM Enterprise](#25-pam-enterprise)
+- [26. ITSM](#26-itsm)
+- [27. Auditoria e Compliance](#27-auditoria-e-compliance)
+- [28. Arquitetura](#28-arquitetura)
+- [29. Projeto final](#29-projeto-final)
+- [30. Portfólio e entrevistas](#30-portfólio-e-entrevistas)
+- [31. Checklist](#31-checklist)
 
 ---
 
-# 1. 🎯 Objetivo
+# 0. Método
 
-Este projeto transforma sua experiência de infraestrutura, redes e segurança em uma trilha profissional de **IAM → IGA → IAM Engineering → arquitetura**.
+## Regra
 
-A versão atual da SC-300, com competências medidas desde 27/04/2026, organiza o domínio em quatro áreas: identidades de usuários, autenticação/acesso, workload identities e governança. A Microsoft também espera familiaridade com Azure, Microsoft 365, AD DS, PowerShell e KQL. ([Microsoft Learn — SC-300](https://learn.microsoft.com/pt-br/credentials/certifications/resources/study-guides/sc-300))
+**Não avance porque leu. Avance porque executou.**
 
-O objetivo não é decorar telas. É conseguir responder, com evidência:
+Em cada missão:
 
-> **Quem é a identidade, como foi autenticada, por que recebeu o acesso, quem autorizou, por quanto tempo, qual privilégio possui, onde funciona, como revogar e como provar tudo isso para auditoria?**
-
----
-
-# 2. 🧠 Método de estudo
-
-## Regra 70/20/10
-
-- **70%:** prática.
-- **20%:** documentação, logs e troubleshooting.
-- **10%:** teoria.
-
-## Ciclo de cada missão
-
-1. Leia o objetivo.
-2. Explique o conceito com suas palavras.
-3. Diga qual risco ele reduz.
-4. Verifique pré-requisitos e licença.
-5. Configure o menor cenário possível.
-6. Faça teste positivo.
-7. Faça teste negativo.
-8. Provoque uma falha controlada.
-9. Localize o log.
+1. Leia **O que é**.
+2. Leia **Por que usar**.
+3. Leia **Quando usar**.
+4. Confira **pré-requisitos/licença**.
+5. Configure.
+6. Teste permitido.
+7. Teste negado.
+8. Quebre uma configuração de propósito.
+9. Investigue o log.
 10. Corrija.
-11. Faça rollback.
-12. Repita sem consultar o manual.
-13. Registre a evidência.
-14. Explique o cenário em 60 segundos.
+11. Revogue.
+12. Repita sem consulta.
+13. Salve evidência.
+14. Explique em 60 segundos.
 
-### Critério de domínio
+### Checklist por missão
 
-```text
-[ ] Sei o que é
-[ ] Sei por que existe
-[ ] Sei quando usar
-[ ] Sei os pré-requisitos/licenciamento
-[ ] Sei configurar
-[ ] Sei testar permitido
-[ ] Sei testar negado
-[ ] Sei investigar
-[ ] Sei corrigir
-[ ] Sei revogar
-[ ] Tenho evidência
-[ ] Consigo explicar em entrevista
-```
+- [ ] Sei o que é
+- [ ] Sei por que usar
+- [ ] Sei quando usar
+- [ ] Sei configurar
+- [ ] Sei testar
+- [ ] Sei negar
+- [ ] Sei investigar
+- [ ] Sei corrigir
+- [ ] Sei revogar
+- [ ] Tenho evidência
+- [ ] Consigo explicar
 
 ---
 
-# 3. 💻 Arquitetura mínima
+# 1. Ambiente
 
-A máquina não precisa manter todas as VMs ligadas.
+## Arquitetura econômica
 
 ```text
-SEU PC
+PC
 ├── Browser
 ├── PowerShell
-└── Graph SDK
+└── Microsoft Graph
       │
       ▼
-MICROSOFT ENTRA ID
+Microsoft Entra ID
 ├── Users / Groups
-├── Authentication / CA
+├── MFA / CA
 ├── RBAC / PIM
 ├── Applications
-├── Workload Identities
 ├── Governance
 └── Logs
       │
-      ├── Azure VM temporária
-      ├── Linux + Teleport CE
-      └── Windows Server AD somente na fase híbrida
+      ├── Windows Server AD  ← somente Hybrid
+      ├── Linux + Teleport   ← somente PAM
+      └── DB/K8s             ← opcional
 ```
 
-| Componente | Quando ligar |
+### VMs
+
+| VM | Ligue quando |
 |---|---|
-| Entra ID | Sempre |
-| Teleport CE | PAM |
-| Linux target | PAM/SSH |
-| Windows Server | AD/Hybrid |
-| Windows Client | JEA/PAW/dispositivo |
-| PostgreSQL | Database Access opcional |
-| Kubernetes | Somente etapa avançada |
+| `LAB-DC01` | AD/Hybrid |
+| `LAB-TELEPORT` | PAM |
+| `LAB-LINUX01` | PAM/SSH |
+| `LAB-DB01` | Database Access |
+| `LAB-K8S01` | Kubernetes |
 
-**Regra:** desligue a VM quando ela não participar do exercício.
-
----
-
-# 4. 💰 Estratégia para 1 P2
-
-Você possui **1 licença Microsoft Entra ID P2**. Ela deve ser usada de forma estratégica e dentro do licenciamento real.
-
-## Identidade P2 principal
-
-```text
-LAB-P2-ADMIN
-```
-
-Use-a para os exercícios que realmente exigirem P2, especialmente PIM e recursos de risco/governança aplicáveis ao seu tenant.
-
-A Microsoft informa que PIM exige Microsoft Entra ID P2 ou Microsoft Entra ID Governance e que existem requisitos de licenciamento para usuários elegíveis, aprovadores e participantes de determinados recursos de governança. Consulte a matriz oficial antes de cada laboratório. ([Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing))
-
-## Regra de laboratório
-
-Você pode explorar uma funcionalidade em uma identidade por vez quando isso for compatível com sua licença, mas **não use troca de licença como modelo de implantação corporativa**. Se um cenário exigir licenciamento para vários usuários, registre a limitação ou use uma licença/trial adicional legítima.
-
-| Recurso | Estratégia |
-|---|---|
-| Users / Groups | usuários de laboratório |
-| RBAC | cenário mínimo |
-| MFA / SSPR | usuários de teste |
-| Conditional Access | validar requisitos atuais |
-| Identity Protection | P2 no escopo mínimo |
-| PIM | P2 no escopo mínimo |
-| Access Reviews | somente escopo licenciado |
-| Entitlement Management | validar licença atual |
-| Lifecycle Workflows | executar se disponível; caso contrário simular |
-
----
-
-# 5. 🔐 Preparação
+**Desligue tudo que não participa da missão.**
 
 ## Identidades
 
-| Nome | Uso |
+| Identidade | Uso |
 |---|---|
-| `LAB-P2-ADMIN` | P2 / administração |
+| `LAB-P2-ADMIN` | P2 / PIM / governança |
 | `LAB-BREAKGLASS` | recuperação |
-| `LAB-USER-ANA` | teste permitido |
-| `LAB-USER-JOAO` | teste negado |
+| `LAB-USER-ANA` | permitido |
+| `LAB-USER-JOAO` | negado |
 | `LAB-USER-MARIA` | JML |
 | `LAB-USER-CARLOS` | privilégio |
 | `LAB-GUEST-PARTNER` | B2B |
 | `LAB-APP-TEST` | aplicação |
 
-## Convenções
-
-```text
-LAB-USER-*
-LAB-GRP-*
-LAB-ROLE-*
-LAB-CA-*
-LAB-APP-*
-LAB-SP-*
-LAB-PIM-*
-LAB-AR-*
-LAB-PACK-*
-LAB-JML-*
-```
-
-## Break-glass
-
-Antes de criar Conditional Access:
-
-- [ ] conta criada;
-- [ ] recuperação validada;
-- [ ] não está indevidamente no escopo de bloqueio;
-- [ ] uso será monitorado.
-
-Nunca publique no GitHub senhas, tokens, secrets, chaves privadas, recovery codes ou dados pessoais reais.
+Nunca publique credenciais, tokens, secrets, private keys ou recovery codes.
 
 ---
 
-# 6. 🗺️ Mapa de carreira
+# 2. IAM Fundamentals
 
-```text
-IAM Fundamentals
-      ↓
-AD / Entra ID
-      ↓
-Authentication / MFA / SSO
-      ↓
-Authorization / RBAC / ABAC
-      ↓
-JML
-      ↓
-SAML / OIDC / OAuth2 / SCIM
-      ↓
-Workload Identity
-      ↓
-IGA / SoD / Access Reviews
-      ↓
-PIM
-      ↓
-PAM — Teleport CE
-      ↓
-PowerShell / Graph / REST / Python
-      ↓
-KQL / Investigation / Audit
-      ↓
-Hybrid Identity / Cloud IAM
-      ↓
-ITSM / Compliance
-      ↓
-SailPoint / PAM Enterprise
-      ↓
-IAM Engineering
-      ↓
-IAM Architecture
-```
+## O que é
 
-| Senioridade | Você deve conseguir |
-|---|---|
-| Entrada | operar identidades, MFA, JML e acessos |
-| Júnior | administrar Entra/AD, controles e automação básica |
-| Pleno | projetar JML, RBAC, SSO, IGA, APIs e governança |
-| Sênior | arquitetura, IGA/PAM, cloud, risco, auditoria e liderança técnica |
+Controle do ciclo de vida, autenticação, autorização e privilégio de identidades humanas e não humanas.
 
----
+## Por que usar
 
-# 7. 👤 IAM Fundamentals
+Reduz acesso excessivo, permanente e sem rastreabilidade.
 
-## Aprenda
-
-- identidade;
-- conta;
-- autenticação;
-- autorização;
-- entitlement;
-- role;
-- grupo;
-- privilégio;
-- sessão;
-- identidade humana;
-- identidade não humana;
-- service account;
-- workload identity.
-
-## Prática
+## Faça
 
 Desenhe:
 
@@ -313,64 +165,207 @@ Recurso
 Auditoria
 ```
 
-Depois explique, sem consulta, por que autenticação e autorização são problemas diferentes.
+Explique sem consulta:
+
+- Authentication = quem é?
+- Authorization = o que pode fazer?
+- Entitlement = qual permissão concreta?
+- Role = conjunto lógico de permissões?
 
 ---
 
-# 8. 🏢 Active Directory
+# 3. Active Directory
 
-## O que aprender
+## Você precisa dominar
 
-Usuários, grupos, OUs, GPO, DNS, LDAP, Kerberos, permissões, delegação, contas privilegiadas, service accounts, trusts e sincronização com Entra.
+Users, groups, OUs, GPO, DNS, LDAP, Kerberos, permissões, delegação, service accounts, privilégios, trusts e sincronização.
 
-## Laboratório
+## Montagem
 
-1. Criar domínio.
-2. Criar OUs `Users`, `Servers`, `Workstations`, `Admins`.
-3. Criar grupos por função.
-4. Criar usuários.
-5. Aplicar GPO simples.
-6. Testar login.
-7. Testar acesso por grupo.
-8. Remover grupo.
-9. Confirmar perda de acesso.
-10. Investigar eventos.
+1. VirtualBox → **New** → `LAB-DC01`.
+2. Instale Windows Server.
+3. Configure IP estático.
+4. **Server Manager → Add roles and features**.
+5. Instale **Active Directory Domain Services** e **DNS**.
+6. Promova para novo domínio, por exemplo `lab.local`.
+7. Reinicie.
+8. **Tools → Active Directory Users and Computers**.
+9. Crie OUs `Users`, `Groups`, `Servers`, `Workstations`, `Admins`.
 
-**Pergunta:** por que grupos são preferíveis a permissões individuais?
+## Missão
+
+Crie:
+
+```text
+LAB-GRP-FINANCE
+LAB-GRP-IT
+LAB-GRP-ADMINS
+```
+
+Crie usuários e associe grupos.
+
+### Teste
+
+Grupo → permissão → acesso.
+
+Remova grupo → acesso negado.
+
+### Quebre
+
+Dê permissão diretamente ao usuário.
+
+Depois remova e modele novamente via grupo.
+
+### Explique
+
+Por que grupo melhora escala, revisão e governança?
 
 ---
 
-# 9. 👥 Users e Groups
+# 4. Entra ID
 
-## O que é
+## 4.1 Usuário
 
-Usuário representa uma identidade. Grupo fornece uma forma escalável de associar identidades a acesso.
+### O que
 
-## Como
+Identidade cloud.
 
-**Entra admin center → Identity → Users → All users → New user**
+### Faça
 
-Crie ANA, JOAO e MARIA.
+1. Abra **Microsoft Entra admin center**.
+2. **Identity → Users → All users**.
+3. **New user → Create new user**.
+4. Crie `LAB-USER-ANA`.
+5. Defina senha temporária.
+6. Salve.
 
-Depois:
+### Teste
 
-**Identity → Groups → All groups → New group**
+Login com ANA.
 
-Crie `LAB-GRP-FINANCE` e adicione ANA.
+## 4.2 Grupo
+
+1. **Identity → Groups → All groups**.
+2. **New group**.
+3. Crie `LAB-GRP-FINANCE`.
+4. Adicione ANA.
+5. Conceda um acesso ao grupo.
+6. Teste ANA.
+7. Remova ANA.
+8. Teste novamente.
+
+## 4.3 Role
+
+1. **Identity → Roles & admins**.
+2. Selecione role de laboratório.
+3. Examine escopo e permissões.
+4. Não conceda privilégio administrativo desnecessário.
+
+Monte:
+
+```text
+Identidade → Role → Escopo → Motivo → Prazo
+```
+
+---
+
+# 5. MFA e SSPR
+
+## MFA
+
+### Por que
+
+Reduz o risco de credencial comprometida.
+
+### Faça
+
+1. Selecione ANA.
+2. Configure método de autenticação disponível.
+3. Faça login.
+4. Complete MFA.
+5. Abra **Entra ID → Monitoring & health → Sign-in logs**.
+6. Localize o evento.
+
+### Quebre
+
+Tente autenticar sem satisfazer o requisito.
+
+### Investigue
+
+Identifique resultado, política e método.
+
+## SSPR
+
+Teste:
+
+```text
+Senha esquecida
+ ↓
+Verificação
+ ↓
+Reset
+ ↓
+Novo login
+```
+
+Explique por que SSPR não é autorização.
+
+---
+
+# 6. Conditional Access
+
+## O que
+
+Decide acesso usando identidade, recurso, localização, dispositivo, risco e condições.
+
+## Por que
+
+Transforma política de segurança em decisão técnica.
+
+## Faça primeiro
+
+Confirme que `LAB-BREAKGLASS` não será bloqueada.
+
+## Criar política
+
+1. **Protection → Conditional Access → Policies**.
+2. **New policy**.
+3. Nome `LAB-CA-001-MFA`.
+4. **Users** → somente ANA.
+5. **Target resources** → menor escopo possível.
+6. **Grant** → MFA.
+7. **Report-only**.
+8. Salve.
 
 ## Teste
 
-Conceda acesso ao grupo → ANA acessa.
+1. Faça login com ANA.
+2. Abra **Sign-in logs**.
+3. Examine a avaliação da política.
 
-Remova ANA → ANA perde o acesso.
+## Quebre
 
-## Teste negativo
+Altere uma condição de forma controlada.
 
-Tente acessar sem membership e registre a evidência.
+## Corrija
+
+Retorne à configuração anterior.
+
+## Evolução
+
+Repita para cenários de:
+
+- MFA;
+- localização;
+- dispositivo;
+- risco;
+- sessão.
+
+Use **Report-only → teste → log → ativação**.
 
 ---
 
-# 10. 🔐 RBAC / ABAC / Least Privilege
+# 7. RBAC e ABAC
 
 ## RBAC
 
@@ -378,29 +373,32 @@ Tente acessar sem membership e registre a evidência.
 User → Role → Permission → Resource
 ```
 
-Crie:
+### Missão
+
+Crie papéis:
 
 ```text
-APP-READER
-APP-OPERATOR
-APP-ADMIN
+LAB-ROLE-READER
+LAB-ROLE-OPERATOR
+LAB-ROLE-ADMIN
 ```
 
-Teste acesso progressivo.
+Teste cada um.
+
+Depois remova a role e confirme revogação.
 
 ## Azure RBAC
 
-Crie um recurso temporário. Conceda somente a role mínima. Teste. Remova. Teste novamente.
+1. Crie recurso temporário.
+2. Conceda role mínima.
+3. Teste.
+4. Remova.
+5. Teste novamente.
+6. Repita comparando subscription, resource group e resource.
 
-Compare o mesmo acesso em:
+### Explique
 
-```text
-Subscription
-Resource Group
-Resource
-```
-
-Explique **escopo, herança e blast radius**.
+Escopo, herança e blast radius.
 
 ## ABAC
 
@@ -410,510 +408,436 @@ Modele:
 Subject + Action + Resource + Attributes → Decision
 ```
 
-Use atributos conceituais como `Department=Finance`, `Environment=Production`, `JobLevel=Senior`.
-
----
-
-# 11. 🔑 MFA / SSPR
-
-## MFA
-
-**O que é:** múltiplos fatores.
-
-**Por que:** reduz dependência de senha.
-
-**Prática:** registrar método → testar login → confirmar MFA → consultar log → revogar sessão → repetir.
-
-## SSPR
-
-Simule:
+Atributos:
 
 ```text
-Senha esquecida
- ↓
-Validação
- ↓
-Reset
- ↓
-Novo login
+Department=Finance
+Environment=Production
+JobLevel=Senior
 ```
 
-Teste também o caminho que não satisfaz os requisitos.
-
-**Pergunta:** SSPR resolve autorização? **Não.**
+Crie uma política conceitual Finance → Finance e teste Marketing → Finance como negado.
 
 ---
 
-# 12. 🛡️ Conditional Access
+# 8. Logs e KQL
 
-## Conceito
+## Missão
+
+Produza um login permitido e um negado.
+
+1. **Entra ID → Monitoring & health → Sign-in logs**.
+2. Filtre ANA.
+3. Compare eventos.
+4. Identifique usuário, app, resultado, IP e Conditional Access.
+
+Quando os logs estiverem em Log Analytics, pratique consultas KQL por campos como:
 
 ```text
-WHO + WHAT + WHERE + DEVICE + RISK
-                ↓
-             POLICY
-                ↓
-        GRANT / BLOCK / SESSION
+UserPrincipalName
+AppDisplayName
+ResultType
+IPAddress
+ConditionalAccessStatus
 ```
 
-## Regra
-
-**Report-only → teste → What If → logs → ajuste → ativação.**
-
-## Missão 1 — MFA
-
-**Protection → Conditional Access → Policies → New policy**
-
-Nome: `LAB-CA-001-MFA`
-
-Selecione somente ANA. Configure MFA. Use Report-only. Faça login. Analise o detalhe do Sign-in Log. Ative somente após validar.
-
-## Missão 2 — Bloqueio
-
-Crie uma política de laboratório que bloqueie JOAO. Teste. Investigue. Faça rollback.
-
-## Missão 3 — Contexto
-
-Quando disponível, teste localização, dispositivo, risco e session controls.
-
-### Evidência obrigatória
-
-- política;
-- escopo;
-- exclusões;
-- What If;
-- log permitido;
-- log negado;
-- rollback.
-
----
-
-# 13. 🔎 Logs / KQL / Investigação
-
-A SC-300 atual inclui monitoramento, logs, relatórios e KQL. ([Microsoft Learn — SC-300](https://learn.microsoft.com/pt-br/credentials/certifications/resources/study-guides/sc-300))
-
-## Investigue
-
-- login falho;
-- login bem-sucedido;
-- alteração de usuário;
-- alteração de grupo;
-- mudança de role;
-- aplicação;
-- consentimento;
-- atividade administrativa;
-- PIM;
-- provisionamento.
-
-## Método
+### Exercício
 
 ```text
-Evento → Hipótese → Query → Evidência → Conclusão → Ação
+Evento → Evidência → Causa → Correção → Resultado
 ```
 
-Comece no portal e evolua para KQL/Log Analytics quando o cenário permitir.
+---
+
+# 9. B2B
+
+## Por que
+
+Permite colaboração externa sem transformar parceiro em usuário interno.
+
+## Faça
+
+1. **Identity → External Identities**.
+2. Convide uma identidade de teste.
+3. Crie `LAB-GUEST-PARTNER`.
+4. Coloque o guest em grupo específico.
+5. Conceda recurso mínimo.
+6. Teste.
+7. Remova.
+8. Teste novamente.
+
+Fluxo:
+
+```text
+Partner → Guest → Group → Resource → Review → Removal
+```
 
 ---
 
-# 14. 🌐 B2B / External Identity
+# 10. SSO, SAML, OIDC e OAuth2
 
-## Aprenda
+## SAML
 
-- guest;
-- collaboration settings;
-- cross-tenant access;
-- external identity provider;
-- lifecycle de guest.
-
-## Laboratório
-
-1. Criar/invitar `LAB-GUEST-PARTNER`.
-2. Definir acesso mínimo.
-3. Testar aplicação/grupo.
-4. Remover acesso.
-5. Revisar atividade.
-6. Documentar risco de contas externas persistentes.
-
----
-
-# 15. 🔗 SSO / SAML
-
-## Conceitos
+### Aprenda durante a configuração
 
 - IdP;
 - SP;
 - Assertion;
+- claims;
 - Entity ID;
 - ACS;
-- claims;
 - metadata;
-- assinatura;
 - certificado.
 
-## Laboratório
+### Faça
 
-```text
-Entra ID
- ↓
-Enterprise Application
- ↓
-SAML
- ↓
-Aplicação de teste
-```
+1. Escolha aplicação de laboratório com SAML.
+2. **Entra → Enterprise applications → New application**.
+3. Configure SAML.
+4. Associe usuário/grupo.
+5. Teste login.
+6. Verifique claims.
 
-Quebre propositalmente:
+### Quebre
 
-- claim;
-- audience;
-- ACS;
-- certificado.
+Altere uma claim/parâmetro de teste.
 
-Investigue o erro e documente a correção.
+### Investigue
 
----
-
-# 16. 🔐 OIDC / OAuth2
+Identifique se o erro está no IdP, assertion, claim ou aplicação.
 
 ## OIDC
 
-Dominar:
+Monte:
 
-- authorization endpoint;
-- token endpoint;
-- ID token;
-- access token;
-- claims;
-- discovery;
-- JWKS.
+```text
+Browser → Client → Authorization Server → Token → Application
+```
+
+Confira issuer, audience, redirect URI, ID token e claims.
 
 ## OAuth2
 
-Dominar:
-
-- client;
-- authorization server;
-- resource server;
-- scopes;
-- access token;
-- refresh token.
-
-## Exercício
-
-Trace manualmente:
+Entenda:
 
 ```text
-User
- ↓
-Authorization
- ↓
-Token
- ↓
-API
- ↓
-Resource
+Client → Authorization Server → Access Token → Resource Server
 ```
 
-Depois explique por que **ID token não é o mesmo que access token**.
+Não trate OAuth2 isoladamente como protocolo de autenticação.
 
 ---
 
-# 17. 🧩 Applications / APIs / Service Principals
+# 11. Applications, APIs e SCIM
 
-## Diferencie
+## App Registration
 
-```text
-App Registration
-= definição/configuração da aplicação
+1. **Identity → Applications → App registrations**.
+2. **New registration**.
+3. Crie `LAB-APP-TEST`.
+4. Examine Application object e Service Principal.
+5. Configure redirect URI somente se necessário.
 
-Service Principal
-= identidade da aplicação no tenant
+## API permission
 
-Enterprise Application
-= representação/configuração da aplicação no tenant
-```
+1. Adicione a menor permissão necessária.
+2. Teste.
+3. Remova.
+4. Teste novamente.
+5. Consulte consentimento e logs.
 
-## Laboratório
+## SCIM
 
-1. Criar App Registration.
-2. Configurar redirect URI.
-3. Configurar API permissions.
-4. Criar app role.
-5. Criar service principal.
-6. Atribuir usuário/grupo.
-7. Testar.
-8. Remover permission.
-9. Investigar a falha.
-
----
-
-# 18. 🤖 Managed Identity / Workload Federation
-
-## Compare
+Fluxo:
 
 ```text
-User Account
-Service Principal
-Managed Identity
-Managed Service Account
-Workload Identity Federation
+Identity/IGA → SCIM → Application → User/Group
 ```
 
-## Managed Identity
-
-1. Criar VM/recurso temporário.
-2. Habilitar Managed Identity.
-3. Conceder role mínima.
-4. Acessar recurso.
-5. Remover role.
-6. Repetir acesso.
-7. Investigar falha.
-8. Restaurar somente a permissão necessária.
-
-## Workload Federation
-
-Entender como workload obtém identidade temporária sem armazenar segredo de longa duração. Faça o exercício quando houver um provedor compatível disponível; caso contrário, documente a arquitetura e simule o fluxo.
-
----
-
-# 19. 🔄 JML — Joiner / Mover / Leaver
-
-## Joiner
-
-```text
-RH → Identity → Groups → License → Application → MFA
-```
-
-## Mover
-
-Simule `Finance → IT`.
-
-Retire acessos incompatíveis e conceda os novos.
-
-## Leaver
-
-```text
-Disable
- ↓
-Revoke Sessions
- ↓
-Remove Groups
- ↓
-Review Privileges
- ↓
-Evidence
-```
-
-Execute os três ciclos com `LAB-USER-MARIA`.
-
-### Pergunta de entrevista
-
-> Como você garantiria que um funcionário que mudou de departamento não mantenha privilégios antigos?
-
----
-
-# 20. 🏛️ IGA / SoD / Access Reviews
-
-## SoD
-
-Cenário:
-
-```text
-ROLE-FINANCE-REQUEST
-+
-ROLE-FINANCE-APPROVE
-=
-CONFLITO
-```
-
-Prática: definir roles → criar combinação proibida → atribuir primeira → tentar segunda → registrar conflito → criar exceção com owner e validade.
-
-## Access Reviews
-
-```text
-Access → Review → Owner → Approve/Deny → Remediation → Evidence
-```
-
-Teste aprovação, rejeição e ausência de resposta, respeitando licenciamento.
-
-## Resultado esperado
-
-Você deve conseguir explicar a diferença entre:
-
-```text
-IAM operacional
-IGA
-Access Review
-SoD
-RBAC
-```
-
----
-
-# 21. 📦 Entitlement Management
-
-## Modelo
-
-```text
-Catalog
- ↓
-Access Package
- ↓
-Policy
- ↓
-Approval
- ↓
-Assignment
- ↓
-Expiration
-```
-
-## Prática
-
-Crie um cenário de acesso temporário a uma aplicação/grupo, com aprovação e expiração, se o recurso estiver disponível no seu tenant.
-
-Se a licença impedir o laboratório completo, faça o fluxo conceitual e registre exatamente o que não foi executado.
-
----
-
-# 22. 🔄 Lifecycle Workflows
-
-Modele três workflows:
-
-```text
-Joiner
-Mover
-Leaver
-```
-
-Para cada um defina:
-
-- gatilho;
-- identidade em escopo;
-- tarefas;
-- condição de sucesso;
-- condição de erro;
-- evidência.
-
-Depois compare:
-
-```text
-Lifecycle Workflow
-vs
-PowerShell / Graph
-```
-
----
-
-# 23. 👑 PIM / JIT
-
-## Conceito
-
-Reduz standing privilege transformando acesso administrativo em acesso elegível/temporário, quando aplicável.
-
-## Fluxo
-
-```text
-Eligible
- ↓
-Request
- ↓
-MFA
- ↓
-Justification
- ↓
-Approval, quando configurado
- ↓
-Activation
- ↓
-Expiration
- ↓
-Audit
-```
-
-## Laboratório com 1 P2
-
-Use `LAB-P2-ADMIN` e somente as identidades estritamente necessárias e licenciadas.
+Use aplicação de laboratório compatível.
 
 Teste:
 
-- eligible;
-- activation;
-- tempo limitado;
-- justificativa;
-- MFA;
-- expiração;
-- histórico;
-- auditoria;
-- emergency account.
-
-Não conceda P2 a todo o laboratório apenas para aumentar a quantidade de testes.
+1. Provisionar usuário.
+2. Alterar atributo.
+3. Adicionar/remover grupo.
+4. Desprovisionar.
+5. Confirmar resultado.
 
 ---
 
-# 24. 🔒 PAM Fundamentals
+# 12. Workload Identity
+
+## O que
+
+Identidade usada por aplicação, serviço, pipeline ou workload.
+
+## Estude
+
+- App Registration;
+- Service Principal;
+- Managed Identity;
+- Federated Credential.
+
+## Missão
+
+1. Crie recurso temporário.
+2. Habilite Managed Identity.
+3. Conceda role mínima.
+4. Teste acesso.
+5. Remova role.
+6. Teste novamente.
+
+### Pergunta
+
+Por que uma identidade gerenciada é preferível a senha hardcoded?
+
+---
+
+# 13. JML
+
+## Joiner
+
+1. Crie Maria.
+2. Defina departamento.
+3. Associe grupo.
+4. Associe role.
+5. Conceda aplicação.
+6. Registre evidência.
+
+## Mover
+
+Mude Maria de Finance para TI.
+
+Remova acesso antigo.
+
+Adicione novo acesso.
+
+Verifique SoD.
+
+## Leaver
+
+1. Desative Maria.
+2. Revogue grupos.
+3. Revogue acessos.
+4. Revogue sessões quando aplicável.
+5. Teste login.
+6. Salve evidência.
+
+### Evidência
+
+```text
+Identidade
+Motivo
+Aprovador
+Acesso anterior
+Acesso novo
+Data
+Revogação
+Resultado
+```
+
+---
+
+# 14. IGA, SoD e Access Reviews
+
+## SoD
+
+### Cenário
+
+```text
+REQUESTER + APPROVER = CONFLITO
+```
+
+Modele regra:
+
+```text
+LAB-ROLE-FINANCE-REQUESTER
+LAB-ROLE-FINANCE-APPROVER
+```
+
+Tente combinar as funções.
+
+Registre conflito, risco, exceção e aprovador.
+
+## Access Review
+
+Fluxo:
+
+```text
+Acesso → Reviewer → Approve/Deny → Remoção → Evidência
+```
+
+### Faça
+
+1. Crie acesso temporário.
+2. Crie revisão no menor escopo.
+3. Atribua reviewer conforme recurso/licença.
+4. Rejeite acesso.
+5. Verifique remoção.
+6. Salve evidência.
+
+**Confira licenciamento antes de executar; participantes e funcionalidades podem possuir requisitos próprios.**
+
+---
+
+# 15. Entitlement Management
+
+## O que
+
+Controla acesso por pacote, política, aprovação, duração e revisão.
+
+## Faça
+
+Modele:
+
+```text
+Access Package
+├── Group
+├── Application
+└── Resource
+```
+
+Teste, quando disponível:
+
+```text
+Request → Approval → Access → Expiration → Removal
+```
+
+Se a função não estiver disponível no tenant, documente o fluxo manual equivalente.
+
+---
+
+# 16. Lifecycle Workflows
+
+## Objetivo
+
+Automatizar tarefas de Joiner, Mover e Leaver.
+
+## Missão
+
+Modele:
+
+```text
+Atributo/Evento
+ ↓
+Workflow
+ ↓
+Task
+ ↓
+Resultado
+ ↓
+Auditoria
+```
+
+Execute cenário de entrada e saída.
+
+Verifique execução e resultado.
+
+Se o recurso exigir licença não disponível, faça a mesma lógica manualmente e marque como **simulação**.
+
+---
+
+# 17. PIM
+
+## O que
+
+Administração just-in-time de privilégios.
+
+## Licença
+
+Use `LAB-P2-ADMIN` de forma estratégica. Não trate troca de licença entre usuários como arquitetura corporativa.
+
+## Missão
+
+1. **Identity → Privileged Identity Management**.
+2. Abra **Microsoft Entra roles**.
+3. Escolha role de laboratório de baixo impacto.
+4. Configure elegibilidade quando permitido.
+5. Ative por período curto.
+6. Exija MFA/justificativa quando disponível.
+7. Execute tarefa.
+8. Expire/desative.
+9. Consulte histórico.
+
+### Teste negativo
+
+Tente executar ação sem ativação.
+
+### Evidência
+
+```text
+Eligible → Activate → MFA/Justification → Role → Task → Expiration → Audit
+```
+
+---
+
+# 18. PAM
+
+## O que
+
+Controle de contas e sessões privilegiadas.
 
 ## Aprenda
 
 - privileged account;
-- standing privilege;
 - JIT;
 - JEA;
-- bastion;
 - vault;
 - credential rotation;
 - session recording;
 - break-glass;
-- least privilege.
+- elevation;
+- service accounts.
 
-### Diferencie
+## Compare
 
 ```text
-PIM
-= controle de privilégios no ecossistema Microsoft/Entra/Azure
+SSH tradicional
+User → Key → Server
 
 PAM
-= disciplina e tecnologias para controlar acesso privilegiado a recursos, contas e credenciais
+Identity → Policy → Temporary Credential/Certificate → Resource → Audit
 ```
-
-PIM e PAM se complementam.
 
 ---
 
-# 25. 🟢 Teleport Community Edition
+# 19. Teleport Community Edition
 
-> **Objetivo:** obter hands-on de PAM/Zero Trust Infrastructure Access sem depender de uma licença CyberArk.
+## Objetivo
 
-A matriz oficial do Teleport deve ser usada como fonte de verdade. Atualmente, a Community Edition possui acesso a infraestrutura, RBAC, auditoria e capacidades de machine/workload identity, enquanto recursos como SSO com Microsoft Entra, SCIM e JIT Access Requests estão indicados como Enterprise. ([Teleport Feature Matrix](https://goteleport.com/docs/feature-matrix/))
+Obter prática real de PAM/Zero Trust sem depender de CyberArk.
+
+## Limite
+
+Teleport CE **não é equivalente a CyberArk/Delinea/BeyondTrust** e recursos Enterprise devem ser tratados como Enterprise.
 
 ## Arquitetura mínima
 
 ```text
-Teleport CE VM
- ├── Auth Service
- ├── Proxy Service
- └── SSH Service
-       │
-       ▼
-Linux Target
+LAB-TELEPORT
+├── Auth
+├── Proxy
+└── SSH Service
+      ↓
+Linux target
 ```
 
-## PAM-01 — Instalação
+Pode começar com uma única VM e adicionar um segundo Linux quando necessário.
 
-1. Criar VM Linux.
-2. Atualizar o sistema.
-3. Instalar a versão CE indicada na documentação oficial atual.
-4. Criar cluster single-node de laboratório.
-5. Configurar hostname/DNS.
-6. Abrir somente portas necessárias.
-7. Criar usuário inicial.
-8. Validar `tsh status`.
+## Instalação
 
-Use a documentação da versão instalada; não copie comandos antigos sem validar a versão.
+1. Crie VM `LAB-TELEPORT`.
+2. Configure hostname e IP.
+3. Garanta resolução DNS funcional.
+4. Instale a versão atual do Teleport CE seguindo a documentação oficial.
+5. Inicialize Auth e Proxy.
+6. Crie identidade administrativa.
+7. Valide CLI/painel.
 
-## PAM-02 — RBAC
+## RBAC
 
-Criar roles de laboratório:
+Crie roles:
 
 ```text
 teleport-admin
@@ -922,625 +846,572 @@ teleport-auditor
 teleport-developer
 ```
 
-Teste permissões distintas e acesso negado.
+Teste permissões individualmente.
 
-## PAM-03 — Least Privilege por labels
+## Least privilege
 
-Rotule recursos:
+Use labels:
 
 ```text
 env=dev
 env=prod
 ```
 
-Developer acessa somente `env=dev`.
+Developer → `env=dev`.
 
-## PAM-04 — SSH baseado em identidade
+Teste DEV permitido e PROD negado.
 
-Compare:
+## Session audit
 
-```text
-SSH tradicional
-User → SSH Key → Server
-```
+1. Entre pelo Teleport.
+2. Execute comandos inofensivos.
+3. Saia.
+4. Consulte eventos/sessão.
+5. Identifique usuário, recurso, horário e atividade.
+6. Guarde evidência.
 
-com:
-
-```text
-Teleport
-User → Identity → RBAC → Short-lived Credential → Server → Audit
-```
-
-## PAM-05 — Auditoria
-
-1. Acessar recurso.
-2. Executar comandos de teste.
-3. Encerrar sessão.
-4. Consultar eventos.
-5. Identificar usuário, recurso e horário.
-6. Documentar evidência.
-
-## PAM-06 — Database Access
-
-Opcional: adicione PostgreSQL somente nesta fase.
-
-Crie:
+## Database Access — opcional
 
 ```text
-DB-ADMIN
-DB-READONLY
-DB-NONE
+Teleport → PostgreSQL
 ```
 
-Prove acesso administrativo, leitura e negação.
+Crie `DB-ADMIN`, `DB-READONLY`, `DB-NONE`.
 
-## PAM-07 — Kubernetes
+Teste SELECT e operação proibida.
 
-Opcional e posterior. Só execute após dominar SSH e Database Access.
+## Kubernetes — opcional
 
-## Limites da CE
+Faça somente após SSH/RBAC/auditoria.
 
-Não apresente recurso Enterprise como Community Edition. SSO Entra/SAML/OIDC, SCIM e JIT Access Requests devem ser tratados como **estudo de arquitetura ou trial Enterprise quando disponível**, conforme a matriz oficial atual. ([Teleport Feature Matrix](https://goteleport.com/docs/feature-matrix/))
+## Access Requests
+
+Marque claramente:
+
+- CE = disponível na edição instalada;
+- Enterprise = recurso comercial;
+- Simulação = workflow estudado sem funcionalidade disponível.
 
 ---
 
-# 26. 🧰 JEA / PAW / Break-glass
+# 20. JEA, PAW e Break-glass
 
 ## JEA
 
-```text
-Admin → Endpoint controlado → Somente comandos necessários
-```
+Crie endpoint PowerShell limitado.
 
-Crie uma sessão administrativa de laboratório com somente as operações necessárias.
+Teste:
+
+```text
+Comando permitido → sucesso
+Comando administrativo não permitido → bloqueio
+```
 
 ## PAW
 
-Entenda por que contas privilegiadas devem ser usadas em endpoints/contextos controlados.
+Simule separação:
+
+```text
+Workstation comum ≠ Admin Workstation
+```
 
 ## Break-glass
 
-Documente duas identidades de emergência: finalidade, owner, proteção, monitoramento, quando usar e revisão posterior.
+Mantenha identidade de recuperação separada.
 
-Não use uma conta de emergência como conta administrativa diária.
+Defina:
+
+```text
+Quando usar
+Quem usa
+Como monitorar
+Como recuperar
+```
 
 ---
 
-# 27. ⚙️ PowerShell / Graph / REST
+# 21. PowerShell, Graph e REST
 
-## Provisioning
+## PowerShell
+
+Crie CSV:
 
 ```text
-CSV
- ↓
-Create User
- ↓
-Group Assignment
- ↓
-Report
+name,department
+Ana,Finance
+Joao,IT
 ```
 
-## Leaver
+Automatize:
 
 ```text
-Disable
- ↓
-Revoke Sessions
- ↓
-Remove Groups
- ↓
-Evidence
+CSV → User → Group → Log → Report
 ```
 
 ## Graph
 
-Consultar usuários, grupos, aplicações e service principals.
+Pratique primeiro leitura:
 
-## Qualidade obrigatória
+```text
+Authentication → Permission → Endpoint → Request → Response
+```
 
-Scripts devem ter:
-
-- validação de entrada;
-- tratamento de erro;
-- `-WhatIf` quando aplicável;
-- logs;
-- idempotência;
-- menor privilégio.
+Depois escrita em objeto de laboratório.
 
 ## REST
 
-Dominar:
+Pratique:
 
 ```text
-GET / POST / PATCH / DELETE
+GET → consultar
+POST → criar
+PATCH → alterar
+DELETE → remover
 ```
 
-E HTTP status, headers, bearer token, scopes, permissions, JSON, pagination, rate limit e error handling.
-
-Comece com leitura; só depois faça escrita.
+Sempre use menor privilégio.
 
 ---
 
-# 28. 🔁 Hybrid Identity
+# 22. Hybrid Identity
 
-Estudar:
-
-- AD DS;
-- Entra Connect Sync;
-- Cloud Sync;
-- Password Hash Synchronization;
-- Pass-through Authentication;
-- Seamless SSO;
-- Connect Health;
-- troubleshooting de sincronização.
-
-Fluxo:
+## Arquitetura
 
 ```text
-AD → Sync → Entra → Cloud Identity
+AD DS → Synchronization → Entra ID
 ```
 
-Altere uma identidade no AD e acompanhe a mudança até o Entra. Depois provoque um erro controlado e investigue.
+## Missão
+
+1. Ligue `LAB-DC01`.
+2. Configure sincronização conforme documentação atual.
+3. Sincronize usuário de laboratório.
+4. Altere atributo no AD.
+5. Observe Entra.
+6. Desative usuário.
+7. Observe sincronização.
+8. Provoque falha controlada.
+9. Investigue.
+
+Explique qual sistema é a fonte de autoridade em cada atributo do cenário.
 
 ---
 
-# 29. ☁️ Cloud IAM
+# 23. Cloud IAM
 
 ## Azure
 
-Aprofunde Azure RBAC, Managed Identity e workload access.
+Pratique:
+
+- RBAC;
+- scope;
+- inheritance;
+- Managed Identity;
+- Service Principal;
+- Key Vault;
+- workload identity.
 
 ## AWS
 
-Depois do núcleo Microsoft:
+Estude/pratique em conta de laboratório quando disponível:
 
-- IAM User;
-- Role;
-- Policy;
-- Resource Policy;
-- Federation;
-- STS;
-- workload identity;
-- least privilege.
+```text
+IAM Role
+Policy
+Trust Policy
+STS
+Federation
+```
+
+Modele:
+
+```text
+Human → Federation → Role → Resource
+Workload → Role → Resource
+```
 
 ## GCP
 
-Conhecer:
-
-- principal;
-- role;
-- IAM policy;
-- service account;
-- workload identity federation.
-
-Não mantenha três clouds no laboratório simultaneamente.
-
----
-
-# 30. 🏛️ IGA / SailPoint
-
-Não tente instalar uma plataforma corporativa complexa no homelab sem necessidade.
-
-Estude a arquitetura:
+Modele:
 
 ```text
-Identity Source
- ↓
-Application / Source
- ↓
-Account
- ↓
-Entitlement
- ↓
-Role
- ↓
-Provisioning
- ↓
-Certification
- ↓
-SoD
+Principal → Role → Permission → Resource
 ```
 
-Conheça:
-
-- IdentityIQ;
-- Identity Security Cloud;
-- connectors;
-- aggregation;
-- provisioning;
-- certifications;
-- roles;
-- policies;
-- lifecycle;
-- APIs;
-- application onboarding.
-
-> Aprenda IGA como disciplina e SailPoint como plataforma. Não declare experiência hands-on que não possui.
+Priorize conceitos antes de abrir infraestrutura adicional.
 
 ---
 
-# 31. 🔐 PAM Enterprise
+# 24. SailPoint e IGA Enterprise
 
-| Plataforma | Conceitos |
-|---|---|
-| CyberArk | Vault, accounts, rotation, sessions, JIT |
-| Delinea | privileged accounts, policies, secrets |
-| BeyondTrust | privileged access, endpoint/server access |
-| senhasegura | vault, credential management, privileged access |
-| Teleport CE | hands-on de infraestrutura, RBAC e auditoria |
+## Objetivo
 
-Teleport CE é um laboratório prático de conceitos de PAM/Zero Trust, não um substituto integral dessas plataformas.
-
----
-
-# 32. 🎫 ITSM
-
-IAM corporativo precisa de processo:
-
-```text
-Request → Approval → Fulfillment → Validation → Closure → Evidence
-```
+Aprender IGA corporativo a partir dos conceitos já praticados.
 
 Estude:
 
-- Incident;
-- Request;
-- Change;
-- Problem;
-- SLA;
-- approval;
-- owner;
-- evidence.
+- identity;
+- account;
+- entitlement;
+- source;
+- connector;
+- aggregation;
+- provisioning;
+- certification;
+- role;
+- policy;
+- SoD;
+- lifecycle;
+- application onboarding;
+- API.
 
-Simule os tickets em Markdown/CSV ou ferramenta gratuita. Não é necessário instalar ServiceNow.
+## Exercício
 
----
-
-# 33. 📋 Auditoria / Compliance
-
-Conecte IAM a:
-
-- ISO 27001;
-- NIST;
-- LGPD;
-- PCI DSS;
-- CIS Controls.
-
-Para cada controle:
+Modele:
 
 ```text
-Risco
- ↓
-Controle IAM
- ↓
-Implementação
- ↓
-Log
- ↓
-Evidência
- ↓
-Owner
- ↓
-Periodicidade
+HR → IGA → Identity → Role → SoD → Approval → Provisioning → Application → Certification
 ```
 
-### Exemplo
+Compare cada etapa com o laboratório Entra.
 
-**Risco:** ex-funcionário mantém acesso.
-
-**Controle:** Leaver.
-
-**Evidência:** identidade desabilitada + revogação + ticket + log.
+Não alegue experiência hands-on com SailPoint sem ter usado a plataforma.
 
 ---
 
-# 34. 🏗️ Arquitetura IAM
+# 25. PAM Enterprise
 
-## Desafio
+## Plataformas
 
-Empresa fictícia:
+- CyberArk;
+- Delinea;
+- BeyondTrust;
+- senhasegura.
+
+## Para cada uma responda
+
+1. Onde fica a credencial?
+2. Como ocorre rotação?
+3. Como ocorre JIT?
+4. Como ocorre sessão?
+5. Como auditar?
+6. Como integrar AD/Entra?
+7. Como proteger service accounts?
+
+Compare cada conceito com Teleport CE.
+
+---
+
+# 26. ITSM
+
+## Aprenda
+
+Request, Incident, Change, Approval, SLA, Evidence, Workflow.
+
+## Simule
 
 ```text
-8.000 funcionários
+REQ-001
+Solicitação: Finance Reader
+Solicitante: usuário
+Aprovador: gestor
+Role: LAB-ROLE-FINANCE-READER
+Prazo: 30 dias
+Evidência: logs
+```
+
+Execute manualmente.
+
+Depois automatize o que puder.
+
+---
+
+# 27. Auditoria e Compliance
+
+## Pergunta
+
+**Quem autorizou este acesso e como provo?**
+
+## Monte
+
+```text
+Identity
+ ↓
+Request
+ ↓
+Approver
+ ↓
+Role
+ ↓
+Entitlement
+ ↓
+Timestamp
+ ↓
+Audit Log
+ ↓
+Review
+ ↓
+Revocation
+```
+
+## Estude
+
+ISO 27001, NIST, LGPD, PCI DSS e CIS Controls.
+
+## Missão
+
+Escolha um acesso do laboratório e produza um pacote de evidência sanitizado.
+
+---
+
+# 28. Arquitetura
+
+## Caso
+
+```text
+8.000 usuários
 400 aplicações
-AD on-premises
+AD on-prem
 Entra ID
 AWS
-SailPoint
+IGA
 PAM
 ITSM
 ```
 
-Projete:
+## Desenhe
 
 ```text
 HR
  ↓
-IGA
+Identity Source
  ↓
-Identity
+IGA
  ↓
 AD / Entra
  ↓
 RBAC
  ↓
+SSO
+ ↓
 Applications
  ↓
-PAM
+PIM
  ↓
-Access Reviews
+PAM
  ↓
 Audit
 ```
 
-Justifique:
+Para cada componente responda:
 
-- fonte autoritativa;
-- JML;
-- RBAC/ABAC;
-- SoD;
-- SSO;
-- workload identity;
-- PAM;
-- reviews;
-- logs;
-- ITSM;
-- break-glass;
-- recuperação;
-- métricas.
+- problema resolvido;
+- risco reduzido;
+- administrador;
+- fonte de autoridade;
+- revogação;
+- auditoria;
+- falha e recuperação.
 
 ---
 
-# 35. 🧪 Projeto final
+# 29. Projeto final
 
-Construa o cenário completo:
+## Cenário
+
+Empresa fictícia com RH, Finance, TI, AD, Entra, SaaS, Linux, Azure, banco e auditoria.
+
+## Execute
+
+1. Criar identidades.
+2. Criar grupos e roles.
+3. Implementar MFA.
+4. Implementar Conditional Access.
+5. Criar SSO.
+6. Implementar JML.
+7. Modelar SoD.
+8. Executar Access Review.
+9. Criar Access Package quando disponível.
+10. Executar PIM.
+11. Proteger Linux com Teleport.
+12. Implementar workload identity.
+13. Automatizar parte do fluxo.
+14. Investigar logs.
+15. Produzir evidências.
+16. Revogar acessos.
+17. Documentar arquitetura.
+
+## Critério
+
+Você só conclui quando consegue reconstruir o fluxo sem consultar o manual.
+
+---
+
+# 30. Portfólio e entrevistas
+
+## Cada projeto deve conter
 
 ```text
-                         RH
-                          │
-                          ▼
-                         JML
-                          │
-                          ▼
-                   ┌─────────────┐
-                   │ AD / Entra  │
-                   └──────┬──────┘
-                          │
-               ┌──────────┼──────────┐
-               ▼          ▼          ▼
-             RBAC        SSO       Groups
-               │          │          │
-               └──────┬───┴──────────┘
-                      ▼
-                     IGA
-               ┌──────┼──────┐
-               ▼      ▼      ▼
-              SoD   Review  Package
-                      │
-                      ▼
-                     PIM
-                      │
-                      ▼
-                     PAM
-                      │
-                      ▼
-                  Resources
-                      │
-                      ▼
-                    Audit
+Objetivo
+Arquitetura
+Pré-requisitos
+Configuração
+Teste positivo
+Teste negativo
+Falha controlada
+Logs
+Correção
+Rollback
+Evidência
+Conclusão
 ```
 
-## Cenários obrigatórios
+## Perguntas obrigatórias
 
-1. Joiner.
-2. Mover.
-3. Leaver.
-4. MFA.
-5. Conditional Access.
-6. RBAC.
-7. ABAC conceitual.
-8. SoD.
-9. SSO/SAML.
-10. OAuth/OIDC.
-11. SCIM prático ou simulado.
-12. Workload Identity.
-13. Access Review.
-14. Entitlement.
-15. PIM.
-16. PAM com Teleport.
-17. Incidente IAM.
-18. Automação.
-19. Auditoria.
-20. Arquitetura.
+1. IAM x IGA x PAM?
+2. Authentication x Authorization?
+3. RBAC x ABAC?
+4. O que é JML?
+5. O que PIM resolve?
+6. PIM x PAM?
+7. SAML x OIDC?
+8. OAuth2?
+9. SCIM?
+10. Service Principal x Managed Identity?
+11. Como investigar login negado?
+12. Como executar Access Review?
+13. Como detectar SoD?
+14. Como provar acesso para auditoria?
+15. Como automatizar JML?
 
 ---
 
-# 36. 📸 Evidências
+# 31. Checklist
 
-Estrutura sugerida:
+## IAM
+
+- [ ] Fundamentals
+- [ ] Authentication
+- [ ] Authorization
+- [ ] Least privilege
+- [ ] Lifecycle
+
+## Microsoft
+
+- [ ] AD
+- [ ] Entra Users
+- [ ] Groups
+- [ ] RBAC
+- [ ] MFA
+- [ ] SSPR
+- [ ] Conditional Access
+- [ ] Logs
+- [ ] KQL
+- [ ] B2B
+- [ ] SSO
+- [ ] SAML
+- [ ] OIDC
+- [ ] OAuth2
+- [ ] App Registration
+- [ ] Service Principal
+- [ ] Managed Identity
+- [ ] Workload Identity
+- [ ] SCIM
+- [ ] JML
+- [ ] SoD
+- [ ] Access Reviews
+- [ ] Entitlement Management
+- [ ] Lifecycle Workflows
+- [ ] PIM
+
+## PAM
+
+- [ ] PAM fundamentals
+- [ ] JIT
+- [ ] JEA
+- [ ] PAW
+- [ ] Break-glass
+- [ ] Teleport CE
+- [ ] RBAC
+- [ ] Session audit
+- [ ] Database Access
+- [ ] CyberArk concepts
+- [ ] Delinea concepts
+- [ ] BeyondTrust concepts
+- [ ] senhasegura concepts
+
+## Engineering
+
+- [ ] PowerShell
+- [ ] Microsoft Graph
+- [ ] REST
+- [ ] JSON
+- [ ] Python
+- [ ] SQL
+- [ ] KQL
+
+## Enterprise
+
+- [ ] Hybrid Identity
+- [ ] Azure IAM
+- [ ] AWS IAM
+- [ ] GCP IAM
+- [ ] ITSM
+- [ ] ISO 27001
+- [ ] NIST
+- [ ] LGPD
+- [ ] PCI DSS
+- [ ] Architecture
+
+## Mercado
+
+- [ ] Tenho laboratórios executados
+- [ ] Tenho evidências sanitizadas
+- [ ] Tenho projeto corporativo
+- [ ] Sei investigar falhas
+- [ ] Sei automatizar
+- [ ] Sei explicar arquitetura
+- [ ] Sei responder entrevista
+
+---
+
+# 🔗 Referências oficiais
+
+- Microsoft SC-300: https://learn.microsoft.com/pt-br/credentials/certifications/resources/study-guides/sc-300
+- Entra licensing: https://learn.microsoft.com/en-us/entra/fundamentals/licensing
+- Entra Governance: https://learn.microsoft.com/en-us/entra/id-governance/
+- Lifecycle Workflows: https://learn.microsoft.com/en-us/entra/id-governance/what-are-lifecycle-workflows
+- Access Reviews: https://learn.microsoft.com/en-us/entra/id-governance/deploy-access-reviews
+- Entitlement Management: https://learn.microsoft.com/en-us/entra/id-governance/entitlement-management-overview
+- Teleport Community Edition: https://goteleport.com/docs/get-started/deploy-community/
+- Teleport Feature Matrix: https://goteleport.com/docs/feature-matrix/
+
+---
+
+# 🏁 Regra do laboratório
 
 ```text
-evidence/
-├── 01-fundamentals/
-├── 02-ad/
-├── 03-entra/
-├── 04-authentication/
-├── 05-conditional-access/
-├── 06-rbac/
-├── 07-jml/
-├── 08-sso/
-├── 09-apps/
-├── 10-workload/
-├── 11-iga/
-├── 12-sod/
-├── 13-pim/
-├── 14-pam/
-├── 15-teleport/
-├── 16-automation/
-├── 17-kql/
-├── 18-hybrid/
-├── 19-cloud/
-├── 20-audit/
-└── 21-final-project/
+ENTENDER
+ ↓
+CONFIGURAR
+ ↓
+TESTAR
+ ↓
+NEGAR
+ ↓
+QUEBRAR
+ ↓
+INVESTIGAR
+ ↓
+CORRIGIR
+ ↓
+REVOGAR
+ ↓
+AUDITAR
+ ↓
+AUTOMATIZAR
+ ↓
+EXPLICAR
 ```
 
-Para cada missão, guarde apenas evidências sanitizadas: screenshot sem PII, configuração, resultado positivo, resultado negativo, log e conclusão.
-
-Nunca publique secrets, tokens, cookies, chaves privadas ou dados reais.
-
----
-
-# 37. 📄 Portfólio / Entrevistas
-
-## Não escreva
-
-> "Estudei Entra ID e Teleport."
-
-## Escreva somente o que demonstrou
-
-> Laboratório prático de IAM com Microsoft Entra ID, incluindo RBAC, Conditional Access, MFA, JML, Access Reviews, PIM, workload identities, Microsoft Graph e automação com PowerShell.
-
-Após concluir Teleport:
-
-> Laboratório de PAM com Teleport Community Edition, incluindo RBAC, least privilege, acesso SSH baseado em identidade, controle por recurso e auditoria.
-
-Não declare experiência profissional em SailPoint, CyberArk, Delinea ou outras plataformas se o contato foi apenas teórico.
-
-## Perguntas que você deve conseguir responder
-
-- Autenticação vs autorização?
-- RBAC vs ABAC?
-- PIM vs PAM?
-- App Registration vs Service Principal?
-- SAML vs OIDC?
-- OAuth2 serve para quê?
-- O que é SCIM?
-- O que é JML?
-- Como evitar privilégio permanente?
-- Como investigar login suspeito?
-- Como provar um acesso para auditoria?
-- Como desenhar IGA para uma empresa grande?
-
----
-
-# 38. 📈 Evolução de carreira
-
-## Júnior
-
-Dominar:
-
-- AD;
-- Entra;
-- usuários/grupos;
-- MFA;
-- Conditional Access;
-- JML;
-- RBAC;
-- ITSM;
-- PowerShell básico.
-
-## Pleno
-
-Adicionar:
-
-- IGA;
-- SoD;
-- Access Reviews;
-- Entitlement Management;
-- SAML/OIDC/OAuth2/SCIM;
-- Graph/REST;
-- KQL;
-- cloud IAM;
-- automação;
-- PAM.
-
-## Sênior
-
-Adicionar:
-
-- arquitetura IAM;
-- SailPoint/IGA enterprise;
-- PAM enterprise;
-- Zero Trust;
-- cloud híbrida/multicloud;
-- compliance;
-- métricas;
-- liderança técnica;
-- desenho de modelos de identidade.
-
-### Prioridade de estudo para seu perfil
-
-```text
-1. Entra ID
-2. JML
-3. RBAC / Least Privilege
-4. MFA / Conditional Access
-5. SSO / SAML / OIDC / OAuth2
-6. IGA / SoD / Access Reviews
-7. PowerShell / Graph / REST
-8. PIM
-9. PAM / Teleport
-10. Hybrid Identity
-11. Cloud IAM
-12. SailPoint / PAM Enterprise
-13. Architecture
-```
-
----
-
-# 39. ✅ Checklist final de prontidão
-
-Você está pronto para começar a disputar vagas IAM quando consegue, sem tutorial:
-
-- [ ] explicar autenticação × autorização;
-- [ ] administrar usuários e grupos no Entra;
-- [ ] criar/testar RBAC;
-- [ ] aplicar MFA;
-- [ ] projetar/testar Conditional Access;
-- [ ] executar JML;
-- [ ] explicar SAML/OIDC/OAuth2;
-- [ ] diferenciar App Registration/Service Principal/Enterprise Application;
-- [ ] explicar Managed Identity;
-- [ ] automatizar uma tarefa com PowerShell/Graph;
-- [ ] investigar Sign-in Logs;
-- [ ] explicar Access Reviews;
-- [ ] explicar SoD;
-- [ ] explicar PIM;
-- [ ] explicar PAM;
-- [ ] demonstrar Teleport CE;
-- [ ] relacionar IAM com auditoria;
-- [ ] desenhar arquitetura IAM básica;
-- [ ] explicar o que você ainda não sabe sem inventar experiência.
-
----
-
-# 40. 📚 Referências
-
-- [Microsoft Entra ID](https://learn.microsoft.com/entra/)
-- [Microsoft Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing)
-- [SC-300 Study Guide — 2026](https://learn.microsoft.com/pt-br/credentials/certifications/resources/study-guides/sc-300)
-- [Microsoft Entra ID Governance](https://learn.microsoft.com/en-us/entra/id-governance/)
-- [Microsoft Entra PIM](https://learn.microsoft.com/en-us/entra/id-governance/privileged-identity-management/pim-configure)
-- [Teleport Documentation](https://goteleport.com/docs/)
-- [Teleport Feature Matrix](https://goteleport.com/docs/feature-matrix/)
-- [Teleport Community Edition deployment](https://goteleport.com/docs/get-started/deploy-community/)
-
----
-
-# 🏁 Regra final
-
-```text
-Não estudar para saber.
-
-Estudar
-→ construir
-→ testar
-→ quebrar
-→ investigar
-→ corrigir
-→ revogar
-→ documentar
-→ explicar.
-```
-
-**O objetivo não é conhecer dezenas de produtos. É dominar o raciocínio de identidade, acesso, privilégio, governança e auditoria e conseguir demonstrá-lo na prática.**
+**O objetivo é transformar cada conceito em uma habilidade executável e demonstrável.**
