@@ -1,233 +1,495 @@
-# 🟦 IAM Study Lab
+# 🟦 IAM Study Lab — Microsoft Entra ID do básico ao avançado
 
-> **Formato:** laboratório prático progressivo. Execute na ordem.
+> **Objetivo:** aprender IAM executando tarefas reais em um laboratório controlado, com foco em Microsoft Entra ID, Active Directory, IGA, PAM, automação e auditoria.
 >
-> **Regra:** configure → teste → provoque uma falha controlada → investigue → corrija → revogue → registre evidência.
+> **Método obrigatório:** `configurar → testar → teste negativo → investigar → corrigir → revogar → evidenciar → explicar`.
 >
-> **Licença:** use estrategicamente **1 Entra ID P2** apenas no usuário/conta necessária para os exercícios avançados. Recursos cuja licença não esteja disponível devem ser marcados como `OPCIONAL` e não tratados como pré-requisito.
-
-## 📍 Mapa
-
-1. Ambiente
-2. IAM Fundamentals
-3. Active Directory
-4. Entra Users & Groups
-5. RBAC
-6. Administrative RBAC
-7. MFA
-8. Conditional Access
-9. Identity Protection
-10. Logs & Troubleshooting
-11. OAuth 2.0
-12. OpenID Connect
-13. SAML 2.0
-14. App Registration
-15. Service Principals
-16. Workload Identity
-17. SCIM
-18. Microsoft Graph
-19. PowerShell Automation
-20. JML
-21. Entitlement Management
-22. Access Reviews
-23. PIM
-24. B2B
-25. Hybrid Identity
-26. IGA + RBAC + ABAC + SoD
-27. PAM + Teleport CE
-28. Cloud IAM
-29. ITSM + Audit
-30. Zero Trust
-31. IAM Metrics
-32. Projeto Final
-33. Desafio de Entrevista
+> **Licenciamento do laboratório:** o projeto foi desenhado para funcionar com **1 única licença Microsoft Entra ID P2**, atribuída à conta `LAB-P2`. Os demais usuários são contas de teste e recebem somente os recursos que não exigem P2. **Não coloque uma política baseada em risco em usuários sem P2**; para esse exercício, o alvo será somente `LAB-P2`. Acesso Condicional comum é P1; políticas baseadas em risco usam ID Protection/P2. PIM exige licença para usuários com atribuições elegíveis ou com prazo definido. Access Reviews devem usar um único reviewer `LAB-P2`; não use self-review dos usuários sem P2. Entitlement Management e Lifecycle Workflows ficam em exercícios controlados/condicionados à licença disponível no tenant.
+>
+> **Regra de segurança:** nunca publique senha, secret, token, chave privada, cookie, código MFA, arquivo de configuração sensível ou dado real.
 
 ---
 
-# 01 — AMBIENTE
+## 🧭 Navegação
 
-## Cenário
+| Módulo | Tema | Nível |
+|---|---|---|
+| 00 | Como usar o laboratório | Base |
+| 01 | Ambiente e VirtualBox | Base |
+| 02 | IAM Fundamentals | Base |
+| 03 | Active Directory | Base |
+| 04 | Entra Users, Groups e atributos | Base |
+| 05 | Administrative Units e least privilege | Base |
+| 06 | Azure RBAC | Júnior |
+| 07 | MFA e métodos de autenticação | Júnior |
+| 08 | Conditional Access | Júnior |
+| 09 | Identity Protection — P2 | Pleno |
+| 10 | Logs e troubleshooting | Júnior |
+| 11 | SSO, OAuth 2.0 e OIDC | Júnior/Pleno |
+| 12 | SAML 2.0 | Júnior/Pleno |
+| 13 | App Registrations e Service Principals | Pleno |
+| 14 | Workload Identity e Managed Identity | Pleno |
+| 15 | SCIM e provisioning | Pleno |
+| 16 | Microsoft Graph | Pleno |
+| 17 | PowerShell e automação | Pleno |
+| 18 | JML — Joiner/Mover/Leaver | Pleno |
+| 19 | IGA, RBAC, ABAC e SoD | Pleno |
+| 20 | Entitlement Management | Pleno |
+| 21 | Access Reviews | Pleno |
+| 22 | PIM — única P2 | Avançado |
+| 23 | B2B / External ID | Pleno |
+| 24 | Hybrid Identity — AD + Entra | Avançado |
+| 25 | PAM com Teleport Community Edition | Avançado |
+| 26 | Cloud IAM — Azure/AWS | Avançado |
+| 27 | ITSM, auditoria e evidências | Pleno |
+| 28 | Zero Trust | Avançado |
+| 29 | Métricas de IAM | Avançado |
+| 30 | Projeto final | Sênior |
+| 31 | Desafio de entrevista | Sênior |
 
-Criar um laboratório isolado para não misturar testes com recursos reais.
+---
 
-## PASSO 1 — Criar rede no VirtualBox
+# 00 — COMO USAR O LABORATÓRIO
 
-Abra **VirtualBox → Tools → Network Manager → Host-only Networks → Create**.
+## Regra de cada módulo
 
-Use uma rede como:
+Não avance apenas porque a configuração funcionou.
 
-- IPv4: `192.168.56.1`
-- máscara: `255.255.255.0`
-- DHCP: **desativado**
+Você termina um módulo somente quando consegue responder:
 
-### Por quê?
+1. **O que configurei?**
+2. **Por que configurei?**
+3. **Quem foi afetado?**
+4. **Qual permissão foi concedida?**
+5. **Qual foi o scope?**
+6. **Como provei que funcionou?**
+7. **Como provei que o acesso indevido foi negado?**
+8. **Onde encontrei o log?**
+9. **Como revoguei?**
+10. **Como explicaria isso em uma entrevista?**
 
-O DHCP será feito pelo próprio Windows Server quando ele assumir a função DHCP. Ter dois DHCPs na mesma rede pode entregar IP, gateway ou DNS incorretos.
+## Padrão de exercício
+
+Cada exercício deve possuir:
+
+```text
+PASSO 1 → preparar
+PASSO 2 → configurar
+PASSO 3 → validar resultado positivo
+PASSO 4 → provocar falha controlada
+PASSO 5 → investigar
+PASSO 6 → corrigir
+PASSO 7 → revogar/limpar
+PASSO 8 → registrar evidência
+PASSO 9 → explicar o conhecimento adquirido
+```
+
+## Convenção de contas
+
+| Conta | Licença P2 | Função |
+|---|---:|---|
+| `LAB-ADMIN` | Não | configuração administrativa do tenant |
+| `LAB-P2` | **Sim — única P2** | PIM, ID Protection e exercícios avançados licenciados |
+| `LAB-USER01` | Não | usuário comum para CA/MFA/SSO |
+| `LAB-USER02` | Não | segundo usuário para testes comparativos |
+| `LAB-BREAKGLASS` | Não | emergência; não usar no dia a dia |
+
+### ⚠️ Regra de licenciamento
+
+`LAB-ADMIN` pode **configurar** políticas sem ser o usuário beneficiado pelo recurso P2.
+
+Mas uma política baseada em risco **não deve ser aplicada a `LAB-USER01` ou `LAB-USER02` neste laboratório**, porque o cenário de P2 deve permanecer restrito à única identidade licenciada.
+
+Assim:
+
+```text
+LAB-ADMIN
+   │
+   ├── configura CA comum ───────────→ LAB-USER01 / LAB-USER02
+   │
+   ├── configura CA baseada em risco → LAB-P2
+   │
+   └── configura PIM ────────────────→ LAB-P2
+```
+
+---
+
+# 01 — AMBIENTE E VIRTUALBOX
+
+## Objetivo
+
+Construir uma rede isolada, economizando RAM e evitando que testes afetem o ambiente real.
+
+## PASSO 1 — Criar rede Host-only
+
+Abra:
+
+**VirtualBox → Tools → Network Manager → Host-only Networks → Create**.
+
+Configure:
+
+| Campo | Valor |
+|---|---|
+| IPv4 Address | `192.168.56.1` |
+| IPv4 Network Mask | `255.255.255.0` |
+| DHCP Server | **desativado** |
+
+### Por que o DHCP do VirtualBox fica desligado?
+
+Porque o laboratório terá um **único DHCP**, o `LAB-DC01`. Dois DHCPs na mesma rede podem entregar configurações diferentes para o mesmo cliente.
 
 ## PASSO 2 — Criar VMs
 
-Crie, mas não mantenha todas ligadas:
+| VM | Função | IP | RAM inicial |
+|---|---|---|---:|
+| `LAB-DC01` | AD DS + DNS + DHCP | `192.168.56.10` | 4 GB |
+| `LAB-WIN11` | cliente Windows | DHCP | 4 GB |
+| `LAB-LINUX01` | alvo PAM | `192.168.56.30` | 2 GB |
+| `LAB-TELEPORT` | PAM | `192.168.56.20` | 2 GB |
 
-| VM | Função | IP |
-|---|---|---|
-| LAB-DC01 | AD/DNS/DHCP | 192.168.56.10 |
-| LAB-WIN11 | cliente | DHCP |
-| LAB-LINUX01 | alvo PAM | 192.168.56.30 |
-| LAB-TELEPORT | PAM | 192.168.56.20 |
+Não mantenha todas ligadas.
 
-RAM mínima sugerida: DC `4 GB`; Windows `4 GB`; Linux `2 GB`; Teleport `2 GB`.
+### Estratégia de RAM
 
-### Regra de economia
+- AD: ligado quando estudar AD/híbrido.
+- Windows: ligado quando testar GPO/cliente.
+- Linux + Teleport: ligados somente no módulo PAM.
+- Entra: os exercícios cloud não exigem todas as VMs locais.
 
-Ligue somente as VMs necessárias ao módulo atual. Para Entra, AD pode permanecer desligado depois dos testes de identidade híbrida.
+## PASSO 3 — Configurar adaptador das VMs
 
-## PASSO 3 — Validar conectividade
+Em cada VM:
 
-No cliente Windows:
+**Settings → Network → Adapter 1 → Enable Network Adapter → Host-only Adapter**.
 
-`ipconfig`
+Selecione a rede criada.
 
-`ping 192.168.56.10`
+### Por que Host-only?
+
+Permite comunicação entre host e VMs sem expor o laboratório diretamente à rede física.
+
+## PASSO 4 — Configurar IP do DC
+
+No Windows Server:
+
+**Settings → Network Connections → Ethernet → Properties → IPv4**.
+
+Configure:
+
+```text
+IP:      192.168.56.10
+Mask:    255.255.255.0
+Gateway: deixar vazio no laboratório isolado
+DNS:     192.168.56.10 após instalar DNS
+```
+
+## PASSO 5 — Validar
+
+No cliente:
+
+```text
+ipconfig /all
+ping 192.168.56.10
+```
 
 ### Resultado esperado
 
-O cliente alcança o DC.
+O cliente recebe IP pelo DHCP do Windows Server quando esse serviço estiver configurado e consegue alcançar o DC.
 
-### O que você aprendeu
+### Teste negativo
 
-Isolamento de laboratório, rede host-only, endereçamento estático e motivo de desativar DHCP do VirtualBox.
+Desligue o DC.
+
+Renove o IP do cliente.
+
+### Resultado esperado
+
+O DHCP do VirtualBox não assume o serviço.
+
+### Conhecimento adquirido
+
+Segmentação de laboratório, DHCP, DNS, IP estático, isolamento e dependências de infraestrutura.
 
 ---
 
 # 02 — IAM FUNDAMENTALS
 
-## Cenário
+## Objetivo
 
-Distinguir autenticação, autorização, identidade, conta, grupo, role, entitlement e privilégio.
+Entender a cadeia:
 
-## PASSO 1 — Criar identidade
+`Identidade → autenticação → autorização → recurso → auditoria`.
 
-No Entra: **Identity → Users → All users → New user**.
+## PASSO 1 — Criar usuário
 
-Crie `LAB-ANA`.
+No Entra:
 
-### Por quê?
+**Identity → Users → All users → New user**.
 
-Uma identidade representa a pessoa; a conta é a representação técnica usada para autenticação e autorização.
+Crie `LAB-USER01`.
+
+### Por que criar um usuário?
+
+IAM administra identidades que precisam autenticar e receber autorizações.
 
 ## PASSO 2 — Criar grupo
 
-**Groups → New group**.
+**Identity → Groups → New group**.
 
-Crie `GRP-FINANCE` e adicione `LAB-ANA`.
+Crie:
 
-### Resultado esperado
+`GRP-FINANCE`
 
-Ana possui uma identidade e pertence a um grupo.
+Adicione `LAB-USER01`.
 
-### O que você aprendeu
+### Por que usar grupo?
 
-`Identidade → conta → grupo → autorização`.
+O grupo desacopla a identidade individual da autorização. Em ambiente corporativo, o acesso deve preferencialmente ser atribuído por função/grupo, não manualmente usuário por usuário.
+
+## PASSO 3 — Diferenciar conceitos
+
+Documente:
+
+```text
+Identidade = representação de uma pessoa/sistema
+Conta = objeto usado para acesso
+Credencial = mecanismo usado para provar identidade
+Autenticação = provar quem é
+Autorização = determinar o que pode fazer
+Entitlement = permissão/acesso concedido
+Role = conjunto lógico de permissões
+Privilege = capacidade administrativa/especial
+```
+
+### Teste
+
+Pergunte a si mesmo:
+
+> “MFA resolve autorização?”
+
+Resposta esperada: **não**. MFA fortalece autenticação; autorização continua sendo controlada por roles, grupos, políticas e scopes.
 
 ---
 
 # 03 — ACTIVE DIRECTORY
 
-## Cenário
+## Objetivo
 
-Criar uma pequena estrutura corporativa on-premises.
+Aprender o diretório corporativo que ainda aparece em grande parte dos ambientes híbridos.
 
 ## PASSO 1 — Instalar AD DS
 
-No `LAB-DC01`: **Server Manager → Add Roles and Features → Active Directory Domain Services → Install**.
+No `LAB-DC01`:
 
-Depois selecione **Promote this server to a domain controller**.
+**Server Manager → Add Roles and Features → Role-based installation → Active Directory Domain Services → Install**.
+
+Após instalar:
+
+**Promote this server to a domain controller**.
+
+Escolha:
+
+**Add a new forest**.
 
 Domínio:
 
 `lab.local`
 
-### Por quê?
+Reinicie.
 
-O AD será a fonte de identidade on-premises para praticar usuários, grupos, OU, GPO, LDAP, Kerberos e sincronização híbrida.
+## PASSO 2 — Validar DNS
 
-## PASSO 2 — Criar OUs
+No DC:
 
-**Active Directory Users and Computers → lab.local → New → Organizational Unit**.
+```text
+nslookup lab.local
+```
+
+### Por que DNS é crítico?
+
+AD depende fortemente de DNS para localizar serviços do domínio.
+
+## PASSO 3 — Criar OUs
+
+Abra:
+
+**Active Directory Users and Computers**.
 
 Crie:
 
-- `OU=Users`
-- `OU=Groups`
-- `OU=Servers`
-- `OU=Workstations`
-- `OU=Disabled`
-
-## PASSO 3 — Criar usuário
-
-Crie `LAB-ANA` em `OU=Users`.
+```text
+OU=Users
+OU=Groups
+OU=Servers
+OU=Workstations
+OU=Disabled
+```
 
 ## PASSO 4 — Criar grupos
 
 Crie:
 
-- `GG-FINANCE`
-- `GG-IT`
-- `GG-IAM`
+```text
+GG-FINANCE
+GG-IT
+GG-IAM
+```
 
-Adicione Ana a `GG-FINANCE`.
+Adicione usuários aos grupos conforme a função.
 
-## PASSO 5 — GPO
+## PASSO 5 — Criar GPO de auditoria
 
-**Group Policy Management → Default/OU → Create a GPO**.
+Abra:
 
-Crie `GPO-LAB-AUDIT` e habilite auditoria adequada ao laboratório.
+**Group Policy Management → OU de laboratório → Create a GPO in this domain**.
+
+Nome:
+
+`GPO-LAB-AUDIT`
+
+Configure auditoria somente para os eventos necessários ao estudo.
+
+### Por que não usar a Default Domain Policy para tudo?
+
+Porque separar configurações por finalidade facilita troubleshooting, rollback e governança.
+
+## PASSO 6 — Entrar uma estação no domínio
+
+No `LAB-WIN11`:
+
+**Settings → System → About → Advanced system settings → Computer Name → Change**.
+
+Escolha **Domain** e informe:
+
+`lab.local`
+
+Use credencial administrativa do domínio.
 
 ### Resultado esperado
 
-Você possui AD, OU, usuário, grupo e GPO.
+A máquina aparece no AD e consegue autenticar no domínio.
 
-### O que você aprendeu
+### Teste negativo
 
-Estrutura de diretório e administração básica de identidade.
+Configure DNS incorreto no cliente e tente ingressar novamente.
+
+### Resultado esperado
+
+O ingresso falha ou apresenta problemas de descoberta do domínio.
+
+### Conhecimento adquirido
+
+AD DS, DNS, OU, grupos, GPO, domínio, autenticação de domínio e troubleshooting.
 
 ---
 
-# 04 — ENTRA USERS & GROUPS
+# 04 — ENTRA USERS, GROUPS E ATRIBUTOS
 
-## PASSO 1 — Criar usuário cloud
-
-**Entra admin center → Identity → Users → New user**.
-
-Crie `LAB-CLOUD-01`.
-
-## PASSO 2 — Criar grupos
+## PASSO 1 — Criar usuários
 
 Crie:
 
-`GRP-IAM-READERS`
+```text
+LAB-P2
+LAB-USER01
+LAB-USER02
+LAB-BREAKGLASS
+```
 
-`GRP-IAM-ADMINS`
+Atribua a licença P2 **somente a `LAB-P2`**.
 
-## PASSO 3 — Adicionar membro
+## PASSO 2 — Criar grupos
 
-Adicione `LAB-CLOUD-01` a `GRP-IAM-READERS`.
+```text
+GRP-FINANCE
+GRP-IT
+GRP-IAM-READERS
+GRP-IAM-ADMINS
+GRP-LAB-CA-MFA
+```
 
-### Por quê?
+## PASSO 3 — Testar grupo como alvo de política
 
-Conceder acesso por grupo facilita RBAC, JML, recertificação e automação.
+Coloque `LAB-USER01` em `GRP-LAB-CA-MFA`.
 
-### Resultado esperado
+Use esse grupo em uma política de CA posterior.
 
-Acesso futuro pode ser atribuído ao grupo em vez de usuário individual.
+### Por que grupo é melhor que usuário direto?
+
+Permite governar populações inteiras e torna a política reutilizável.
+
+## PASSO 4 — Estudar atributos
+
+Observe:
+
+- Department
+- Job title
+- Usage location
+- Manager
+- User type
+- Account enabled
+
+### Teste adicional
+
+Altere `Department` de `Finance` para `IT` e observe o impacto em regras futuras.
+
+### Conhecimento adquirido
+
+Identidade, atributos, grupos, escopo e governança baseada em população.
 
 ---
 
-# 05 — RBAC
+# 05 — ADMINISTRATIVE UNITS + LEAST PRIVILEGE
+
+## Objetivo
+
+Aprender a restringir administração sem transformar todo operador em Global Administrator.
+
+## PASSO 1 — Criar Administrative Unit
+
+No Entra:
+
+**Identity → Administrative Units → Add**.
+
+Nome:
+
+`AU-FINANCE`
+
+## PASSO 2 — Adicionar usuário
+
+Adicione `LAB-USER01`.
+
+## PASSO 3 — Delegar administração
+
+Crie uma conta operacional de laboratório e conceda somente a role compatível com o escopo que você quer testar.
+
+### Por que isso importa?
+
+Least privilege não significa apenas limitar o usuário final. Também significa limitar quem administra usuários.
+
+## PASSO 4 — Teste positivo
+
+O operador executa a tarefa dentro do escopo permitido.
+
+## PASSO 5 — Teste negativo
+
+O operador tenta administrar usuário fora do escopo.
+
+### Resultado esperado
+
+A operação é negada.
+
+### Conhecimento adquirido
+
+Delegação, escopo administrativo, blast radius e least privilege.
+
+---
+
+# 06 — AZURE RBAC
 
 ## Cenário
 
-Ana precisa administrar VMs de um Resource Group, mas não a assinatura inteira.
+`LAB-USER01` administra VMs de um Resource Group, mas não a assinatura inteira.
 
 ## PASSO 1 — Criar Resource Group
 
@@ -237,9 +499,11 @@ Nome:
 
 `rg-iam-lab`
 
-## PASSO 2 — Atribuir função
+## PASSO 2 — Atribuir role
 
-**Resource group → Access control (IAM) → Add role assignment**.
+Abra:
+
+**rg-iam-lab → Access control (IAM) → Add role assignment**.
 
 Role:
 
@@ -247,518 +511,573 @@ Role:
 
 Member:
 
-`LAB-ANA`
+`LAB-USER01`
 
 Scope:
 
 `rg-iam-lab`
 
-### Por quê?
+### Por que esse scope?
 
-RBAC combina **role + principal + scope** para conceder somente as permissões necessárias.
+A mesma role em subscription teria impacto muito maior.
 
-## PASSO 3 — Testar
+## PASSO 3 — Teste positivo
 
-Entre como Ana e tente administrar uma VM do Resource Group.
-
-### Resultado esperado
-
-A operação permitida funciona.
+Entre com `LAB-USER01` e execute uma operação permitida sobre uma VM do Resource Group.
 
 ## PASSO 4 — Teste negativo
 
-Tente uma ação de administração do Entra.
+Tente administrar recursos fora do Resource Group.
 
 ### Resultado esperado
 
-A operação é negada.
+Negado.
 
-## PASSO 5 — Remover role
+## PASSO 5 — Revogar
 
-Volte ao administrador → IAM → Role assignments → remova a função.
+Remova a role.
 
-Teste novamente.
+Repita o teste positivo.
 
-### O que você aprendeu
+### Resultado esperado
 
-Autorização, scope, least privilege, concessão e revogação.
+O acesso deixa de funcionar.
+
+### Conhecimento adquirido
+
+Principal + role + scope, least privilege, concessão e revogação.
 
 ---
 
-# 06 — ADMINISTRATIVE RBAC
+# 07 — MFA E MÉTODOS DE AUTENTICAÇÃO
 
-## Cenário
+## PASSO 1 — Registrar método
 
-Não conceder Global Administrator para tarefas comuns.
+Entre como `LAB-USER01` e registre Microsoft Authenticator conforme o método permitido pelo tenant.
 
-## PASSO 1 — Comparar roles
+## PASSO 2 — Criar CA de MFA
 
-No Entra: **Roles & admins**.
+A política será criada no módulo seguinte. Aqui, apenas confirme que o método está registrado.
 
-Compare:
+## PASSO 3 — Testar autenticação
 
-- User Administrator
-- Groups Administrator
-- Application Administrator
-- Security Administrator
-- Global Administrator
-
-## PASSO 2 — Criar operador de laboratório
-
-Use `LAB-IAM-OPERATOR`.
-
-Atribua somente a role necessária para a tarefa.
-
-## PASSO 3 — Testar
-
-Execute a tarefa permitida.
-
-Depois tente uma tarefa fora do escopo.
+Faça login novamente quando a política estiver aplicada.
 
 ### Resultado esperado
 
-A tarefa necessária funciona; a desnecessária é negada.
+O segundo fator é solicitado.
 
-### O que você aprendeu
+## PASSO 4 — Estudar Authentication Methods
 
-Least privilege administrativo e separação de responsabilidades.
+No Entra, examine os métodos disponíveis e documente:
 
----
+```text
+Password
+Microsoft Authenticator
+FIDO2/passkeys
+Temporary Access Pass
+SMS/voice quando habilitados
+```
 
-# 07 — MFA
+### Teste adicional
 
-## PASSO 1 — Registrar método MFA
+Compare MFA por método com autenticação resistente a phishing.
 
-Entre com `LAB-ANA` e registre Microsoft Authenticator ou método disponível no tenant.
+### Conhecimento adquirido
 
-## PASSO 2 — Testar login
-
-Saia e entre novamente.
-
-### Resultado esperado
-
-O segundo fator é solicitado quando requerido.
-
-## PASSO 3 — Investigar log
-
-**Entra → Monitoring & health → Sign-in logs**.
-
-Abra o evento e observe o método de autenticação.
-
-### O que você aprendeu
-
-Autenticação forte e evidência de autenticação.
+MFA, métodos de autenticação, registro e authentication strength.
 
 ---
 
 # 08 — CONDITIONAL ACCESS
 
-## Cenário
+## Regra
 
-Exigir MFA somente para o usuário de laboratório.
+Comece sempre em **Report-only**.
 
-## PASSO 1 — Criar política
+A documentação atual da Microsoft recomenda planejamento, validação de impacto e uso de Report-only antes de aplicar políticas amplamente.
 
-**Entra → Protection → Conditional Access → Policies → Create new policy**.
+## PASSO 1 — Criar grupo de teste
+
+Use:
+
+`GRP-LAB-CA-MFA`
+
+Membro:
+
+`LAB-USER01`
+
+## PASSO 2 — Criar política
+
+Abra:
+
+**Entra → Protection → Conditional Access → Policies → New policy**.
 
 Nome:
 
-`CA-LAB-MFA`
+`CA-LAB-01-MFA`
 
-Users: somente `LAB-ANA`.
+Users:
 
-Target resources: `All cloud apps`.
+`GRP-LAB-CA-MFA`
 
-Grant: `Require multifactor authentication`.
+Target resources:
 
-Use **Report-only** primeiro.
+`All cloud apps`
 
-### Por quê?
+Grant:
 
-Report-only permite validar impacto antes de bloquear.
+`Require multifactor authentication`
 
-## PASSO 2 — Validar
+Mode:
 
-Faça login como Ana e consulte o Sign-in Log.
+`Report-only`
 
-## PASSO 3 — Ativar
+## PASSO 3 — Validar
 
-Mude para **On**.
+Faça login como `LAB-USER01`.
 
-## PASSO 4 — Teste negativo
+Abra:
 
-Tente autenticar sem satisfazer o controle.
+**Monitoring & health → Sign-in logs**.
+
+Abra o evento e observe a aba de Conditional Access.
+
+## PASSO 4 — Ativar
+
+Depois de validar, altere para **On**.
+
+## PASSO 5 — Teste positivo
+
+Login de `LAB-USER01`.
 
 ### Resultado esperado
 
-A política exige MFA.
+MFA é exigido.
 
-## PASSO 5 — Break-glass
+## PASSO 6 — Teste negativo
 
-Antes de políticas amplas, mantenha contas de emergência excluídas e monitoradas.
+Exclua temporariamente o usuário do grupo ou altere o escopo da política.
 
-### O que você aprendeu
+Teste novamente.
 
-Policy evaluation, MFA, report-only, exceção administrativa e troubleshooting.
+### Objetivo
 
----
+Entender que CA avalia condições e escopo, não simplesmente “liga MFA”.
 
-# 09 — IDENTITY PROTECTION
+## PASSO 7 — Testar What If
 
-> **P2:** use a única licença neste laboratório.
+Use a ferramenta **What If** do Conditional Access para simular um usuário/aplicação/cenário.
 
-## PASSO 1 — Abrir Risky Users
+### Conhecimento adquirido
 
-**Entra → Protection → Identity Protection → Risky users**.
-
-## PASSO 2 — Abrir Risky sign-ins
-
-Observe sinais e detalhes disponíveis.
-
-## PASSO 3 — Criar política baseada em risco
-
-Configure uma política de laboratório com escopo restrito a `LAB-ANA` e ação de MFA/controle disponível.
-
-### Por quê?
-
-Identity Protection transforma sinais de risco em decisões de acesso.
-
-## PASSO 4 — Investigar
-
-Compare o risco com o Sign-in Log.
-
-### O que você aprendeu
-
-Risk detection, risk remediation e integração com Conditional Access.
+Conditions, grant controls, exclusions, report-only, policy evaluation e troubleshooting.
 
 ---
 
-# 10 — LOGS & TROUBLESHOOTING
+# 09 — IDENTITY PROTECTION — ÚNICA P2
 
-## PASSO 1 — Gerar evento
+> **Licença:** somente `LAB-P2` participa do exercício P2.
+>
+> **Importante:** não coloque `LAB-USER01` ou `LAB-USER02` no escopo de uma política baseada em risco neste laboratório.
 
-Faça login com `LAB-ANA`.
+## PASSO 1 — Abrir ID Protection
 
-## PASSO 2 — Investigar
+**Entra → Protection → Identity Protection**.
 
-**Entra → Sign-in logs**.
+Explore:
 
-Verifique:
+- Risky users
+- Risky sign-ins
+- Risk detections
 
-- usuário;
-- aplicação;
-- IP;
-- resultado;
-- Conditional Access;
-- autenticação;
-- risco.
+## PASSO 2 — Criar grupo P2
+
+Crie:
+
+`GRP-LAB-P2`
+
+Membro:
+
+`LAB-P2`.
+
+## PASSO 3 — Criar CA baseada em risco
+
+Crie:
+
+`CA-LAB-P2-SIGNIN-RISK`
+
+Users:
+
+`LAB-P2` somente.
+
+Condition:
+
+`Sign-in risk`.
+
+Grant:
+
+controle de MFA/remediação disponível no tenant.
+
+Comece em `Report-only`.
+
+### Por que somente `LAB-P2`?
+
+Porque políticas de risco utilizam ID Protection/P2. O laboratório deve reproduzir o recurso sem criar uma falsa premissa de que uma única P2 licencia todos os usuários afetados.
+
+## PASSO 4 — Analisar eventos
+
+Faça login com `LAB-P2` e consulte Sign-in logs + Risk detections.
+
+## PASSO 5 — Teste controlado
+
+Use somente métodos de teste/documentados pelo tenant para produzir sinais de risco. **Não tente provocar comprometimento real ou ataque contra a conta.**
+
+## PASSO 6 — Remediação
+
+Observe como MFA/remediação altera o resultado do acesso quando o risco é aplicável.
+
+### Conhecimento adquirido
+
+Risky user, sign-in risk, risk remediation, risk-based CA e diferença entre CA comum e CA baseada em risco.
+
+---
+
+# 10 — LOGS E TROUBLESHOOTING
+
+## PASSO 1 — Gerar login
+
+Faça login como `LAB-USER01`.
+
+## PASSO 2 — Abrir Sign-in logs
+
+Analise:
+
+```text
+User
+Application
+IP
+Location
+Authentication requirement
+Authentication details
+Conditional Access
+Status
+Risk
+```
 
 ## PASSO 3 — Criar falha
 
-Desabilite temporariamente a role ou grupo necessário.
+Remova `LAB-USER01` do grupo que recebe uma role.
 
-Repita o acesso.
+Repita a operação.
 
-## PASSO 4 — Diagnosticar
+## PASSO 4 — Investigar
 
 Use esta ordem:
 
-`Identidade → autenticação → grupo → role → scope → CA → aplicação → token → logs`.
+```text
+1. Identidade existe?
+2. Conta está habilitada?
+3. Autenticação passou?
+4. MFA passou?
+5. Conditional Access permitiu?
+6. Grupo correto?
+7. Role correta?
+8. Scope correto?
+9. Aplicação correta?
+10. Token/claims corretos?
+11. API permission correta?
+12. Logs explicam a falha?
+```
 
-## PASSO 5 — Corrigir
+## PASSO 5 — Corrigir o menor componente
 
-Reponha somente a permissão necessária.
+Não conceda Global Administrator para “resolver”.
 
-### O que você aprendeu
+Corrija somente a causa.
 
-Troubleshooting sistemático em IAM.
+### Conhecimento adquirido
+
+Troubleshooting baseado em evidência.
 
 ---
 
-# 11 — OAUTH 2.0
+# 11 — SSO + OAUTH 2.0 + OIDC
 
-## Cenário
+## Objetivo
 
-Uma aplicação precisa obter acesso delegado a uma API.
+Não decorar protocolos; observar o fluxo real.
 
-## PASSO 1 — Identificar atores
-
-Documente:
-
-`Resource Owner → Client → Authorization Server → Resource Server`.
-
-## PASSO 2 — Criar App Registration
+## PASSO 1 — Criar App Registration
 
 **Entra → App registrations → New registration**.
 
 Nome:
 
-`APP-OAUTH-LAB`
+`APP-OIDC-LAB`
 
-## PASSO 3 — Configurar Redirect URI
+## PASSO 2 — Configurar Redirect URI
 
-Use uma URI local da aplicação de laboratório.
+Use uma aplicação de laboratório local ou um serviço de teste compatível.
 
-### Por quê?
+## PASSO 3 — Executar Authorization Code Flow
 
-OAuth autoriza o cliente a obter tokens; não é, por si só, um protocolo de autenticação de usuário.
+Observe:
 
-## PASSO 4 — Testar Authorization Code
-
-Faça login e observe o retorno de autorização.
-
-## PASSO 5 — Inspecionar token
-
-Identifique `access_token`, `scope`, `aud`, `iss` e expiração.
-
-### Teste negativo
-
-Altere o redirect URI e repita.
-
-### Resultado esperado
-
-O fluxo é rejeitado.
-
-### O que você aprendeu
-
-Delegated authorization, scopes, tokens e redirect URI.
-
----
-
-# 12 — OPENID CONNECT
-
-## PASSO 1 — Usar a mesma App Registration
-
-Habilite o fluxo OIDC da aplicação escolhida.
-
-## PASSO 2 — Configurar issuer/discovery
-
-Use o endpoint OpenID Configuration do tenant.
-
-## PASSO 3 — Fazer login
-
-Autentique como `LAB-ANA`.
+```text
+Usuário
+  ↓
+Client
+  ↓
+Authorization Server
+  ↓
+Authorization Code
+  ↓
+Client
+  ↓
+Token Endpoint
+  ↓
+Access Token + ID Token quando OIDC
+```
 
 ## PASSO 4 — Inspecionar ID Token
 
 Identifique:
 
-- `iss`
-- `sub`
-- `aud`
-- `exp`
-- `name`
-- `preferred_username`
+```text
+iss
+sub
+aud
+exp
+iat
+name
+preferred_username
+```
 
-### Por quê?
+### Por que OIDC?
 
-OIDC adiciona autenticação e identidade sobre OAuth 2.0.
+OAuth 2.0 é um framework de autorização. OIDC adiciona uma camada padronizada de autenticação/identidade.
 
-### Teste negativo
+## PASSO 5 — Teste negativo
 
-Use audiência/redirect incorreto.
+Altere o Redirect URI cadastrado e repita.
 
 ### Resultado esperado
 
-A validação falha.
+O fluxo deve ser rejeitado.
 
-### O que você aprendeu
+## PASSO 6 — Teste de scope
 
-OIDC, claims, ID token, issuer e audience.
+Solicite um scope que o cliente não possui.
+
+### Resultado esperado
+
+Falha de autorização/consentimento.
+
+### Conhecimento adquirido
+
+OAuth, OIDC, authorization code, access token, ID token, scopes, claims e redirect URI.
 
 ---
 
-# 13 — SAML 2.0
-
-## Cenário
-
-Integrar uma aplicação SaaS de laboratório como Service Provider.
+# 12 — SAML 2.0
 
 ## PASSO 1 — Criar Enterprise Application
 
 **Entra → Enterprise applications → New application → Create your own application**.
 
-Escolha configuração de SAML para a aplicação de teste.
+Escolha integração SAML quando a aplicação de laboratório suportar.
 
 ## PASSO 2 — Configurar SP
 
 Preencha:
 
-- Identifier / Entity ID
-- Reply URL / ACS
-- Sign-on URL
+```text
+Identifier / Entity ID
+Reply URL / ACS
+Sign-on URL
+```
 
 ## PASSO 3 — Configurar claims
 
-Envie um identificador do usuário como claim.
+Mapeie o identificador necessário pela aplicação.
 
 ## PASSO 4 — Login
 
-Faça login e observe a Assertion.
-
-### Por quê?
-
-SAML transporta uma assertion assinada do IdP para o SP.
-
-## PASSO 5 — Quebrar Entity ID
-
-Altere deliberadamente o identificador.
-
-### Resultado esperado
-
-O SP rejeita a resposta.
-
-## PASSO 6 — Corrigir
-
-Restaure o valor e valide.
-
-### O que você aprendeu
-
-IdP, SP, Entity ID, ACS, Assertion, claims e certificado.
-
----
-
-# 14 — APP REGISTRATION
-
-## PASSO 1 — Criar aplicação
-
-Crie `APP-IAM-LAB` em **App registrations**.
-
-## PASSO 2 — Identificar objetos
+Execute SSO.
 
 Observe:
 
-`Application object ≠ Service Principal`
+```text
+IdP → SAML Response → Assertion → SP
+```
 
-### Por quê?
+### Por que isso importa?
 
-O App Registration representa a definição da aplicação; o Service Principal é a instância dessa aplicação em um tenant.
+A aplicação não precisa conhecer a senha do usuário; ela confia no IdP e valida a assertion.
 
-## PASSO 3 — Criar redirect URI
+## PASSO 5 — Teste negativo
 
-Adicione uma URI somente para o laboratório.
-
-## PASSO 4 — Configurar API permissions
-
-Comece com a menor permissão necessária.
-
-### O que você aprendeu
-
-Application object, service principal, redirect URI e API permissions.
-
----
-
-# 15 — SERVICE PRINCIPALS
-
-## PASSO 1 — Criar Service Principal
-
-Use a App Registration `APP-IAM-LAB`.
-
-## PASSO 2 — Conceder acesso mínimo
-
-Atribua uma role RBAC somente ao Resource Group `rg-iam-lab`.
-
-### Por quê?
-
-Aplicações também são identidades e precisam de autorização controlada.
-
-## PASSO 3 — Testar
-
-Execute uma ação permitida pela aplicação.
-
-## PASSO 4 — Remover role
-
-Teste novamente.
+Altere Entity ID ou ACS deliberadamente.
 
 ### Resultado esperado
 
-A ação deixa de funcionar.
+A aplicação rejeita o fluxo.
 
-### O que você aprendeu
+## PASSO 6 — Investigar
 
-Identidade não humana e RBAC para aplicações.
+Verifique claims, Entity ID, ACS, assinatura e certificado.
+
+### Conhecimento adquirido
+
+IdP, SP, assertion, claims, ACS, Entity ID e confiança federada.
 
 ---
 
-# 16 — WORKLOAD IDENTITY + SECRETS
+# 13 — APP REGISTRATIONS + SERVICE PRINCIPALS
 
-## PASSO 1 — Comparar opções
+## PASSO 1 — Criar aplicação
+
+Use `APP-IAM-LAB`.
+
+## PASSO 2 — Identificar objetos
 
 Documente:
 
-`Client Secret → Certificate → Managed Identity → Workload Identity Federation`
+```text
+Application object
+      ≠
+Service Principal
+```
 
-## PASSO 2 — Secret de laboratório
+### Explicação
 
-Se precisar criar secret, use somente laboratório, registre a data de expiração e não publique o valor.
+O Application object descreve a aplicação. O Service Principal representa a identidade/instância usada pelo tenant.
 
-## PASSO 3 — Preferir identidade gerenciada
+## PASSO 3 — Localizar Service Principal
 
-Em uma VM Azure de laboratório, habilite Managed Identity quando disponível.
+Abra:
 
-## PASSO 4 — Testar acesso
+**Enterprise applications → All applications → APP-IAM-LAB**.
 
-Conceda uma role mínima ao recurso e valide o acesso.
+## PASSO 4 — Atribuir RBAC mínimo
 
-### Por quê?
+No `rg-iam-lab`, atribua uma role mínima ao Service Principal.
 
-Evitar secrets permanentes reduz risco de vazamento e rotação manual.
+## PASSO 5 — Teste positivo
 
-## PASSO 5 — Key Vault
+Execute a operação permitida.
 
-Crie um cofre de laboratório e pratique acesso por Managed Identity.
+## PASSO 6 — Teste negativo
 
-### O que você aprendeu
-
-Workload identity, secret lifecycle, certificates e eliminação de credenciais estáticas.
-
----
-
-# 17 — SCIM 2.0
-
-## Cenário
-
-Automatizar provisioning e deprovisioning de usuários para uma aplicação.
-
-## PASSO 1 — Subir endpoint SCIM
-
-Use uma aplicação SCIM de laboratório ou um mock SCIM 2.0 local.
-
-## PASSO 2 — Testar API
-
-Valide os métodos:
-
-`GET /Users`
-
-`POST /Users`
-
-`PATCH /Users/{id}`
-
-`DELETE /Users/{id}`
-
-## PASSO 3 — Configurar provisioning
-
-No Enterprise Application → **Provisioning**.
-
-Configure endpoint e token de teste.
-
-## PASSO 4 — Mapear atributos
-
-Mapeie pelo menos:
-
-`userName`, `active`, `displayName`, `emails[type eq "work"].value`.
-
-## PASSO 5 — Provisionar
-
-Ative um usuário de teste.
+Remova a role e repita.
 
 ### Resultado esperado
 
-O usuário aparece no sistema alvo.
+A operação falha por falta de autorização.
+
+### Conhecimento adquirido
+
+Identidades de aplicação, Service Principal e RBAC não humano.
+
+---
+
+# 14 — WORKLOAD IDENTITY + MANAGED IDENTITY
+
+## PASSO 1 — Criar VM Azure de laboratório
+
+Use uma VM pequena somente quando necessário.
+
+## PASSO 2 — Ativar Managed Identity
+
+Nas propriedades da VM:
+
+**Identity → System assigned → On**.
+
+## PASSO 3 — Conceder role mínima
+
+No recurso alvo, atribua uma role de leitura.
+
+## PASSO 4 — Testar
+
+A aplicação/processo dentro da VM tenta acessar o recurso sem armazenar secret estático.
+
+## PASSO 5 — Comparar
+
+Documente:
+
+```text
+Client Secret
+Certificate
+Managed Identity
+Workload Identity Federation
+```
+
+### Pergunta
+
+> “Por que uma identidade de workload é melhor que um secret permanente?”
+
+Resposta esperada: reduz exposição e necessidade de armazenar/rotacionar credenciais estáticas.
+
+### Conhecimento adquirido
+
+Workload identity, managed identity, service principal e credential lifecycle.
+
+---
+
+# 15 — SCIM + PROVISIONING
+
+## Objetivo
+
+Simular o fluxo que aparece em IAM/IGA corporativo:
+
+`Entra → aplicação → usuário`.
+
+## PASSO 1 — Preparar endpoint SCIM
+
+Use um mock SCIM 2.0 ou aplicação de laboratório que ofereça endpoint SCIM.
+
+## PASSO 2 — Testar endpoints
+
+Valide:
+
+```text
+GET /Users
+POST /Users
+PATCH /Users/{id}
+DELETE /Users/{id}
+```
+
+## PASSO 3 — Configurar Enterprise Application
+
+Abra:
+
+**Enterprise application → Provisioning**.
+
+Configure endpoint e credencial de laboratório.
+
+## PASSO 4 — Mapear atributos
+
+Pratique:
+
+```text
+userName
+active
+displayName
+emails
+```
+
+## PASSO 5 — Provisionar
+
+Ative o usuário.
+
+### Resultado esperado
+
+Usuário criado no sistema alvo.
 
 ## PASSO 6 — Alterar
 
-Mude um atributo no Entra e sincronize.
+Altere um atributo no Entra e sincronize.
 
 ## PASSO 7 — Desprovisionar
 
@@ -766,670 +1085,953 @@ Desative o usuário.
 
 ### Resultado esperado
 
-O alvo recebe a alteração de ciclo de vida.
+O alvo recebe a alteração de lifecycle conforme o comportamento configurado.
 
-### Teste negativo
+## PASSO 8 — Teste negativo
 
-Use endpoint/token inválido e investigue logs.
+Use endpoint/token inválido.
 
-### O que você aprendeu
+Investigue logs de provisioning.
 
-Provisioning, deprovisioning, attribute mapping e SCIM.
+### Conhecimento adquirido
+
+Provisioning, deprovisioning, attribute mapping, SCIM e troubleshooting.
 
 ---
 
-# 18 — MICROSOFT GRAPH
+# 16 — MICROSOFT GRAPH
 
-## PASSO 1 — Graph Explorer
+## PASSO 1 — Abrir Graph Explorer
 
-Abra o Microsoft Graph Explorer e autentique com a conta de laboratório.
+Autentique com conta de laboratório.
 
 ## PASSO 2 — Consultar usuário
 
-Execute uma consulta `GET` para o usuário `LAB-ANA`.
+Faça um `GET` de `LAB-USER01`.
+
+Observe atributos e object ID.
 
 ## PASSO 3 — Consultar grupos
 
-Consulte grupos e memberships.
+Liste grupos e memberships.
 
-## PASSO 4 — Alterar atributo
+## PASSO 4 — Testar operação de escrita
 
-Faça uma alteração permitida pela sessão.
+Execute somente uma alteração de laboratório para a qual a sessão tenha permissão.
 
-## PASSO 5 — Testar permissão insuficiente
+## PASSO 5 — Teste negativo
 
-Use uma operação para a qual não exista consentimento.
+Tente uma operação sem a permissão necessária.
 
 ### Resultado esperado
 
-A API retorna erro de autorização.
+Erro de autorização.
 
-### O que você aprendeu
+## PASSO 6 — Relacionar com IAM
 
-REST, Microsoft Graph, permissions, consent e troubleshooting de API.
+Documente:
+
+```text
+Graph API
+   ↓
+Permission
+   ↓
+Consent
+   ↓
+Token
+   ↓
+API
+```
+
+### Conhecimento adquirido
+
+REST, Microsoft Graph, permissions, consent, token e troubleshooting.
 
 ---
 
-# 19 — POWERSHELL + AUTOMATION
+# 17 — POWERSHELL + AUTOMAÇÃO
 
-## Cenário
+## Objetivo
 
-Automatizar onboarding e offboarding.
+Transformar operação manual em processo repetível.
 
-## PASSO 1 — Preparar CSV
+## PASSO 1 — Criar CSV
 
-Crie:
+Arquivo:
 
 `users.csv`
 
-com:
+Campos:
 
-`Name,UserPrincipalName,Department`
+```text
+Name
+UserPrincipalName
+Department
+```
 
-## PASSO 2 — Conectar Graph
+## PASSO 2 — Criar script
 
-Use Microsoft Graph PowerShell e conceda somente permissões necessárias.
+O script deve:
 
-## PASSO 3 — Criar usuários
+1. Ler CSV.
+2. Validar dados.
+3. Verificar se usuário existe.
+4. Criar somente se não existir.
+5. Adicionar grupo.
+6. Gravar log.
 
-Escreva script que:
+## PASSO 3 — Testar idempotência
 
-1. lê CSV;
-2. verifica se usuário existe;
-3. cria somente se necessário;
-4. adiciona grupo;
-5. grava log.
+Execute duas vezes.
 
-### Por quê?
+### Resultado esperado
 
-A verificação evita duplicidade e torna o script idempotente.
+A segunda execução não cria duplicatas.
 
-## PASSO 4 — Offboarding
+## PASSO 4 — Criar offboarding
 
-Script:
+Fluxo:
 
-`disable → remove group → revoke sessions quando aplicável → log`
+```text
+disable
+→ remove group
+→ revoke sessions quando aplicável
+→ log
+```
 
 ## PASSO 5 — Erro controlado
 
-Informe um usuário inexistente.
+Informe um usuário inválido.
 
 ### Resultado esperado
 
-O script não interrompe toda a execução e registra o erro.
+O script registra o erro e continua de forma controlada.
 
-### O que você aprendeu
+### Conhecimento adquirido
 
-Automação, idempotência, logging e least privilege.
+PowerShell, Graph, idempotência, logging, tratamento de erro e automação IAM.
 
 ---
 
-# 20 — JML
+# 18 — JML — JOINER / MOVER / LEAVER
 
 ## Cenário
 
-Simular ciclo corporativo completo.
+A mesma pessoa entra, muda de área e sai da empresa.
 
 ## PASSO 1 — JOINER
 
-Crie `LAB-MARIA`.
+Crie:
 
-Atribua departamento Finance.
+`LAB-MARIA`
 
-Adicione ao grupo adequado.
+Atributos:
 
-### O que você aprendeu
+```text
+Department = Finance
+JobTitle = Financial Analyst
+```
 
-Onboarding e provisioning.
+Adicione:
 
-## PASSO 2 — MOVER
-
-Altere Finance → IT.
-
-Remova grupo antigo e adicione grupo novo.
-
-### Teste
-
-Verifique que Maria perdeu o acesso Finance.
-
-### O que você aprendeu
-
-Mover não é simplesmente adicionar acesso novo; é recalcular o acesso antigo.
-
-## PASSO 3 — LEAVER
-
-Bloqueie a conta, remova grupos e revogue sessões quando aplicável.
+`GRP-FINANCE`
 
 ### Resultado esperado
 
-Maria não consegue mais autenticar nem manter os acessos anteriores.
+Maria recebe o acesso de nascimento definido para Finance.
 
-### O que você aprendeu
+## PASSO 2 — MOVER
 
-Lifecycle e revogação.
+Altere:
 
-> **Lifecycle Workflows:** trate como `OPCIONAL` caso a licença disponível no tenant não cubra a funcionalidade.
+`Finance → IT`
+
+Remova:
+
+`GRP-FINANCE`
+
+Adicione:
+
+`GRP-IT`
+
+### Teste negativo
+
+Maria tenta acessar recurso Finance.
+
+### Resultado esperado
+
+Acesso negado.
+
+### Ponto importante
+
+Mover não é somente **adicionar** acesso. É recalcular o acesso anterior e remover o que deixou de ser necessário.
+
+## PASSO 3 — LEAVER
+
+Execute:
+
+```text
+Disable account
+→ remove groups
+→ revoke sessions quando aplicável
+→ remover roles
+→ registrar evidência
+```
+
+### Resultado esperado
+
+Maria não consegue continuar utilizando os acessos anteriores.
+
+## PASSO 4 — Automatizar
+
+Repita o fluxo usando PowerShell/Graph.
+
+## PASSO 5 — Lifecycle Workflows
+
+Estude a funcionalidade e execute somente se o tenant possuir a licença necessária. O conceito deve ser aprendido mesmo quando a execução estiver fora do escopo de licenciamento.
+
+### Conhecimento adquirido
+
+JML, birthright access, mover, leaver, revogação e automação de lifecycle.
 
 ---
 
-# 21 — ENTITLEMENT MANAGEMENT
-
-> **Licenciamento:** valide no tenant antes de executar; não trate como garantido com P2 isolada.
+# 19 — IGA + RBAC + ABAC + SOD
 
 ## Cenário
 
-Um funcionário solicita um pacote de acessos Finance.
+Uma empresa possui duas funções incompatíveis:
+
+```text
+FIN-REQUESTER
+FIN-APPROVER
+```
+
+## PASSO 1 — Definir role
+
+Documente os entitlements de cada role.
+
+## PASSO 2 — Criar conflito
+
+Regra:
+
+```text
+FIN-REQUESTER + FIN-APPROVER = CONFLITO SoD
+```
+
+## PASSO 3 — Testar
+
+Atribua `FIN-REQUESTER` a `LAB-USER01`.
+
+Simule tentativa de `FIN-APPROVER`.
+
+## PASSO 4 — Registrar exceção
+
+Se uma exceção for permitida, registre:
+
+```text
+Justificativa
+Aprovador
+Prazo
+Risco
+Mitigação
+Data de revisão
+```
+
+## PASSO 5 — Comparar RBAC e ABAC
+
+RBAC:
+
+```text
+User → Role → Permission
+```
+
+ABAC:
+
+```text
+User attributes
++ Resource attributes
++ Action
++ Environment
+→ Decision
+```
+
+Exemplo:
+
+```text
+Department = Finance
+AND Location = BR
+AND Resource = FinanceApp
+→ Allow
+```
+
+### Conhecimento adquirido
+
+Role engineering, entitlement, SoD, ABAC, exceções e governança.
+
+---
+
+# 20 — ENTITLEMENT MANAGEMENT
+
+> **Licenciamento:** Entitlement Management é um recurso de Identity Governance. O comportamento/licenciamento deve ser validado no tenant antes da execução. Para manter o laboratório com uma única P2, use a conta `LAB-P2` para o exercício executável; os demais usuários podem ser usados somente para desenho/documentação quando a licença do cenário não estiver disponível.
 
 ## PASSO 1 — Criar catálogo
 
-No Entra → Identity Governance → Entitlement Management, se disponível.
+**Entra → ID Governance → Entitlement management → Catalogs**.
 
-Crie catálogo `CAT-FINANCE`.
+Nome:
+
+`CAT-FINANCE`
 
 ## PASSO 2 — Criar Access Package
 
-Crie `PKG-FINANCE-ANALYST`.
+Nome:
 
-Inclua grupo e aplicação de laboratório.
+`PKG-FINANCE-ANALYST`
+
+Inclua um grupo/aplicação de laboratório.
 
 ## PASSO 3 — Criar policy
 
-Defina quem pode solicitar, aprovação e expiração.
+Configure:
 
-## PASSO 4 — Solicitar
+```text
+Quem pode solicitar
+Aprovação
+Expiração
+Perguntas/justificativa
+```
 
-Solicite o pacote como `LAB-ANA`.
+## PASSO 4 — Executar com LAB-P2
 
-## PASSO 5 — Aprovar
+Solicite o pacote como `LAB-P2`.
 
-Aprove como aprovador separado.
+## PASSO 5 — Aprovação
+
+Use o fluxo de aprovação que o tenant permitir sem exigir uma segunda identidade licenciada.
 
 ## PASSO 6 — Validar
 
-Confirme o acesso.
+Confirme o acesso concedido.
 
-## PASSO 7 — Expirar/remover
+## PASSO 7 — Expirar/revogar
 
-Remova ou deixe expirar conforme a policy.
+Force ou aguarde o término conforme a policy.
 
-### O que você aprendeu
+### Teste negativo
 
-Entitlement, access package, approval, expiration e governança de acesso.
+Tente solicitar um pacote fora do escopo permitido.
+
+### Conhecimento adquirido
+
+Catalog, Access Package, request, approval, lifecycle e entitlement.
 
 ---
 
-# 22 — ACCESS REVIEWS
+# 21 — ACCESS REVIEWS
 
-> Valide o entitlement/licenciamento disponível antes de criar o review.
+> **Estratégia de licença:** `LAB-P2` será o **único reviewer**. Não use self-review de `LAB-USER01`/`LAB-USER02`, pois isso adicionaria outra categoria de usuário que interage diretamente com a funcionalidade licenciada.
 
-## PASSO 1 — Criar população
+## PASSO 1 — Criar grupo de teste
 
-Escolha `GRP-FINANCE`.
+Use:
 
-## PASSO 2 — Criar review
+`GRP-FINANCE`
 
-**Identity Governance → Access Reviews → New access review**.
+Membros:
 
-Use população pequena.
+`LAB-USER01`
+
+`LAB-USER02`
+
+## PASSO 2 — Criar Access Review
+
+**ID Governance → Access Reviews → New access review**.
+
+População:
+
+`GRP-FINANCE`
+
+Reviewer:
+
+`LAB-P2`
 
 ## PASSO 3 — Revisar
 
-Acesse como reviewer e marque:
+Como `LAB-P2`, marque:
 
-- Keep access
-- Remove access
+```text
+LAB-USER01 → Keep
+LAB-USER02 → Remove
+```
 
 ## PASSO 4 — Aplicar resultado
 
-Remova o acesso rejeitado.
+Execute a aplicação do resultado conforme configuração do review.
 
-## PASSO 5 — Evidência
+## PASSO 5 — Validar
+
+Verifique membership antes/depois.
+
+## PASSO 6 — Auditoria
 
 Registre:
 
-`reviewer → usuário → decisão → data → resultado`
+```text
+Reviewer
+Subject
+Decision
+Date
+Applied result
+```
 
-### O que você aprendeu
+### Teste adicional
 
-Recertificação, owner, decisão e evidência.
+Crie uma segunda revisão com decisão oposta e compare o resultado.
+
+### Conhecimento adquirido
+
+Recertificação, reviewer, decisão, aplicação e evidência.
 
 ---
 
-# 23 — PIM
+# 22 — PIM — ÚNICA LICENÇA P2
 
-> **P2:** este é um dos usos prioritários da única licença.
+## Objetivo
 
-## Cenário
+Aprender JIT sem precisar licenciar vários administradores.
 
-O administrador não deve permanecer permanentemente privilegiado.
+## PASSO 1 — Usar `LAB-P2`
 
-## PASSO 1 — Criar/usar conta administrativa separada
+A única P2 do laboratório será a identidade que recebe a atribuição elegível.
 
-Não use sua conta pessoal principal como identidade de teste privilegiada.
+## PASSO 2 — Atribuir role como Eligible
 
-## PASSO 2 — Tornar elegível
+Abra:
 
 **Entra → Privileged Identity Management → Microsoft Entra roles**.
 
-Escolha uma role adequada ao laboratório.
+Escolha uma role adequada ao exercício.
 
-Atribua como **Eligible**.
+Atribua:
 
-## PASSO 3 — Testar antes da ativação
+`Eligible`
+
+Não use Global Administrator sem necessidade.
+
+## PASSO 3 — Teste antes da ativação
 
 Tente executar a tarefa administrativa.
 
 ### Resultado esperado
 
-Sem ativação, a tarefa não deve possuir o privilégio necessário.
+A permissão privilegiada não está ativa.
 
 ## PASSO 4 — Ativar
 
-Informe justificativa, MFA e duração conforme a policy.
+Como `LAB-P2`:
+
+- Activate
+- informar justificativa
+- concluir MFA quando solicitado
+- definir duração permitida
 
 ## PASSO 5 — Testar
+
+Execute a tarefa administrativa.
+
+### Resultado esperado
+
+Funciona durante a ativação.
+
+## PASSO 6 — Expirar
+
+Aguarde a expiração ou use a duração mínima disponível.
 
 Repita a tarefa.
 
 ### Resultado esperado
 
-A tarefa funciona durante a ativação.
-
-## PASSO 6 — Esperar expiração
-
-Após expirar, repita.
-
-### Resultado esperado
-
-O privilégio deixa de estar ativo.
+A permissão deixa de estar ativa.
 
 ## PASSO 7 — Auditar
 
-Consulte activation history e audit logs.
+Consulte:
 
-### O que você aprendeu
+- Activation history
+- Audit logs
+- Role assignments
 
-JIT, eligible, activation, MFA, duração e auditoria.
+## PASSO 8 — Teste de elevação
+
+Tente ativar uma role diferente da necessária.
+
+### Objetivo
+
+Entender que PIM controla **qual privilégio**, **por quanto tempo** e **sob quais condições**.
+
+### Conhecimento adquirido
+
+Eligible, active, JIT, activation, MFA, justification, duration, least privilege e auditoria.
 
 ---
 
-# 24 — B2B
+# 23 — B2B / EXTERNAL IDENTITY
 
-## Cenário
+## PASSO 1 — Criar convidado de teste
 
-Um fornecedor externo precisa acessar uma aplicação específica.
+Use uma identidade externa controlada.
 
-## PASSO 1 — Convidar identidade externa
+## PASSO 2 — Conceder acesso mínimo
 
-**Entra → Users → New external user**.
-
-Use identidade de teste controlada.
-
-## PASSO 2 — Atribuir acesso mínimo
-
-Conceda somente aplicação/grupo necessário.
+Atribua somente a aplicação/grupo necessário.
 
 ## PASSO 3 — Testar
 
-Entre como externo.
+Entre como convidado.
 
-## PASSO 4 — Revogar
+## PASSO 4 — Verificar logs
 
-Remova acesso/convidado.
+Analise o Sign-in Log e o tipo de usuário.
 
-### O que você aprendeu
+## PASSO 5 — Revogar
 
-External identity, guest lifecycle e least privilege.
+Remova o acesso do convidado.
+
+### Teste negativo
+
+Tente acessar recurso não autorizado.
+
+### Resultado esperado
+
+Negado.
+
+### Conhecimento adquirido
+
+External identity, guest lifecycle, trust e least privilege.
 
 ---
 
-# 25 — HYBRID IDENTITY
+# 24 — HYBRID IDENTITY — AD + ENTRA
 
-## Cenário
+## Objetivo
 
-AD é a origem e Entra recebe identidade sincronizada.
+Entender o conceito de source of authority e sincronização.
 
 ## PASSO 1 — Preparar UPN
 
-No AD, configure o UPN do usuário para corresponder ao domínio verificado no tenant de laboratório.
+No AD, configure o UPN do usuário de laboratório para corresponder ao domínio verificado no tenant quando necessário.
 
-## PASSO 2 — Instalar ferramenta de sincronização
+## PASSO 2 — Escolher método
 
-Use **Microsoft Entra Cloud Sync ou Entra Connect Sync**, conforme o cenário de laboratório e a documentação atual.
+Estude:
 
-### Por quê?
+```text
+Microsoft Entra Cloud Sync
+Microsoft Entra Connect Sync
+```
 
-A sincronização cria uma relação entre identidade on-premises e cloud.
+Use a opção suportada pelo cenário atual do tenant.
 
-## PASSO 3 — Escopo limitado
+## PASSO 3 — Limitar escopo
 
-Sincronize somente a OU de laboratório.
+Sincronize **somente** a OU de laboratório.
 
-## PASSO 4 — Sincronizar
+### Por que limitar?
 
-Sincronize `LAB-ANA`.
+Evita trazer objetos reais ou desnecessários para o tenant.
+
+## PASSO 4 — Sincronizar `LAB-ANA`
+
+Valide o objeto no Entra.
+
+Observe que a origem passa a ser híbrida/sincronizada.
+
+## PASSO 5 — Alterar atributo no AD
+
+Altere `Department`.
+
+Sincronize.
 
 ### Resultado esperado
 
-O usuário aparece como sincronizado no Entra.
+A alteração chega ao Entra conforme o mapeamento.
 
-## PASSO 5 — Alterar atributo
+## PASSO 6 — Teste negativo
 
-Altere um atributo no AD e sincronize.
+Interrompa o serviço/agente de sincronização no laboratório.
 
-### Resultado esperado
+Observe o comportamento e os logs.
 
-A alteração chega ao Entra.
+Restaure o serviço.
 
-## PASSO 6 — Troubleshooting
+### Conhecimento adquirido
 
-Quebre deliberadamente DNS ou credencial/configuração do agente em ambiente isolado.
-
-Investigue logs e restaure.
-
-### O que você aprendeu
-
-Source of authority, sync scope, identidade híbrida e troubleshooting.
+Source of authority, sync scope, UPN, atributos, AD Connect/Cloud Sync e troubleshooting híbrido.
 
 ---
 
-# 26 — IGA + RBAC + ABAC + SoD
+# 25 — PAM COM TELEPORT COMMUNITY EDITION
 
-## Cenário
+> **Objetivo:** aprender PAM com ferramenta aberta. Teleport Community Edition permite estudar RBAC, acesso a servidores, sessões e um fluxo de Access Request via CLI. A experiência completa de Identity Governance/JIT Access Requests é recurso Enterprise; na CE, requests são feitos via `tsh` e aprovados por administrador usando `tctl` no Auth Service.
 
-Finance possui funções incompatíveis.
+## PASSO 1 — Preparar Linux
 
-## PASSO 1 — Criar roles
+`LAB-LINUX01`:
 
-`FIN-REQUESTER`
+```text
+IP: 192.168.56.30
+SSH: habilitado
+```
 
-`FIN-APPROVER`
+Crie um usuário de laboratório sem privilégios excessivos.
 
-## PASSO 2 — Criar entitlements
+## PASSO 2 — Instalar Teleport
 
-Defina permissões de cada role.
+Na `LAB-TELEPORT`, siga a documentação oficial da versão instalada.
 
-## PASSO 3 — Criar conflito SoD
+Não fixe comandos antigos no manual sem validar a versão.
 
-`FIN-REQUESTER + FIN-APPROVER = CONFLITO`
-
-### Por quê?
-
-Uma pessoa que cria e aprova a própria operação pode gerar risco de fraude.
-
-## PASSO 4 — Testar concessão
-
-Atribua requester a Ana.
-
-Tente conceder approver.
-
-Registre a violação.
-
-## PASSO 5 — Simular ABAC
-
-Defina uma regra conceitual:
-
-`Department = Finance AND Location = Brazil`
-
-Compare com RBAC puro.
-
-### O que você aprendeu
-
-IGA, role engineering, SoD, ABAC e exceções.
-
----
-
-# 27 — PAM COM TELEPORT COMMUNITY EDITION
-
-## Cenário
-
-Administrador precisa acessar Linux sem compartilhar senha privilegiada.
-
-## PASSO 1 — Criar `LAB-LINUX01`
-
-IP:
-
-`192.168.56.30`
-
-Instale SSH.
-
-## PASSO 2 — Criar `LAB-TELEPORT`
-
-IP:
-
-`192.168.56.20`
-
-Instale Teleport Community Edition conforme a documentação da versão utilizada.
-
-## PASSO 3 — Registrar servidor
+## PASSO 3 — Registrar o servidor
 
 Adicione `LAB-LINUX01` ao cluster Teleport.
 
-## PASSO 4 — Criar role de menor privilégio
+## PASSO 4 — Criar role mínima
 
-Permita acesso somente ao servidor necessário.
+A role deve permitir somente o acesso ao recurso necessário.
 
-## PASSO 5 — Acessar
+## PASSO 5 — Login
 
-Entre via Teleport e execute:
+Use `tsh login` conforme o cluster.
 
-`whoami`
+Depois execute:
 
-`hostname`
+```text
+whoami
+hostname
+id
+```
 
-`id`
+## PASSO 6 — Auditar sessão
 
-## PASSO 6 — Session recording/auditoria
-
-Consulte eventos e gravação disponíveis na edição instalada.
+Consulte eventos e recursos de gravação disponíveis na versão CE instalada.
 
 ## PASSO 7 — Access Request CE
 
-Pratique role request pela CLI (`tsh request create`) e aprovação administrativa (`tctl`), conforme suporte da versão.
+Crie uma role que possa solicitar uma role elevada.
 
-## PASSO 8 — Negar
+Use o fluxo CLI documentado para CE:
 
-Remova a role e tente novamente.
+```text
+tsh request create
+```
+
+A aprovação/negação deve ser feita pelo administrador via `tctl` no Auth Service.
+
+## PASSO 8 — Teste negativo
+
+Negue a request.
+
+Tente novamente acessar o recurso elevado.
 
 ### Resultado esperado
 
-Acesso privilegiado controlado e auditável.
+A elevação não ocorre.
 
-> **Limite:** CE não é equivalente às capacidades Enterprise de PAM/Access Requests.
+## PASSO 9 — Limitar duração
 
-### O que você aprendeu
+Use `max_session_ttl`/configuração equivalente quando suportado pela versão para estudar acesso temporário.
 
-PAM, privileged access, RBAC, sessão, auditoria e acesso temporário.
+### Conhecimento adquirido
+
+PAM, RBAC, privileged access, session control, audit, request/approval e JIT conceitual.
 
 ---
 
-# 28 — CLOUD IAM
+# 26 — CLOUD IAM — AZURE + AWS
 
-## PASSO 1 — Azure
+## Azure
 
-Use `Virtual Machine Contributor` em `rg-iam-lab`.
+### PASSO 1
 
-## PASSO 2 — AWS
+Crie uma role mínima no `rg-iam-lab`.
 
-Em conta de laboratório, crie uma role/policy de leitura com menor privilégio.
+### PASSO 2
 
-## PASSO 3 — Testar
+Teste ação permitida.
 
-Faça leitura e tente alteração.
+### PASSO 3
+
+Teste ação negada.
+
+## AWS
+
+Somente em conta de laboratório.
+
+### PASSO 4
+
+Crie uma IAM Role de leitura.
+
+### PASSO 5
+
+Teste leitura.
+
+### PASSO 6
+
+Tente alteração.
 
 ### Resultado esperado
 
 Leitura funciona; alteração é negada.
 
-## PASSO 4 — Comparar
+## Comparação
 
 | Conceito | Azure | AWS |
 |---|---|---|
 | Autorização | Azure RBAC | IAM Policy |
 | Identidade de workload | Managed Identity | IAM Role |
-| Escopo | Resource/Resource Group/Subscription | Resource/Account/Policy |
-| Federação | Entra/OIDC/SAML | IAM Identity Center/OIDC/SAML |
+| Escopo | Resource / RG / Subscription | Resource / Account |
+| Federação | SAML/OIDC/Entra | SAML/OIDC/Identity Center |
 
-### O que você aprendeu
+### Conhecimento adquirido
 
-IAM é um modelo, não uma ferramenta.
+IAM é um modelo de segurança aplicado por plataformas diferentes.
 
 ---
 
-# 29 — ITSM + AUDITORIA
+# 27 — ITSM + AUDITORIA
 
 ## Cenário
 
-Maria solicita acesso a uma aplicação.
+`LAB-USER01` solicita acesso à aplicação Finance.
 
-## PASSO 1 — Abrir solicitação
+## PASSO 1 — Criar solicitação
 
-Crie `docs/itsm/REQ-001.md` com:
+Arquivo:
 
-- solicitante;
-- usuário;
-- aplicação;
-- acesso;
-- justificativa;
-- aprovador;
-- data;
-- resultado.
+`docs/itsm/REQ-001.md`
+
+Inclua:
+
+```text
+Solicitante
+Usuário
+Aplicação
+Acesso solicitado
+Justificativa
+Aprovador
+Data
+Resultado
+```
 
 ## PASSO 2 — Aprovar
 
-Use aprovador separado.
+Registre quem aprovou e por quê.
 
 ## PASSO 3 — Conceder
 
-Aplique grupo/role.
+Use grupo/role, não permissão manual na aplicação quando houver alternativa.
 
-## PASSO 4 — Registrar evidência
+## PASSO 4 — Evidenciar
 
-Cole referências aos logs e alterações.
+Relacione:
+
+```text
+Request
+→ Approval
+→ Role assignment
+→ Sign-in
+→ Audit log
+```
 
 ## PASSO 5 — Revogar
 
-Remova o acesso e registre a data.
+Remova acesso e registre data/hora.
 
 ### Perguntas de auditoria
 
-`Quem pediu? Quem aprovou? Quem concedeu? O quê? Quando? Por quanto tempo? Qual evidência?`
+```text
+Quem pediu?
+Quem aprovou?
+Quem concedeu?
+Qual acesso?
+Por quê?
+Quando?
+Por quanto tempo?
+Qual evidência?
+Quando foi revogado?
+```
 
-### O que você aprendeu
+### Conhecimento adquirido
 
-ITSM, approval, evidência, auditoria e rastreabilidade.
+ITSM, approval, evidence, audit trail e accountability.
 
 ---
 
-# 30 — ZERO TRUST
+# 28 — ZERO TRUST
 
-## PASSO 1 — Mapear princípios
+## PASSO 1 — Três princípios
 
-`Verify explicitly`
+```text
+Verify explicitly
+Use least privilege
+Assume breach
+```
 
-`Use least privilege`
+## PASSO 2 — Relacionar com o laboratório
 
-`Assume breach`
-
-## PASSO 2 — Relacionar controles
-
-| Princípio | Laboratório |
+| Princípio | Controle |
 |---|---|
-| Verify explicitly | MFA + CA + Identity Protection |
-| Least privilege | RBAC + PIM |
-| Assume breach | logs + audit + PAM |
+| Verify explicitly | MFA + CA + risk signals |
+| Least privilege | RBAC + PIM + PAM |
+| Assume breach | logs + audit + revocation |
 
 ## PASSO 3 — Demonstrar
 
-Use Ana para provar que identidade autenticada não significa acesso irrestrito.
+`LAB-USER01` autentica corretamente, mas não consegue acessar um recurso fora de sua autorização.
 
-### O que você aprendeu
+### Resultado esperado
 
-Zero Trust aplicado, não apenas conceitualmente.
+Você consegue explicar por que **autenticação bem-sucedida não significa autorização total**.
+
+### Conhecimento adquirido
+
+Zero Trust aplicado à identidade.
 
 ---
 
-# 31 — IAM METRICS
+# 29 — IAM METRICS
 
-## PASSO 1 — Criar dataset fictício
+## PASSO 1 — Criar dataset
 
 Registre:
 
-- total de usuários;
-- MFA ativo;
-- contas privilegiadas;
-- contas permanentes;
-- acessos revisados;
-- acessos removidos;
-- contas sem owner;
-- tempo de provisioning;
-- tempo de revogação.
+```text
+Total users
+MFA coverage
+Privileged accounts
+Eligible privileged accounts
+Permanent privileged accounts
+Access reviews completed
+Access removed
+Orphan accounts
+Provisioning time
+Deprovisioning time
+Failed sign-ins
+```
 
-## PASSO 2 — Calcular indicadores
+## PASSO 2 — Calcular
 
-Exemplos:
+```text
+MFA Coverage = MFA users / Total users × 100
 
-`MFA Coverage = usuários MFA / usuários totais × 100`
+Review Completion = Completed / Planned × 100
 
-`Review Completion = reviews concluídos / reviews planejados × 100`
+Privileged Permanent Rate = Permanent privileged / Total privileged × 100
+```
 
-## PASSO 3 — Produzir relatório
+## PASSO 3 — Criar relatório
 
-Crie `docs/metrics/iam-dashboard.md`.
+Arquivo:
 
-### O que você aprendeu
+`docs/metrics/iam-dashboard.md`
 
-Medir eficácia de IAM e comunicar risco.
+## PASSO 4 — Interpretar
+
+Não basta mostrar 98% de MFA.
+
+Pergunte:
+
+> “Quais 2% estão sem MFA e por quê?”
+
+### Conhecimento adquirido
+
+Métricas, risco, exceções e comunicação executiva.
 
 ---
 
-# 32 — PROJETO FINAL
+# 30 — PROJETO FINAL — IAM CORPORATIVO
 
 ## Cenário
 
-Você é responsável pelo IAM de uma empresa fictícia.
+Empresa fictícia:
+
+```text
+Finance
+IT
+HR
+IAM
+```
 
 ## PASSO 1 — Criar identidades
 
-`ANA-FIN`
-
-`JOAO-IT`
-
-`CARLA-HR`
-
-`ADMIN-IAM`
+```text
+ANA-FIN
+JOAO-IT
+CARLA-HR
+LAB-P2
+```
 
 ## PASSO 2 — Criar grupos
 
-`GRP-FINANCE`
+```text
+GRP-FINANCE
+GRP-IT
+GRP-HR
+GRP-IAM-READONLY
+```
 
-`GRP-IT`
+## PASSO 3 — Definir role matrix
 
-`GRP-HR`
-
-`GRP-IAM-READONLY`
-
-## PASSO 3 — Criar roles
-
-Documente a matriz:
+Arquivo:
 
 `docs/architecture/role-matrix.md`
 
-## PASSO 4 — Proteger autenticação
+Para cada role:
 
-MFA + CA + Identity Protection.
+```text
+Role
+Business purpose
+Entitlements
+Owner
+Approver
+SoD conflict
+Review frequency
+```
 
-## PASSO 5 — Implementar autorização
+## PASSO 4 — Autenticação
 
-RBAC + least privilege.
+Implemente:
+
+```text
+MFA
+CA comum
+CA baseada em risco somente para LAB-P2
+```
+
+## PASSO 5 — Autorização
+
+Implemente:
+
+```text
+RBAC
+Least privilege
+Administrative delegation
+```
 
 ## PASSO 6 — JML
 
-Execute Joiner → Mover → Leaver.
+Execute:
+
+```text
+Joiner
+→ Mover
+→ Leaver
+```
 
 ## PASSO 7 — SSO
 
-Integre uma aplicação OIDC ou SAML.
+Integre uma aplicação via OIDC ou SAML.
 
 ## PASSO 8 — Provisioning
 
@@ -1441,116 +2043,241 @@ Execute PowerShell + Graph.
 
 ## PASSO 10 — Governance
 
-Execute Access Package/Access Review quando disponível.
+Execute Access Review com `LAB-P2` como único reviewer.
 
-## PASSO 11 — Privilege
+Use Entitlement Management somente conforme o licenciamento disponível.
 
-Execute PIM com a licença P2.
+## PASSO 11 — Privileged Access
+
+Execute PIM somente com `LAB-P2`.
 
 ## PASSO 12 — PAM
 
-Acesse Linux pelo Teleport.
+Acesse Linux pelo Teleport CE.
 
 ## PASSO 13 — Auditoria
 
-Prove criação, autenticação, concessão, privilégio, revisão e revogação.
+Prove:
 
-### Resultado final
-
-Você deve conseguir demonstrar:
-
-`Identity → Authentication → Authorization → Provisioning → Governance → Privilege → Audit → Revocation`
+```text
+Identity
+→ Authentication
+→ Authorization
+→ Provisioning
+→ Governance
+→ Privilege
+→ PAM
+→ Audit
+→ Revocation
+```
 
 ---
 
-# 33 — DESAFIO DE ENTREVISTA
+# 31 — DESAFIO DE ENTREVISTA
 
 ## Cenário
 
 Maria entra como Analista Financeiro, muda para IT e depois deixa a empresa.
 
-## Execute sem consultar o manual
+Execute **sem consultar o manual**:
 
 1. Criar identidade.
-2. Aplicar grupo.
-3. Aplicar role.
-4. Exigir MFA.
-5. Integrar aplicação.
-6. Consultar logs.
-7. Mover Finance → IT.
-8. Remover acessos antigos.
-9. Conceder novos acessos.
-10. Fazer review.
-11. Ativar privilégio temporário com PIM.
-12. Acessar servidor pelo PAM.
-13. Desligar Maria.
-14. Revogar acessos.
-15. Produzir evidências.
+2. Definir atributos.
+3. Aplicar grupo Finance.
+4. Aplicar role.
+5. Exigir MFA.
+6. Integrar aplicação.
+7. Consultar logs.
+8. Mover Finance → IT.
+9. Remover acessos antigos.
+10. Conceder novos acessos.
+11. Executar Access Review.
+12. Ativar privilégio temporário com PIM usando `LAB-P2`.
+13. Acessar Linux pelo PAM.
+14. Desligar Maria.
+15. Revogar acessos.
+16. Produzir evidências.
 
-### Você passou se conseguir explicar
+## Perguntas que você precisa responder
 
-- autenticação × autorização;
-- RBAC × ABAC;
-- JML;
-- SoD;
-- SSO;
-- SAML;
-- OAuth;
-- OIDC;
-- SCIM;
-- service principal;
-- workload identity;
-- Access Review;
-- PIM;
-- PAM;
-- least privilege;
-- auditoria.
+- Autenticação vs autorização?
+- RBAC vs ABAC?
+- O que é JML?
+- O que é birthright access?
+- O que é SoD?
+- O que é entitlement?
+- O que é SSO?
+- SAML vs OIDC?
+- OAuth 2.0 é autenticação?
+- O que é SCIM?
+- Application object vs Service Principal?
+- O que é workload identity?
+- O que é Access Review?
+- O que é PIM?
+- O que é PAM?
+- Como funciona least privilege?
+- Como investigar um login negado?
+- Como provar para auditoria que um acesso foi autorizado?
+
+---
+
+# 🧪 TESTES ADICIONAIS OBRIGATÓRIOS
+
+Depois de concluir os módulos, execute estes cenários sem alterar o desenho do laboratório:
+
+## Teste A — Usuário certo, role errada
+
+Usuário autenticado corretamente, mas sem role.
+
+**Esperado:** autorização negada.
+
+## Teste B — Role certa, scope errado
+
+A role existe, mas foi atribuída a outro Resource Group.
+
+**Esperado:** negado.
+
+## Teste C — CA bloqueia
+
+Usuário possui permissão, mas CA bloqueia a autenticação.
+
+**Esperado:** não chega à autorização do recurso.
+
+## Teste D — MFA satisfeito, autorização ausente
+
+Usuário passa MFA, mas não possui role.
+
+**Esperado:** autenticação passa; autorização falha.
+
+## Teste E — PIM inativo
+
+`LAB-P2` possui role elegível, mas não ativada.
+
+**Esperado:** privilégio não está ativo.
+
+## Teste F — PIM ativo
+
+Ative a role.
+
+**Esperado:** privilégio temporário funciona.
+
+## Teste G — Expiração PIM
+
+Espere expirar.
+
+**Esperado:** privilégio deixa de funcionar.
+
+## Teste H — JML Mover
+
+Finance → IT.
+
+**Esperado:** acesso Finance removido e IT concedido.
+
+## Teste I — Leaver
+
+Bloqueie usuário.
+
+**Esperado:** autenticação e acessos são revogados conforme o fluxo.
+
+## Teste J — SSO quebrado
+
+Altere ACS/Redirect URI.
+
+**Esperado:** login falha.
+
+## Teste K — SCIM quebrado
+
+Use token inválido.
+
+**Esperado:** provisioning falha e gera evidência.
+
+## Teste L — API sem consentimento
+
+Execute chamada Graph sem permissão.
+
+**Esperado:** erro de autorização.
+
+## Teste M — PAM negado
+
+Remova role Teleport.
+
+**Esperado:** acesso ao recurso privilegiado é negado.
+
+## Teste N — Auditoria
+
+Depois de todos os testes, responda:
+
+> “Consigo reconstruir quem fez o quê, quando, com qual permissão e por qual motivo?”
 
 ---
 
 # 🧭 PLAYBOOK UNIVERSAL DE TROUBLESHOOTING
 
-Quando algo falhar:
+Sempre siga esta ordem:
 
-1. Identifique o usuário/aplicação.
-2. Confirme se a identidade está habilitada.
-3. Verifique autenticação.
-4. Verifique MFA.
-5. Verifique Conditional Access.
-6. Verifique grupos.
-7. Verifique role.
-8. Verifique scope.
-9. Verifique aplicação/Enterprise App.
-10. Verifique token/claims.
-11. Verifique API permissions.
-12. Verifique logs.
-13. Reproduza.
-14. Corrija o menor componente possível.
-15. Repita o teste.
-16. Revogue a alteração de laboratório.
-17. Registre causa e solução.
+```text
+01. Identidade
+02. Estado da conta
+03. Autenticação
+04. MFA
+05. Conditional Access
+06. Grupo
+07. Role
+08. Scope
+09. Aplicação
+10. Token / claims
+11. API permission
+12. Provisioning
+13. Logs
+14. Causa raiz
+15. Correção mínima
+16. Novo teste
+17. Revogação / cleanup
+18. Evidência
+```
+
+## Regra de investigação
+
+Nunca resolva:
+
+```text
+"acesso negado"
+```
+
+com:
+
+```text
+Global Administrator
+```
+
+Descubra **qual autorização está faltando**.
 
 ---
 
-# 📸 EVIDÊNCIAS
+# 📁 EVIDÊNCIAS DO LABORATÓRIO
 
-Para cada módulo, salve somente evidências sem secrets:
+Estrutura sugerida:
 
 ```text
 01-IAM/
+├── IAM-Study-Lab.md
 ├── evidencias/
 │   ├── 01-ambiente/
-│   ├── 05-rbac/
+│   ├── 03-active-directory/
+│   ├── 06-rbac/
 │   ├── 08-conditional-access/
-│   ├── 12-oidc/
-│   ├── 13-saml/
-│   ├── 17-scim/
-│   ├── 19-automation/
-│   ├── 21-entitlement/
-│   ├── 22-access-reviews/
-│   ├── 23-pim/
-│   ├── 27-pam/
-│   └── 29-audit/
+│   ├── 09-identity-protection/
+│   ├── 11-oidc/
+│   ├── 12-saml/
+│   ├── 15-scim/
+│   ├── 16-graph/
+│   ├── 17-automation/
+│   ├── 18-jml/
+│   ├── 21-access-reviews/
+│   ├── 22-pim/
+│   ├── 24-hybrid/
+│   ├── 25-pam/
+│   └── 27-audit/
 ├── docs/
 │   ├── architecture/
 │   ├── iga/
@@ -1561,46 +2288,163 @@ Para cada módulo, salve somente evidências sem secrets:
     └── graph/
 ```
 
-Nunca publique senhas, tokens, client secrets, private keys ou dados reais.
+## O que salvar
+
+- screenshots de configuração;
+- screenshots de resultado positivo;
+- screenshots de resultado negativo;
+- logs relevantes;
+- matriz de roles;
+- fluxos JML;
+- scripts;
+- relatórios;
+- decisões de SoD.
+
+## O que nunca salvar
+
+- senha;
+- client secret;
+- refresh token;
+- access token;
+- private key;
+- QR code de MFA;
+- cookie de sessão;
+- dados reais.
 
 ---
 
-# ✅ CHECKPOINT
+# ✅ CHECKPOINT POR MÓDULO
 
-Antes de avançar:
+Antes de marcar um módulo como concluído:
 
-- [ ] Executei todos os passos.
-- [ ] Entendi por que cada configuração existe.
-- [ ] Vi o resultado esperado.
-- [ ] Fiz o teste negativo.
+- [ ] Configurei sozinho.
+- [ ] Sei por que a configuração existe.
+- [ ] Sei quem foi afetado.
+- [ ] Validei resultado positivo.
+- [ ] Executei teste negativo.
 - [ ] Investiguei o erro.
-- [ ] Corrigi.
-- [ ] Revoguei o acesso quando aplicável.
+- [ ] Corrigi a causa.
+- [ ] Revoguei/limpei o laboratório.
 - [ ] Registrei evidência.
-- [ ] Consigo explicar sem consultar o manual.
-- [ ] Consigo repetir sozinho.
+- [ ] Consigo explicar o conceito.
+- [ ] Consigo repetir sem consultar o passo a passo.
 
-> **Regra:** terminar a leitura não significa dominar o módulo. Domínio = configurar + testar + quebrar + investigar + corrigir + revogar + explicar.
+> **Domínio = executar + quebrar + investigar + corrigir + revogar + explicar.**
 
-## 🎯 Progressão
+---
 
-| Nível | Evidência prática |
+# 🎯 MATRIZ DE EVOLUÇÃO
+
+| Nível | Você precisa demonstrar |
 |---|---|
-| 🟢 Básico | identidade, AD/Entra, grupos, RBAC, MFA |
-| 🔵 Júnior | JML, CA, logs, SSO, protocolos |
-| 🟣 Pleno | SCIM, Graph, PowerShell, IGA, SoD, reviews |
-| 🟠 Avançado | PIM, PAM, cloud IAM, workload identity, ABAC |
-| 🔴 Sênior | arquitetura, governança, métricas, Zero Trust e controles auditáveis |
+| 🟢 Base | IAM fundamentals, AD, Entra, users, groups, DNS, GPO |
+| 🔵 Júnior | RBAC, MFA, CA, SSO, logs, troubleshooting, ITSM |
+| 🟣 Pleno | JML, OAuth/OIDC/SAML, SCIM, Graph, PowerShell, IGA, SoD, Access Reviews |
+| 🟠 Avançado | PIM, PAM, workload identity, hybrid identity, cloud IAM, ABAC |
+| 🔴 Sênior | arquitetura, governance, role engineering, métricas, auditoria, Zero Trust, automação e desenho de controles |
 
-## 📚 Referências oficiais
+---
+
+# 📌 O QUE ESTE LABORATÓRIO DEVE PRODUZIR NO FINAL
+
+Você não deve terminar apenas sabendo clicar no portal.
+
+Deve conseguir explicar e demonstrar:
+
+```text
+IDENTITY
+   ↓
+AUTHENTICATION
+   ↓
+MFA / CONDITIONAL ACCESS
+   ↓
+AUTHORIZATION
+   ↓
+RBAC / ABAC
+   ↓
+PROVISIONING
+   ↓
+JML
+   ↓
+IGA / SoD / ACCESS REVIEW
+   ↓
+PIM
+   ↓
+PAM
+   ↓
+AUDIT
+   ↓
+REVOCATION
+```
+
+E deve conseguir transformar esse conhecimento em:
+
+```text
+Política
+→ configuração
+→ teste
+→ automação
+→ evidência
+→ auditoria
+→ melhoria
+```
+
+---
+
+# 📚 REFERÊNCIAS OFICIAIS
 
 - Microsoft Entra: https://learn.microsoft.com/entra/
 - Microsoft Entra licensing: https://learn.microsoft.com/entra/fundamentals/licensing
-- Entra Identity Governance: https://learn.microsoft.com/entra/id-governance/
+- Conditional Access: https://learn.microsoft.com/entra/identity/conditional-access/
+- Identity Protection: https://learn.microsoft.com/entra/id-protection/
+- PIM: https://learn.microsoft.com/entra/id-governance/privileged-identity-management/
+- Identity Governance: https://learn.microsoft.com/entra/id-governance/
+- Access Reviews: https://learn.microsoft.com/entra/id-governance/access-reviews-overview
+- Entitlement Management: https://learn.microsoft.com/entra/id-governance/entitlement-management-overview
+- Lifecycle Workflows: https://learn.microsoft.com/entra/id-governance/lifecycle-workflows-overview
 - Microsoft Graph: https://learn.microsoft.com/graph/
-- OAuth: https://www.rfc-editor.org/rfc/rfc6749
-- OpenID Connect: https://openid.net/specs/openid-connect-core-1_0.html
+- OAuth 2.0 RFC 6749: https://www.rfc-editor.org/rfc/rfc6749
+- OpenID Connect Core: https://openid.net/specs/openid-connect-core-1_0.html
 - SAML: https://www.oasis-open.org/standard/saml/
-- SCIM: https://www.rfc-editor.org/rfc/rfc7644
+- SCIM RFC 7644: https://www.rfc-editor.org/rfc/rfc7644
 - NIST Digital Identity Guidelines: https://pages.nist.gov/800-63-4/
 - Teleport Community Edition: https://goteleport.com/docs/get-started/deploy-community/
+
+---
+
+# 🧾 AUDITORIA DO PRÓPRIO LABORATÓRIO
+
+Este documento foi estruturado para corrigir quatro problemas comuns de roadmaps de IAM:
+
+1. **Excesso de teoria antes da prática:** cada módulo começa por uma tarefa concreta.
+2. **Passos sem objetivo:** cada configuração explica imediatamente o motivo e o resultado esperado.
+3. **Ausência de troubleshooting:** cada bloco relevante possui teste negativo e investigação.
+4. **Licenciamento ignorado:** o laboratório separa explicitamente CA comum, recursos P2 e cenários que dependem de licenças adicionais.
+
+### Estratégia de 1 P2
+
+```text
+LAB-ADMIN
+   ↓
+CONFIGURA
+   ↓
+┌─────────────────────────────────────┐
+│                                     │
+│  LAB-USER01 / LAB-USER02            │
+│  ├── MFA                             │
+│  ├── CA comum                        │
+│  ├── SSO                             │
+│  ├── RBAC                            │
+│  ├── JML                             │
+│  └── testes gerais                   │
+│                                     │
+│  LAB-P2                              │
+│  ├── Identity Protection             │
+│  ├── Risk-based CA                   │
+│  ├── PIM                             │
+│  └── Access Review como reviewer     │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+**Resultado:** o laboratório maximiza o conteúdo técnico aprendido sem transformar a quantidade de usuários em requisito artificial de licenciamento. Os exercícios que realmente exigem múltiplos usuários licenciados devem permanecer como cenários corporativos de referência, não como pré-requisito para concluir o laboratório.
