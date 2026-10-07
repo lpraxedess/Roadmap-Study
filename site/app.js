@@ -53,9 +53,10 @@
     <section class="resource-banner"><div><h3>Prática de verdade, sem depender de licenças caras.</h3><p>Comece com Keycloak e Python. Use seu Entra ID P2 apenas quando o licenciamento permitir.</p></div><a class="btn secondary" href="#/laboratorios">Ver laboratórios →</a></section>`;
   }
   function catalog(kind,heading,sub){
-    let list=selection(kind).filter(x=>!query||normalized(x.title+" "+x.description+" "+x.stage).includes(normalized(query)));
+    let list=(query ? items.filter(x=>x.kind!=="referencia") : selection(kind)).filter(x=>!query||normalized(x.title+" "+x.description+" "+x.stage).includes(normalized(query)));
     if(currentFilter!=="todos"&&currentFilter!=="concluidos"&&kind==="aula")list=list.filter(x=>x.stage===currentFilter);
-    if(currentFilter==="concluidos")list=list.filter(x=>completed.has(x.id));\n    if(query)list.sort((a,b)=>a.kind.localeCompare(b.kind)||a.order-b.order);
+    if(currentFilter==="concluidos")list=list.filter(x=>completed.has(x.id));
+    if(query)list.sort((a,b)=>a.kind.localeCompare(b.kind)||a.order-b.order);
     let controls=kind==="aula"?`<div class="filter-row"><button class="filter-btn ${currentFilter==="todos"?"active":""}" data-filter="todos">Todas</button>${stages.map(x=>`<button class="filter-btn ${currentFilter===x?"active":""}" data-filter="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("")}<button class="filter-btn ${currentFilter==="concluidos"?"active":""}" data-filter="concluidos">Concluídas</button></div>`:"";
     return `<div class="eyebrow">IAM ACADEMY / FORMAÇÃO</div><h1 class="page-title">${heading}</h1><p class="page-sub">${sub}</p>${controls}${list.length?(kind==="aula"&&!query?`<div class="course-list">${list.map(row).join("")}</div>`:`<div class="card-grid">${list.map(card).join("")}</div>`):'<div class="empty">Nenhum conteúdo encontrado. Limpe a busca ou altere o filtro.</div>'}`;
   }
