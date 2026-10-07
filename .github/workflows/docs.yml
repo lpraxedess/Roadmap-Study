@@ -4,7 +4,10 @@ on:
     branches: [main]
   pull_request:
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,8 +26,27 @@ jobs:
         run: python site/build.py
       - name: Validate generated site
         run: python site/check_build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: iam-academy-site
+          path: dist
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements-docs.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: iam-academy-site
+          path: dist
       - name: Publish to gh-pages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: ghp-import -n -p -f dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

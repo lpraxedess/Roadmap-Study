@@ -53,11 +53,12 @@
     <section class="resource-banner"><div><h3>Prática de verdade, sem depender de licenças caras.</h3><p>Comece com Keycloak e Python. Use seu Entra ID P2 apenas quando o licenciamento permitir.</p></div><a class="btn secondary" href="#/laboratorios">Ver laboratórios →</a></section>`;
   }
   function catalog(kind,heading,sub){
-    let list=selection(kind).filter(x=>!query||normalized(x.title+" "+x.description+" "+x.stage).includes(normalized(query)));
-    if(currentFilter!=="todos"&&kind==="aula")list=list.filter(x=>x.stage===currentFilter);
+    let list=(query ? items.filter(x=>x.kind!=="referencia") : selection(kind)).filter(x=>!query||normalized(x.title+" "+x.description+" "+x.stage).includes(normalized(query)));
+    if(currentFilter!=="todos"&&currentFilter!=="concluidos"&&kind==="aula")list=list.filter(x=>x.stage===currentFilter);
     if(currentFilter==="concluidos")list=list.filter(x=>completed.has(x.id));
+    if(query)list.sort((a,b)=>a.kind.localeCompare(b.kind)||a.order-b.order);
     let controls=kind==="aula"?`<div class="filter-row"><button class="filter-btn ${currentFilter==="todos"?"active":""}" data-filter="todos">Todas</button>${stages.map(x=>`<button class="filter-btn ${currentFilter===x?"active":""}" data-filter="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("")}<button class="filter-btn ${currentFilter==="concluidos"?"active":""}" data-filter="concluidos">Concluídas</button></div>`:"";
-    return `<div class="eyebrow">IAM ACADEMY / FORMAÇÃO</div><h1 class="page-title">${heading}</h1><p class="page-sub">${sub}</p>${controls}${list.length?(kind==="aula"?`<div class="course-list">${list.map(row).join("")}</div>`:`<div class="card-grid">${list.map(card).join("")}</div>`):'<div class="empty">Nenhum conteúdo encontrado. Limpe a busca ou altere o filtro.</div>'}`;
+    return `<div class="eyebrow">IAM ACADEMY / FORMAÇÃO</div><h1 class="page-title">${heading}</h1><p class="page-sub">${sub}</p>${controls}${list.length?(kind==="aula"&&!query?`<div class="course-list">${list.map(row).join("")}</div>`:`<div class="card-grid">${list.map(card).join("")}</div>`):'<div class="empty">Nenhum conteúdo encontrado. Limpe a busca ou altere o filtro.</div>'}`;
   }
   function resourcePage(){
     const refs=selection("referencia").filter(x=>x.source!=="index.md");
@@ -71,6 +72,7 @@
     $$("a[href]",article).forEach(link=>{
       const raw=link.getAttribute("href");
       if(!raw||raw.startsWith("#")||/^(https?:|mailto:)/i.test(raw)){if(raw&&raw.startsWith("http")){link.target="_blank";link.rel="noopener noreferrer"}return;}
+      if(/^javascript:|^data:/i.test(raw)){link.removeAttribute("href");return;}
       if(raw.endsWith(".md")||raw.includes(".md#")){
         const [relative]=raw.split("#");
         const base=item.source.split("/");base.pop();
@@ -99,7 +101,7 @@
     const links=$$("#article-body h2, #article-body h3").slice(0,18);
     $("#toc-links").innerHTML=links.map((h,i)=>{h.id=h.id||"topico-"+i;return `<a href="#${h.id}" data-toc="${h.id}">${escapeHtml(h.textContent)}</a>`}).join("")||"<small>Conteúdo de estudo</small>";
   }
-  function currentRoute(){const parts=decodeURIComponent(location.hash||"#/dashboard").replace(/^#\//,"").split("/");return {route:parts[0]||"dashboard",id:parts.slice(1).join("/")};}
+  function currentRoute(){let hash=location.hash||"#/dashboard";try{hash=decodeURIComponent(hash)}catch{hash="#/dashboard"}const parts=hash.replace(/^#\//,"").split("/");return {route:parts[0]||"dashboard",id:parts.slice(1).join("/")};}
   function render(){
     const {route,id}=currentRoute();let view;
     if(route==="dashboard")view=dashboard();
@@ -113,8 +115,9 @@
     main.innerHTML=view;
     navUpdate(route);
     if(route==="conteudo")enrichReader();
+    document.title=(route==="conteudo"?items.find(x=>x.id===id)?.title:$("#current-section").textContent)+" | IAM Academy";
     closeMenu();
-    window.scrollTo({top:0,behavior:"instant"});
+    window.scrollTo(0,0);
   }
   function downloadProgress(){
     const payload={app:"IAM Academy",version:1,exportedAt:new Date().toISOString(),completed:[...completed]};
@@ -128,7 +131,7 @@
     try{
       if(file.size>1024*1024)throw Error("Arquivo muito grande");
       const data=JSON.parse(await file.text());
-      if(data.app!=="IAM Academy"||data.version!==1||!Array.isArray(data.completed))throw Error("Formato inválido");
+      if(data.app!=="IAM Academy"||data.version!==1||!Array.isArray(data.completed)||data.completed.length>10000||!data.completed.every(x=>typeof x==="string"))throw Error("Formato inválido");
       completed=new Set(data.completed.filter(id=>items.some(x=>x.id===id)));
       save(STORAGE,JSON.stringify([...completed]));render();notify("Progresso importado.");
     }catch(e){notify("Não foi possível importar: "+e.message)}
