@@ -72,7 +72,8 @@
     $$("a[href]",article).forEach(link=>{
       const raw=link.getAttribute("href");
       if(!raw||raw.startsWith("#")||/^(https?:|mailto:)/i.test(raw)){if(raw&&raw.startsWith("http")){link.target="_blank";link.rel="noopener noreferrer"}return;}
-      if(/^javascript:|^data:/i.test(raw)){link.removeAttribute("href");return;}\n      if(raw.endsWith(".md")||raw.includes(".md#")){
+      if(/^javascript:|^data:/i.test(raw)){link.removeAttribute("href");return;}
+      if(raw.endsWith(".md")||raw.includes(".md#")){
         const [relative]=raw.split("#");
         const base=item.source.split("/");base.pop();
         const tokens=base.concat(relative.split("/")),resolved=[];
@@ -113,7 +114,8 @@
     else view=dashboard();
     main.innerHTML=view;
     navUpdate(route);
-    if(route==="conteudo")enrichReader();\n    document.title=(route==="conteudo"?items.find(x=>x.id===id)?.title:$("#current-section").textContent)+" | IAM Academy";
+    if(route==="conteudo")enrichReader();
+    document.title=(route==="conteudo"?items.find(x=>x.id===id)?.title:$("#current-section").textContent)+" | IAM Academy";
     closeMenu();
     window.scrollTo(0,0);
   }
