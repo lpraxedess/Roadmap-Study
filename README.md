@@ -1,33 +1,50 @@
-# IAM Study Lab — Formação autoguiada
+# IAM Academy — Roadmap Study
 
-Formação prática em **Identity & Access Management**, de operações de identidade a IAM Engineering, Identity Security e arquitetura. O foco é Microsoft Entra ID, Active Directory e Azure, com **laboratórios open source para não depender de licenças pagas**.
+**Portal de aprendizagem de Identity & Access Management do IAM operacional à arquitetura**, com Microsoft Entra ID e laboratórios open source para avançar sem depender de produtos comerciais.
 
-> **Comece aqui:** [Guia do aluno](docs/guia-do-aluno.md) · [Matriz de competências](docs/matriz-de-competencias.md) · [Laboratórios e custos](docs/laboratorios-e-custos.md) · [Primeiro laboratório guiado](docs/labs/01-keycloak-oidc.md).
+## Abrir o portal
 
-## Como os repositórios se relacionam
+**[IAM Academy — GitHub Pages](https://lpraxedess.github.io/Roadmap-Study/)**
 
-- **Roadmap-Study:** curso, exercícios, critérios de aprovação e documentação dos laboratórios.
-- **[Projetos](https://github.com/lpraxedess/Projetos):** portfólio existente, consultado apenas como referência; não é modificado por este curso.
+> A URL só estará acessível quando o GitHub Pages estiver habilitado para o repositório, usando a branch `gh-pages` e diretório raiz. Veja [instruções](docs/publicacao.md).
 
-## Percurso
+A plataforma oferece dashboard, trilha de aulas, laboratórios, projetos, busca, modo claro/escuro, acompanhamento de progresso local e exportação/importação dos dados de estudo. Não exige conta ou servidor de aplicação.
 
-1. Fundamentos essenciais e diagnóstico
-2. AD DS e Entra ID avançados
-3. IAM Operations e ciclo de vida
-4. SSO, SAML, OAuth 2.0, OIDC e SCIM
-5. IAM Engineering: Microsoft Graph, PowerShell, APIs e automação
-6. IGA: governança, revisão e segregação de funções
-7. PAM e gestão de segredos
-8. Azure IAM, workload identities e cloud
-9. Identity Security e investigação
-10. Arquitetura empresarial e projetos integradores
+## Como está organizado
 
-O conteúdo legado permanece em [IAM-Study-Lab.md](01-IAM/IAM-Study-Lab.md) até sua migração revisada. **Nenhum laboratório deve pressupor licenciamento além do que o aluno realmente possui.**
+- `site/`: interface visual em HTML/CSS/JS e gerador estático Python.
+- `docs/modulos/`: 25 aulas estruturadas.
+- `docs/labs/`: 7 laboratórios guiados.
+- `docs/projetos/`: 6 projetos integradores.
+- `scripts/`: simulação e testes de JML.
+- `docs/`: guias, currículo, matriz, custos, publicação.
+- `01-IAM/IAM-Study-Lab.md`: arquivo legado preservado com 32 módulos como referência.
 
-## Portal
+## Rodar o site localmente
 
-A documentação pode ser publicada como site estático via **MkDocs + Material** e GitHub Pages. Consulte [Publicação](docs/publicacao.md). A publicação não é automática até que GitHub Pages seja configurado.
+Requer Python 3.10+:
 
-## Segurança
+```bash
+python -m pip install -r requirements-docs.txt
+python site/build.py
+python site/check_build.py
+python -m http.server 8000 --directory dist
+```
 
-Use apenas contas e ambientes de laboratório. Não publique tokens, chaves, senhas, IDs sensíveis ou capturas contendo dados privados. Evite recursos Azure com cobrança contínua; remova os recursos ao terminar.
+Acesse `http://localhost:8000/`. Não abra `dist/index.html` por `file://`, pois o navegador pode bloquear o carregamento de JSON local.
+
+## Como publicar
+
+Push na branch `main` dispara os testes, gera `dist/` e publica na branch `gh-pages`, usando GitHub Actions. Se necessário, habilite **Settings → Pages → Deploy from a branch → gh-pages → / (root)**. O repositório deve permitir que Actions escreva conteúdo.
+
+## Licenças, custo e segurança
+
+Uma licença Entra ID P2 é utilizada apenas no escopo de uso devidamente licenciado. SSO, OIDC, SAML, SCIM, PAM e JML contam com alternativas abertas ou simulações locais. Azure pode gerar custos; revise cada laboratório antes de provisionar.
+
+**Portfólio separado:** [Projetos](https://github.com/lpraxedess/Projetos) é somente referenciado; nenhuma alteração é feita nesse outro repositório.
+
+**Limite de progresso:** os dados ficam no `localStorage` do navegador. Para manter backup ou transferir entre dispositivos, exporte o arquivo JSON na área Competências.
+
+## Evolução do conteúdo
+
+As aulas organizam objetivos, procedimentos, falhas e critérios de conclusão; nem todos os laboratórios representam uma instalação validada ponta a ponta para cada sistema e versão. Trate os roteiros avançados como projetos de estudo que requerem adaptação e revisão técnica, especialmente quando houver licenciamento e infraestrutura externa.
