@@ -1,36 +1,45 @@
-# Publicar o portal gratuitamente
+# Publicação do IAM Academy no GitHub Pages
 
-A documentação utiliza **MkDocs Material**. O GitHub Pages precisa ser ativado nas configurações do repositório para disponibilizar o site.
+O portal usa **HTML, CSS e JavaScript** para a interface visual. O conteúdo das aulas está em Markdown apenas como fonte interna, convertida para HTML e JSON pelo gerador Python.
 
-## Testar localmente
-
-Requer Python 3.10+ e Git:
+## Build local
 
 ```bash
-python -m venv .venv
-# Linux/macOS
-source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -r requirements-docs.txt
-mkdocs serve
+python site/build.py
+python site/check_build.py
+python -m http.server 8000 --directory dist
 ```
 
-Acesse o endereço local exibido no terminal.
+Acesse `http://localhost:8000/`. O diretório `dist/` não precisa ser versionado no Git.
 
-## Gerar o site
+## Publicação automática
 
-```bash
-mkdocs build --strict
+O workflow `.github/workflows/docs.yml`:
+
+1. Executa os testes da simulação JML.
+2. Gera o site em `dist/` a partir de `docs/`.
+3. Valida a estrutura do bundle e o conteúdo.
+4. Se a branch for `main`, publica `dist/` na branch `gh-pages`.
+
+### Ativar o GitHub Pages
+
+No GitHub, abra **Settings → Pages**, escolha **Deploy from a branch**, selecione **gh-pages** e **/(root)**. A opção `gh-pages` aparece após a primeira publicação bem-sucedida.
+
+Confira também **Settings → Actions → General → Workflow permissions**, garantindo que a ação tenha permissões de escrita para criar/atualizar `gh-pages`. Organizações podem restringir essas permissões.
+
+Depois da ativação, o endereço previsto é:
+
+```text
+https://lpraxedess.github.io/Roadmap-Study/
 ```
 
-## Publicar no GitHub Pages
+A URL só pode ser tratada como publicada quando a implantação terminar e o endereço abrir no navegador.
 
-Após revisar as configurações e permissões da conta, é possível publicar com:
+## Progresso e privacidade
 
-```bash
-mkdocs gh-deploy
-```
+O site não usa banco, login nem servidores de usuários. As marcações de conclusão ficam no navegador atual e podem ser exportadas/importadas na aba Competências. Não faça upload de arquivos contendo tokens, credenciais, dados pessoais ou registros de ambientes profissionais.
 
-Esse comando cria/atualiza a branch de publicação `gh-pages`. No GitHub, em **Settings → Pages**, selecione **Deploy from a branch** e a branch `gh-pages` (raiz). A URL esperada, **depois de publicar**, é `https://lpraxedess.github.io/Roadmap-Study/`.
+## Separação dos repositórios
 
-**Não execute publicação sem revisar conteúdo e eventuais dados privados.** O repositório e o site são públicos.
+Somente o Roadmap-Study hospeda a plataforma. [Projetos](https://github.com/lpraxedess/Projetos) continua como portfólio externo, sem alterações.
