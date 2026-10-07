@@ -38,6 +38,8 @@ O percurso respeita experiência prévia com AD e Entra ID. Faça diagnóstico p
 - [04 — Microsoft Graph — consultas delegadas e diagnóstico](labs/04-graph-readonly.md)
 - [05 — JML reproduzível — CSV e PowerShell](labs/05-jml-simulacao.md)
 - [06 — Acesso privilegiado — desenho e validação](labs/06-pam-lab.md)
+- [07 — JML com Python e dry-run](labs/07-jml-python.md)
+- [08 — Simulação local de PIM: ativação JIT, expiração e auditoria](labs/08-pim-simulador.md)
 
 ## Projetos integradores
 
