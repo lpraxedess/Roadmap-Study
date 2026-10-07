@@ -2,12 +2,12 @@
 """Build a standalone, zero-backend IAM Academy for GitHub Pages."""
 from __future__ import annotations
 
-import html
 import json
 import re
 import shutil
 from pathlib import Path
 import markdown
+import bleach
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
