@@ -1,0 +1,31 @@
+site_name: IAM Study Lab
+site_description: Formação autoguiada em IAM, Microsoft e open source
+site_url: https://lpraxedess.github.io/Roadmap-Study/
+repo_url: https://github.com/lpraxedess/Roadmap-Study
+theme:
+  name: material
+  language: pt-BR
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+plugins:
+  - search
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+nav:
+  - Início: index.md
+  - Comece aqui:
+      - Guia do aluno: guia-do-aluno.md
+      - Matriz de competências: matriz-de-competencias.md
+      - Laboratórios e custos: laboratorios-e-custos.md
+  - Curso:
+      - Estrutura curricular: curriculo.md
+      - Keycloak e OIDC — laboratório 01: labs/01-keycloak-oidc.md
+  - Portfólio e publicação:
+      - Portfólio: portfolio.md
+      - Publicação: publicacao.md
+docs_dir: docs
