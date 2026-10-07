@@ -35,12 +35,12 @@ Executar consultas com menor privilégio e saber quando usar identidade gerencia
 2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
 
 ```text
-Install-Module Microsoft.Graph -Scope CurrentUser; Connect-MgGraph -Scopes 'User.Read'; Get-MgContext; Get-MgUser -Top 1
+Install-Module Microsoft.Graph -Scope CurrentUser\nConnect-MgGraph -Scopes 'User.Read'\nGet-MgContext\nInvoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/me'\nDisconnect-MgGraph
 ```
 
 3. Configure apenas o mínimo necessário, com permissões reduzidas.
 4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Remova consentimento/escopo no laboratório e documente resultado HTTP de operação não autorizada.
+5. Execute **teste negativo controlado**: Com apenas User.Read, tente consultar GET /v1.0/users e observe a recusa por escopo insuficiente. Não solicite User.Read.All apenas para fazer o teste.
 6. Registre horário, status, mensagem de erro, causa e solução.
 7. Reverta as alterações e confirme o estado final.
 

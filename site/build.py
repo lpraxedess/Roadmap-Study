@@ -55,7 +55,7 @@ def description(source: str) -> str:
 def make_entry(path: Path, kind: str, order: int) -> dict:
     raw = path.read_text(encoding="utf-8")
     md.reset()
-    rendered = md.convert(raw)
+    rendered = bleach.clean(md.convert(raw), tags=set(bleach.sanitizer.ALLOWED_TAGS) | {"h1","h2","h3","h4","h5","h6","p","pre","code","div","span","table","thead","tbody","tr","th","td","hr","br","input","label","section","sup","sub"}, attributes={"a":["href","title","id","class"],"*":["id","class"],"input":["type","checked","disabled"]}, protocols=["http","https","mailto"], strip=True)
     rel = path.relative_to(DOCS).as_posix()
     title = first_title(raw, path.stem.replace("-", " ").title())
     stage = next((label for label, start, end in STAGES if start <= order <= end), "") if kind == "aula" else ""
