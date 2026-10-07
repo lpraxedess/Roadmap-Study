@@ -1,4 +1,4 @@
-name: Build and publish IAM Study Lab
+name: Build and publish IAM Academy
 on:
   push:
     branches: [main]
@@ -6,32 +6,23 @@ on:
 permissions:
   contents: write
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -r requirements-docs.txt
-      - run: python -m unittest discover -s scripts -p 'test_*.py' -v
-      - run: mkdocs build --strict
-  publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: test
-    runs-on: ubuntu-latest
-    concurrency:
-      group: iam-pages-publish
-      cancel-in-progress: false
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - run: python -m pip install -r requirements-docs.txt
-      - name: Generate and push gh-pages branch
-        run: mkdocs gh-deploy --force
+      - name: Install static site dependencies
+        run: python -m pip install -r requirements-docs.txt
+      - name: Test JML script
+        run: python -m unittest discover -s scripts -p 'test_*.py' -v
+      - name: Build visual site
+        run: python site/build.py
+      - name: Validate generated site
+        run: python site/check_build.py
+      - name: Publish to gh-pages
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: ghp-import -n -p -f dist
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
