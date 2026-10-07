@@ -13,7 +13,9 @@ assert len(kinds["laboratorio"]) >= 7, "Expected at least 7 labs"
 assert len(kinds["projeto"]) == 6, "Expected 6 capstones"
 assert len({x["id"] for x in items}) == len(items), "Duplicate route IDs"
 assert len({x["source"] for x in items}) == len(items), "Duplicate source paths"
-assert all(x["html"].strip() and x["title"].strip() for x in items)\nassert not any("<script" in x["html"].lower() or "javascript:" in x["html"].lower() for x in items), "Unsafe HTML in generated content"\nassert all(x["id"] == x["source"].removesuffix(".md").replace("/", "--") for x in items)
+assert all(x["html"].strip() and x["title"].strip() for x in items)
+assert not any("<script" in x["html"].lower() or "javascript:" in x["html"].lower() for x in items), "Unsafe HTML in generated content"
+assert all(x["id"] == x["source"].removesuffix(".md").replace("/", "--") for x in items)
 assert all((out / name).exists() for name in ("index.html","assets/app.js","assets/styles.css",".nojekyll"))
 source = (out / "index.html").read_text(encoding="utf-8")
 assert 'id="main"' in source and "assets/app.js" in source and "assets/styles.css" in source
