@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+site/
+.env
+.env.*
+!.env.example
+*.tfstate
+*.tfstate.*
+*.key
+*.pfx
+*.pem

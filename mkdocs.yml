@@ -22,10 +22,50 @@ nav:
       - Guia do aluno: guia-do-aluno.md
       - Matriz de competências: matriz-de-competencias.md
       - Laboratórios e custos: laboratorios-e-custos.md
-  - Curso:
-      - Estrutura curricular: curriculo.md
-      - Keycloak e OIDC — laboratório 01: labs/01-keycloak-oidc.md
-  - Portfólio e publicação:
+      - Currículo: curriculo.md
+      - Progresso: progresso.md
+  - Aulas:
+      - "01 fundamentos": modulos/01-fundamentos.md
+      - "02 ad": modulos/02-ad.md
+      - "03 entra": modulos/03-entra.md
+      - "04 hibrido": modulos/04-hibrido.md
+      - "05 jml": modulos/05-jml.md
+      - "06 sso": modulos/06-sso.md
+      - "07 oauth": modulos/07-oauth.md
+      - "08 saml": modulos/08-saml.md
+      - "09 scim": modulos/09-scim.md
+      - "10 graph": modulos/10-graph.md
+      - "11 powershell": modulos/11-powershell.md
+      - "12 python": modulos/12-python.md
+      - "13 iga": modulos/13-iga.md
+      - "14 reviews": modulos/14-reviews.md
+      - "15 pim": modulos/15-pim.md
+      - "16 pam": modulos/16-pam.md
+      - "17 segredos": modulos/17-segredos.md
+      - "18 azure": modulos/18-azure.md
+      - "19 multicloud": modulos/19-multicloud.md
+      - "20 itdr": modulos/20-itdr.md
+      - "21 logs": modulos/21-logs.md
+      - "22 zero trust": modulos/22-zero-trust.md
+      - "23 iac": modulos/23-iac.md
+      - "24 auditoria": modulos/24-auditoria.md
+      - "25 architecture": modulos/25-architecture.md
+  - Laboratórios:
+      - "01 keycloak oidc": labs/01-keycloak-oidc.md
+      - "02 saml keycloak": labs/02-saml-keycloak.md
+      - "03 scim local": labs/03-scim-local.md
+      - "04 graph readonly": labs/04-graph-readonly.md
+      - "05 jml simulacao": labs/05-jml-simulacao.md
+      - "06 pam lab": labs/06-pam-lab.md
+      - "07 jml python": labs/07-jml-python.md
+  - Projetos:
+      - "01 hybrid recovery": projetos/01-hybrid-recovery.md
+      - "02 sso federation": projetos/02-sso-federation.md
+      - "03 jml engineering": projetos/03-jml-engineering.md
+      - "04 governance": projetos/04-governance.md
+      - "05 itdr": projetos/05-itdr.md
+      - "06 enterprise architecture": projetos/06-enterprise-architecture.md
+  - Referências:
       - Portfólio: portfolio.md
       - Publicação: publicacao.md
 docs_dir: docs
