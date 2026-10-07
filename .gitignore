@@ -10,3 +10,4 @@ site/
 *.key
 *.pfx
 *.pem
+dist/
