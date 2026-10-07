@@ -4,6 +4,12 @@
 
 Profissional com experiência em AD DS, Entra ID ou gestão de acessos que deseja avançar para IAM Engineering, IGA, PAM, Identity Security e arquitetura. O conteúdo básico existe como **nivelamento**, não como barreira obrigatória.
 
+## Padrão obrigatório de conteúdo
+
+Toda aula deve responder explicitamente: **o que é**, **por que existe**, **quando aplicar**, **vantagens**, **desvantagens e riscos**, **pré-requisitos**, **como implementar passo a passo**, **como comprovar que funcionou**, **como diagnosticar falhas**, **como reverter** e **o que entregar**. Quando um recurso exigir licença indisponível, diferencie **execução real** de **simulação gratuita**. Não trate checklists genéricos como laboratório completo.
+
+**Aula-modelo já detalhada:** [15 — PIM](modulos/15-pim.md) e [Laboratório 08 — Simulação local de PIM](labs/08-pim-simulador.md). Os demais módulos devem ser aprofundados com o mesmo padrão; a existência da seção não garante que já foram validados.
+
 ## Método por aula
 
 1. **Contexto:** qual problema corporativo resolve?
