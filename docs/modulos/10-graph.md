@@ -1,75 +1,60 @@
-# 10 — Microsoft Graph e segurança de API
+# 10 — Microsoft Graph: mínimo privilégio
 
-**Nível:** engenharia · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
 
-## Por que aprender
+## 1. Conceito em 1 minuto
 
-Executar consultas com menor privilégio e saber quando usar identidade gerenciada.
+Microsoft Graph oferece API para objetos Microsoft; scopes delegados e permissões app-only têm riscos diferentes.
 
-**Assuntos principais:** Delegated vs app-only, scopes, consent, paginação e throttling. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**Onde aparece no trabalho:** Preciso consultar a própria conta, sem ler todos os usuários.
 
-## Como o profissional atua
+**Ao terminar você fará:** Demonstre `User.Read` sem solicitar permissões de diretório amplas.
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+## 2. Por que usar? Vantagens e limites
 
-## Conceitos a dominar
+**Ponto positivo:** Automação auditável e integrações padronizadas.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** Delegated vs app-only, scopes, consent, paginação e throttling.
+**Ponto negativo / risco:** Consentimento excessivo e tokens expostos viram risco.
 
-## Laboratório orientado
+**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
 
-**Objetivo:** Executar consultas com menor privilégio e saber quando usar identidade gerenciada.
+## 3. Preparar o ambiente
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+PowerShell e Microsoft Graph SDK; identidade de laboratório autorizada.
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
 
-```text
-Install-Module Microsoft.Graph -Scope CurrentUser\nConnect-MgGraph -Scopes 'User.Read'\nGet-MgContext\nInvoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/me'\nDisconnect-MgGraph
-```
+## 4. Fazer agora — passo a passo
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Com apenas User.Read, tente consultar GET /v1.0/users e observe a recusa por escopo insuficiente. Não solicite User.Read.All apenas para fazer o teste.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+1. Leia o cenário e escreva em uma frase o resultado esperado.
+2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
+3. **Execute:** Use `Connect-MgGraph -Scopes 'User.Read'`; rode `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/me'`; depois `Get-MgContext` e `Disconnect-MgGraph`. Consulte [lab Graph](../labs/04-graph-readonly.md).
+4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
 
-## Como diagnosticar
+**O que deve acontecer:** API retorna objeto da própria conta; a consulta não precisa `User.Read.All`.
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+## 5. Quebre de propósito (apenas laboratório)
 
-## Evidências para aprovação
+Com apenas `User.Read`, consulte `/users` em ambiente de teste e registre eventual 403, sem pedir consentimento extra.
 
-Script somente leitura, escopos necessários, saída sanitizada e plano de revogação.
+**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+## 6. Limpar e repetir sem olhar
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Registre diferença entre delegated e application permissions e quando usar managed identity.
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 7. Fixação ativa
 
-## Segurança e limitações
+**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
 
-Não salve access tokens; privilégios administrativos exigem revisão cuidadosa. Respeite políticas do tenant e licença. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+## 8. Evidência mínima (5 itens)
 
-## Conexão com o portfólio
+- [ ] Consigo explicar o conceito e **por que usar**.
+- [ ] Enumero uma vantagem e uma limitação real.
+- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
+- [ ] Fiz teste negativo e expliquei a causa.
+- [ ] Reverti o estado e consigo repetir sem o roteiro.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
 
-[Voltar ao currículo](../curriculo.md)
+[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)

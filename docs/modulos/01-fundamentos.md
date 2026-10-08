@@ -1,75 +1,60 @@
-# 01 — Fundamentos essenciais e diagnóstico
+# 01 — Fundamentos: DNS, HTTP e TLS
 
-**Nível:** nivelamento e operações · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
 
-## Por que aprender
+## 1. Conceito em 1 minuto
 
-Entender a cadeia navegador → DNS → TLS → aplicação → IdP; distinguir autenticação de autorização e reconhecer falhas de infraestrutura.
+Uma aplicação só autentica depois de resolver nome, negociar TLS e alcançar o IdP.
 
-**Assuntos principais:** DNS, TLS, HTTP, Git e identidades. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**Onde aparece no trabalho:** Investigar falha de login que parece erro de senha, mas é DNS.
 
-## Como o profissional atua
+**Ao terminar você fará:** Localize a etapa rede→IdP antes de alterar identidades.
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+## 2. Por que usar? Vantagens e limites
 
-## Conceitos a dominar
+**Ponto positivo:** Diagnóstico por camada evita elevação de privilégios.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** DNS, TLS, HTTP, Git e identidades.
+**Ponto negativo / risco:** Ferramentas de rede mostram transporte, não provam autorização.
 
-## Laboratório orientado
+**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
 
-**Objetivo:** Entender a cadeia navegador → DNS → TLS → aplicação → IdP; distinguir autenticação de autorização e reconhecer falhas de infraestrutura.
+## 3. Preparar o ambiente
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+Python 3, terminal e acesso apenas a host público de documentação.
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
 
-```text
-nslookup localhost; curl -I https://example.org; git --version
-```
+## 4. Fazer agora — passo a passo
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Simule falha de resolução DNS de um hostname fictício na documentação; identifique em qual camada a conexão falha.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+1. Leia o cenário e escreva em uma frase o resultado esperado.
+2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
+3. **Execute:** No terminal rode `python -c "import socket; print(socket.getaddrinfo('example.org',443)[0][4])"`. Em seguida rode `python -c "import ssl; print(ssl.OPENSSL_VERSION)"`. Desenhe o fluxo cliente→DNS→TLS→IdP→aplicação.
+4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
 
-## Como diagnosticar
+**O que deve acontecer:** DNS retorna um endereço; a versão do OpenSSL é exibida. Nenhum login ocorreu ainda.
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+## 5. Quebre de propósito (apenas laboratório)
 
-## Evidências para aprovação
+Substitua por `dominio-inexistente.invalid`: a resolução falha. Classifique como problema de DNS, não de MFA.
 
-Mapa de fluxo de autenticação, checklist técnico e interpretação de códigos HTTP.
+**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+## 6. Limpar e repetir sem olhar
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Repita o fluxo para um app SaaS fictício e indique onde surgiria HTTP 401.
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 7. Fixação ativa
 
-## Segurança e limitações
+**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
 
-Não modifique DNS do sistema em produção; teste apenas nomes fictícios. Base para todas as integrações. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+## 8. Evidência mínima (5 itens)
 
-## Conexão com o portfólio
+- [ ] Consigo explicar o conceito e **por que usar**.
+- [ ] Enumero uma vantagem e uma limitação real.
+- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
+- [ ] Fiz teste negativo e expliquei a causa.
+- [ ] Reverti o estado e consigo repetir sem o roteiro.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
 
-[Voltar ao currículo](../curriculo.md)
+[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)

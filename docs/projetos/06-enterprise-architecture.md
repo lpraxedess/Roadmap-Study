@@ -30,8 +30,7 @@ Requisitos, C4, decisões arquiteturais (ADRs), modelo de governança, backlog, 
 
 **Aprovação:** pelo menos 16/20, sem nota zero em segurança ou implementação. Quando um recurso exigir licença, simulação técnica claramente identificada substitui a execução comercial, sem afirmar equivalência funcional.
 
-## Publicação
+## Evidências internas
 
-O [portfólio](https://github.com/lpraxedess/Projetos) é externo e não será modificado automaticamente; só publique quando desejar.
 
 [Voltar ao currículo](../curriculo.md)

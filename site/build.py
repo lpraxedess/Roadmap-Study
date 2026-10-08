@@ -23,7 +23,6 @@ EXTRA = [
     ("matriz-de-competencias.md", "matriz", "Matriz de competências"),
     ("laboratorios-e-custos.md", "custos", "Laboratórios e custos"),
     ("progresso.md", "progresso", "Modelo de progresso"),
-    ("portfolio.md", "portfolio", "Portfólio"),
     ("publicacao.md", "publicacao", "Publicação"),
 ]
 STAGES = [
@@ -74,15 +73,25 @@ def main() -> None:
     if OUT.exists():
         shutil.rmtree(OUT)
     (OUT / "assets").mkdir(parents=True)
+    questions = json.loads((ROOT / "site" / "questions.json").read_text(encoding="utf-8"))
     items = []
     for folder, kind, _ in KINDS:
         for i, path in enumerate(sorted((DOCS / folder).glob("*.md")), 1):
-            items.append(make_entry(path, kind, i))
+            entry = make_entry(path, kind, i)
+            if kind == "aula":
+                q = questions.get(entry["id"])
+                if q:
+                    options = list(q["question"])
+                    offset = i % len(options)
+                    options = options[offset:] + options[:offset]
+                    entry["quiz"] = {"prompt": "Qual afirmação está correta?", "options": options, "correct": (q["correct"] - offset) % len(options), "explanation": q["feedback"]}
+            items.append(entry)
     for i, (source, key, _) in enumerate(EXTRA, 1):
         items.append(make_entry(DOCS / source, "referencia", i))
     assert len([x for x in items if x["kind"] == "aula"]) == 25
     assert len([x for x in items if x["kind"] == "laboratorio"]) >= 7
     assert len([x for x in items if x["kind"] == "projeto"]) == 6
+    assert all(x.get("quiz") for x in items if x["kind"] == "aula"), "Questão de fixação ausente"
     (OUT / "assets" / "content.json").write_text(json.dumps(items, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     for name in ("app.js", "styles.css"):
         shutil.copyfile(ROOT / "site" / name, OUT / "assets" / name)

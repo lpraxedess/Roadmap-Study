@@ -1,75 +1,60 @@
-# 03 — Microsoft Entra ID e RBAC
+# 03 — Entra ID: papéis e escopos
 
-**Nível:** nivelamento e operações · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
 
-## Por que aprender
+## 1. Conceito em 1 minuto
 
-Separar roles do Entra das atribuições Azure RBAC e limitar o escopo das permissões.
+Funções de diretório administram identidades; Azure RBAC controla recursos no Azure.
 
-**Assuntos principais:** Tenant, usuários, grupos, directory roles e Azure RBAC. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**Onde aparece no trabalho:** Um operador precisa visualizar apenas um Resource Group.
 
-## Como o profissional atua
+**Ao terminar você fará:** Separe directory roles de escopos Azure Resource Manager.
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+## 2. Por que usar? Vantagens e limites
 
-## Conceitos a dominar
+**Ponto positivo:** Menor privilégio e delegação granular.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** Tenant, usuários, grupos, directory roles e Azure RBAC.
+**Ponto negativo / risco:** Um papel Reader ainda pode expor metadados; permissões variam por plano e escopo.
 
-## Laboratório orientado
+**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
 
-**Objetivo:** Separar roles do Entra das atribuições Azure RBAC e limitar o escopo das permissões.
+## 3. Preparar o ambiente
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+Conta de laboratório; não crie recurso cobrado apenas para a atividade.
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
 
-```text
-az account show; az role assignment list --scope <RESOURCE_ID>
-```
+## 4. Fazer agora — passo a passo
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Atribua Reader no grupo de recursos de teste e tente executar ação de escrita com essa identidade.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+1. Leia o cenário e escreva em uma frase o resultado esperado.
+2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
+3. **Execute:** No portal Azure, abra `Access control (IAM)` de um grupo de recursos **existente** → `View my access`. Depois, no Entra, observe `Roles and administrators`. Compare os dois escopos. Se não houver assinatura, preencha matriz `identidade, recurso, role, ação permitida`.
+4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
 
-## Como diagnosticar
+**O que deve acontecer:** Você consegue explicar por que Global Reader não é automaticamente Reader de uma assinatura.
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+## 5. Quebre de propósito (apenas laboratório)
 
-## Evidências para aprovação
+Na matriz fictícia, tente `Reader → excluir VM`: marque negado e explique quem avalia.
 
-Tabela de função, escopo e ação permitida/negada.
+**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+## 6. Limpar e repetir sem olhar
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Crie uma matriz de três papéis e cinco operações, mantendo ações sensíveis negadas.
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 7. Fixação ativa
 
-## Segurança e limitações
+**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
 
-Evite conceder Owner; use identidade de teste e delete atribuições ao concluir. Compare tenant role com subscription/resource role. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+## 8. Evidência mínima (5 itens)
 
-## Conexão com o portfólio
+- [ ] Consigo explicar o conceito e **por que usar**.
+- [ ] Enumero uma vantagem e uma limitação real.
+- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
+- [ ] Fiz teste negativo e expliquei a causa.
+- [ ] Reverti o estado e consigo repetir sem o roteiro.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
 
-[Voltar ao currículo](../curriculo.md)
+[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)

@@ -30,8 +30,7 @@ Timeline, matriz IOC, regras de detecção, impacto, contenção e recuperação
 
 **Aprovação:** pelo menos 16/20, sem nota zero em segurança ou implementação. Quando um recurso exigir licença, simulação técnica claramente identificada substitui a execução comercial, sem afirmar equivalência funcional.
 
-## Publicação
+## Evidência de aprendizagem
 
-O [portfólio](https://github.com/lpraxedess/Projetos) é externo e não será modificado automaticamente; só publique quando desejar.
 
 [Voltar ao currículo](../curriculo.md)

@@ -8,7 +8,7 @@ Profissional com experiência em AD DS, Entra ID ou gestão de acessos que desej
 
 Toda aula deve responder explicitamente: **o que é**, **por que existe**, **quando aplicar**, **vantagens**, **desvantagens e riscos**, **pré-requisitos**, **como implementar passo a passo**, **como comprovar que funcionou**, **como diagnosticar falhas**, **como reverter** e **o que entregar**. Quando um recurso exigir licença indisponível, diferencie **execução real** de **simulação gratuita**. Não trate checklists genéricos como laboratório completo.
 
-**Aula-modelo já detalhada:** [15 — PIM](modulos/15-pim.md) e [Laboratório 08 — Simulação local de PIM](labs/08-pim-simulador.md). Os demais módulos devem ser aprofundados com o mesmo padrão; a existência da seção não garante que já foram validados.
+**Aula-modelo já detalhada:** [15 — PIM](modulos/15-pim.md) e [Laboratório 08 — Simulação local de PIM](labs/08-pim-simulador.md). As 25 aulas agora seguem o mesmo roteiro curto de teoria, prática, diagnóstico e revisão. Laboratórios que requerem software externo precisam ser executados para comprovar a prática.
 
 ## Método por aula
 
@@ -21,7 +21,6 @@ Toda aula deve responder explicitamente: **o que é**, **por que existe**, **qua
 7. **Investigação:** logs, hipótese e causa-raiz.
 8. **Correção e reversão:** restaurar estado seguro.
 9. **Desafio:** repetir sem roteiro.
-10. **Portfólio:** documentação sanitizada e lições aprendidas.
 
 ## Critérios de domínio
 

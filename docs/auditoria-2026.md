@@ -2,7 +2,6 @@
 
 ## Escopo verificado
 
-Repositório `Roadmap-Study` com 25 aulas, sete laboratórios, seis projetos, script JML, portal HTML/CSS/JS, gerador Python, GitHub Actions e publicação em `gh-pages`. O portfólio `Projetos` não faz parte do escopo de alteração.
 
 ## Correções implementadas
 
