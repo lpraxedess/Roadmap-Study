@@ -1,30 +1,26 @@
-# Guia para estudar no Roadmap-Study
+# Guia do aluno — conceito, prática e fixação
 
-**Princípio:** você não precisa aprender instalando uma coleção de ferramentas. Primeiro vai trabalhar com **Active Directory e Entra ID**, que são o foco da formação. Depois escolherá somente o que faltar.
+O curso foi reorganizado em **25 aulas distribuídas por seis fases**. **Cada conceito é estudado individualmente**, não como lista de comandos sem contexto.
 
-## Como funciona uma fase
+## Como estudar
 
-Cada fase contém temas em ordem. Em cada tema, siga o roteiro:
+1. **O que é:** leia a definição em linguagem simples.
+2. **Prática:** execute as instruções imediatamente no **AD ou Entra de laboratório**, quando o cenário permitir.
+3. **O que fez:** observe o resultado antes de continuar.
+4. **Importância:** entenda por que esta atividade existe no trabalho IAM.
+5. **Pontos positivos e negativos:** entenda benefícios e limitações.
+6. **Fixação:** responda em suas palavras e repita o processo com outro objeto fictício.
 
-1. **O que é:** definição direta.
-2. **Por que existe e onde usar:** exemplo de tarefa IAM.
-3. **Pontos positivos e negativos:** o que resolve e quais riscos mantém.
-4. **Fazer na prática:** em AD/Entra, com os caminhos da interface e pré-requisitos explícitos.
-5. **Conferir:** verifique se o usuário/grupo/permissão mudou.
-6. **Quebrar de propósito:** erro controlado e reversível, em laboratório.
-7. **Resolver:** investigar e corrigir.
-8. **Fixar:** responder ao quiz e repetir o cenário com outro usuário fictício.
+**Exemplo:** [Aula 05 — JML](modulos/05-jml.md). **Joiner:** criar João e grupo Financeiro no AD/Entra; **Mover:** retirar Financeiro e adicionar TI; **Leaver:** desabilitar a conta e avaliar sessões e retenção.
 
-## Primeiro desafio: JML no seu ambiente
+## Três tipos de atividade
 
-Na [Fase 1, módulo 05](modulos/05-jml.md) você criará João e os grupos JML-Financeiro e JML-TI no **AD ou Entra**. Executará Joiner, Mover e Leaver, com checagem em cada etapa. **Não requer Docker, Python nem Keycloak**.
+- **Prática em software real:** você cria, muda ou revoga um objeto no AD, Entra ou API didática e verifica o resultado.
+- **Observação:** você identifica a configuração/log sem modificá-la, pois editar não é necessário ou seguro.
+- **Simulação/arquitetura:** você analisa caso fictício quando a ferramenta exige licença ou infraestrutura indisponível. Simular **não** deve ser descrito como executar no produto.
 
-## Ambiente e permissões
+## Quando a aula depender de licença, tenant ou aplicativo
 
-- Faça apenas no laboratório. Se possuir **AD local**: execute com conta de administração delegada na OU de testes.
-- Se possuir apenas **Microsoft Entra**: crie usuário **cloud-only**, use grupos de segurança atribuídos e gerencie-os pelo painel.
-- Se o usuário é **sincronizado do AD**: a fonte principal é on-prem; não crie um cloud-only duplicado.
-- Não use contas reais, não afete grupos de produção e não atribua Global Administrator por conveniência.
-- Nem toda atividade precisa de licença P2; recursos de Governance, PIM e Azure têm requisitos próprios.
+Não se atribua privilégios nem compre licenças para concluir a atividade. Identifique o requisito e use somente ambientes já disponíveis e autorizados. Uma licença Entra P2 não autoriza automaticamente recursos premium para todas as identidades.
 
-**Fase concluída:** você consegue explicar, executar, verificar o que mudou e repetir sem copiar o roteiro. O botão “concluído” do site registra apenas seu estudo; não prova execução em tenant.
+**Progressão:** fases 1–2 priorizam operação e compreensão; fase 3 introduz automação **do que você já executou**; fases 4–6 trazem governança, segurança e arquitetura com análise de riscos. O nível avançado só é atingido ao repetir, investigar e justificar, não ao marcar a aula como concluída.

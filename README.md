@@ -21,6 +21,10 @@ Curso autoguiado de Identity & Access Management, do operacional à arquitetura.
 - `scripts/`: laboratórios *de simulação* Python para automação, SCIM didático e SoD.
 - `01-IAM/IAM-Study-Lab.md`: material original preservado como arquivo histórico.
 
+## Método de aprendizagem
+
+Cada uma das 25 aulas agora trabalha **cada conceito por separado**: o que é, prática imediata, o que foi executado, importância, pontos positivos/negativos e pergunta de fixação. As seis fases progridem de AD/Entra manual até governança, cloud e arquitetura. Sempre diferencie operação real, observação e simulação.
+
 ## Qualidade e honestidade sobre os laboratórios
 
 **Não confunda** simulação CSV, especificação conceitual, laboratório real em software local ou execução em Microsoft. A aula de JML ensina criação, movimentação e bloqueio no Active Directory ou Microsoft Entra de laboratório, sem dependência de Docker. Outras unidades com ferramentas externas ainda exigem validação prática específica; um build do site não valida o produto.

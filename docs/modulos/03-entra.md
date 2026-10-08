@@ -1,36 +1,68 @@
 # 03 — Microsoft Entra ID: usuários, grupos e papéis
 
-**Fase 1 — AD e Entra** · **50–80 minutos** · **Requer:** tenant de laboratório e função com permissão para administrar usuários e grupos. **Não requer PIM ou Docker.**
+**Fase 1 — AD e Entra** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. O que é e por que usar?
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-O **Microsoft Entra ID** mantém identidades na nuvem e atende autenticação e autorização de aplicações integradas. **Security group** reúne usuários. **Entra directory role** concede capacidade administrativa sobre o diretório. **Azure RBAC** concede acesso a recursos de uma assinatura no escopo adequado: **são controles distintos**.
+## 1. Usuário cloud-only
 
-**Vantagens:** identidade centralizada e integração com SaaS. **Desafios:** excesso de funções, atribuições herdadas, licenciamento de serviços e diferença entre grupo, papel e permissão.
+**O que é?** É a identidade criada diretamente no Entra ID, não controlada por AD on-prem.
 
-## 2. Faça no portal Entra
+**Prática — faça agora:**
 
-1. Abra [entra.microsoft.com](https://entra.microsoft.com) no **tenant de laboratório**.
-2. Em **Entra ID → Groups → All groups → New group**, crie `IAM-Treino-Leitura` com **Group type = Security** e **Membership type = Assigned**.
-3. Em **Entra ID → Users → All users → New user → Create new user**, crie a identidade *cloud-only* `aluno.entra` em um **domínio verificado** do tenant. Use nome fictício, uma senha inicial exclusiva e não atribua funções administrativas.
-4. Volte em **Groups → IAM-Treino-Leitura → Members → Add members** e selecione esse usuário.
-5. Confirme **presença em Members**, além de visualizar as associações na página do usuário.
-6. Abra **Entra ID → Roles and administrators** e **observe** a diferença entre *role* administrativa e *grupo* — não conceda nova role neste exercício.
+Em entra.microsoft.com → Entra ID → Users → New user → Create new user. No **tenant de laboratório**, crie ana.treino em domínio verificado. Confirme Account enabled e Source/On-premises sync.
 
-**Resultado esperado:** usuário cloud-only presente no grupo e sem privilégios administrativos extras. **Atenção:** associação ao grupo não dá acesso efetivo a um aplicativo que não use esse grupo.
+**O que você acabou de fazer?** Você provisionou um usuário cloud-only.
 
-## 3. Teste negativo e correção
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-No grupo **de laboratório**, remova o usuário em **Members → Remove member**. Confira que a conta continua existindo; apenas sua associação mudou. Adicione-o novamente.
+**Pontos positivos:** Permite administrar identidades SaaS sem AD.
 
-Se a ação não estiver disponível, confira **função administrativa e propriedade do grupo**. Não atribua Global Administrator apenas para seguir o exercício.
+**Pontos negativos / riscos:** Criar conta em tenant incorreto pode impactar usuários reais.
 
-## 4. Desafio e limpeza
+**Fixação:** Por que não duplicar um usuário sincronizado criando cloud-only?
 
-Crie outro usuário fictício e repita a associação. Descreva quando usar um grupo, quando usar uma role do Entra e quando usar Azure RBAC.
+## 2. Grupo atribuído
 
-A exclusão da conta do laboratório é opcional e deve obedecer ao cuidado de verificar o usuário antes de confirmar.
+**O que é?** Agrupa usuários com associação administrada manualmente.
 
-**Se o usuário for sincronizado do AD, não edite atributos controlados na origem nem crie conta duplicada.** Use a [aula 04](04-hibrido.md) e depois a [aula 05 JML](05-jml.md).
+**Prática — faça agora:**
 
-[Microsoft Learn — Criar usuários no Entra](https://learn.microsoft.com/pt-br/entra/fundamentals/how-to-create-delete-users)
+Entra ID → Groups → New group → Security → Assigned; crie IAM-Treino-Leitura. Em Members → Add members, adicione ana.treino. Abra Members e confirme; depois remova-a e confira ausência.
+
+**O que você acabou de fazer?** Você administrou uma associação de identidade.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Escalável para acesso baseado em grupo.
+
+**Pontos negativos / riscos:** Grupo só autoriza acesso se recurso/aplicativo estiver configurado para reconhecê-lo.
+
+**Fixação:** O que verificar se usuário está no grupo mas aplicativo nega acesso?
+
+## 3. Directory role x Azure RBAC
+
+**O que é?** Directory role administra Entra; Azure RBAC governa recursos de assinatura/escopo.
+
+**Prática — faça agora:**
+
+Apenas **observe** Entra ID → Roles and administrators. Se existir um Resource Group de laboratório, abra portal.azure.com → grupo → Access control (IAM) → View my access. Compare role e escopo; não atribua permissões.
+
+**O que você acabou de fazer?** Você identificou dois domínios de autorização diferentes.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Evita papéis administrativos abrangentes.
+
+**Pontos negativos / riscos:** Role errada no escopo errado causa privilégios excessivos ou falha.
+
+**Fixação:** Global Reader do Entra significa automaticamente Reader do Azure?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)

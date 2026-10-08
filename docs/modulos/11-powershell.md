@@ -1,60 +1,66 @@
-# 11 — PowerShell: automação segura
+# 11 — PowerShell: administração AD e Entra
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 3 — Automação IAM** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Scripts IAM precisam validar entrada, ser idempotentes, registrar resultado e permitir dry-run.
+## 1. Consultar antes de alterar
 
-**Onde aparece no trabalho:** Um script de provisionamento recebe departamento vazio.
+**O que é?** Boa automação identifica o objeto exato antes de escrever.
 
-**Ao terminar você fará:** Implemente validações e erros sem tocar no tenant.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Em estação **com RSAT de laboratório**, abra PowerShell e execute `Get-ADUser -Identity 'joao.jml' -Properties Enabled,Department,MemberOf | Select-Object Name,Enabled,Department,MemberOf`. Use conta **realmente criada no Lab 05**. Se não há AD, use `Connect-MgGraph -Scopes 'User.Read'` e consulte `/me`, sem pedir novas permissões.
 
-**Ponto positivo:** Melhora consistência e reduz tarefas manuais.
+**O que você acabou de fazer?** Você leu estado antes de qualquer alteração.
 
-**Ponto negativo / risco:** Scripts inseguros podem alterar milhares de contas de uma vez.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Evita erro de identidade e alterações desnecessárias.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Filtrar somente por nome de exibição pode encontrar homônimos.
 
-PowerShell 7 local, sem AD.
+**Fixação:** Por que consultar Object ID/SamAccountName antes de editar?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Dry-run / WhatIf
 
-## 4. Fazer agora — passo a passo
+**O que é?** É prever alteração antes de executá-la, quando o cmdlet oferece suporte.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Execute `pwsh -NoProfile -Command '$dept=""; if ([string]::IsNullOrWhiteSpace($dept)) { throw "department obrigatório" }'` e observe a falha. Depois use dept=`TI`. Inclua `try/catch` e saída estruturada.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Entrada válida segue; entrada ausente falha antes da operação.
+Na OU **de teste**, execute `Set-ADUser -Identity 'joao.jml' -Department 'TI' -WhatIf` e observe a simulação. Só execute a alteração real, **sem `-WhatIf`**, se tiver autorização e a conta for exclusiva do laboratório.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você diferenciou previsão da alteração real.
 
-Passe `'  '` e explique por que `IsNullOrWhiteSpace` é mais robusto do que testar null.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Diminui alterações acidentais.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Nem todos os cmdlets/API suportam WhatIf; não confundir com operação efetuada.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Escreva função `Test-Department` com três testes de entrada.
+**Fixação:** O que significa ver saída de WhatIf sem mudança na conta?
 
-## 7. Fixação ativa
+## 3. Idempotência
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Executar repetidamente a mesma automação não deve causar concessões duplicadas ou estado inesperado.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+No objeto **fictício** já transferido, leia Department e grupos; escreva uma condição: só ajustar Department se for diferente de `TI`. Rode uma segunda vez e comprove que não há alteração necessária.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você praticou checagem de estado antes da escrita.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Diminui ruído e retrabalho.
+
+**Pontos negativos / riscos:** Condição mal escrita pode ocultar falhas reais.
+
+**Fixação:** Qual evidência demonstra que a segunda execução foi inofensiva?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

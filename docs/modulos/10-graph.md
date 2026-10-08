@@ -1,60 +1,66 @@
-# 10 — Microsoft Graph: mínimo privilégio
+# 10 — Microsoft Graph: API do Entra com menor privilégio
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 3 — Automação IAM** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Microsoft Graph oferece API para objetos Microsoft; scopes delegados e permissões app-only têm riscos diferentes.
+## 1. Microsoft Graph
 
-**Onde aparece no trabalho:** Preciso consultar a própria conta, sem ler todos os usuários.
+**O que é?** É API que dá acesso programático a identidades e outros recursos Microsoft conforme permissões.
 
-**Ao terminar você fará:** Demonstre `User.Read` sem solicitar permissões de diretório amplas.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No PowerShell de **seu laboratório**, rode `Install-Module Microsoft.Graph -Scope CurrentUser` (quando ainda não instalado); depois `Connect-MgGraph -Scopes 'User.Read'`, faça `Get-MgContext` e `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/me'`. Termine com `Disconnect-MgGraph`.
 
-**Ponto positivo:** Automação auditável e integrações padronizadas.
+**O que você acabou de fazer?** Você leu **seu próprio perfil** via API delegada.
 
-**Ponto negativo / risco:** Consentimento excessivo e tokens expostos viram risco.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Elimina consultas manuais repetitivas.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Scopes excessivos expõem outros usuários.
 
-PowerShell e Microsoft Graph SDK; identidade de laboratório autorizada.
+**Fixação:** Por que `/me` é melhor exercício inicial que listar todo o diretório?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Permissões delegadas
 
-## 4. Fazer agora — passo a passo
+**O que é?** A API opera em nome do usuário autenticado, limitada por escopos e permissões efetivas.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Use `Connect-MgGraph -Scopes 'User.Read'`; rode `Invoke-MgGraphRequest -Method GET -Uri 'https://graph.microsoft.com/v1.0/me'`; depois `Get-MgContext` e `Disconnect-MgGraph`. Consulte [lab Graph](../labs/04-graph-readonly.md).
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** API retorna objeto da própria conta; a consulta não precisa `User.Read.All`.
+Ainda com `User.Read`, tente **somente** consulta GET `https://graph.microsoft.com/v1.0/users` em ambiente autorizado. Caso retorne 403, anote status e não peça `User.Read.All` só para concluir.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você investigou diferença entre leitura própria e leitura global; o resultado depende da configuração.
 
-Com apenas `User.Read`, consulte `/users` em ambiente de teste e registre eventual 403, sem pedir consentimento extra.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Permite limitar operações ao contexto necessário.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Consentimento excessivo pode ampliar impacto do token.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Registre diferença entre delegated e application permissions e quando usar managed identity.
+**Fixação:** Como investigar HTTP 403 sem atribuir função Global Administrator?
 
-## 7. Fixação ativa
+## 3. Auditoria de acesso à API
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Registrar operação, status e contexto permite investigar falhas.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Faça duas chamadas somente leitura `/me`; registre horário, URI e status sem copiar access token. Compare log da aplicação, se acessível, com resultado da API.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você separou evidência segura de credenciais sensíveis.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Facilita troubleshooting.
+
+**Pontos negativos / riscos:** Logs com bearer token podem virar vazamento.
+
+**Fixação:** Quais dados você jamais salvaria no repositório?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

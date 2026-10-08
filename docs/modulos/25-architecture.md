@@ -1,60 +1,66 @@
-# 25 — Arquitetura IAM: decisões e resiliência
+# 25 — Arquitetura IAM: escolher controles e demonstrar decisões
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 6 — Arquitetura** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Arquitetura integra provisionamento, SSO, controles privilegiados, logs e recuperação.
+## 1. Arquitetura de identidade
 
-**Onde aparece no trabalho:** Empresa fictícia de 500 pessoas migra AD local para ambiente híbrido/cloud.
+**O que é?** É definir fonte, autenticação, autorização, ciclo de vida, privilégio, observabilidade e recuperação.
 
-**Ao terminar você fará:** Defenda escolhas com critérios funcionais, riscos e custos.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Desenhe para organização fictícia: RH → AD DS → Entra → aplicativos; anote onde acontece Joiner, Mover, Leaver, quem autentica e onde um app autoriza. Compare com configuração **do seu laboratório**, apenas por observação.
 
-**Ponto positivo:** Reduz fragilidade e facilita evolução.
+**O que você acabou de fazer?** Você ligou os módulos aprendidos num único fluxo.
 
-**Ponto negativo / risco:** Complexidade, dependência de IdP e custos de operação.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Evidencia dependências e responsáveis.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Arquitetura complexa amplia custo e pontos de falha.
 
-Diagrama gratuito (Mermaid) e planilha fictícia.
+**Fixação:** O que acontece se RH e diretório divergirem?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Decisão arquitetural (ADR)
 
-## 4. Fazer agora — passo a passo
+**O que é?** É documento curto que registra alternativas e por que uma solução foi escolhida.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie diagrama com RH→JML→AD/Entra→apps e IdP→SSO; inclua PAM, SIEM, break-glass. Escreva ADR de 1 página comparando Keycloak versus Entra no caso, com segurança, operação, custo e risco.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** ADR contém alternativas, trade-offs, decisão, risco residual e rollback.
+Escreva ADR de uma página: `decisão: JML on-prem antes de sincronizar`, opções consideradas, vantagens, riscos, custo, o que fica fora do escopo e rollback. Se ambiente cloud-only, justifique alternativa.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você tomou decisão explícita, não apenas desenhou ferramentas.
 
-Simule indisponibilidade de IdP por 2 horas: liste serviços afetados e plano de contingência.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Ajuda a revisar trade-offs.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Uma escolha válida hoje pode precisar mudar após novos requisitos.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Apresente arquitetura em 5 minutos e responda por que não usar permissões permanentes.
+**Fixação:** Por que guardar o motivo da decisão é tão importante quanto diagrama?
 
-## 7. Fixação ativa
+## 3. Resiliência e emergência
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** IAM precisa continuar seguro diante de indisponibilidade ou comprometimento.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Simule **no papel** uma falha do IdP por 2 horas: indique apps afetados, contas de emergência protegidas, decisões de bloqueio e plano de recuperação. Não desconecte o tenant real para testar.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você executou exercício de arquitetura e recuperação, **não** provocou indisponibilidade real.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Antecipação diminui tempo de crise.
+
+**Pontos negativos / riscos:** Break-glass mal protegido é risco elevado.
+
+**Fixação:** Como distinguir recuperação de emergência de permissão permanente de rotina?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

@@ -1,60 +1,66 @@
-# 17 — Segredos: OpenBao e tokens
+# 17 — Secrets: senhas, tokens e identidades de aplicações
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 4 — Governança e privilégios** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Workloads precisam de segredo ou identidade; cofres centralizam política, TTL e revogação.
+## 1. Segredo de aplicativo
 
-**Onde aparece no trabalho:** Pipeline possui senha hardcoded em arquivo Git.
+**O que é?** É dado confidencial usado por workload para autenticar, como client secret ou certificado privado.
 
-**Ao terminar você fará:** Modele cofre e política de acesso por workload.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Entra → App registrations → **aplicativo de teste existente** → Certificates & secrets. **Observe apenas** metadados e expiração de segredos, nunca copie valores nem crie segredo desnecessário.
 
-**Ponto positivo:** Rotação e menor exposição de segredos.
+**O que você acabou de fazer?** Você identificou o local de gestão e a necessidade de rotação.
 
-**Ponto negativo / risco:** Cofre mal administrado vira ponto crítico de indisponibilidade.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Permite inventariar expiração.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Segredo vazado pode dar acesso com permissões do aplicativo.
 
-OpenBao local isolado, ou simulação com JSON de política.
+**Fixação:** Por que um client secret não deve ser incluído no Git?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Service principal e consent
 
-## 4. Fazer agora — passo a passo
+**O que é?** É a identidade da aplicação e o conjunto de permissões efetivas no tenant.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie política fictícia `app-reader` com leitura somente de `secret/data/app1`; compare com acesso a `secret/data/app2` e negue. Se usar OpenBao, execute apenas modo development local, nunca guarde root token no Git.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** A política limita leitura a um caminho; TTL reduz exposição.
+Em App registrations e Enterprise applications **de laboratório**, compare app registration, service principal e API permissions; identifique delegated versus application permissions. Faça consulta somente leitura.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você reconheceu identidades humanas e não humanas.
 
-Tente ler caminho fora da política: acesso negado. Documente expiração/rotação.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Separação de responsabilidades.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Application permissions excessivas podem acessar dados sem usuário.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Desenhe fluxo de rotação sem interromper a aplicação.
+**Fixação:** O que difere app-only de delegated?
 
-## 7. Fixação ativa
+## 3. Rotação e validade
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É trocar credenciais antes do vencimento e remover as antigas após migração controlada.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Para um app **fictício**, escreva plano de rotação: inventário → novo segredo/certificado em cofre → atualização do serviço → teste → revogação do anterior. **Não gire credenciais reais** sem aplicação de teste e rollback.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você planejou rotação segura; **não** a executou no produto.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Reduz janela de credenciais antigas.
+
+**Pontos negativos / riscos:** Rotação sem validação causa indisponibilidade.
+
+**Fixação:** Em que momento remover a credencial anterior?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

@@ -1,14 +1,9 @@
-# IAM Academy — aprenda IAM por fases
+# IAM Academy — aprenda IAM praticando
 
-A formação usa **Active Directory e Microsoft Entra ID como ferramentas principais**. O conteúdo avança em seis fases: identidades, autenticação, automação, governança, defesa e arquitetura.
+**Princípio do curso:** um conceito, uma prática, um resultado. Depois avance para o próximo conceito.
 
-## Como começar
+Comece pela [Fase 1 no currículo](curriculo.md). O [módulo 05 — JML](modulos/05-jml.md) demonstra Joiner, Mover e Leaver diretamente no Active Directory ou Microsoft Entra ID de laboratório, sem Docker.
 
-1. Abra a [trilha organizada por fases](curriculo.md).
-2. Execute a [Fase 1 — AD e Entra](modulos/01-fundamentos.md).
-3. No [módulo 05, faça JML diretamente no AD ou Entra](modulos/05-jml.md): crie João, mova seus grupos e desabilite sua conta.
-4. Confira o resultado e repita com outra conta fictícia.
+O padrão se repete nas 25 aulas: **O que é? → Prática → O que você fez? → Importância → Pontos positivos e negativos → Fixação.** A dificuldade aumenta por fase; para recursos indisponíveis o roteiro distingue observação/simulação de configuração real.
 
-Cada aula deve mostrar **o que é → para que serve → vantagens e limites → como fazer → como verificar → como corrigir um erro**.
-
-Docker, Keycloak, mocks e CSV são complementos, **não** exigências para aprender o básico de IAM no Microsoft.
+[Guia do aluno](guia-do-aluno.md) · [Trilha de seis fases](curriculo.md)

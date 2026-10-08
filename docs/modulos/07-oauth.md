@@ -1,60 +1,68 @@
-# 07 — OAuth 2.0 e OIDC com PKCE
+# 07 — OAuth 2.0 e OpenID Connect (OIDC)
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 2 — SSO e protocolos** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. Conceito em 1 minuto
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-OAuth delega autorização; OIDC adiciona autenticação por ID Token e informações de identidade.
+## 1. OAuth 2.0
 
-**Onde aparece no trabalho:** Aplicação web precisa autenticar sem receber senha do usuário.
+**O que é?** É protocolo de autorização delegada: um cliente obtém acesso a recurso dentro de escopos.
 
-**Ao terminar você fará:** Execute Authorization Code + PKCE e diferencie tipos de token.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Entra, abra App registrations **de laboratório já existente** → API permissions. Identifique um escopo Delegated; não adicione permissões novas. Descreva o recurso que seria acessado.
 
-**Ponto positivo:** Evita compartilhar senha com aplicações.
+**O que você acabou de fazer?** Você reconheceu quais permissões um aplicativo solicita.
 
-**Ponto negativo / risco:** Erros de audience, redirect e escopo geram exposição; tokens exigem cuidado.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Evita expor senha do usuário ao cliente.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Escopos amplos aumentam o impacto de um token vazado.
 
-Docker ou Podman e Keycloak isolado; siga o laboratório OIDC detalhado.
+**Fixação:** User.Read concede ler todas as contas do diretório?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. OIDC
 
-## 4. Fazer agora — passo a passo
+**O que é?** Usa OAuth 2.0 e adiciona autenticação e identidade, incluindo ID Token.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Realize [laboratório 01 de Keycloak e PKCE](../labs/01-keycloak-oidc.md). Salve **somente** código HTTP e estrutura redigida, nunca tokens. Compare ID Token versus Access Token no diagrama.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Recebe código de autorização, troca-o com verifier correto e identifica scopes.
+Abra a página de informações de um app registrado de teste e observe Authentication/Redirect URIs. Compare a finalidade do ID Token (identidade) com Access Token (API). Não copie tokens para documentação pública.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você identificou cliente, redirect e diferença entre tokens.
 
-Altere `code_verifier` na troca: Keycloak deve rejeitar; explique vínculo PKCE.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Padroniza login moderno em apps.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Configuração de redirect incorreta pode levar a falhas/risco.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Desenhe Authorization Code Flow com issuer, audience, redirect e validação de assinatura.
+**Fixação:** É correto enviar ID Token como autorização para toda API?
 
-## 7. Fixação ativa
+## 3. Consentimento e PKCE
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Consent define permissões; PKCE protege a troca do código de autorização em clientes aplicáveis.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Em App registrations de **teste**, identifique Authentication/Platform e API permissions. Faça checklist: redirect exato, Authorization Code + PKCE em cliente público e menor escopo. Para executar protocolo ponta a ponta, use [Lab 01 opcional](../labs/01-keycloak-oidc.md), que requer ambiente adicional.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você fez revisão de configuração. Sem aplicação rodando, isto **não** é execução de login OIDC ponta a ponta.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Protege autorização e reduz abuso de código.
+
+**Pontos negativos / riscos:** Consentimento elevado/redirect excessivo pode ampliar acesso indevido.
+
+**Fixação:** Por que PKCE não substitui validação de redirect URI?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)

@@ -1,60 +1,66 @@
-# 24 — Auditoria: controle, evidência e KPI
+# 24 — Auditoria IAM: controles e evidências
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 6 — Arquitetura** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Controle precisa de objetivo, proprietário, frequência, teste e prova verificável.
+## 1. Controle IAM
 
-**Onde aparece no trabalho:** Auditoria solicita evidência de revogação de ex-funcionário.
+**O que é?** É regra/atividade que reduz risco mensurável, com dono e frequência.
 
-**Ao terminar você fará:** Conecte risco → controle → teste → evidência → responsável.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Entra ou AD de **teste**, escolha controle `usuário desligado não pode autenticar` e verifique estado de conta do exercício JML. Registre data, responsável e critério. Não inclua dados pessoais.
 
-**Ponto positivo:** Torna resultados auditáveis e mede desempenho.
+**O que você acabou de fazer?** Você transformou um risco em controle verificável.
 
-**Ponto negativo / risco:** Métricas sem fonte ou controle geram falsas conclusões.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Facilita auditoria.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Controle sem proprietário acaba esquecido.
 
-Planilha ou CSV fictício.
+**Fixação:** Qual evidência demonstra que Leaver foi executado?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Evidência
 
-## 4. Fazer agora — passo a passo
+**O que é?** É registro verificável de ação, resultado e momento de execução.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie tabela com `controle`, `risco`, `frequência`, `owner`, `evidência`, `resultado`. Calcule: 18 revogações no SLA entre 20 saídas = 90%. Registre as duas exceções e causa.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Indicador tem denominador, período e fonte.
+Em grupo JML-Financeiro de lab, consulte antes/depois da remoção de uma conta fictícia. Combine com audit log do Entra se disponível; guarde apenas dados sanitizados.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você produziu evidência da remoção real.
 
-Retire owner de um controle: explique por que a auditoria não pode encerrar achado.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Permite validar eficiência de remediação.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Print isolado sem contexto pode ser inconclusivo.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Defina KPI de contas órfãs e rotina de revisão.
+**Fixação:** Como demonstrar quem alterou um grupo e quando?
 
-## 7. Fixação ativa
+## 3. KPI de controle
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É medida com fórmula, origem, período e meta documentados.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Considere 20 desligamentos **fictícios**, 18 bloqueados dentro do SLA. Calcule `18/20*100 = 90%`. Registre também duas exceções e suas causas. Esta é **simulação de análise**, não métrica do tenant.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você entendeu cálculo e limite da amostra.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Mostra tendência e gargalos.
+
+**Pontos negativos / riscos:** KPI sem fonte real gera falsa sensação de conformidade.
+
+**Fixação:** O que falta para chamar 90% de desempenho real?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

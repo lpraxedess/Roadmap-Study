@@ -1,60 +1,66 @@
-# 23 — IaC: revisão e controle de mudanças
+# 23 — IaC e Git: controle de mudanças em IAM
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 6 — Arquitetura** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Infraestrutura como código descreve configuração verificável por diff e pipeline.
+## 1. Versionamento
 
-**Onde aparece no trabalho:** Permissão ampla foi introduzida em pull request.
+**O que é?** É registrar alterações de configuração com histórico e revisão.
 
-**Ao terminar você fará:** Faça code review sem executar apply.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No repositório **local de exercícios separado do ambiente real**, crie arquivo `politica-iam-lab.json` com texto fictício `{"role":"Reader","scope":"rg-lab"}`. Rode `git init`, `git add politica-iam-lab.json`, `git commit -m 'policy inicial'`. Configure nome/e-mail local se o Git pedir.
 
-**Ponto positivo:** Repetibilidade, revisão e histórico.
+**O que você acabou de fazer?** Você versionou uma política **fictícia**, não concedeu role Azure.
 
-**Ponto negativo / risco:** States/segredos podem vazar; plano deve ser revisado.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Permite rastrear quem mudou o desenho.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Arquivo com segredo não deve ser versionado.
 
-Git local e editor; Terraform opcional.
+**Fixação:** Um commit aplica permissão no Entra?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Revisão de diferença
 
-## 4. Fazer agora — passo a passo
+**O que é?** É comparar estado anterior e alteração proposta antes de executar.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie `policy.json` fictício com `role: Reader, scope: rg-lab`; faça commit. Altere para `Owner`, execute `git diff`, marque risco e reverta via `git restore policy.json` se não houver dados não salvos importantes.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Diff evidencia escalada de privilégio antes de execução.
+Edite no arquivo fictício Reader → Owner; execute `git diff` e identifique o aumento de privilégio. Desfaça com editor ou `git restore` **após salvar o que for necessário**.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você detectou risco em revisão sem afetar cloud.
 
-Introduza wildcard de permissões e escreva uma regra de revisão que falharia.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Impede mudanças excessivas antes de apply.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Pipeline sem revisão pode propagar erro.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Defina requisito de duas revisões antes de aplicar mudança crítica.
+**Fixação:** Por que mudar Reader para Owner precisa de revisão?
 
-## 7. Fixação ativa
+## 3. Pipeline e rollback
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** São etapas para validar, aprovar, aplicar e eventualmente reverter mudanças de IAM.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Desenhe pipeline `PR → validate → review → plan → approval → apply → verify`. Para uma alteração fictícia que falhe, descreva rollback e quais logs guardaria. Não rode Terraform apply em assinatura com custo para esta aula.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você projetou controles, ainda **não** fez deploy IaC real.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Melhora repetibilidade e governança.
+
+**Pontos negativos / riscos:** Rollback nem sempre restaura tokens/sessões anteriores.
+
+**Fixação:** Que condição deve impedir o apply automático?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

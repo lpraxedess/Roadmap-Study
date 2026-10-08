@@ -1,60 +1,66 @@
-# 12 — Python: APIs e tratamento de falhas
+# 12 — Python e APIs: automatizar com segurança
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 3 — Automação IAM** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Integrações IAM usam JSON, HTTP e códigos de status; erros devem ser classificados antes de retry.
+## 1. JSON em APIs
 
-**Onde aparece no trabalho:** Uma API de provisionamento responde 429 e 403.
+**O que é?** É formato de dados usado para enviar e receber identidades em APIs.
 
-**Ao terminar você fará:** Identifique falhas transitórias e permanentes e valide entradas.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Sem instalar produto IAM extra, execute `python -c "import json; print(json.loads('{\"active\": false}'))"`. Depois crie `usuario.json` com `userName` fictício e `active` booleano. Confirme que JSON usa `false`, não `False`.
 
-**Ponto positivo:** Boa cobertura de testes e integração com APIs.
+**O que você acabou de fazer?** Você interpretou payload que APIs IAM enviam.
 
-**Ponto negativo / risco:** Sem limites de retry, scripts causam bloqueio e consumo.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Padroniza integração entre sistemas.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Campos mal mapeados podem conceder ou revogar acesso indevido.
 
-Python 3 sem dependências externas.
+**Fixação:** Qual a diferença entre JSON `false` e uma string `'false'`?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Status HTTP
 
-## 4. Fazer agora — passo a passo
+**O que é?** O retorno 201/400/403/409 indica sucesso ou categoria de falha.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** No terminal: `python -c "import json; data=json.loads('{\"active\": false}'); print(data['active'])"`. Crie função `should_retry(status)` que retorne True para 429, 502, 503 e False para 400, 401, 403; teste com assertions.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** JSON interpreta `false` como booleano Python; seus testes classificam os status.
+Use [Lab 09 SCIM mock](../labs/09-scim-mock.md): crie usuário com POST (201), repita o mesmo cadastro (409) e omita `userName` (400). Anote causa de cada resposta.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você executou requisições HTTP em API de laboratório, sem mexer no Entra.
 
-Faça a função retornar True incorretamente para 403, depois explique por que seria mau desenho.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Facilita tratamento de erros em automações reais.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Repetir erro permanente sem análise pode causar bloqueios.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Adicione backoff limitado à função com tempo máximo e logs que nunca incluam bearer tokens.
+**Fixação:** Quando faz sentido retry e quando corrigir o payload?
 
-## 7. Fixação ativa
+## 3. Automatização do JML
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É traduzir Joiner/Mover/Leaver conhecido para operação de API segura.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Após executar [aula 05](05-jml.md), rode `python scripts/jml_dry_run.py scripts/dados-exemplo.csv` na raiz do repositório. Confira JSON gerado e entenda **DRY_RUN_ONLY**. Não confunda saída proposta com conta criada.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você fez **somente planejamento de mudanças**; a operação real foi na aula 05.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Permite validar entradas antes de escrita massiva.
+
+**Pontos negativos / riscos:** Dry-run não confirma permissões nem efetiva revogação.
+
+**Fixação:** Que operação estaria faltando para transformar plano em alteração real?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)
