@@ -1,60 +1,36 @@
-# 03 — Entra ID: papéis e escopos
+# 03 — Microsoft Entra ID: usuários, grupos e papéis
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 1 — AD e Entra** · **50–80 minutos** · **Requer:** tenant de laboratório e função com permissão para administrar usuários e grupos. **Não requer PIM ou Docker.**
 
-## 1. Conceito em 1 minuto
+## 1. O que é e por que usar?
 
-Funções de diretório administram identidades; Azure RBAC controla recursos no Azure.
+O **Microsoft Entra ID** mantém identidades na nuvem e atende autenticação e autorização de aplicações integradas. **Security group** reúne usuários. **Entra directory role** concede capacidade administrativa sobre o diretório. **Azure RBAC** concede acesso a recursos de uma assinatura no escopo adequado: **são controles distintos**.
 
-**Onde aparece no trabalho:** Um operador precisa visualizar apenas um Resource Group.
+**Vantagens:** identidade centralizada e integração com SaaS. **Desafios:** excesso de funções, atribuições herdadas, licenciamento de serviços e diferença entre grupo, papel e permissão.
 
-**Ao terminar você fará:** Separe directory roles de escopos Azure Resource Manager.
+## 2. Faça no portal Entra
 
-## 2. Por que usar? Vantagens e limites
+1. Abra [entra.microsoft.com](https://entra.microsoft.com) no **tenant de laboratório**.
+2. Em **Entra ID → Groups → All groups → New group**, crie `IAM-Treino-Leitura` com **Group type = Security** e **Membership type = Assigned**.
+3. Em **Entra ID → Users → All users → New user → Create new user**, crie a identidade *cloud-only* `aluno.entra` em um **domínio verificado** do tenant. Use nome fictício, uma senha inicial exclusiva e não atribua funções administrativas.
+4. Volte em **Groups → IAM-Treino-Leitura → Members → Add members** e selecione esse usuário.
+5. Confirme **presença em Members**, além de visualizar as associações na página do usuário.
+6. Abra **Entra ID → Roles and administrators** e **observe** a diferença entre *role* administrativa e *grupo* — não conceda nova role neste exercício.
 
-**Ponto positivo:** Menor privilégio e delegação granular.
+**Resultado esperado:** usuário cloud-only presente no grupo e sem privilégios administrativos extras. **Atenção:** associação ao grupo não dá acesso efetivo a um aplicativo que não use esse grupo.
 
-**Ponto negativo / risco:** Um papel Reader ainda pode expor metadados; permissões variam por plano e escopo.
+## 3. Teste negativo e correção
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+No grupo **de laboratório**, remova o usuário em **Members → Remove member**. Confira que a conta continua existindo; apenas sua associação mudou. Adicione-o novamente.
 
-## 3. Preparar o ambiente
+Se a ação não estiver disponível, confira **função administrativa e propriedade do grupo**. Não atribua Global Administrator apenas para seguir o exercício.
 
-Conta de laboratório; não crie recurso cobrado apenas para a atividade.
+## 4. Desafio e limpeza
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+Crie outro usuário fictício e repita a associação. Descreva quando usar um grupo, quando usar uma role do Entra e quando usar Azure RBAC.
 
-## 4. Fazer agora — passo a passo
+A exclusão da conta do laboratório é opcional e deve obedecer ao cuidado de verificar o usuário antes de confirmar.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** No portal Azure, abra `Access control (IAM)` de um grupo de recursos **existente** → `View my access`. Depois, no Entra, observe `Roles and administrators`. Compare os dois escopos. Se não houver assinatura, preencha matriz `identidade, recurso, role, ação permitida`.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Se o usuário for sincronizado do AD, não edite atributos controlados na origem nem crie conta duplicada.** Use a [aula 04](04-hibrido.md) e depois a [aula 05 JML](05-jml.md).
 
-**O que deve acontecer:** Você consegue explicar por que Global Reader não é automaticamente Reader de uma assinatura.
-
-## 5. Quebre de propósito (apenas laboratório)
-
-Na matriz fictícia, tente `Reader → excluir VM`: marque negado e explique quem avalia.
-
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
-
-## 6. Limpar e repetir sem olhar
-
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Crie uma matriz de três papéis e cinco operações, mantendo ações sensíveis negadas.
-
-## 7. Fixação ativa
-
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
-
-## 8. Evidência mínima (5 itens)
-
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
-
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
-
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+[Microsoft Learn — Criar usuários no Entra](https://learn.microsoft.com/pt-br/entra/fundamentals/how-to-create-delete-users)
