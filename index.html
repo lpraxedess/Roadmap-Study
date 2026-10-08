@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="Trilha de estudos IAM organizada em seis fases, apenas temas.">
+  <title>Roadmap Study — IAM</title>
+  <style>
+    :root{color-scheme:dark;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#050505;color:#efefef}
+    *{box-sizing:border-box}body{margin:0}main{width:min(820px,calc(100% - 36px));margin:0 auto;padding:70px 0 100px}
+    .eyebrow{color:#989898;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700}
+    h1{font-size:clamp(34px,6vw,58px);letter-spacing:-.05em;margin:10px 0 10px}p{color:#aaa;line-height:1.65;margin:0 0 42px}
+    section{padding:26px 0;border-top:1px solid #282828}h2{font-size:20px;font-weight:650;margin:0 0 15px;letter-spacing:-.015em}
+    ol{list-style:none;padding:0;margin:0;counter-reset:item}li{counter-increment:item;display:flex;gap:17px;padding:9px 0;color:#dadada;line-height:1.45}
+    li::before{content:counter(item,decimal-leading-zero);font-variant-numeric:tabular-nums;color:#818181;font-size:12px;padding-top:3px;min-width:25px}
+    footer{border-top:1px solid #282828;padding:24px 0;color:#838383;font-size:12px}
+    @media(prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Trilha de estudos</div>
+  <h1>Identity &amp; Access Management</h1>
+  <p>Seis fases · 33 temas</p>
+  <section><h2>Fase 1 — Identidades, Active Directory e Entra ID</h2><ol>
+    <li>Fundamentos de identidade, autenticação e autorização</li>
+    <li>Active Directory: objetos, OUs, grupos, LDAP e Kerberos</li>
+    <li>Microsoft Entra ID: usuários, grupos, roles e RBAC</li>
+    <li>RBAC, ABAC e princípio do menor privilégio</li>
+    <li>Identidade híbrida e sincronização AD–Entra</li>
+    <li>Joiner, Mover, Leaver (JML)</li>
+  </ol></section>
+  <section><h2>Fase 2 — SSO e protocolos de identidade</h2><ol>
+    <li>Single Sign-On (SSO) e federação</li>
+    <li>OAuth 2.0 e OpenID Connect (OIDC)</li>
+    <li>SAML 2.0</li>
+    <li>SCIM 2.0 e provisionamento</li>
+    <li>Autenticação multifator (MFA), Passwordless, FIDO2 e Passkeys</li>
+    <li>Microsoft Entra Conditional Access</li>
+    <li>App Registrations, Enterprise Applications e Service Principals</li>
+  </ol></section>
+  <section><h2>Fase 3 — Automação de IAM</h2><ol>
+    <li>Microsoft Graph API</li>
+    <li>PowerShell para IAM</li>
+    <li>Python e APIs REST</li>
+  </ol></section>
+  <section><h2>Fase 4 — Governança e privilégios</h2><ol>
+    <li>Identity Governance and Administration (IGA)</li>
+    <li>Access Reviews e recertificação</li>
+    <li>Privileged Identity Management (PIM)</li>
+    <li>Privileged Access Management (PAM)</li>
+    <li>Secrets e Workload Identity</li>
+    <li>Entitlement Management e Access Packages</li>
+    <li>Identidades externas: B2B e convidados</li>
+  </ol></section>
+  <section><h2>Fase 5 — IAM em nuvem e segurança</h2><ol>
+    <li>Azure IAM, RBAC e Managed Identity</li>
+    <li>IAM multicloud (AWS e Azure)</li>
+    <li>Identity Threat Detection and Response (ITDR)</li>
+    <li>Logs e troubleshooting de identidade</li>
+    <li>Zero Trust e acesso adaptativo</li>
+    <li>Microsoft Entra ID Protection</li>
+  </ol></section>
+  <section><h2>Fase 6 — Engenharia e arquitetura</h2><ol>
+    <li>Infrastructure as Code (IaC), Git e CI/CD para IAM</li>
+    <li>Auditoria, controles e indicadores de IAM</li>
+    <li>Arquitetura IAM empresarial</li>
+    <li>Resiliência IAM e contas de emergência (Break Glass)</li>
+  </ol></section>
+  <footer>Roadmap Study · Índice pessoal de temas de IAM</footer>
+</main>
+</body>
+</html>
