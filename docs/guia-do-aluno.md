@@ -1,33 +1,30 @@
-# Guia do aluno — aprender IAM executando
+# Guia para estudar no Roadmap-Study
 
-**Ordem em cada módulo:** conceito (3 min) → por que existe → vantagens/limites → preparar → **executar em software real quando viável** → verificar → provocar falha controlada → corrigir → desafio sem roteiro.
+**Princípio:** você não precisa aprender instalando uma coleção de ferramentas. Primeiro vai trabalhar com **Active Directory e Entra ID**, que são o foco da formação. Depois escolherá somente o que faltar.
 
-O fato de uma aula possuir um comando, CSV ou tabela **não a torna um laboratório real**. Identifique sempre o tipo de exercício:
+## Como funciona uma fase
 
-| Tipo | O que comprova |
-|---|---|
-| Operação real em software local | Objetos e configurações efetivamente criados/alterados no serviço de laboratório |
-| Operação Microsoft | Configuração e logs vistos em tenant/assinatura autorizados e licenciados |
-| Simulação offline | Entendimento do processo e tratamento de dados, **não** provisionamento real |
-| Desenho arquitetural | Capacidade de justificar decisão, ainda sem implantação |
+Cada fase contém temas em ordem. Em cada tema, siga o roteiro:
 
-**Comece pela [aula 05 JML](modulos/05-jml.md)** para experimentar a diferença entre gerenciar identidades manualmente no Keycloak e gerar planos de alteração em Python.
+1. **O que é:** definição direta.
+2. **Por que existe e onde usar:** exemplo de tarefa IAM.
+3. **Pontos positivos e negativos:** o que resolve e quais riscos mantém.
+4. **Fazer na prática:** em AD/Entra, com os caminhos da interface e pré-requisitos explícitos.
+5. **Conferir:** verifique se o usuário/grupo/permissão mudou.
+6. **Quebrar de propósito:** erro controlado e reversível, em laboratório.
+7. **Resolver:** investigar e corrigir.
+8. **Fixar:** responder ao quiz e repetir o cenário com outro usuário fictício.
 
-## Critério de conclusão
+## Primeiro desafio: JML no seu ambiente
 
-1. Explique o conceito e o benefício em suas palavras.
-2. Registre pré-requisitos e o que instalou.
-3. Execute as etapas e mostre resultado esperado versus observado.
-4. Comprove pelo menos **um teste negativo seguro**.
-5. Descubra a causa, corrija, remova recursos temporários e repita sem roteiro.
-6. Responda à pergunta de fixação da aula.
+Na [Fase 1, módulo 05](modulos/05-jml.md) você criará João e os grupos JML-Financeiro e JML-TI no **AD ou Entra**. Executará Joiner, Mover e Leaver, com checagem em cada etapa. **Não requer Docker, Python nem Keycloak**.
 
-**Notas e progresso** são salvos somente no navegador. Eles não comprovam execução real nem são sincronizados automaticamente. Nunca inclua tokens, senhas ou dados corporativos nas anotações.
+## Ambiente e permissões
 
-## Licenciamento
+- Faça apenas no laboratório. Se possuir **AD local**: execute com conta de administração delegada na OU de testes.
+- Se possuir apenas **Microsoft Entra**: crie usuário **cloud-only**, use grupos de segurança atribuídos e gerencie-os pelo painel.
+- Se o usuário é **sincronizado do AD**: a fonte principal é on-prem; não crie um cloud-only duplicado.
+- Não use contas reais, não afete grupos de produção e não atribua Global Administrator por conveniência.
+- Nem toda atividade precisa de licença P2; recursos de Governance, PIM e Azure têm requisitos próprios.
 
-Uma licença Microsoft Entra ID P2 só deve ser utilizada para usuários e funcionalidades efetivamente licenciados. Governance, recursos Azure e integrações com nuvem podem requerer planos/custos diferentes. Caso a função não esteja disponível, use a alternativa local **sem afirmar que ela é equivalente ao produto Microsoft**.
-
-## Segurança
-
-Utilize ambiente isolado e contas fictícias. Nunca quebre políticas do tenant principal; proteja a conta de emergência. Teste exclusão **somente em objetos criados especificamente para o laboratório**.
+**Fase concluída:** você consegue explicar, executar, verificar o que mudou e repetir sem copiar o roteiro. O botão “concluído” do site registra apenas seu estudo; não prova execução em tenant.

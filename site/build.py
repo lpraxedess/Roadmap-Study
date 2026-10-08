@@ -26,12 +26,12 @@ EXTRA = [
     ("publicacao.md", "publicacao", "Publicação"),
 ]
 STAGES = [
-    ("Fundamentos e identidade", 1, 5),
-    ("Federação e protocolos", 6, 9),
-    ("IAM Engineering", 10, 12),
-    ("Governança e privilégios", 13, 17),
-    ("Cloud e Identity Security", 18, 22),
-    ("Arquitetura e auditoria", 23, 25),
+    ("Fase 1 — AD e Entra", 1, 5),
+    ("Fase 2 — SSO e protocolos", 6, 9),
+    ("Fase 3 — Automação IAM", 10, 12),
+    ("Fase 4 — Governança e privilégios", 13, 17),
+    ("Fase 5 — Cloud e defesa", 18, 22),
+    ("Fase 6 — Arquitetura", 23, 25),
 ]
 md = markdown.Markdown(extensions=["extra", "admonition", "codehilite", "toc", "tables", "fenced_code"])
 

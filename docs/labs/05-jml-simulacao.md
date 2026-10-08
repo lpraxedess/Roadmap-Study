@@ -1,36 +1,24 @@
-# Laboratório 05 — JML manual de ponta a ponta no Keycloak
+# Laboratório 05 — JML com AD ou Microsoft Entra (sem Docker)
 
-**Tipo:** operações reais de identidade no Keycloak do laboratório; **não é simulação CSV**.
+**Prática principal:** [módulo 05 — JML completo no AD/Entra](../modulos/05-jml.md). Escolha seu ambiente disponível, não instale outra plataforma.
 
-**Tempo:** 90–150 minutos · **Custo:** gratuito · **Ambiente:** Docker + Keycloak local.
+| Ambiente | Onde administrar | Operações reais |
+|---|---|---|
+| AD DS de laboratório | \`dsa.msc\` | Criar usuário e grupos, alterar membership, desabilitar e opcionalmente excluir |
+| Entra ID de laboratório | \`entra.microsoft.com\` | Criar usuário cloud-only e grupos, alterar membership, bloquear login e opcionalmente excluir |
+| AD sincronizado | Origem on-prem e verificação cloud | Fazer alterações na origem, monitorar sync e tratar sessões cloud |
 
-Este laboratório faz parte da [aula 05 — Joiner, Mover e Leaver](../modulos/05-jml.md), que já contém os passos detalhados, comandos, caminhos do painel e resultados esperados. Siga a aula na ordem, sem pular a validação de cada etapa.
+## Checklist guiado
 
-## Ordem prática
+1. [ ] Conferi permissões e ambiente de laboratório.
+2. [ ] Criei \`JML-Financeiro\` e \`JML-TI\`.
+3. [ ] **Joiner:** criei \`joao.jml\` e o adicionei a Financeiro.
+4. [ ] **Mover:** retirei Financeiro e adicionei TI.
+5. [ ] **Leaver:** desabilitei o usuário e verifiquei resultado.
+6. [ ] Testei falha de grupos duplicados **apenas nos grupos do lab**.
+7. [ ] Registrei evidência e decisão de retenção.
+8. [ ] Repeti com outro usuário de laboratório sem roteiro.
 
-1. Iniciar contêiner Keycloak e criar o realm `iam-lab`.
-2. Criar grupos `Financeiro` e `TI`.
-3. **Joiner:** criar `joao.lab`, definir senha de laboratório, atribuir grupo Financeiro e testar login.
-4. **Mover:** retirar Financeiro, adicionar TI e confirmar a ausência de acesso antigo.
-5. **Leaver:** desabilitar conta, encerrar sessões quando disponível e comprovar negação de **novo** login.
-6. **Opcional:** excluir a conta fictícia somente depois de coletar evidências.
-7. **Desafio:** repetir com `maria.lab`, sem instruções.
+**Atenção:** se o usuário for sincronizado AD→Entra, gerencie-o na origem on-prem. **Exclusão não é o primeiro passo do desligamento.**
 
-## Resultado esperado
-
-| Etapa | Conta ativa | Grupos | Login novo |
-|---|---|---|---|
-| Joiner | Sim | Financeiro | Permitido |
-| Mover | Sim | TI (não Financeiro) | Permitido |
-| Leaver | Não | Associação pode permanecer para auditoria | Negado |
-| Exclusão opcional | Conta inexistente | — | Negado |
-
-**Importante:** grupos demonstram ciclo de associação; autorização efetiva precisa de aplicação integrada, com roles e políticas, em exercícios posteriores.
-
-## Checkpoint e diagnóstico
-
-Se não conseguir login após Joiner, verifique `Enabled`, senha, realm e eventos antes de continuar. Se o grupo antigo permanecer após Mover, o processo não está concluído. Se uma sessão antiga funcionar após Leaver, investigue revogação de sessões/tokens e diferencie sessão existente de novo login.
-
-**Critério de conclusão:** apresente o estado antes/depois de cada fase e execute o desafio Maria. Sem isso, não considere o laboratório aprovado.
-
-[Executar aula completa](../modulos/05-jml.md) · [Etapa posterior: automação em Python](07-jml-python.md)
+[Executar tutorial com cliques e validações](../modulos/05-jml.md) · [Automatização posterior](07-jml-python.md)

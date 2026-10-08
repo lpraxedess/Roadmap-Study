@@ -6,10 +6,10 @@ Curso autoguiado de Identity & Access Management, do operacional à arquitetura.
 
 ## Início rápido
 
-1. [Guia do aluno](docs/guia-do-aluno.md)
-2. [Currículo](docs/curriculo.md)
-3. [Aula 05: ciclo de vida JML realmente executado no Keycloak](docs/modulos/05-jml.md)
-4. [Laboratórios](docs/labs/05-jml-simulacao.md) — nome histórico do arquivo, conteúdo agora dedicado à prática manual.
+1. [Trilha em seis fases por tema](docs/curriculo.md)
+2. [Guia do aluno](docs/guia-do-aluno.md)
+3. [Aula 05: JML com usuários e grupos no AD ou Entra](docs/modulos/05-jml.md)
+4. [Laboratórios](docs/labs/05-jml-simulacao.md) — arquivo de laboratório guiado no Active Directory ou Entra.
 5. [Aula 15: PIM e ativação de privilégio](docs/modulos/15-pim.md)
 
 ## Estrutura
@@ -23,7 +23,7 @@ Curso autoguiado de Identity & Access Management, do operacional à arquitetura.
 
 ## Qualidade e honestidade sobre os laboratórios
 
-**Não confunda** simulação CSV, especificação conceitual, laboratório real em software local ou execução em Microsoft. A aula de JML agora realiza criação, movimentação e bloqueio efetivos em um Keycloak de laboratório. Outras unidades com ferramentas externas ainda exigem validação prática específica; um build do site não valida o produto.
+**Não confunda** simulação CSV, especificação conceitual, laboratório real em software local ou execução em Microsoft. A aula de JML ensina criação, movimentação e bloqueio no Active Directory ou Microsoft Entra de laboratório, sem dependência de Docker. Outras unidades com ferramentas externas ainda exigem validação prática específica; um build do site não valida o produto.
 
 ## Rodar localmente
 

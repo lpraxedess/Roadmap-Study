@@ -9,6 +9,8 @@ out = root / "dist"
 items = json.loads((out / "assets/content.json").read_text(encoding="utf-8"))
 kinds = {kind: [x for x in items if x["kind"] == kind] for kind in ("aula", "laboratorio", "projeto")}
 assert len(kinds["aula"]) == 25, "Expected 25 lessons"
+assert len({x["stage"] for x in kinds["aula"]}) == 6, "Expected six learning phases"
+assert all(x["stage"].startswith("Fase ") for x in kinds["aula"]), "Missing phase labels"
 assert len(kinds["laboratorio"]) == 10, "Expected at least 7 labs"
 assert len(kinds["projeto"]) == 6, "Expected 6 capstones"
 assert len({x["id"] for x in items}) == len(items), "Duplicate route IDs"
