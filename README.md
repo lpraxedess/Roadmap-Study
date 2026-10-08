@@ -1,13 +1,6 @@
-# Roadmap Study — IAM
+# Roadmap-Study
 
-Projeto de estudos organizado exclusivamente por temas, em seis fases e 33 assuntos.
+Índice pessoal de estudos, mantido somente em Markdown.
 
-**Não inclui tutoriais, exercícios, laboratórios, scripts de estudo ou conteúdo do portfólio.**
+[**IAM — trilha de estudos (6 fases e 33 temas)**](iam/README.md)
 
-O índice completo está em [`index.html`](index.html).
-
-Site: https://lpraxedess.github.io/Roadmap-Study/
-
-## Publicação
-
-O GitHub Actions publica automaticamente a página estática na branch `gh-pages` a cada push na `main`. Em **Settings → Pages**, use **Deploy from a branch**, `gh-pages`, `/(root)`.
