@@ -1,60 +1,35 @@
-# 04 — Híbrido: AD DS + Entra Connect
+# 04 — Identidade híbrida: de onde vêm os usuários?
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 1 — AD e Entra** · **40–70 minutos** · **Ambiente:** AD DS e Entra Connect/Cloud Sync **já existentes**; sem necessidade de instalar novo sincronizador nesta aula.
 
-## 1. Conceito em 1 minuto
+## 1. Entenda
 
-Sincronização propaga objetos/atributos da fonte definida; não é o mesmo que autenticação.
+Em **identidade híbrida**, parte das identidades é originada no AD local e sincronizada ao Entra. A **fonte autoritativa** define onde cada atributo deve ser alterado. A sincronização **não** é o mesmo que login. Dados como nome, departamento e estado da conta dependem do tipo de objeto e do fluxo configurado.
 
-**Onde aparece no trabalho:** Conta é desativada no AD, mas ainda aparece no Entra.
+**Vantagem:** reaproveita o diretório local. **Risco:** alterações no local errado, conflito de atributos, sincronização atrasada e contas duplicadas.
 
-**Ao terminar você fará:** Investigue origem da conta, agendamento e atributos sem alterar produção.
+## 2. Verificação prática — somente leitura primeiro
 
-## 2. Por que usar? Vantagens e limites
+1. No **AD de laboratório**, abra `dsa.msc` e selecione um usuário de teste **já sincronizado**.
+2. Registre seu nome de usuário e o atributo de departamento, se existir; **não modifique ainda**.
+3. No [Entra](https://entra.microsoft.com), localize o mesmo usuário e observe a propriedade que indica sincronização de diretório, quando a interface exibir `On-premises sync enabled` ou equivalente.
+4. Compare o identificador/UPN, os atributos e o estado atual. **Não suponha** que todos os grupos locais são sincronizados: verifique a configuração de escopo existente.
+5. Se tiver acesso ao servidor de sincronização, consulte estado e histórico de sincronização; se não tiver, anote que não é possível validar a etapa de propagação.
 
-**Ponto positivo:** Reaproveita identidades on-prem e facilita transição.
+**Resultado esperado:** você identifica um objeto sincronizado e sabe por que a mudança de atributo precisa ocorrer na origem.
 
-**Ponto negativo / risco:** Erros de escopo, atributos e sincronização impactam provisionamento.
+## 3. Alteração opcional — apenas se você administra o laboratório
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+1. No AD, altere **Department** de um usuário fictício sincronizado de `Financeiro` para `TI`.
+2. Registre horário e espere o próximo ciclo de sincronização **já agendado**. Não force ciclos sem necessidade.
+3. Compare o valor visto no Entra após a sincronização. Se não atualizar, examine logs/escopo e permissões de leitura, sem recriar o usuário.
 
-## 3. Preparar o ambiente
+**Teste negativo de raciocínio:** alguém tentou editar diretamente no Entra um atributo controlado pelo AD. Explique por que a sincronização pode sobrescrever a alteração. Não faça o teste destrutivo com uma conta real.
 
-AD/Entra Connect de laboratório existente; caso contrário, simulação com CSV fictício.
+## 4. Desafio
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+Desenhe setas **RH → AD DS → sincronizador → Entra ID → aplicativo**; marque a fonte autoritativa e o ponto de auditoria. Explique quais verificações faria se um Leaver fosse bloqueado no AD e ainda aparecesse habilitado na nuvem.
 
-## 4. Fazer agora — passo a passo
+Se não possui laboratório híbrido, a atividade é **análise arquitetural**, não prática executada no produto. Não crie recurso Azure pago apenas para completar esta fase.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Abra `Synchronization Service Manager` ou logs do conector em sua VM. Consulte escopo de OU e scheduler com `Get-ADSyncScheduler` quando disponível. Se só puder simular, crie tabela `AD enabled=false`, `sync pendente`, `cloud enabled=true` e avance uma execução fictícia.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
-
-**O que deve acontecer:** Após sincronização validada, a alteração elegível é refletida no destino conforme o tipo de objeto e a configuração.
-
-## 5. Quebre de propósito (apenas laboratório)
-
-Retire um usuário fictício do escopo em tabela e preveja comportamento e riscos; não altere sync de usuários importantes.
-
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
-
-## 6. Limpar e repetir sem olhar
-
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Documente procedimento para diferenciar falha de fluxo, erro de atributo e exclusão de escopo.
-
-## 7. Fixação ativa
-
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
-
-## 8. Evidência mínima (5 itens)
-
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
-
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
-
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+[Continuar: 05 — JML no AD ou Entra](05-jml.md)

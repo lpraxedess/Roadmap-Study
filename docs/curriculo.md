@@ -1,68 +1,90 @@
-# Currículo — roteiro de formação
+# Trilha de aprendizagem IAM — organizada em fases
 
-O percurso respeita experiência prévia com AD e Entra ID. Faça diagnóstico por competência; o conteúdo básico é revisão, não pré-requisito de tempo fixo. Estude primeiro os fundamentos quando um teste diagnóstico indicar lacuna.
+**Ferramentas principais:** Active Directory DS e Microsoft Entra ID. **Não precisa instalar Docker ou Keycloak para começar.** Use primeiro o que já existe no seu laboratório.
 
-## Aulas sequenciais
+**Método em todas as fases:** entender em linguagem direta → ver exemplo real → executar na ferramenta → verificar o resultado → investigar um erro controlado → concluir desafio sem roteiro.
 
-1. [01 — Fundamentos essenciais e diagnóstico](modulos/01-fundamentos.md) — DNS, TLS, HTTP, Git e identidades.
-2. [02 — Active Directory e protocolos](modulos/02-ad.md) — AD DS, LDAP, Kerberos, NTLM, GPO e objetos.
-3. [03 — Microsoft Entra ID e RBAC](modulos/03-entra.md) — Tenant, usuários, grupos, directory roles e Azure RBAC.
-4. [04 — Identidade híbrida](modulos/04-hibrido.md) — Entra Connect, hash sync, soft match, hard match e fonte autoritativa.
-5. [05 — Joiner–Mover–Leaver](modulos/05-jml.md) — Nascimento, mudança e saída do colaborador.
-6. [06 — SSO e federação](modulos/06-sso.md) — IdP, SP, trust, sessões, metadata e certificados.
-7. [07 — OAuth 2.0 e OIDC](modulos/07-oauth.md) — Authorization Code + PKCE, ID Token, Access Token, scopes, claims.
-8. [08 — SAML 2.0](modulos/08-saml.md) — Assertions XML, SP, IdP, ACS, NameID, assinatura e metadata.
-9. [09 — SCIM 2.0](modulos/09-scim.md) — Resource schemas, Users, Groups, PATCH e desprovisionamento.
-10. [10 — Microsoft Graph e segurança de API](modulos/10-graph.md) — Delegated vs app-only, scopes, consent, paginação e throttling.
-11. [11 — PowerShell para IAM](modulos/11-powershell.md) — Objetos, pipeline, módulos, validação, tratamento de erros.
-12. [12 — Python e REST APIs](modulos/12-python.md) — Requests, JSON, HTTP status, retries, paginação.
-13. [13 — Fundamentos de IGA](modulos/13-iga.md) — Catálogo de entitlements, ownership, review e SoD.
-14. [14 — Access Reviews e recertificação](modulos/14-reviews.md) — Campanhas, reviewers, decisões, evidências.
-15. [15 — PIM e acesso privilegiado](modulos/15-pim.md) — Eligible vs active, JIT, aprovação, duração, auditoria.
-16. [16 — PAM open source](modulos/16-pam.md) — Teleport Community, sessões, RBAC e acesso remoto.
-17. [17 — Secrets e workload identity](modulos/17-segredos.md) — OpenBao, secrets, tokens, TTL, rotação e credenciais de máquina.
-18. [18 — Azure IAM e identidade de workload](modulos/18-azure.md) — Azure RBAC, managed identity, service principals e recursos.
-19. [19 — Fundamentos multicloud](modulos/19-multicloud.md) — AWS IAM, roles, policies, trust e conceitos comparados.
-20. [20 — ITDR e defesa de identidades](modulos/20-itdr.md) — Risco de conta, tokens, logs, detecção e resposta.
-21. [21 — Logs, telemetria e troubleshooting](modulos/21-logs.md) — Sign-in logs, audit logs, correlação, retenção.
-22. [22 — Zero Trust e acesso adaptativo](modulos/22-zero-trust.md) — Verificar explicitamente, menor privilégio, assumir violação.
-23. [23 — IaC, Git e CI/CD para IAM](modulos/23-iac.md) — Terraform/Bicep, revisão de código, pipelines e drift.
-24. [24 — Auditoria e indicadores](modulos/24-auditoria.md) — Controle, evidência, risco residual, SLA e KPI.
-25. [25 — Arquitetura IAM empresarial](modulos/25-architecture.md) — AD/Entra, federação, provisionamento, PAM, observabilidade e recuperação.
+## Fase 1 — Identidades, AD e Entra
 
-## Laboratórios guiados
+**Objetivo:** saber administrar identidades e acessos do nascimento ao desligamento.
 
-- [01 — OIDC com Keycloak e PKCE](labs/01-keycloak-oidc.md)
-- [02 — SAML 2.0 — Keycloak e SP de teste](labs/02-saml-keycloak.md)
-- [03 — Provisionamento SCIM 2.0 — API de laboratório](labs/03-scim-local.md)
-- [04 — Microsoft Graph — consultas delegadas e diagnóstico](labs/04-graph-readonly.md)
-- [05 — JML manual: usuários e grupos reais no Keycloak](labs/05-jml-simulacao.md)
-- [06 — Acesso privilegiado — desenho e validação](labs/06-pam-lab.md)
-- [07 — JML com Python e dry-run](labs/07-jml-python.md)
-- [08 — Simulação local de PIM: ativação JIT, expiração e auditoria](labs/08-pim-simulador.md)
-- [09 — SCIM em localhost](labs/09-scim-mock.md)
-- [10 — Segregação de funções no terminal](labs/10-sod-offline.md)
+| Ordem | Tema | Aprenda | Faça no laboratório |
+|---|---|---|---|
+| 01 | [Fundamentos de autenticação e autorização](modulos/01-fundamentos.md) | Conta, credencial, grupos, DNS, sessão | Investigar um login e identificar cada camada |
+| 02 | [Active Directory](modulos/02-ad.md) | AD DS, OU, grupos, Kerberos e LDAP | Inspecionar DC, usuários e membership |
+| 03 | [Microsoft Entra ID](modulos/03-entra.md) | Tenant, usuário, grupo e papel | Localizar usuários e distinguir role de grupo |
+| 04 | [Identidade híbrida](modulos/04-hibrido.md) | Origem autoritativa e sincronização | Seguir uma alteração AD→Entra quando disponível |
+| **05** | **[JML — Joiner, Mover, Leaver](modulos/05-jml.md)** | **Por que criar, movimentar e desligar** | **Criar João, trocar Financeiro→TI e bloquear acesso no AD ou Entra** |
 
-## Projetos integradores
+**Entrega de fase:** você executa JML manualmente e explica a diferença entre usuário *cloud-only* e sincronizado.
 
-1. [Recuperação de identidade híbrida](projetos/01-hybrid-recovery.md) — Projetar procedimento de recuperação para conflito de atributos, usuário desabilitado e atraso de sync.
-2. [Integração SSO OIDC e SAML](projetos/02-sso-federation.md) — Conectar IdP local e dois tipos de aplicação, documentando confiança, claims e segurança.
-3. [Automação de JML com trilha de auditoria](projetos/03-jml-engineering.md) — Construir pipeline de Joiner–Mover–Leaver com dry-run, idempotência, aprovações e testes.
-4. [IGA e acesso privilegiado](projetos/04-governance.md) — Desenhar catálogo de entitlements, SoD, revisão periódica e política de privilégios.
-5. [Investigação de incidente de identidade](projetos/05-itdr.md) — Analisar logs sintéticos, definir causa-raiz e plano de resposta.
-6. [Arquitetura IAM empresarial](projetos/06-enterprise-architecture.md) — Projetar para empresa fictícia de 500 pessoas com on-prem, cloud, SaaS, terceiros e aplicações internas.
+## Fase 2 — SSO e protocolos
 
-## Como seguir sem gastar
+**Objetivo:** entender como uma aplicação confia no provedor de identidade.
 
-- **Trilha totalmente local:** Keycloak, PowerShell, Python, cenários e datasets fictícios.
-- **Trilha híbrida existente:** AD DS/Entra Connect já implantados no laboratório, somente com licenças adequadas.
-- **Trilha Entra P2:** funcionalidades da conta corretamente licenciada, com limitações explicitadas.
-- **Trilha Azure:** criar recurso somente com orçamento, alerta de custos e plano de exclusão.
+| Ordem | Tema | Prática |
+|---|---|---|
+| 06 | [SSO e federação](modulos/06-sso.md) | Identificar IdP, SP e sessão |
+| 07 | [OAuth 2.0 e OIDC](modulos/07-oauth.md) | Reconhecer código, scope, ID Token e Access Token |
+| 08 | [SAML 2.0](modulos/08-saml.md) | Interpretar metadata, EntityID e ACS |
+| 09 | [SCIM](modulos/09-scim.md) | Criar/desativar conta em API de laboratório |
 
-**Dependências:** AD → híbrido → JML; protocolos → Graph e integrações; identidade/roles → IGA; logs → ITDR; todas as trilhas → arquitetura.
+**Ferramenta preferencial:** enterprise applications do Entra quando você tiver aplicação de teste. Alternativas open source **opcionais** ficam em laboratórios complementares; não são pré-requisitos da fase 1.
 
-## Evidência e conclusão
+## Fase 3 — Automatização de IAM
 
-Cada aula exige explicação, teste positivo, teste negativo e reversão. Cada projeto exige rubrica e nota mínima de 16/20. Use a [matriz de competências](matriz-de-competencias.md) para avaliar lacunas.
+**Objetivo:** automatizar o que você **já aprendeu a fazer manualmente**.
 
-O material legado permanece em [01-IAM/IAM-Study-Lab.md](https://github.com/lpraxedess/Roadmap-Study/blob/main/01-IAM/IAM-Study-Lab.md).
+| Ordem | Tema | Prática |
+|---|---|---|
+| 10 | [Microsoft Graph](modulos/10-graph.md) | Consultar a própria conta com \`User.Read\` |
+| 11 | [PowerShell](modulos/11-powershell.md) | Validar entradas e erros antes de escrita |
+| 12 | [Python e APIs](modulos/12-python.md) | Entender JSON, HTTP, retries e logs |
+
+**Entrega:** plano JML em dry-run; **não confunda simular mudanças com executá-las no diretório**.
+
+## Fase 4 — Governança e acesso privilegiado
+
+**Objetivo:** aprovar, revisar e limitar privilégios.
+
+| Ordem | Tema | Prática |
+|---|---|---|
+| 13 | [IGA e SoD](modulos/13-iga.md) | Identificar acessos incompatíveis |
+| 14 | [Access Reviews](modulos/14-reviews.md) | Simular revisão, dono e revogação |
+| 15 | [PIM](modulos/15-pim.md) | Verificar elegibilidade e ativação **quando licenciado** |
+| 16 | [PAM](modulos/16-pam.md) | Modelar acesso administrativo por função |
+| 17 | [Segredos e workloads](modulos/17-segredos.md) | Desenhar TTL, policy e rotação |
+
+**Entrega:** justificativa de least privilege + evidências de revisão e, quando disponível, ativação real.
+
+## Fase 5 — IAM em nuvem e defesa
+
+**Objetivo:** entender controles aplicados a recursos e investigar incidentes.
+
+| Ordem | Tema | Prática |
+|---|---|---|
+| 18 | [Azure RBAC e workload identity](modulos/18-azure.md) | Avaliar role, principal e scope |
+| 19 | [Multicloud](modulos/19-multicloud.md) | Comparar políticas AWS e Azure |
+| 20 | [ITDR](modulos/20-itdr.md) | Construir linha do tempo de incidentes |
+| 21 | [Logs e troubleshooting](modulos/21-logs.md) | Identificar falha no log e causa-raiz |
+| 22 | [Zero Trust](modulos/22-zero-trust.md) | Testar matriz de decisões de acesso |
+
+**Entrega:** uma análise de incidente de identidade e um plano de contenção.
+
+## Fase 6 — Engenharia, auditoria e arquitetura
+
+**Objetivo:** tomar decisões e projetar IAM com riscos e custos explícitos.
+
+| Ordem | Tema | Prática |
+|---|---|---|
+| 23 | [IaC, Git e CI/CD](modulos/23-iac.md) | Revisar permissões por diff antes de aplicar |
+| 24 | [Auditoria IAM](modulos/24-auditoria.md) | Calcular KPI e documentar controle |
+| 25 | [Arquitetura empresarial](modulos/25-architecture.md) | Criar diagrama, ADR e plano de contingência |
+
+**Entrega:** arquitetura de referência para uma organização fictícia e decisão técnica justificável.
+
+## Como escolher as práticas
+
+**Regra principal:** primeiro AD DS/Entra. Se a prática precisar de aplicativo de teste, Azure ou licença inexistente, a aula deve deixar isso explícito e oferecer uma alternativa identificada como simulação. **Não compre licença nem instale ferramentas extras sem necessidade.**
+
+[Iniciar módulo 05 com AD ou Entra](modulos/05-jml.md) · [Laboratórios complementares](labs/05-jml-simulacao.md)

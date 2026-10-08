@@ -164,7 +164,7 @@
       const out=$("#quiz-result");
       out.textContent=(correct?"✓ Correto. ":"✗ Revise e tente novamente. ")+item.quiz.explanation;
       out.className=correct?"quiz-right":"quiz-wrong";
-      $(".quiz-option").forEach(b=>b.classList.toggle("selected-answer",b===answer));
+      $$(".quiz-option").forEach(b=>b.classList.toggle("selected-answer",b===answer));
       if(correct){quizResults[item.id]=true;save(QUIZ_STORE,JSON.stringify(quizResults));}
       return;
     }

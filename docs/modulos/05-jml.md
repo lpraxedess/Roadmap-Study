@@ -1,137 +1,175 @@
-# 05 — Joiner, Mover, Leaver: gerencie um usuário de verdade
+# 05 — JML na prática: Active Directory e Microsoft Entra ID
 
-**Tempo:** 90–150 min · **Ferramenta:** Keycloak local · **Custo:** gratuito · **Pré-requisitos:** Docker instalado e funcionando · **Tipo de prática:** operação real de contas no diretório do laboratório
+**Fase 1 — Identidade no AD e Entra** · **Tempo:** 60–120 minutos por ambiente · **Tipo:** operação real em diretório de laboratório, sem Docker.
 
-## 1. Entenda antes de clicar
+**Missão:** você vai criar João, conceder o grupo Financeiro, transferi-lo para TI e impedir seu acesso depois do desligamento. No final, explica o que fez e prova cada resultado.
 
-**Joiner:** admissão. Criar a identidade e entregar apenas os acessos aprovados.
+## 1. O que é JML e por que importa?
 
-**Mover:** mudança de função ou departamento. Conceder acesso novo **e revogar o antigo**.
+- **Joiner — admissão:** a pessoa chega. IAM cria a conta, registra atributos e concede **somente** os acessos autorizados.
+- **Mover — movimentação:** a pessoa muda de função. IAM **remove os acessos antigos** e concede os novos depois da aprovação.
+- **Leaver — desligamento:** a pessoa sai. IAM bloqueia novos acessos, revoga sessões quando possível, trata licenças e informações e, **quando a política permitir**, exclui a identidade.
 
-**Leaver:** saída. Impedir novas autenticações, encerrar sessões, remover acessos e seguir a política de retenção antes de excluir dados.
+**Por que fazer:** para evitar contas órfãs, permissões acumuladas e acessos após o desligamento. **Benefícios:** menor privilégio, rastreabilidade, gestão padronizada, auditoria. **Limitações:** dados de RH incorretos, propagação de alterações, sistemas que não obedecem ao grupo, sessões existentes e necessidade de retenção.
 
-**Por que existe?** Uma conta ativa de ex-funcionário e permissões acumuladas após movimentações aumentam a exposição a incidentes. O ciclo JML controla o acesso do nascimento ao desligamento.
+**Exemplo:** João é contratado para o Financeiro, muda para TI e depois é desligado. O grupo que representa cada departamento será o *controle* da prática. A atribuição de um grupo só vira permissão efetiva se um recurso estiver configurado para usá-lo.
 
-| Vantagem | Risco ou limitação |
+## 2. Escolha seu ambiente (não instale nada novo)
+
+**Trilha A — Active Directory local:** use o Windows Server/AD DS do **seu laboratório**, com a console **Usuários e Computadores do Active Directory** (ADUC, \`dsa.msc\`). Precisa de permissão delegada para criar usuários e administrar grupos na OU de testes.
+
+**Trilha B — Microsoft Entra ID:** use \`https://entra.microsoft.com\` e um tenant **de teste** onde você possa criar usuário *cloud-only* e administrar grupos de segurança. Funções normalmente usadas são User Administrator e Groups Administrator, ou uma delegação suficiente; não se atribua Global Administrator para fazer a aula. **Criar grupos/usuários básicos não requer que você compre P2 para cada usuário**, mas o exercício não deve provisionar serviços que exijam licenças adicionais.
+
+**Escolha uma trilha primeiro.** Se tiver os dois ambientes, realize A e depois B. Se houver sincronização do AD para o Entra, faça mudanças na **origem autoritativa**, não edite atributos sincronizados diretamente nem crie outra conta com a mesma identidade.
+
+### Antes de iniciar — checagem obrigatória
+
+1. Confirme que está em **ambiente de laboratório** autorizado.
+2. Use conta separada com direitos adequados; não altere um administrador, conta de emergência, usuário real ou grupo de produção.
+3. Decida nomes fictícios: \`joao.jml\`, \`JML-Financeiro\` e \`JML-TI\`. Se já existirem, **pare** e use nomes novos para não afetar objetos anteriores.
+4. Registre em um bloco de notas: data, sistema escolhido, OU/tenant de teste, estado inicial (usuários e grupos ainda não existem).
+5. Se sua conta não permite executar, registre a permissão faltante e peça acesso **delegado na área de testes**; não contorne uma negação.
+
+---
+
+## 3. Trilha A — fazer no Active Directory (Windows Server)
+
+### A1. Prepare uma OU e os grupos
+
+1. No servidor ou computador com RSAT e acesso ao domínio de laboratório, abra **Executar → \`dsa.msc\`**.
+2. Na árvore do domínio, clique com o botão direito na unidade organizacional onde você tem permissão de criar uma OU → **Novo → Unidade Organizacional**. Nomeie \`IAM-Lab\`. Se já houver OU de teste autorizada, reutilize-a.
+3. Dentro de \`IAM-Lab\`, botão direito → **Novo → Grupo**. Crie \`JML-Financeiro\` como **Security / Global**.
+4. Crie \`JML-TI\` com as mesmas opções.
+5. Abra ambos os grupos e confira que ainda não possuem João como membro.
+
+**Resultado:** uma OU dedicada e dois grupos de segurança. Ainda não há usuário.
+
+### A2. JOINER — criar João e conceder Financeiro
+
+1. Clique com o botão direito na OU \`IAM-Lab\` → **Novo → Usuário**.
+2. Preencha nome \`Joao\`, sobrenome \`Laboratorio\` e logon \`joao.jml\`. Avance.
+3. Defina **uma senha fictícia exclusiva**, atendendo à política de complexidade do domínio. Pode manter “O usuário deve alterar a senha no próximo logon” se conseguir completar essa ação com uma estação do laboratório.
+4. Finalize. Na OU, procure \`joao.jml\`.
+5. Abra **Propriedades → Membro de (Member Of) → Adicionar**. Digite \`JML-Financeiro\`, pressione **Verificar nomes** e **OK**.
+6. Abra o grupo \`JML-Financeiro → Membros\`: João deve estar listado.
+
+**Confirmação:** João existe, está habilitado e pertence a Financeiro. Se tiver estação ingressada no domínio e direitos de logon, faça um login de teste com João e confira a autenticação. **Não** use a única estação administrativa como prova obrigatória.
+
+### A3. MOVER — transferir João para TI
+
+1. Abra \`joao.jml → Propriedades → Membro de\`.
+2. Selecione \`JML-Financeiro\` e clique **Remover**. **Não remova Domain Users nem grupos padrão necessários**.
+3. Clique **Adicionar**, pesquise \`JML-TI\`, escolha **Verificar nomes → OK**.
+4. Se desejar demonstrar atributos, em **Organization / Organização**, altere **Department** para \`TI\` (quando disponível).
+5. Confira o usuário e os dois grupos:
+   - \`JML-Financeiro\`: João **não** aparece.
+   - \`JML-TI\`: João **aparece**.
+
+**Teste negativo:** adicione João **temporariamente** aos dois grupos de laboratório e observe o problema de acúmulo de acesso. Corrija retirando o grupo Financeiro. Se testar uma sessão Windows, lembre-se de que a associação em tokens já emitidos pode exigir novo logon.
+
+### A4. LEAVER — bloquear conta e verificar
+
+1. Na OU \`IAM-Lab\`, clique com o botão direito em \`joao.jml\` → **Desabilitar conta (Disable Account)**.
+2. Reabra as propriedades e confirme que a conta está desabilitada.
+3. Em estação Windows do **laboratório**, tente **novo** logon como João: deverá ser negado. Não afirme que sessões existentes foram encerradas automaticamente.
+4. Registre o estado dos grupos e a ação de bloqueio. Avalie a remoção de grupos específicos conforme a política de desligamento, sem alterar grupos padrão.
+5. **Exclusão é opcional:** somente depois de validar o ciclo, selecione o **usuário fictício** e **Excluir (Delete)** se seu laboratório não exigir retenção. Uma conta apagada recebe novo SID se recriada. Não exclua usuários reais.
+
+**Limpeza:** mantenha a OU se ela for reutilizada no curso; caso contrário, exclua **apenas** os dois grupos e objetos fictícios criados para a aula depois de conferir cada nome. Evite exclusão de OU com outros objetos.
+
+### A5. Erros típicos
+
+| O que aconteceu | O que verificar |
 |---|---|
-| Menos contas órfãs | Falhas ou atrasos de RH podem impedir revogação |
-| Menor privilégio por função | Grupos mal desenhados propagam privilégios excessivos |
-| Auditoria de mudanças | Desabilitar conta não remove necessariamente sessões e tokens já emitidos |
-| Base para automação | Automação sem teste pode errar em grande escala |
+| Não consegue criar João | Direitos sobre OU, conexão ao DC, senha e política |
+| Grupo não aparece | Domínio, OU, tipo do grupo, nome digitado |
+| João ainda tem acesso antigo | Grupo direto/indireto, sessão/token anterior, permissão atribuída fora do grupo |
+| Conta desabilitada mas há sessão existente | Bloqueio de novos logons ≠ encerramento automático de sessões |
 
-**Cenário da aula:** João entra no Financeiro, muda para TI e depois sai da empresa. Você será o operador de IAM responsável.
+---
 
-## 2. Preparar — faça exatamente isto
+## 4. Trilha B — fazer no Microsoft Entra ID
 
-**Não use o tenant corporativo.** Aqui você criará contas reais *dentro do Keycloak de teste*, não no AD nem no Entra.
+**Use apenas o tenant de laboratório.** Estas etapas tratam um usuário *cloud-only*. Em ambiente híbrido, objetos sincronizados devem ser administrados na origem AD para os atributos e grupos sincronizados.
 
-1. Instale [Docker Desktop](https://docs.docker.com/get-started/get-docker/) ou Docker Engine. Abra um terminal e execute `docker --version` e `docker info`. Se o segundo falhar, inicie o Docker antes de continuar.
-2. Execute o contêiner abaixo **somente no computador local**. Use uma senha fictícia exclusiva para o laboratório, alterando o valor do exemplo:
+### B1. Crie grupos de segurança
 
-```bash
-docker run --name iam-jml-lab --rm -p 127.0.0.1:8080:8080 \
-  -e KC_BOOTSTRAP_ADMIN_USERNAME=admin \
-  -e KC_BOOTSTRAP_ADMIN_PASSWORD='Senha-Local-Apenas-Lab-123!' \
-  quay.io/keycloak/keycloak:26.0.7 start-dev
-```
+1. Acesse [Microsoft Entra admin center](https://entra.microsoft.com).
+2. Navegue para **Entra ID → Groups → All groups** (nomes dos menus podem variar).
+3. Clique **New group**; escolha **Security**, nome \`JML-Financeiro\`, tipo de associação **Assigned** e **Create**.
+4. Repita para \`JML-TI\`.
+5. Abra cada grupo e confira que João ainda não é membro. **Não use grupo dinâmico** neste primeiro exercício.
 
-3. Espere a mensagem indicando inicialização. No navegador abra `http://localhost:8080/admin/`.
-4. Entre com `admin` e a senha de laboratório do comando. **Não use esse modo em produção**: `start-dev` não é protegido como uma instalação de produção. A versão do exemplo é uma referência de laboratório; menus podem variar.
-5. No seletor de realm (canto superior do console), escolha **Create realm**, digite `iam-lab` e confirme **Create**. Se já existir, selecione-o.
-6. Para observar o comportamento de autenticação, em **Realm settings → Events** habilite eventos de usuário, quando disponíveis na versão, e salve. Não habilite logging de informações sensíveis.
+### B2. JOINER — crie o usuário cloud-only
 
-**Conferência:** o canto do painel mostra realm `iam-lab). Você administra o realm do laboratório, e não `master`.
+1. Em **Entra ID → Users → All users**, clique **New user → Create new user**.
+2. Digite \`joao.jml\` como nome de usuário no **domínio verificado disponível no tenant**. Use nome de exibição \`João JML (LAB)\`.
+3. Defina uma senha inicial conforme a interface e mantenha-a privada. Não use endereço de e-mail pessoal real; o UPN deve pertencer a um domínio válido do tenant.
+4. Crie o usuário. Pesquise pelo nome e confira **Account enabled / conta habilitada**.
+5. Acesse **Groups → All groups → JML-Financeiro → Members → Add members**; localize João e confirme.
+6. Confira na aba **Members** que João aparece. No perfil do usuário, observe **Groups**.
 
-## 3. Prepare os acessos: crie dois grupos
+**Resultado:** objeto *cloud-only* criado e pertencente ao grupo Financeiro. Isto comprova **atribuição de grupo**; só comprovará acesso a um aplicativo se ele estiver configurado com autorização baseada nesse grupo.
 
-1. No menu do realm `iam-lab`, entre em **Groups** e escolha **Create group**.
-2. Nomeie `Financeiro` e salve.
-3. Repita para `TI`.
-4. Confirme que ambos aparecem em **Groups**.
+### B3. MOVER — retire grupo antigo e conceda novo
 
-**O que isso prova?** Os grupos existem. **Atenção:** pertencer a um grupo, sozinho, não prova autorização em uma aplicação. Para isso seria necessário vincular o grupo a papéis/políticas de uma aplicação de teste — exercício posterior de SSO e autorização.
+1. Abra **JML-Financeiro → Members**, selecione João e escolha **Remove member**.
+2. Abra **JML-TI → Members → Add members**, escolha João e confirme.
+3. Opcionalmente atualize \`Department\` (perfil/propriedades) para \`TI\`, se sua função administrativa permitir.
+4. Reabra **ambos os grupos** e confirme **presente em TI / ausente em Financeiro**.
 
-## 4. JOINER — admissão de João
+**Teste negativo:** adicione João aos dois grupos **somente em seu tenant de laboratório**, confira o erro de privilégio acumulado e remova Financeiro novamente. Não atribua roles administrativas para demonstrar grupos.
 
-**Ticket RH-100:** “Admitir João no Financeiro”.
+### B4. LEAVER — bloqueio de login e sessões
 
-1. Entre em **Users → Add user** (ou **Create new user**, conforme a interface).
-2. Defina **Username:** `joao.lab`; **First name:** `Joao`; **Last name:** `Laboratorio`; **Email:** `joao.lab@example.invalid`.
-3. Mantenha **Enabled** ativo, confirme a criação.
-4. Abra o usuário e vá à aba **Credentials**. Escolha **Set password**; defina uma senha fictícia exclusiva de teste. Para testar login imediatamente, desmarque **Temporary** se a interface oferecer essa escolha, e confirme.
-5. Abra a aba **Groups** do usuário, selecione **Join group** e escolha `Financeiro`. Confirme.
-6. Verifique que **Enabled** está ligado e que `Financeiro` aparece em seus grupos.
+1. Em **Entra ID → Users → All users**, abra João.
+2. Use **Block sign-in** ou ajuste **Account enabled = No**, conforme a versão da interface, e confirme.
+3. Se disponível, execute **Revoke sessions / Revoke sign-in sessions** na página do usuário. Entenda que tokens já emitidos podem continuar válidos até expirar ou conforme o comportamento do serviço.
+4. Verifique que o usuário aparece com entrada bloqueada. **Não é obrigatório testar login** em aplicativo que exija licença inexistente; a alteração do estado da conta e os registros de auditoria já comprovam a operação administrativa.
+5. Abra **Audit logs**, se sua função permitir, e pesquise eventos de alteração de usuário/membership.
+6. **Exclusão opcional:** apenas para \`joao.jml\` criado nesta aula, e somente após salvar evidência e avaliar retenção. A operação remove o objeto; não apague outros usuários.
 
-**Teste real de autenticação:** em janela anônima abra `http://localhost:8080/realms/iam-lab/account/`. Entre como `joao.lab` com a senha fictícia. Se a página pedir completar perfil ou ações obrigatórias, finalize-as somente para o usuário do lab. Se conseguir entrar, o Joiner está validado.
+### B5. Troubleshooting
 
-**Evidência:** conta habilitada, grupo `Financeiro`, autenticação bem-sucedida (sem exibir senha).
+| Sintoma | Verifique antes de agir |
+|---|---|
+| “Create user” não aparece | Role e escopo administrativos, tenant correto |
+| UPN inválido | Domínio permitido pelo tenant e unicidade |
+| Grupo não aceita João | Grupo de segurança atribuído, permissão de gerenciamento, regras de associação |
+| João ainda consegue usar app | Sessões/tokens existentes, propagação, aplicativo não integrado, acesso externo ao grupo |
+| Não encontra “Revoke sessions” | Interface, função administrativa, disponibilidade e registros disponíveis |
 
-## 5. MOVER — João foi transferido para TI
+---
 
-**Ticket RH-101:** “Mover João do Financeiro para TI; não manter acesso antigo”.
+## 5. Qual trilha é correta em ambiente híbrido?
 
-1. Volte ao painel de administração como `admin`.
-2. Entre em **Users**, pesquise `joao.lab` e abra o registro.
-3. Na aba **Groups**, localize `Financeiro` e use **Leave** ou **Leave group**, confirmando a remoção.
-4. Na mesma aba, escolha **Join group** e selecione `TI`.
-5. Atualize o atributo de departamento, se ele existir no seu esquema; caso não exista, registre essa limitação e mantenha a avaliação pelos grupos.
-6. Confirme que **TI aparece** e **Financeiro não aparece** nos grupos de João.
+Quando **AD DS é a origem do usuário sincronizado para o Entra**:
 
-**Teste negativo:** se João continuar em ambos os grupos, a movimentação está incorreta. Remova o grupo antigo e confira novamente. **Não** faça apenas a inclusão do grupo `TI`.
+1. Faça **Joiner, Mover e Leaver no AD**, na OU e nos grupos efetivamente sincronizados (se configurados).
+2. Espere o ciclo de sincronização já configurado. Monitore o status em Entra Connect e no objeto em nuvem.
+3. Compare o que mudou no AD e no Entra; não crie **outro** usuário cloud-only para representar a mesma pessoa.
+4. Bloqueio e revogação de sessões de aplicações cloud também precisam ser considerados conforme arquitetura. **Uma alteração on-prem não significa revogação instantânea de todos os tokens cloud.**
 
-**Evidência:** comparação dos grupos antes e depois; ticket RH-101; sem privilégios antigos.
+## 6. Verificação e evidências
 
-## 6. LEAVER — desligamento e revogação
+| Evento | Prova mínima |
+|---|---|
+| Joiner | Objeto João existe e pertence a Financeiro |
+| Mover | Não pertence mais a Financeiro; pertence a TI |
+| Leaver | Conta desabilitada; novas autenticações negadas quando possível testar |
+| Auditoria | Quem alterou, quando e qual ação (sem senhas ou tokens) |
+| Retenção | Decisão fundamentada: manter desabilitada ou excluir objeto fictício |
 
-**Ticket RH-102:** “João saiu. Impedir novos acessos imediatamente”.
+**Desafio sem roteiro:** repita com \`maria.jml\`, mudando de TI para Financeiro e depois desabilitando. Registre quais etapas dependem do AD, Entra ou sincronização.
 
-1. Abra **Users → joao.lab → Details**.
-2. Altere **Enabled** para **Off** e salve.
-3. Vá à aba **Sessions** desse usuário (se disponível) e use a ação equivalente a **Sign out all sessions / Logout all**, confirmando. Se a função não existir na versão usada, registre a limitação — não assuma que desativar encerra tokens existentes.
-4. No navegador anônimo, feche a sessão do laboratório e tente **novo login** em `http://localhost:8080/realms/iam-lab/account/` com `joao.lab`.
-5. **Resultado esperado:** a nova autenticação falha. Se ainda estiver autenticado por uma sessão antiga, diferencie essa situação de um novo login e investigue sessões e tempo de vida dos tokens.
-6. No console administrativo, abra os eventos do realm e registre data, usuário fictício e status do login (sem divulgar segredos).
+### 7. Depois da prática manual
 
-**Desabilitar x excluir:** o desligamento normalmente começa com bloqueio e revogação; excluir imediatamente pode eliminar vínculos ou evidências necessárias. Siga uma política de retenção, mesmo no exercício.
+Só então faça [Laboratório 07 — automação JML em Python (dry-run)](../labs/07-jml-python.md). Ele serve para planejar mudanças e detectar entradas inválidas — **não substitui o processo real de criar e administrar contas**.
 
-### Exercício opcional de exclusão definitiva — somente conta fictícia
+### Referências oficiais
 
-Depois de registrar as evidências e confirmar que `joao.lab` é do laboratório, em **Users → joao.lab** localize a ação **Delete** e confirme. Pesquise novamente: o usuário não deve existir. **Não execute isso em outros usuários ou no realm master.**
+- [Microsoft Learn — Gerenciar contas e grupos no AD DS](https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage-user-accounts-in-windows-server)
+- [Microsoft Learn — Gerenciar usuários no Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/fundamentals/how-to-create-delete-users)
+- [Microsoft Learn — Gerenciar grupos no Microsoft Entra ID](https://learn.microsoft.com/en-us/entra/fundamentals/how-to-manage-groups)
 
-## 7. Troubleshooting — encontre a causa, não adivinhe
-
-| Sintoma | Verificação | Correção |
-|---|---|---|
-| Login de João falha logo após Joiner | Enabled, senha, ações obrigatórias, realm e eventos | Corrigir credencial de teste ou estado do usuário |
-| João está em Financeiro e TI | Aba Groups | Remover o grupo antigo |
-| Conta desabilitada ainda aparece logada | Sessões existentes e duração de tokens | Revogar sessões quando disponível e conferir renovação |
-| Tela administrativa não abre | `docker ps`, porta 8080 e logs | Conferir processo e contêiner |
-| “Nenhuma permissão mudou no aplicativo” | Grupos não são autorização automática | Configurar role e integração de aplicativo em aula posterior |
-
-**Comandos de diagnóstico** (no terminal, contêiner em execução):
-
-```bash
-docker ps
-docker logs iam-jml-lab --tail 50
-```
-
-## 8. Desafio independente — Maria
-
-Sem consultar os passos anteriores, faça o ciclo com `maria.lab`: Joiner em `TI`, Mover para `Financeiro`, Leaver por desativação. Confirme cada etapa. **Não exclua Maria até terminar a investigação e registrar evidências.**
-
-## 9. Como comprovar que aprendeu
-
-- [ ] Sei explicar Joiner/Mover/Leaver e por que existem.
-- [ ] Criei um usuário real no Keycloak do laboratório e testei login.
-- [ ] Troquei seus grupos sem manter a associação antiga.
-- [ ] Desativei o usuário, tratei sessões e neguei um novo login.
-- [ ] Diferencio desabilitar de excluir e sei quando cada ação é adequada.
-- [ ] Repeti com Maria sem roteiro.
-
-**Somente depois deste laboratório:** [simulação de automação JML com Python](../labs/07-jml-python.md). Ela ensina planejamento e validação de dados; não substitui a operação manual executada aqui.
-
-## 10. Limpeza do ambiente
-
-Se não quiser preservar as contas locais: pressione **Ctrl+C** no terminal do Keycloak; `--rm` remove o contêiner e, sem volumes de dados, descarta a configuração. **Não execute este comando em um contêiner compartilhado com outros laboratórios.**
-
-[Voltar à trilha](../curriculo.md)
+[Ver fases da formação](../curriculo.md)
