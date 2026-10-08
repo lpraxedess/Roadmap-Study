@@ -1,39 +1,51 @@
-# Auditoria técnica e pedagógica — 07/10/2026
+# Auditoria integral — revisão do curso e tema preto
 
-## Escopo verificado
+## Escopo analisado
 
+- 25 módulos de IAM do fundamental à arquitetura; conteúdo original preservado.
+- 10 laboratórios: implementação real em software, mock HTTP e simulações/offline.
+- Seis projetos integradores e matriz de competências.
+- Portal GitHub Pages, CSS, gerador Markdown→HTML, quizzes, notas locais, pipeline GitHub Actions e scripts Python.
+- Nenhuma dependência do repositório externo de portfólio.
 
-## Correções implementadas
+## Achados e decisões
 
-| Prioridade | Achado | Correção |
+| Prioridade | Achado concreto | Ação |
 |---|---|---|
-| Alta | HTML das aulas era inserido diretamente no DOM sem sanitização de origem | `bleach` sanitiza HTML no build; teste de conteúdo rejeita scripts e URLs javascript |
-| Alta | Workflow concedia `contents: write` também à execução de PR | `contents: read` por padrão; escrita limitada ao job de publicação na main |
-| Média | Consulta `Get-MgUser -Top 1` era apresentada junto com `User.Read`, que não basta para listar usuários | Exemplo de `/me` com `User.Read`, sem sugerir consentimento excessivo |
-| Média | Busca do portal filtrava apenas a categoria atual | Busca geral abrange aulas, laboratórios e projetos |
-| Média | Importação de progresso aceitava array sem validação de tipos ou tamanho lógico | Limite de registros e verificação de tipo, além do limite de arquivo |
-| Baixa | URLs com hash inválido podiam interromper a renderização | Fallback para dashboard e título dinâmico de página |
-| Média | Publicação reconstruía o conteúdo em outro job, sem reaproveitar o artefato testado | Build gera artefato; deploy publica o mesmo bundle validado |
+| Crítica (pedagogia) | Módulo 05 chamava de prática JML um CSV que não altera contas | **Corrigido:** Joiner, Mover e Leaver manuais com Keycloak, etapas e testes de login |
+| Alta (usabilidade) | Tema chamava-se dark, porém fundos, cards e áreas de código permaneciam azul-marinho | **Corrigido:** camada CSS preta/cinza, `#050505` como fundo, menu preto, painéis cinza e cor de destaque discreta |
+| Alta (coerência) | Índice ainda apresentava laboratório 05 como CSV/PowerShell | **Corrigido:** índice aponta para o laboratório manual real; script permanece uma etapa posterior identificada como dry-run |
+| Média (prática) | Laboratório 03 exigia escolher um servidor SCIM por conta própria | **Corrigido:** direciona à API didática local já fornecida no Lab 09 e informa limitações |
+| Média (segurança) | Operação de exclusão aparecia misturada ao desligamento | **Corrigido:** retenção antes de exclusão; deleção opcional somente para usuário fictício |
+| Média (transparência) | Aulas curtas seguiam mesmo formato, mas algumas são simulações em papel/CSV | **Registrado:** diferencia execução em produto, mock HTTP, simulação e arquitetura; sem afirmar equivalência |
+| Média (qualidade) | Verificações de compilação não protegiam o tema preto | **Corrigido:** teste exige arquivo CSS preto no build e meta theme-color escuro |
 
-## Lacunas ainda abertas — não confundir com funcionalidades prontas
+## Revisão temática dos 25 módulos
 
-1. **Profundidade pedagógica:** várias aulas têm estrutura repetida e orientações genéricas. Precisam de exemplos executáveis, diagramas, soluções comentadas e casos reais simulados.
-2. **Laboratórios:** SAML, SCIM, PAM, IGA e cloud exigem escolhas de versões, ferramentas-alvo e scripts de instalação/reversão para serem inteiramente reproduzíveis.
-3. **Avaliação:** o botão de conclusão é auto declaração, não avaliação automática de competência. Projetos requerem revisão humana ou critérios externos.
-4. **Acessibilidade:** realizar testes manuais de teclado, leitor de tela e contraste em desktop e celular; a interface ainda não tem certificação WCAG.
-5. **Qualidade de software:** criar testes automatizados de navegação, busca, importação/exportação e renderização com navegador (Playwright).
-6. **Licenciamento:** não presumir que Entra ID P2 individual inclua recursos de Governance, Workload ID, Azure ou funcionalidades atribuídas a outras identidades.
-7. **Segurança de conteúdo:** atualizar versões dos produtos e rever links externos periodicamente; laboratório Keycloak usa modo `start-dev` exclusivamente local.
+| Unidades | Estado após revisão | Aprofundamento que ainda falta |
+|---|---|---|
+| 01–04 — Fundamentos, AD, Entra, híbrido | Conceito e exercício com dependência do ambiente | Guias de instalação completos e testes com VMs provisionadas |
+| **05 — JML** | **Laboratório manual guiado em Keycloak com conta real no ambiente local** | Integração com aplicação para comprovar autorização final e segunda trilha AD/Entra |
+| 06–08 — SSO/OIDC/SAML | OIDC tem lab de fluxo PKCE; SAML ainda depende de SP selecionado | App/SP de teste empacotado, validação de logout e certificados |
+| 09–12 — SCIM, Graph, programação | SCIM mock e JML Python executáveis, Graph depende de tenant | Provisionamento SCIM integrado a IdP real; automação com API para operações reais |
+| 13–14 — IGA, Access Reviews | SoD offline e campanhas fictícias | Ferramenta IGA local e workflows de revisão reais |
+| 15 — PIM | Explicação detalhada e simulador JIT offline; Microsoft sob licença | Validar cenário real licenciado e regras aplicáveis |
+| 16–17 — PAM/Secrets | Modelagem e roteiro dependente de instalação | Instalação/revogação e logs demonstrados em ambiente aberto |
+| 18–19 — Cloud IAM | Conceitos e revisão estática de policies | Lab com recurso de custo controlado quando houver assinatura |
+| 20–22 — ITDR, Logs, Zero Trust | Exercícios sintéticos e cenários | Pipelines de ingestão, correlação e resposta reproduzíveis |
+| 23–25 — IaC, auditoria, arquitetura | Exercícios de revisão, critérios e projetos | Ambientes IaC testados, arquitetura de referência com DR e métricas |
 
-## Regras de qualidade para futuras aulas
+## Critério para chamar um laboratório de **prático**
 
-- Explicação conceitual e arquitetura, incluindo por que o controle existe.
-- Pré-requisitos verificáveis, hardware mínimo, custo e licença.
-- Passos executáveis com versão de referência e resultado esperado.
-- Teste positivo, teste negativo, troubleshooting e rollback.
-- Evidências sanitizadas e critérios mensuráveis de conclusão.
-- Alternativa local/open source quando licença ou nuvem não estiver disponível.
+- **Implantação guiada:** ambiente definido e instrução de instalação/acesso sem lacunas essenciais.
+- **Ação observável:** criação, alteração ou negação ocorre no sistema de laboratório (e não apenas num plano JSON).
+- **Validação:** resultado esperado e teste positivo/negativo.
+- **Diagnóstico:** erro induzido com caminho de investigação.
+- **Limpeza:** reversão/descarte sem riscos.
+- **Limites:** quando houver mock ou simulação, título e texto devem deixar isso explícito.
 
-## Validação
+A publicação automática é um teste técnico de compilação; **não** comprova execução de cada laboratório em Docker, Keycloak, Windows Server ou Microsoft Entra.
 
-O CI executa testes do script JML, verificação sintática do JavaScript, build do site e checagem estrutural do pacote. A publicação em Pages deve ser verificada separadamente após a integração. **Um build bem-sucedido não comprova que todos os laboratórios foram executados nem que o aluno adquiriu experiência sênior.**
+## Próxima prioridade de conteúdo
+
+Transformar SSO/SAML e PAM em ambientes localmente empacotados, depois SCIM real, IGA e Graph. Essa evolução é distinta da auditoria visual/técnica feita nesta revisão.

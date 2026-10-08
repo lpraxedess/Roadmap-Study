@@ -1,42 +1,36 @@
-# Laboratório — JML reproduzível — CSV e PowerShell
+# Laboratório 05 — JML manual de ponta a ponta no Keycloak
 
-**Objetivo:** realizar o fluxo principal e diagnosticar uma falha com recursos gratuitos, quando possível.
+**Tipo:** operações reais de identidade no Keycloak do laboratório; **não é simulação CSV**.
 
-## Requisitos
+**Tempo:** 90–150 minutos · **Custo:** gratuito · **Ambiente:** Docker + Keycloak local.
 
-PowerShell 7; nenhum tenant necessário; dados fictícios. Escolha versões suportadas, reserve capacidade de CPU/RAM e mantenha serviços acessíveis somente localmente. Nunca execute em ambiente corporativo sem autorização.
+Este laboratório faz parte da [aula 05 — Joiner, Mover e Leaver](../modulos/05-jml.md), que já contém os passos detalhados, comandos, caminhos do painel e resultados esperados. Siga a aula na ordem, sem pular a validação de cada etapa.
 
-## Preparação
+## Ordem prática
 
-1. Registre data, versão, dependências e topologia.
-2. Use conta e dados exclusivamente fictícios.
-3. Anote estado inicial, procedimento de reset e limite de custo.
-4. Leia documentação oficial da **versão instalada** antes de reproduzir comandos específicos.
+1. Iniciar contêiner Keycloak e criar o realm `iam-lab`.
+2. Criar grupos `Financeiro` e `TI`.
+3. **Joiner:** criar `joao.lab`, definir senha de laboratório, atribuir grupo Financeiro e testar login.
+4. **Mover:** retirar Financeiro, adicionar TI e confirmar a ausência de acesso antigo.
+5. **Leaver:** desabilitar conta, encerrar sessões quando disponível e comprovar negação de **novo** login.
+6. **Opcional:** excluir a conta fictícia somente depois de coletar evidências.
+7. **Desafio:** repetir com `maria.lab`, sem instruções.
 
-## Implementação guiada
+## Resultado esperado
 
-Crie entrada CSV com employeeId,department,action; processe somente operações simuladas Joiner/Mover/Leaver; valide schema, gere plano de ações, registre timestamps, negue identidades repetidas e exiba resumo. Depois adapte a Microsoft Graph com revisão e permissões mínimas.
+| Etapa | Conta ativa | Grupos | Login novo |
+|---|---|---|---|
+| Joiner | Sim | Financeiro | Permitido |
+| Mover | Sim | TI (não Financeiro) | Permitido |
+| Leaver | Não | Associação pode permanecer para auditoria | Negado |
+| Exclusão opcional | Conta inexistente | — | Negado |
 
-## Validação positiva
+**Importante:** grupos demonstram ciclo de associação; autorização efetiva precisa de aplicação integrada, com roles e políticas, em exercícios posteriores.
 
-Comprove que a ação autorizada funciona. Salve a sequência executada, resposta esperada e observação real. Não inclua códigos de autorização, tokens, senhas nem dados pessoais.
+## Checkpoint e diagnóstico
 
-## Teste negativo e diagnóstico
+Se não conseguir login após Joiner, verifique `Enabled`, senha, realm e eventos antes de continuar. Se o grupo antigo permanecer após Mover, o processo não está concluído. Se uma sessão antiga funcionar após Leaver, investigue revogação de sessões/tokens e diferencie sessão existente de novo login.
 
-Injete registro duplicado, departamento inexistente e tentativa de leaver de conta privilegiada fictícia.
+**Critério de conclusão:** apresente o estado antes/depois de cada fase e execute o desafio Maria. Sem isso, não considere o laboratório aprovado.
 
-Investigue identidade, configuração, escopo, certificados/tokens, autorização, logs e horário; evite dar permissão administrativa apenas para contornar a falha.
-
-## Entrega obrigatória
-
-Script com dry-run, teste de entradas inválidas, resumo de alterações e matriz aprovação→ação→evidência. Anote causa-raiz e uma medida preventiva.
-
-## Critérios de conclusão
-
-- [ ] Explico os componentes sem depender de um produto específico.
-- [ ] Repito a integração de maneira reproduzível.
-- [ ] Demonstro falha, investigação e correção.
-- [ ] Reestabeleço estado seguro e limpo recursos temporários.
-- [ ] Entrego evidências sanitizadas.
-
-[Voltar ao currículo](../curriculo.md)
+[Executar aula completa](../modulos/05-jml.md) · [Etapa posterior: automação em Python](07-jml-python.md)
