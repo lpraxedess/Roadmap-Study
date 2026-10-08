@@ -42,4 +42,3 @@ O site não usa banco, login nem servidores de usuários. As marcações de conc
 
 ## Separação dos repositórios
 
-Somente o Roadmap-Study hospeda a plataforma. [Projetos](https://github.com/lpraxedess/Projetos) continua como portfólio externo, sem alterações.

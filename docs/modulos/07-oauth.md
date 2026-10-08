@@ -1,75 +1,60 @@
-# 07 — OAuth 2.0 e OIDC
+# 07 — OAuth 2.0 e OIDC com PKCE
 
-**Nível:** engenharia · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
 
-## Por que aprender
+## 1. Conceito em 1 minuto
 
-Compreender diferença entre autorização OAuth e autenticação OIDC; identificar issuer, audience, nonce e state.
+OAuth delega autorização; OIDC adiciona autenticação por ID Token e informações de identidade.
 
-**Assuntos principais:** Authorization Code + PKCE, ID Token, Access Token, scopes, claims. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**Onde aparece no trabalho:** Aplicação web precisa autenticar sem receber senha do usuário.
 
-## Como o profissional atua
+**Ao terminar você fará:** Execute Authorization Code + PKCE e diferencie tipos de token.
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+## 2. Por que usar? Vantagens e limites
 
-## Conceitos a dominar
+**Ponto positivo:** Evita compartilhar senha com aplicações.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** Authorization Code + PKCE, ID Token, Access Token, scopes, claims.
+**Ponto negativo / risco:** Erros de audience, redirect e escopo geram exposição; tokens exigem cuidado.
 
-## Laboratório orientado
+**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
 
-**Objetivo:** Compreender diferença entre autorização OAuth e autenticação OIDC; identificar issuer, audience, nonce e state.
+## 3. Preparar o ambiente
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+Docker ou Podman e Keycloak isolado; siga o laboratório OIDC detalhado.
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
 
-```text
-Execute o laboratório completo em labs/01-keycloak-oidc.md; consulte metadata em /.well-known/openid-configuration.
-```
+## 4. Fazer agora — passo a passo
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Troque token com verifier incorreto e compare erro com retorno de autenticação normal.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+1. Leia o cenário e escreva em uma frase o resultado esperado.
+2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
+3. **Execute:** Realize [laboratório 01 de Keycloak e PKCE](../labs/01-keycloak-oidc.md). Salve **somente** código HTTP e estrutura redigida, nunca tokens. Compare ID Token versus Access Token no diagrama.
+4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
 
-## Como diagnosticar
+**O que deve acontecer:** Recebe código de autorização, troca-o com verifier correto e identifica scopes.
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+## 5. Quebre de propósito (apenas laboratório)
 
-## Evidências para aprovação
+Altere `code_verifier` na troca: Keycloak deve rejeitar; explique vínculo PKCE.
 
-Sequência do protocolo, parâmetros e evidência de teste negativo.
+**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+## 6. Limpar e repetir sem olhar
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Desenhe Authorization Code Flow com issuer, audience, redirect e validação de assinatura.
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 7. Fixação ativa
 
-## Segurança e limitações
+**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
 
-Nunca publique tokens, codes, client secrets ou refresh tokens. Diferencie validação de assinatura, expiração, issuer e audience. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+## 8. Evidência mínima (5 itens)
 
-## Conexão com o portfólio
+- [ ] Consigo explicar o conceito e **por que usar**.
+- [ ] Enumero uma vantagem e uma limitação real.
+- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
+- [ ] Fiz teste negativo e expliquei a causa.
+- [ ] Reverti o estado e consigo repetir sem o roteiro.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
 
-[Voltar ao currículo](../curriculo.md)
+[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)

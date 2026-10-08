@@ -19,6 +19,6 @@ O [portfólio Projetos](https://github.com/lpraxedess/Projetos) registra impleme
 
 ### O que está entregue
 
-Aulas por competência, roteiros de laboratórios, rubricas de projetos, orientação de custos e licenças, e estrutura pronta para MkDocs. Algumas integrações exigem escolher ou instalar um serviço local conforme hardware disponível. **Nenhuma página implica certificação, domínio profissional automático nem execução de laboratório ainda não realizada.**
+Aulas por competência, 10 laboratórios práticos e guiados, rubricas de projetos, orientação de custos e licenças, e estrutura pronta para MkDocs. Algumas integrações exigem escolher ou instalar um serviço local conforme hardware disponível. **Nenhuma página implica certificação, domínio profissional automático nem execução de laboratório ainda não realizada.**
 
 [Currículo completo](curriculo.md) · [Custos e licenças](laboratorios-e-custos.md) · [Publicação](publicacao.md)

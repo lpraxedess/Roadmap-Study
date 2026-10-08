@@ -23,7 +23,6 @@ EXTRA = [
     ("matriz-de-competencias.md", "matriz", "Matriz de competências"),
     ("laboratorios-e-custos.md", "custos", "Laboratórios e custos"),
     ("progresso.md", "progresso", "Modelo de progresso"),
-    ("portfolio.md", "portfolio", "Portfólio"),
     ("publicacao.md", "publicacao", "Publicação"),
 ]
 STAGES = [

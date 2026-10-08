@@ -1,0 +1,227 @@
+{
+  "modulos--01-fundamentos": {
+    "question": [
+      "O DNS resolve, logo a autenticação foi bem-sucedida.",
+      "DNS só fornece endereçamento; autenticação acontece depois.",
+      "TLS substitui autorização."
+    ],
+    "correct": 1,
+    "feedback": "Uma aplicação só autentica depois de resolver nome, negociar TLS e alcançar o IdP."
+  },
+  "modulos--02-ad": {
+    "question": [
+      "Kerberos consulta somente o banco LDAP.",
+      "Kerberos depende de KDC e pode emitir tickets de serviço.",
+      "DNS substitui o KDC."
+    ],
+    "correct": 1,
+    "feedback": "AD DS guarda objetos; Kerberos emite tickets de autenticação e LDAP permite consultar diretório."
+  },
+  "modulos--03-entra": {
+    "question": [
+      "Azure RBAC e Entra directory roles são idênticos.",
+      "Permissões Azure RBAC se aplicam ao escopo Azure atribuído.",
+      "Reader permite excluir recurso."
+    ],
+    "correct": 1,
+    "feedback": "Funções de diretório administram identidades; Azure RBAC controla recursos no Azure."
+  },
+  "modulos--04-hibrido": {
+    "question": [
+      "Sincronização é sempre bidirecional.",
+      "A fonte autoritativa define direção dos atributos sincronizados.",
+      "Password writeback dispensa configuração híbrida."
+    ],
+    "correct": 1,
+    "feedback": "Sincronização propaga objetos/atributos da fonte definida; não é o mesmo que autenticação."
+  },
+  "modulos--05-jml": {
+    "question": [
+      "Mover deve apenas adicionar novo acesso.",
+      "Mover deve revisar e remover acesso incompatível anterior.",
+      "Leaver significa apenas excluir e-mail."
+    ],
+    "correct": 1,
+    "feedback": "JML conecta eventos de RH, aprovações e identidades durante entrada, movimentação e saída."
+  },
+  "modulos--06-sso": {
+    "question": [
+      "SSO remove a necessidade de autorização.",
+      "SSO reutiliza autenticação, mas cada app precisa autorizar.",
+      "SSO garante logout global em todos os aplicativos."
+    ],
+    "correct": 1,
+    "feedback": "SSO reutiliza a autenticação do provedor de identidade nas aplicações integradas."
+  },
+  "modulos--07-oauth": {
+    "question": [
+      "ID Token deve autorizar API arbitrária.",
+      "Access Token é destinado ao recurso/API conforme audience e scopes.",
+      "PKCE dispensa validar redirect URI."
+    ],
+    "correct": 1,
+    "feedback": "OAuth delega autorização; OIDC adiciona autenticação por ID Token e informações de identidade."
+  },
+  "modulos--08-saml": {
+    "question": [
+      "SAML usa JSON Web Tokens por padrão.",
+      "SAML usa assertions XML e valida destino/assinatura.",
+      "ACS identifica o servidor DNS do AD."
+    ],
+    "correct": 1,
+    "feedback": "SAML troca afirmações XML assinadas entre IdP e SP com confiança pré-estabelecida."
+  },
+  "modulos--09-scim": {
+    "question": [
+      "SCIM autentica um usuário no navegador.",
+      "SCIM padroniza provisionamento de identidades via API.",
+      "SCIM substitui obrigatoriamente SAML."
+    ],
+    "correct": 1,
+    "feedback": "SCIM define recursos e operações HTTP para criar, consultar, alterar e desativar usuários/grupos."
+  },
+  "modulos--10-graph": {
+    "question": [
+      "User.Read permite listar qualquer diretório.",
+      "/me usa identidade delegada, com escopo apropriado.",
+      "App-only exige senha salva no código."
+    ],
+    "correct": 1,
+    "feedback": "Microsoft Graph oferece API para objetos Microsoft; scopes delegados e permissões app-only têm riscos diferentes."
+  },
+  "modulos--11-powershell": {
+    "question": [
+      "O ideal é ignorar erros e continuar.",
+      "Validar antes da escrita e suportar dry-run reduz risco.",
+      "Idempotência significa executar só uma vez."
+    ],
+    "correct": 1,
+    "feedback": "Scripts IAM precisam validar entrada, ser idempotentes, registrar resultado e permitir dry-run."
+  },
+  "modulos--12-python": {
+    "question": [
+      "HTTP 403 sempre deve ser repetido indefinidamente.",
+      "429 pode requerer backoff e Retry-After.",
+      "401 significa sucesso."
+    ],
+    "correct": 1,
+    "feedback": "Integrações IAM usam JSON, HTTP e códigos de status; erros devem ser classificados antes de retry."
+  },
+  "modulos--13-iga": {
+    "question": [
+      "SoD impede automaticamente todos os ataques.",
+      "SoD separa operações incompatíveis e precisa ser revisada.",
+      "Uma role deve sempre conter todos os privilégios."
+    ],
+    "correct": 1,
+    "feedback": "IGA governa quem deve possuir acesso, quem aprova e quem revisa."
+  },
+  "modulos--14-reviews": {
+    "question": [
+      "A revisão termina quando alguém clica aprovar.",
+      "Revisão precisa produzir decisão e remediação comprovada.",
+      "Um grupo não precisa de dono."
+    ],
+    "correct": 1,
+    "feedback": "Recertificação exige responsável, prazo, decisão e execução real da revogação."
+  },
+  "modulos--15-pim": {
+    "question": [
+      "PIM torna a role permanentemente ativa.",
+      "Eligible requer ativação antes de usar privilégio.",
+      "PIM substitui backup de contas de emergência."
+    ],
+    "correct": 1,
+    "feedback": "PIM controla elegibilidade, ativação temporária, políticas e rastreabilidade de privilégios."
+  },
+  "modulos--16-pam": {
+    "question": [
+      "PAM é exatamente igual a PIM.",
+      "PAM cobre controle de acesso privilegiado a sistemas e sessões.",
+      "PAM elimina necessidade de SSH."
+    ],
+    "correct": 1,
+    "feedback": "PAM governa acesso privilegiado a hosts/sistemas, sessões, credenciais e auditoria."
+  },
+  "modulos--17-segredos": {
+    "question": [
+      "Guardar segredos no Git é seguro se o repo for privado.",
+      "Tokens de curta duração e políticas específicas reduzem exposição.",
+      "TTL impede qualquer vazamento."
+    ],
+    "correct": 1,
+    "feedback": "Workloads precisam de segredo ou identidade; cofres centralizam política, TTL e revogação."
+  },
+  "modulos--18-azure": {
+    "question": [
+      "Managed identity obriga guardar senha local.",
+      "Managed identity fornece identidade gerenciada pelo Azure quando suportado.",
+      "Reader é administração total."
+    ],
+    "correct": 1,
+    "feedback": "Atribuição Azure RBAC liga principal a role e escopo; managed identity reduz segredos de workloads."
+  },
+  "modulos--19-multicloud": {
+    "question": [
+      "Policies AWS e Azure são sintaticamente idênticas.",
+      "Trust define quem pode assumir role; permissions policy define o que ela faz.",
+      "Action:* aplica menor privilégio."
+    ],
+    "correct": 1,
+    "feedback": "AWS usa policies e trust relationships, com escopo e avaliação próprios."
+  },
+  "modulos--20-itdr": {
+    "question": [
+      "Todo alerta é incidente confirmado.",
+      "Correlacionar eventos e validar contexto evita falsos positivos.",
+      "ITDR dispensa logs."
+    ],
+    "correct": 1,
+    "feedback": "Identity Threat Detection and Response correlaciona sinais e conduz contenção."
+  },
+  "modulos--21-logs": {
+    "question": [
+      "HTTP 403 é sempre falha de senha.",
+      "Audit logs registram mudanças; sign-in logs registram tentativas de autenticação.",
+      "Todo log é retido indefinidamente."
+    ],
+    "correct": 1,
+    "feedback": "Sign-in logs e audit logs registram fatos diferentes; correlation ID liga eventos."
+  },
+  "modulos--22-zero-trust": {
+    "question": [
+      "Zero Trust é um produto único da Microsoft.",
+      "Zero Trust é arquitetura e princípios, com controles progressivos.",
+      "Bloquear tudo sem recuperação é boa prática."
+    ],
+    "correct": 1,
+    "feedback": "Zero Trust é modelo de decisão contínua: verificar explicitamente, mínimo privilégio e assumir violação."
+  },
+  "modulos--23-iac": {
+    "question": [
+      "Um apply cego é seguro se Terraform gerar o plano.",
+      "Code review e dry-run reduzem riscos antes do deploy.",
+      "Git impede todo vazamento de secrets."
+    ],
+    "correct": 1,
+    "feedback": "Infraestrutura como código descreve configuração verificável por diff e pipeline."
+  },
+  "modulos--24-auditoria": {
+    "question": [
+      "Captura de tela isolada prova efetividade contínua.",
+      "Métrica exige fonte, período e definição reprodutível.",
+      "Auditoria elimina risco residual."
+    ],
+    "correct": 1,
+    "feedback": "Controle precisa de objetivo, proprietário, frequência, teste e prova verificável."
+  },
+  "modulos--25-architecture": {
+    "question": [
+      "Arquiteto só desenha topologia.",
+      "Arquitetura envolve requisitos, trade-offs, operação, resiliência e custo.",
+      "Mais ferramentas sempre melhoram segurança."
+    ],
+    "correct": 1,
+    "feedback": "Arquitetura integra provisionamento, SSO, controles privilegiados, logs e recuperação."
+  }
+}

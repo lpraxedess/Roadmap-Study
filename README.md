@@ -14,9 +14,9 @@ A plataforma oferece dashboard, trilha de aulas, laboratórios, projetos, busca,
 
 - `site/`: interface visual em HTML/CSS/JS e gerador estático Python.
 - `docs/modulos/`: 25 aulas estruturadas.
-- `docs/labs/`: 7 laboratórios guiados.
+- `docs/labs/`: 10 laboratórios guiados.
 - `docs/projetos/`: 6 projetos integradores.
-- `scripts/`: simulação e testes de JML.
+- `scripts/`: simulações e testes de JML, PIM, SCIM local e SoD.
 - `docs/`: guias, currículo, matriz, custos, publicação.
 - `01-IAM/IAM-Study-Lab.md`: arquivo legado preservado com 32 módulos como referência.
 
