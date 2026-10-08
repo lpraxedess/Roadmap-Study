@@ -1,75 +1,66 @@
-# 13 — Fundamentos de IGA
+# 13 — IGA: governar quem pode acessar o quê
 
-**Nível:** avançado · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Fase 4 — Governança e privilégios** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## Por que aprender
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Modelar quem pode aprovar, atribuir, revisar e remover acesso.
+## 1. Entitlement
 
-**Assuntos principais:** Catálogo de entitlements, ownership, review e SoD. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**O que é?** É direito específico sobre sistema/recurso; alguém deve ser responsável por aprová-lo.
 
-## Como o profissional atua
+**Prática — faça agora:**
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+No Entra de teste, abra grupo de segurança de laboratório e liste seus membros. Anote em tabela: nome do grupo, finalidade, sistema que o utiliza (se houver) e **owner**. Não invente sistema vinculado.
 
-## Conceitos a dominar
+**O que você acabou de fazer?** Você iniciou um catálogo verificável de acessos.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** Catálogo de entitlements, ownership, review e SoD.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-## Laboratório orientado
+**Pontos positivos:** Aprovações passam a ter responsável e justificativa.
 
-**Objetivo:** Modelar quem pode aprovar, atribuir, revisar e remover acesso.
+**Pontos negativos / riscos:** Grupos sem owner acumulam acesso indefinidamente.
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+**Fixação:** Quem decide se João ainda precisa do grupo Financeiro?
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+## 2. Segregação de funções (SoD)
 
-```text
-Monte planilha/CSV fictício com identidades, papéis, entitlements e owner; crie regras SoD.
-```
+**O que é?** Impede que a mesma pessoa concentre atos incompatíveis, como criar e aprovar pagamento.
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Introduza conflito 'criar fornecedor' + 'aprovar pagamento'; detecte e proponha mitigação.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+**Prática — faça agora:**
 
-## Como diagnosticar
+Use dois grupos fictícios no Entra, `Criar-Pagamento-LAB` e `Aprovar-Pagamento-LAB`, caso autorizados; compare membros e identifique intersecções **sem atribuir roles reais**. Ou rode [Lab 10 — SoD offline](../labs/10-sod-offline.md).
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+**O que você acabou de fazer?** Você detectou conflito potencial; não revogou autorização de um sistema bancário real.
 
-## Evidências para aprovação
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-Matriz de roles, SoD e fluxo de remediação.
+**Pontos positivos:** Reduz possibilidade de fraude por acúmulo de funções.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+**Pontos negativos / riscos:** Conflito depende do contexto do sistema e exceções aprovadas.
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+**Fixação:** Uma conta nos dois grupos é aceitável sem revisão?
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 3. Aprovação
 
-## Segurança e limitações
+**O que é?** É decisão explícita de dono ou gestor antes de conceder acesso relevante.
 
-Não usar colaboradores reais ou dados pessoais. Preparação para campanha de Access Review. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+**Prática — faça agora:**
 
-## Conexão com o portfólio
+Simule uma solicitação de João para `Aprovar-Pagamento-LAB`. Registre solicitante, motivo, dono, decisão e validade; **só altere o grupo de lab** depois de autorização no próprio exercício.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**O que você acabou de fazer?** Você separou pedido, decisão e implementação.
 
-[Voltar ao currículo](../curriculo.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Melhora auditoria.
+
+**Pontos negativos / riscos:** Aprovação automática sem contexto pode virar formalidade.
+
+**Fixação:** Qual evidência prova que a concessão foi autorizada?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

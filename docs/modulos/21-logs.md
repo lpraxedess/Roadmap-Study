@@ -1,60 +1,66 @@
-# 21 — Logs e troubleshooting de autenticação
+# 21 — Logs IAM: encontrar a causa do erro
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 5 — Cloud e defesa** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Sign-in logs e audit logs registram fatos diferentes; correlation ID liga eventos.
+## 1. Sign-in logs
 
-**Onde aparece no trabalho:** Login negado após mudança de Conditional Access.
+**O que é?** Registram tentativas de autenticação e condições avaliadas, quando a coleta está disponível.
 
-**Ao terminar você fará:** Traceie origem do bloqueio antes de alterar a política.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Entra de teste → Sign-in logs → filtre conta fictícia e abra tentativa. Identifique Failure reason ou Success, aplicativo e correlation ID quando exibidos.
 
-**Ponto positivo:** Acelera diagnóstico com evidência.
+**O que você acabou de fazer?** Você viu evidência de login sem supor a causa.
 
-**Ponto negativo / risco:** Retenção, privacidade e permissões variam por plano.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Acelera troubleshooting.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Falta de log/retention pode ocultar evento.
 
-Keycloak local ou conjunto fictício de logs.
+**Fixação:** Senha errada e Conditional Access bloqueando são a mesma falha?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Audit logs
 
-## 4. Fazer agora — passo a passo
+**O que é?** Registram alterações administrativas, como adicionar/remover membros de grupo.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** No Keycloak de laboratório, provoque senha incorreta em `alice`; veja eventos administrativos/usuário e `docker logs iam-keycloak-lab`. Registre timestamp, evento e motivo sem credenciais.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Você associa uma tentativa ao resultado e distingue login de alteração administrativa.
+No Entra de teste, adicione usuário fictício a grupo de lab e volte em Monitoring & health → Audit logs. Procure operação de membership pelo horário e compare ator e alvo. Se sua função não dá acesso, registre limitação.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você vinculou ação administrativa e evento de auditoria.
 
-Crie evento de token expirado e explique por que não se resolve elevando RBAC.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Prova quando alteração ocorreu.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Nem todo evento está disponível por tempo indefinido.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Escreva runbook de triagem em cinco verificações.
+**Fixação:** Sign-in log prova quem modificou um grupo?
 
-## 7. Fixação ativa
+## 3. Diagnóstico por evidências
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É chegar à causa-raiz comparando logs e configuração.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Faça uma remoção controlada do usuário **no grupo fictício**. Reabra o grupo e log de auditoria; responda por que acesso poderia permanecer até sessão/token ser atualizado. Readicione ao final, se necessário.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você comprovou que mudança de membership e sessão são etapas diferentes.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Evita resolver tudo com atribuição privilegiada.
+
+**Pontos negativos / riscos:** Propagação e logs podem ter atraso.
+
+**Fixação:** O que fazer quando o log contradiz a situação atual?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

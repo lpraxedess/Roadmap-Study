@@ -1,35 +1,68 @@
-# 04 — Identidade híbrida: de onde vêm os usuários?
+# 04 — AD + Entra: origem autoritativa e sincronização
 
-**Fase 1 — AD e Entra** · **40–70 minutos** · **Ambiente:** AD DS e Entra Connect/Cloud Sync **já existentes**; sem necessidade de instalar novo sincronizador nesta aula.
+**Fase 1 — AD e Entra** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. Entenda
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-Em **identidade híbrida**, parte das identidades é originada no AD local e sincronizada ao Entra. A **fonte autoritativa** define onde cada atributo deve ser alterado. A sincronização **não** é o mesmo que login. Dados como nome, departamento e estado da conta dependem do tipo de objeto e do fluxo configurado.
+## 1. Fonte autoritativa
 
-**Vantagem:** reaproveita o diretório local. **Risco:** alterações no local errado, conflito de atributos, sincronização atrasada e contas duplicadas.
+**O que é?** É o sistema responsável por manter determinado atributo de uma identidade.
 
-## 2. Verificação prática — somente leitura primeiro
+**Prática — faça agora:**
 
-1. No **AD de laboratório**, abra `dsa.msc` e selecione um usuário de teste **já sincronizado**.
-2. Registre seu nome de usuário e o atributo de departamento, se existir; **não modifique ainda**.
-3. No [Entra](https://entra.microsoft.com), localize o mesmo usuário e observe a propriedade que indica sincronização de diretório, quando a interface exibir `On-premises sync enabled` ou equivalente.
-4. Compare o identificador/UPN, os atributos e o estado atual. **Não suponha** que todos os grupos locais são sincronizados: verifique a configuração de escopo existente.
-5. Se tiver acesso ao servidor de sincronização, consulte estado e histórico de sincronização; se não tiver, anote que não é possível validar a etapa de propagação.
+No AD de teste, identifique um usuário sincronizado já existente; no Entra abra o mesmo objeto e procure On-premises sync enabled. Compare Department e UPN **sem modificar nada**.
 
-**Resultado esperado:** você identifica um objeto sincronizado e sabe por que a mudança de atributo precisa ocorrer na origem.
+**O que você acabou de fazer?** Você encontrou onde o atributo deve ser administrado.
 
-## 3. Alteração opcional — apenas se você administra o laboratório
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-1. No AD, altere **Department** de um usuário fictício sincronizado de `Financeiro` para `TI`.
-2. Registre horário e espere o próximo ciclo de sincronização **já agendado**. Não force ciclos sem necessidade.
-3. Compare o valor visto no Entra após a sincronização. Se não atualizar, examine logs/escopo e permissões de leitura, sem recriar o usuário.
+**Pontos positivos:** Evita divergência e duplicidade.
 
-**Teste negativo de raciocínio:** alguém tentou editar diretamente no Entra um atributo controlado pelo AD. Explique por que a sincronização pode sobrescrever a alteração. Não faça o teste destrutivo com uma conta real.
+**Pontos negativos / riscos:** Tentar editar na nuvem atributo controlado no AD pode falhar ou ser sobrescrito.
 
-## 4. Desafio
+**Fixação:** Qual é a origem do atributo Department neste cenário?
 
-Desenhe setas **RH → AD DS → sincronizador → Entra ID → aplicativo**; marque a fonte autoritativa e o ponto de auditoria. Explique quais verificações faria se um Leaver fosse bloqueado no AD e ainda aparecesse habilitado na nuvem.
+## 2. Sincronização
 
-Se não possui laboratório híbrido, a atividade é **análise arquitetural**, não prática executada no produto. Não crie recurso Azure pago apenas para completar esta fase.
+**O que é?** Transporta alterações configuradas entre diretórios; não equivale a login ou autorização.
 
-[Continuar: 05 — JML no AD ou Entra](05-jml.md)
+**Prática — faça agora:**
+
+Somente se existir sincronizador de laboratório e você tiver autorização: altere Department de conta fictícia no AD, anote hora, aguarde ciclo já previsto e confira atributo no Entra. Se não existir integração, estude logs e declare que a prática não foi executada.
+
+**O que você acabou de fazer?** Você validou (ou identificou impedimento para validar) a propagação de atributo.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Reduz recadastro manual.
+
+**Pontos negativos / riscos:** Escopo de OU e ciclos de sync podem atrasar mudanças.
+
+**Fixação:** Usuário não atualizou na nuvem: quais três pontos verificar antes de recriar?
+
+## 3. Desligamento híbrido
+
+**O que é?** A origem pode desabilitar identidade, mas sessões cloud já emitidas precisam de tratamento separado.
+
+**Prática — faça agora:**
+
+Em cenário fictício, descreva: bloquear no AD → confirmar sincronização → verificar Account enabled no Entra → avaliar revogação de sessões. Execute bloqueio somente em conta **criada para o laboratório**.
+
+**O que você acabou de fazer?** Você separou estado da conta e validade das sessões.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Reduz contas ativas após saída.
+
+**Pontos negativos / riscos:** Não garante invalidação instantânea de cada token já emitido.
+
+**Fixação:** Por que bloquear no AD não encerra automaticamente todas as sessões SaaS?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)

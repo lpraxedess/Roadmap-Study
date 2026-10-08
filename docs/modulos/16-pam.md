@@ -1,60 +1,66 @@
-# 16 — PAM: acesso administrativo controlado
+# 16 — PAM: controlar acesso administrativo
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 4 — Governança e privilégios** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-PAM governa acesso privilegiado a hosts/sistemas, sessões, credenciais e auditoria.
+## 1. Acesso privilegiado
 
-**Onde aparece no trabalho:** Operador precisa acessar Linux sem compartilhar senha root.
+**O que é?** É o acesso capaz de administrar infraestrutura, sistema ou identidade.
 
-**Ao terminar você fará:** Defina acesso por papel e reveja uma sessão.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No AD ou Entra **de laboratório**, identifique um grupo/role administrativo de teste **sem atribuir ninguém**. Liste quais operações esse acesso permitiria e o risco se ficasse permanente.
 
-**Ponto positivo:** Centraliza controles e evidencia atividade privilegiada.
+**O que você acabou de fazer?** Você inventariou privilégio antes de escolher controle.
 
-**Ponto negativo / risco:** Depende de disponibilidade e dos recursos da edição adotada.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Ajuda a restringir administração.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Papel amplo facilita movimento lateral após comprometimento.
 
-Teleport Community em VM isolada quando viável; alternativa: desenho local.
+**Fixação:** Qual a diferença entre conta comum e conta privilegiada?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. PAM x PIM
 
-## 4. Fazer agora — passo a passo
+**O que é?** PAM pode administrar sessões e credenciais privilegiadas de sistemas; PIM cuida elegibilidade/ativação em escopos suportados.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** No [lab PAM](../labs/06-pam-lab.md), crie matriz `operador-leitura` versus `manutencao`, recursos `host-a` e `host-b`, e horários. Ao instalar Teleport Community, use guia da versão em laboratório isolado e valide logs.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Operador só alcança recursos autorizados; sessão é auditável quando a edição suporta.
+No Entra observe PIM (se disponível) e, no AD, grupos que autorizam acesso ao servidor de lab. Monte tabela `quem, qual host/sistema, método de entrada, sessão, log`. Não confunda inventário com sessão PAM gravada.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você comparou objeto de identidade e acesso efetivo a um host.
 
-Revogue papel em cenário de teste; nova sessão deve ser negada.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Ajuda a planejar controle de sessão.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Sem broker PAM real não há controle/recording de sessão.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Defina política de break-glass independente do broker.
+**Fixação:** PIM e PAM são o mesmo produto?
 
-## 7. Fixação ativa
+## 3. Revisão e revogação
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Revogar acesso deve ser verificável e não depender de memória humana.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Crie um **grupo de segurança fictício** `IAM-Admin-Lab` sem poderes reais, adicione um usuário fictício e remova-o; comprove member antes/depois. Para sessão PAM real, siga laboratório adicional apenas se houver solução aprovada instalada.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você realizou revogação de membership, **não** gravou sessão privilegiada real.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Pratica processo de concessão/revogação.
+
+**Pontos negativos / riscos:** Grupos fictícios não são equivalentes a PAM implantado.
+
+**Fixação:** Que provas adicionais seriam necessárias num PAM com gravação de sessão?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

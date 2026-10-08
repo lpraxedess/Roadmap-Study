@@ -1,75 +1,66 @@
-# 09 — SCIM 2.0
+# 09 — SCIM: criar e desligar contas em aplicativos
 
-**Nível:** engenharia · **Formato:** estudo guiado, execução e avaliação · **Custo:** priorize recursos locais e já licenciados.
+**Fase 2 — SSO e protocolos** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## Por que aprender
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Entender como uma origem provisiona contas em um sistema alvo e como tratar idempotência.
+## 1. Provisionamento
 
-**Assuntos principais:** Resource schemas, Users, Groups, PATCH e desprovisionamento. Este módulo deve ser compreendido em contexto empresarial: quem solicita acesso, quem autoriza, quem opera, quem audita e qual é a consequência de uma falha.
+**O que é?** É entregar a identidade ao sistema de destino; não é sinônimo de fazer login.
 
-## Como o profissional atua
+**Prática — faça agora:**
 
-1. **Descobrir requisitos:** identificar identidade, ativo, nível de privilégio e dono do recurso.
-2. **Projetar:** selecionar controle e pré-requisitos, explicando risco e alternativa.
-3. **Implementar:** aplicar o menor privilégio com rastreabilidade.
-4. **Validar:** provar acesso autorizado e bloqueio não autorizado.
-5. **Operar:** registrar logs, procedimentos de recuperação e responsáveis.
+No Entra de teste → Enterprise applications → app de teste já integrado → Provisioning, identifique se há opção de provisionamento e qual status. **Não ative** sem endpoint SaaS autorizado. Compare com Users and groups (atribuição).
 
-## Conceitos a dominar
+**O que você acabou de fazer?** Você distinguiu identidade no Entra de cadastro no aplicativo.
 
-- **Identidade:** representação de um usuário, serviço ou workload com atributos e ciclo de vida.
-- **Autenticação:** prova de controle de um autenticador; não implica autorização.
-- **Autorização:** decisão sobre operação permitida, considerando papel, política, contexto e escopo.
-- **Auditoria:** registro do que mudou, quando, por quem e com qual resultado.
-- **Privilégio mínimo:** conceder apenas acesso necessário, pelo menor tempo e escopo.
-- **Aplicação nesta aula:** Resource schemas, Users, Groups, PATCH e desprovisionamento.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-## Laboratório orientado
+**Pontos positivos:** Evita criação manual repetitiva.
 
-**Objetivo:** Entender como uma origem provisiona contas em um sistema alvo e como tratar idempotência.
+**Pontos negativos / riscos:** App que não suporta SCIM pode exigir outro conector.
 
-**Preparação:** escolha ambiente isolado, identidades fictícias, documente versões e restauração. Verifique se há licença, subscrição ou risco de cobrança. Se não houver acesso, substitua por simulação com dados fictícios, mantendo as verificações conceituais.
+**Fixação:** SSO sozinho cria usuários em todos os aplicativos?
 
-1. Registre o estado inicial com diagrama, identidade de teste e requisitos.
-2. Execute ou adapte o seguinte ponto de partida ao seu laboratório, **sem copiar placeholders literalmente**:
+## 2. SCIM Users
 
-```text
-Monte API SCIM fictícia ou servidor de teste; use curl para GET /Users, POST /Users e PATCH /Users/{id}.
-```
+**O que é?** É recurso HTTP padronizado para representar identidade em aplicação.
 
-3. Configure apenas o mínimo necessário, com permissões reduzidas.
-4. Faça o **teste positivo**: operação autorizada, resultado previsto e evento/auditoria correspondente.
-5. Execute **teste negativo controlado**: Envie uma mudança de atributo inválido e documente o status retornado; teste exclusão ou active=false.
-6. Registre horário, status, mensagem de erro, causa e solução.
-7. Reverta as alterações e confirme o estado final.
+**Prática — faça agora:**
 
-## Como diagnosticar
+No [Lab 09 — API SCIM educativa](../labs/09-scim-mock.md), rode `python scripts/scim_mock.py`, depois POST /Users de usuário fictício, conforme comandos completos do laboratório. Observe HTTP 201 e faça GET.
 
-Para qualquer falha, siga **identidade → autenticação → política → autorização → aplicação/recurso → logs**. Determine o estágio exato do erro antes de alterar permissões. Classifique 401 (autenticação), 403 (autorização), indisponibilidade, configuração incorreta ou problema de sincronização conforme o contexto. Um erro de acesso não deve ser resolvido concedendo privilégio amplo sem análise.
+**O que você acabou de fazer?** Você **criou um objeto real no servidor mock local**, não no Entra nem em SaaS.
 
-## Evidências para aprovação
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-Tabela de endpoints, mapeamento de atributos e registro de requisições mascarado.
+**Pontos positivos:** Ajuda a compreender payload e protocolo sem licença.
 
-**Desafio sem roteiro:** reproduza o cenário com novos usuários fictícios e explique o resultado sem consultar esta página.
+**Pontos negativos / riscos:** Mock não tem autenticação ou todos os recursos de SCIM real.
 
-| Critério | Evidência exigida |
-|---|---|
-| Explicação | Fluxo, componentes e justificativa do controle |
-| Implementação | Configuração ou simulação reproduzível |
-| Validação | Sucesso e falha intencional documentados |
-| Segurança | Menor privilégio, credenciais protegidas, reversão |
-| Autonomia | Diagnóstico sem instruções passo a passo |
+**Fixação:** Por que sucesso HTTP 201 não comprova que usuário fez login?
 
-Aprovação requer todos os critérios, não somente capturas da interface.
+## 3. Desprovisionamento
 
-## Segurança e limitações
+**O que é?** É retirar ou desativar conta no destino quando a identidade perde o direito.
 
-Nunca use SCIM endpoint real de terceiros. Compare provisionamento e autenticação: problemas distintos. Consulte [custos e licenciamento](../laboratorios-e-custos.md) antes de qualquer recurso pago.
+**Prática — faça agora:**
 
-## Conexão com o portfólio
+No mesmo Lab 09, envie PATCH para `active=false` e confira no GET. Em seguida tente POST duplicado e observe HTTP 409; finalize servidor.
 
-Registre scripts, arquitetura, decisões e evidências sanitizadas **somente quando optar por publicar**. O [repositório Projetos](https://github.com/lpraxedess/Projetos) é referência externa e não é alterado por este curso.
+**O que você acabou de fazer?** Você alterou estado do usuário na API didática.
 
-[Voltar ao currículo](../curriculo.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Reduz contas esquecidas nos destinos.
+
+**Pontos negativos / riscos:** Requer reconciliar erros, deprovisionamento e políticas do SaaS real.
+
+**Fixação:** O que significa `active=false` e que validação ainda faltaria num SaaS real?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

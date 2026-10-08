@@ -1,60 +1,66 @@
-# 22 — Zero Trust: políticas graduais
+# 22 — Zero Trust: verificar antes de permitir
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 5 — Cloud e defesa** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Zero Trust é modelo de decisão contínua: verificar explicitamente, mínimo privilégio e assumir violação.
+## 1. Verificação explícita
 
-**Onde aparece no trabalho:** Admin acessa app crítico em dispositivo desconhecido.
+**O que é?** É tomar decisão de acesso com identidade, contexto, dispositivo e sinais de risco disponíveis.
 
-**Ao terminar você fará:** Desenhe decisão por identidade, MFA, dispositivo e risco.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Entra de **laboratório**, abra Protection → Conditional Access → Policies se tiver acesso. **Somente observe** uma política de teste: usuários, cloud apps, conditions e grant controls. Se indisponível por licença, analise a matriz abaixo sem criar política.
 
-**Ponto positivo:** Reduz confiança implícita; favorece defesa em profundidade.
+**O que você acabou de fazer?** Você separou política e mecanismo de autenticação.
 
-**Ponto negativo / risco:** Políticas mal testadas bloqueiam usuários e equipes.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Fortalece controles contextuais.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Regra mal aplicada pode bloquear administradores.
 
-Tabela de decisão local; não precisa licença de CA.
+**Fixação:** MFA por si só equivale a Zero Trust completo?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Menor privilégio
 
-## 4. Fazer agora — passo a passo
+**O que é?** Usuário deve receber apenas permissões necessárias para sua função e duração.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Monte tabela para `admin`, `usuário padrão`, `convidado` x `dispositivo gerenciado` x `MFA`. Indique permitir, exigir controle ou bloquear. Simule duas linhas negadas e plano de exceção temporária.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Decisões estão ligadas a sinais e controle explícito.
+No grupo JML-TI do Entra ou AD de teste, confira quais usuários estão associados e explique quem deveria removê-los depois de mudança de departamento. Faça remoção **apenas de usuário fictício**, caso autorizado.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você aplicou revisão prática de membership.
 
-Retire o sinal de dispositivo gerenciado: explique como resultado deveria mudar.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Diminui exposição lateral.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Revisão manual não cobre todos os apps.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Planeje rollout em modo relatório com conta de emergência preservada.
+**Fixação:** Como evitar que pessoa acumule grupos após mudança?
 
-## 7. Fixação ativa
+## 3. Implantação gradual
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Políticas de acesso precisam ser avaliadas antes de entrar em modo de bloqueio.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Se houver recurso e licença, abra Conditional Access de teste e identifique opção de **Report-only**, sem ativar bloqueios. Elabore teste com duas contas fictícias e verificação de break-glass. **Não aplique policy a todo tenant** para completar aula.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você compreendeu rollout; não é implantação real sem aplicar e validar.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Reduz risco operacional.
+
+**Pontos negativos / riscos:** Report-only não bloqueia acesso; decisão precisa ser revisada.
+
+**Fixação:** Por que proteger conta de emergência antes de CA?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

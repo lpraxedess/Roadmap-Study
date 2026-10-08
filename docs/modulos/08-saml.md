@@ -1,60 +1,68 @@
-# 08 — SAML 2.0 e federação
+# 08 — SAML: confiança e autenticação federada
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 2 — SSO e protocolos** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. Conceito em 1 minuto
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-SAML troca afirmações XML assinadas entre IdP e SP com confiança pré-estabelecida.
+## 1. IdP e SP
 
-**Onde aparece no trabalho:** Uma aplicação corporativa só suporta SAML.
+**O que é?** O IdP autentica e o Service Provider aceita assertions assinadas se confiar no emissor.
 
-**Ao terminar você fará:** Identifique EntityID, ACS, NameID, assinatura e validade de assertion.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Em Entra → Enterprise applications → aplicativo **SAML de laboratório já existente** → Single sign-on → SAML. Identifique Entity ID do SP e Login URL. Não altere configurações.
 
-**Ponto positivo:** Padrão maduro para aplicativos corporativos.
+**O que você acabou de fazer?** Você encontrou emissores/destinatários da federação.
 
-**Ponto negativo / risco:** Clock skew e metadata/certificados incorretos quebram SSO; XML complexo.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Permite SSO em aplicações corporativas antigas.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Configuração divergente entre IdP/SP impede acesso.
 
-Keycloak e SP SAML de teste ou exercício de metadata offline.
+**Fixação:** Quem autentica e quem recebe a assertion?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. ACS e assinatura
 
-## 4. Fazer agora — passo a passo
+**O que é?** ACS é o endpoint que recebe respostas SAML; assinatura protege integridade/autoria.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** No [lab SAML](../labs/02-saml-keycloak.md), anote EntityID, ACS e certificado público. Desenhe AuthnRequest → IdP → SAML Response → ACS. Se não tiver SP, use metadata fictícia e verifique manualmente a igualdade das URLs.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** A assertion destina-se ao SP correto e a resposta chega à ACS autorizada.
+Na configuração SAML de teste, compare Identifier (Entity ID), Reply URL (ACS) e certificado público do IdP com a configuração documentada do SP. Registre **somente dados fictícios/sanitizados**.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você validou os itens fundamentais da confiança.
 
-Troque uma ACS fictícia ou audience e explique rejeição; restaure metadata original.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Ajuda a impedir assertions aceitas por SP incorreto.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Certificado expirado ou ACS errada causa falha de login.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Produza tabela de erros de assinatura, destino e expiração com correção.
+**Fixação:** O que ocorre se o SP recebe assertion destinada a outro Entity ID?
 
-## 7. Fixação ativa
+## 3. Teste de configuração
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** A integração só está validada quando o SP aceita login e impõe a autorização prevista.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Se possuir app SAML de teste, use Test single sign-on e compare mensagem de sucesso/erro. **Sem SP real**, faça análise de parâmetros, identificando claramente que não executou o fluxo.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você distinguiu revisão de metadata de login real.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Detecta erros antes da publicação.
+
+**Pontos negativos / riscos:** Trocar Reply URL em ambiente de produção é perigoso.
+
+**Fixação:** Qual o primeiro item a conferir em erro de destino/audience?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)

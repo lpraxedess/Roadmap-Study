@@ -1,60 +1,66 @@
-# 14 — Access Reviews: recertificar acesso
+# 14 — Access Reviews: revisar e revogar acessos
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 4 — Governança e privilégios** · **Objetivo:** entender cada conceito e, em seguida, praticá-lo.
 
-## 1. Conceito em 1 minuto
+> **Regra do curso:** faça no AD ou Entra autorizado quando possível. Operações que exigem licença, aplicativo ou instalação extra só são executadas se já houver o recurso de laboratório. Observação, simulação e implementação real são atividades distintas.
 
-Recertificação exige responsável, prazo, decisão e execução real da revogação.
+## 1. Recertificação
 
-**Onde aparece no trabalho:** Terceirizado saiu, mas continua membro de grupo.
+**O que é?** É verificar periodicamente se alguém ainda precisa de um grupo ou aplicativo.
 
-**Ao terminar você fará:** Simule campanha e comprove revogações.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Em Entra → Groups → grupo **fictício** JML-Financeiro → Members, anote uma lista de três usuários de lab e o owner. Faça tabela `identidade, grupo, manter/revogar, motivo`.
 
-**Ponto positivo:** Detecta acesso esquecido e produz evidência.
+**O que você acabou de fazer?** Você preparou base para revisão e não apenas um inventário.
 
-**Ponto negativo / risco:** Revisão sem execução de decisão vira formalidade; alto volume causa fadiga.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Reduz acesso órfão.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Revisões sem remediação não corrigem risco.
 
-Tabela fictícia com 8 contas e 3 grupos.
+**Fixação:** O que fazer com decisão de revogar que ainda não foi executada?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Revisão real no Entra
 
-## 4. Fazer agora — passo a passo
+**O que é?** É campanha, geralmente sujeita a requisitos de licença/role, que coleta decisões e pode executar remediação.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie CSV `identity,group,owner,decision` com 8 linhas. Atribua `keep` ou `revoke`, registre justificativa, produza relatório e compare grupo antes/depois em planilha. Se licenciado, observe Access Reviews no Entra sem aplicar a terceiros.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Total de decisões e número de revogações confere com a tabela.
+Se o seu tenant **tem o recurso habilitado e licenciado**, entre em Entra ID → Identity governance → Access reviews; explore revisões **de teste** ou crie campanha apenas com autorização. Se indisponível, use a planilha anterior e registre que foi simulação.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você verificou a diferença entre campanha governada e revisão manual.
 
-Deixe uma decisão sem resposta; escreva regra padrão com prazo e responsável.
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Padroniza responsáveis, prazo e auditoria.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Recursos podem exigir licenciamento Governance ou Entra adequado.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Desenhe campanha de 30 dias e KPI `% acessos reavaliados`.
+**Fixação:** Qual o risco de marcar a campanha como encerrada sem conferir revogações?
 
-## 7. Fixação ativa
+## 3. Remediação
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É aplicar a decisão tomada e verificar estado final.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Para o grupo de teste, escolha um usuário fictício com decisão Revogar. Entra → Groups → Members → Remove member. Compare lista antes/depois e registre data.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você **removeu membership efetivamente**, não apenas registrou opinião.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** entender como esta etapa contribui para controle e segurança de identidades.
+
+**Pontos positivos:** Fecha o ciclo de governança.
+
+**Pontos negativos / riscos:** Remoção errada pode bloquear trabalho de usuário legítimo.
+
+**Fixação:** Qual é a evidência final de recertificação bem-sucedida?
+
+
+## Desafio de fixação
+
+Escolha um **segundo usuário ou aplicativo de laboratório** e repita o processo **sem consultar os passos**. Registre o que realmente executou, qual resultado observou e qual limitação encontrou. Nunca compartilhe tokens ou senhas.
+
+[Trilha por fases](../curriculo.md)

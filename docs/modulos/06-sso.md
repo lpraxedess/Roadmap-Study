@@ -1,60 +1,68 @@
-# 06 — SSO: IdP, SP e sessões
+# 06 — Single Sign-On: um login em vários aplicativos
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 2 — SSO e protocolos** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. Conceito em 1 minuto
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-SSO reutiliza a autenticação do provedor de identidade nas aplicações integradas.
+## 1. SSO
 
-**Onde aparece no trabalho:** Duas aplicações exigem login separado e têm políticas inconsistentes.
+**O que é?** É reutilizar uma autenticação de provedor de identidade (IdP) em aplicações integradas.
 
-**Ao terminar você fará:** Desenhe o fluxo de confiança IdP ↔ SP/RP e identifique quem decide acesso.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Entra de teste → Enterprise applications → All applications, abra **um aplicativo de teste existente** → Single sign-on. Identifique método configurado. Se não houver app de teste, explore apenas a interface sem alterar configurações.
 
-**Ponto positivo:** Centraliza políticas e simplifica autenticação.
+**O que você acabou de fazer?** Você encontrou onde uma aplicação é integrada para confiar no IdP.
 
-**Ponto negativo / risco:** Indisponibilidade do IdP amplia impacto; logout pode variar.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Centraliza autenticação e políticas.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Falha do IdP afeta várias aplicações.
 
-Keycloak local opcional; papel e caneta suficientes para diagnóstico.
+**Fixação:** SSO dispensa checar permissões da aplicação?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. IdP e aplicativo (SP/RP)
 
-## 4. Fazer agora — passo a passo
+**O que é?** IdP autentica; SP/RP confia na resposta e precisa autorizar o usuário.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Desenhe usuário→aplicação→IdP→aplicação. Defina duas aplicações fictícias, mesma sessão IdP e sessões próprias em cada SP. Compare estado antes/depois do logout no IdP e liste verificações necessárias.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Você distingue sessão no IdP da sessão no aplicativo; autenticação única não implica acesso autorizado a tudo.
+Para uma aplicação já federada no **tenant de laboratório**, observe Users and groups e veja quem foi atribuído. Com conta de teste **não atribuída**, verifique se há recusa (somente quando a política de app exige assignment).
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você distinguiu autenticação central de atribuição ao aplicativo.
 
-Simule usuário autenticado mas sem role no aplicativo: deve entrar no IdP, porém receber acesso negado no SP.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Controle de acesso centralizado quando configurado.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Permissão de app pode existir fora de grupos e requer revisão.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Defina política SSO para aplicativo crítico com MFA e fallback documentado.
+**Fixação:** Um usuário com login válido necessariamente entra em qualquer app?
 
-## 7. Fixação ativa
+## 3. Sessão e logout
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** Sessão do IdP e sessão do aplicativo podem ter durações e invalidação diferentes.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Entre em duas aplicações **de laboratório** já integradas ao mesmo IdP; abra ambas, saia da primeira e observe se a segunda continua autenticada. Não altere tokens ou políticas de produção.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você verificou comportamento real de sessões, que varia por aplicativo.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Ajuda a projetar experiência de login.
+
+**Pontos negativos / riscos:** Logout de um serviço nem sempre encerra todas as sessões.
+
+**Fixação:** Por que revogar sessões é uma tarefa relevante em Leaver?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)

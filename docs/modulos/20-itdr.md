@@ -1,60 +1,66 @@
-# 20 — ITDR: detectar abuso de identidade
+# 20 — ITDR: detectar e responder a ameaças de identidade
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 5 — Cloud e defesa** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-Identity Threat Detection and Response correlaciona sinais e conduz contenção.
+## 1. Evento de autenticação
 
-**Onde aparece no trabalho:** Múltiplas tentativas MFA e nova sessão suspeita.
+**O que é?** É registro de tentativa e resultado de login de identidade.
 
-**Ao terminar você fará:** Monte timeline e priorize contenção sem criar ataques reais.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+Em Entra **de laboratório**, abra Monitoring & health → Sign-in logs (ou Users → Sign-in logs), selecione uma tentativa de **conta fictícia autorizada** e observe status, app, horário e motivo. Não faça ataques nem force MFA em produção.
 
-**Ponto positivo:** Reduz tempo de identificação e resposta.
+**O que você acabou de fazer?** Você consultou evidência de autenticação real conforme acesso aos logs.
 
-**Ponto negativo / risco:** Falsos positivos; logs incompletos comprometem investigação.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Facilita triagem de incidentes.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Sem retenção/visibilidade suficiente, investigação fica incompleta.
 
-CSV com eventos inventados; nenhum ataque real.
+**Fixação:** Um login falho sozinho prova ataque?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Correlação de eventos
 
-## 4. Fazer agora — passo a passo
+**O que é?** É relacionar sinais do mesmo usuário em sequência de tempo.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie três eventos com timestamps fictícios: `login_fail`, `mfa_fail`, `login_success` para mesmo usuário; ordene por tempo e produza hipótese, evidência, severidade e próxima verificação.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** Relatório contém linha do tempo e distingue evidência de suposição.
+Na própria amostra de logs, filtre usuário de teste e ordene por horário; se não houver dados, monte três eventos explicitamente **fictícios**: login falho, MFA falho, login bem-sucedido. Escreva uma hipótese e como validá-la.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você montou sequência observada ou simulada, sem inventar conclusão.
 
-Adicione usuário diferente no segundo evento: teste se sua correlação por identityId produz falso positivo.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Diminui tempo para identificar padrão anômalo.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Falsos positivos exigem contexto.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Escreva playbook para revogar sessões e resetar credenciais após autorização.
+**Fixação:** Que hipótese faria após muitas falhas seguidas de sucesso?
 
-## 7. Fixação ativa
+## 3. Resposta à ameaça
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É conter risco sem destruir evidências necessárias.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Em cenário **fictício**, liste decisões de resposta: validar alerta → contatar owner → bloquear conta **de laboratório** se confirmado → revogar sessões quando disponível → investigar sinais → restaurar acesso seguro após aprovação. Se executar bloqueio, confirme o objeto antes.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você criou playbook e, opcionalmente, testou bloqueio apenas em lab.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Padroniza tratamento e reduz improviso.
+
+**Pontos negativos / riscos:** Bloqueio precipitado pode causar interrupção de negócio.
+
+**Fixação:** Quando revogar sessões e como verificar efeito?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

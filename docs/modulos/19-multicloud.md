@@ -1,60 +1,66 @@
-# 19 — Cloud IAM: políticas e confiança AWS
+# 19 — AWS e Azure: compare modelos de IAM
 
-**Tempo estimado:** 45–90 minutos · **Nível:** progressivo · **Modo:** prática local primeiro
+**Fase 5 — Cloud e defesa** · **Objetivo:** compreender cada conceito e executar um exercício com resultado verificável.
 
-## 1. Conceito em 1 minuto
+> **Regra:** AD/Entra são as ferramentas principais. Casos que dependem de Azure, AWS, licenças ou app específico só são práticos quando você já tem o ambiente. Simulação e observação **não equivalem** a instalação real.
 
-AWS usa policies e trust relationships, com escopo e avaliação próprios.
+## 1. Principal e política
 
-**Onde aparece no trabalho:** Uma policy AWS permite `Action:*` em `Resource:*`.
+**O que é?** AWS policies descrevem ações/recursos; Azure RBAC usa roles e escopos, com semântica distinta.
 
-**Ao terminar você fará:** Revise policy sem precisar criar conta AWS.
+**Prática — faça agora:**
 
-## 2. Por que usar? Vantagens e limites
+No Azure **de teste**, consulte uma atribuição Reader existente. Em editor local, escreva uma policy AWS fictícia que permite apenas `s3:GetObject` no bucket `arn:aws:s3:::iam-treino/*`. **Não precisa conta AWS** para a comparação.
 
-**Ponto positivo:** Transferir conceito de menor privilégio entre nuvens.
+**O que você acabou de fazer?** Você identificou o mesmo objetivo de menor privilégio em modelos distintos.
 
-**Ponto negativo / risco:** Não existe equivalência literal perfeita entre funções AWS/Azure.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Quando aplicar:** quando houver necessidade mensurável de controle, rastreabilidade ou integração no cenário acima. Não introduza complexidade sem requisito.
+**Pontos positivos:** Transferência de princípios entre clouds.
 
-## 3. Preparar o ambiente
+**Pontos negativos / riscos:** Sintaxe e avaliação não são intercambiáveis.
 
-Editor de texto e JSON fictício.
+**Fixação:** Pode copiar JSON de policy AWS para Azure RBAC?
 
-**Antes de começar:** use somente contas e dados fictícios; salve estado inicial; defina como desfazer alterações. Serviços comerciais e recursos Azure só quando disponíveis e licenciados. Atividades em papel/CSV são **simulações**, não demonstram operação de plataforma real.
+## 2. Trust policy
 
-## 4. Fazer agora — passo a passo
+**O que é?** Em AWS determina quem pode assumir uma role, além das permissões que a role possui.
 
-1. Leia o cenário e escreva em uma frase o resultado esperado.
-2. Prepare o ambiente descrito, sem conceder direitos administrativos extras.
-3. **Execute:** Crie JSON `{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":"s3:GetObject","Resource":"arn:aws:s3:::exemplo-lab/*"}]}`. Compare com uma versão de `Action:*`; indique menor privilégio e o que faltaria no trust de uma role.
-4. Registre comando/configuração e resultado. Não capture senhas, tokens ou dados pessoais.
+**Prática — faça agora:**
 
-**O que deve acontecer:** JSON limitado a leitura no bucket fictício, sem conta AWS.
+Considere role fictícia AWS: apenas uma service principal específica pode assumir role de leitura. Desenhe duas decisões: **quem assume** e **o que faz depois**. Compare com principal/role/scope do Azure.
 
-## 5. Quebre de propósito (apenas laboratório)
+**O que você acabou de fazer?** Você separou confiança de autorização no desenho; **não** assumiu uma role AWS real.
 
-Substitua `s3:GetObject` por `*` e explique escalada de permissão.
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
 
-**Diagnóstico:** localize camada (identidade, autenticação, política, autorização, API ou recurso), identifique evidência do erro e corrija **a causa**, não eleve permissões por conveniência.
+**Pontos positivos:** Evita trust excessivamente aberto.
 
-## 6. Limpar e repetir sem olhar
+**Pontos negativos / riscos:** Wildcard em trust pode ampliar risco de assunção indevida.
 
-Restaure configurações fictícias, arquivos de teste e acessos temporários. **Desafio:** Desenhe AWS role trust policy versus Azure role assignment.
+**Fixação:** Permissão para S3 já concede direito de assumir qualquer role?
 
-## 7. Fixação ativa
+## 3. Revisão de menor privilégio
 
-**Antes de marcar concluído**, responda à pergunta interativa exibida no final desta aula. Justifique a escolha em uma frase e confira a explicação. A atividade é uma verificação conceitual; a competência prática exige executar e diagnosticar o laboratório.
+**O que é?** É reduzir ações e recursos a operações justificadas.
 
-## 8. Evidência mínima (5 itens)
+**Prática — faça agora:**
 
-- [ ] Consigo explicar o conceito e **por que usar**.
-- [ ] Enumero uma vantagem e uma limitação real.
-- [ ] Executei a prática (ou identifiquei explicitamente uma simulação).
-- [ ] Fiz teste negativo e expliquei a causa.
-- [ ] Reverti o estado e consigo repetir sem o roteiro.
+Pegue a policy fictícia e altere `Action: '*'` para `s3:GetObject` e `Resource: '*'` para ARN fictício específico. Faça diff e explique por que o segundo desenho é preferível.
 
-**Critério:** só declare prática concluída quando houver resultados observados. O botão do portal registra estudo pessoal; não é uma certificação.
+**O que você acabou de fazer?** Você revisou policy **offline**, sem tocar em infraestrutura.
 
-[Ir ao currículo](../curriculo.md) · [Guia do aluno](../guia-do-aluno.md)
+**Importância:** saber quando usar este conceito no trabalho de IAM e como medir seu resultado.
+
+**Pontos positivos:** Ajuda a detectar permissões amplas em code review.
+
+**Pontos negativos / riscos:** Permissão restrita demais pode impedir operação legítima.
+
+**Fixação:** O que revisar primeiro numa policy com `Resource:*`?
+
+
+## Desafio da fase
+
+Repita um dos exercícios em **outro objeto fictício** ou caso de teste, sem consultar o passo a passo. Explique as decisões e os limites do que realmente foi executado. Não use contas reais nem capture senhas ou tokens.
+
+[Trilha por fases](../curriculo.md)

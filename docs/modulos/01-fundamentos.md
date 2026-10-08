@@ -1,31 +1,68 @@
-# 01 — Fundamentos de identidade: o que é login, grupo e permissão?
+# 01 — Identidade, autenticação e autorização
 
-**Fase 1 — AD e Entra** · **30–50 minutos** · **Ambiente:** AD DS ou Microsoft Entra ID existente · **Não precisa Docker/Python**.
+**Fase 1 — AD e Entra** · **Objetivo:** aprender e executar cada conceito com verificação imediata.
 
-## 1. Entenda o essencial
+> **Ambiente:** AD/Entra já disponível, de laboratório e autorizado. Nem todos os conceitos exigem alteração. Quando o recurso/licença não existe, o exercício é **observação/análise**, não configuração executada.
 
-- **Identidade:** o registro de quem ou o que está acessando (usuário, serviço, dispositivo).
-- **Autenticação:** confirma que o usuário é quem diz ser (senha, MFA, certificado etc.).
-- **Autorização:** decide o que ele pode fazer **depois** de autenticado (grupos, roles, ACLs e políticas).
-- **Grupo:** organiza identidades para atribuir acesso de modo administrável.
-- **Menor privilégio:** conceder somente o acesso necessário, no escopo correto.
+## 1. Identidade
 
-**Por que isso existe?** Uma senha válida não deve abrir qualquer recurso. Separar autenticação de autorização evita acesso excessivo. **Ponto positivo:** controle e auditoria. **Limitação:** grupos mal configurados podem continuar dando acesso desnecessário.
+**O que é?** É o registro que representa uma pessoa ou serviço no diretório.
 
-## 2. Veja na ferramenta que você já usa
+**Prática — faça agora:**
 
-**Se tiver AD DS:** abra **Executar → dsa.msc**. No domínio de laboratório, abra um usuário de teste → **Propriedades → Conta** e depois **Membro de**. Anote separadamente o nome do logon, a condição de conta habilitada e as associações de grupo. **Não edite nenhum objeto nesta primeira atividade.**
+Abra Entra ID → Users → All users, selecione uma conta fictícia autorizada e identifique User principal name, Object ID e Account enabled. Se usar AD, abra dsa.msc → usuário de laboratório → Account.
 
-**Se tiver Entra ID:** acesse https://entra.microsoft.com → **Entra ID → Users → All users** → escolha uma conta fictícia/permitida → observe o estado da conta e a lista de grupos. Depois entre em **Entra ID → Roles and administrators** e veja que roles administrativas não são simplesmente grupos comuns.
+**O que você acabou de fazer?** Você identificou **quem** é o principal. Isso ainda não concede acesso.
 
-**O que conferir:** identidade existe, há atributos e grupos, mas isso **não prova** que ela tenha permissão em toda aplicação. Um app precisa usar essas informações em sua própria política.
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
 
-## 3. Teste de raciocínio
+**Pontos positivos:** Centraliza o gerenciamento de contas.
 
-Cenário: João autentica corretamente, porém não consegue acessar a pasta do Financeiro. Investigue o recurso e os grupos/ACLs, **não redefina a senha como primeira ação**.
+**Pontos negativos / riscos:** Contas duplicadas e atributos errados confundem a identificação.
 
-Responda: qual foi a autenticação, qual seria a autorização e que evidência você consultaria?
+**Fixação:** Qual campo distingue o objeto mesmo que seu nome de exibição mude?
 
-**Desafio:** explique a diferença entre usuário, grupo, papel e permissão com um exemplo de help desk. Não altere senhas ou permissões reais.
+## 2. Autenticação
 
-**Próximo:** [02 — Active Directory](02-ad.md) ou [03 — Microsoft Entra](03-entra.md).
+**O que é?** É comprovar a identidade com senha, MFA ou outros métodos.
+
+**Prática — faça agora:**
+
+No Entra, abra Sign-in logs de um login **do laboratório** que sua função permita consultar; observe usuário, aplicativo, horário e status. Sem acesso aos logs, autentique a própria conta de teste em uma janela privada e observe o resultado, sem registrar senha.
+
+**O que você acabou de fazer?** Você testou **se o usuário consegue comprovar quem é**.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Reduz falsificação de identidade quando usa controles adequados.
+
+**Pontos negativos / riscos:** Senha correta não significa acesso autorizado a toda aplicação.
+
+**Fixação:** Uma autenticação com sucesso garante permissão em todos os sistemas? Por quê?
+
+## 3. Autorização
+
+**O que é?** Define o que uma identidade pode fazer num recurso.
+
+**Prática — faça agora:**
+
+Abra o grupo JML-Financeiro de laboratório no Entra ou AD e confira seus membros. Compare a associação ao grupo com a ACL de uma pasta de teste ou o assignment de uma aplicação fictícia, se houver; não altere produção.
+
+**O que você acabou de fazer?** Você distinguiu **ser membro de grupo** de **ter acesso ao recurso**, que precisa consultar esse grupo.
+
+**Importância:** aprender a ligar um conceito de IAM a uma ação verificável do dia a dia.
+
+**Pontos positivos:** Implementa menor privilégio.
+
+**Pontos negativos / riscos:** Membro de grupo sem vínculo com aplicativo pode não obter permissão nenhuma.
+
+**Fixação:** Como investigaria usuário que autentica mas recebe acesso negado?
+
+
+## Desafio da aula
+
+Sem copiar os passos, reproduza o conceito em **outra identidade fictícia**, ou analise outro aplicativo de teste quando a aula for de leitura. Registre **o que fez, o que encontrou, qual falha observou e como verificou**. Nunca salve senhas/tokens.
+
+**Conclua somente após explicar a teoria e demonstrar o resultado observado.** O quiz do portal ajuda a revisar, mas não substitui a prática.
+
+[Trilha por fases](../curriculo.md)
