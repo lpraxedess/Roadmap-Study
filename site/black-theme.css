@@ -1,0 +1,56 @@
+/* BLACK THEME — preto predominante, cinza neutro, contraste alto. Sempre escuro. */
+:root {
+  color-scheme: dark;
+  --bg: #050505;
+  --panel: #101010;
+  --panel2: #161616;
+  --panel3: #202020;
+  --text: #f5f5f5;
+  --muted: #b7b7b7;
+  --faint: #929292;
+  --stroke: #303030;
+  --teal: #70d7ba;
+  --blue: #b2c4dd;
+  --purple: #cabfdf;
+  --green: #85d6ac;
+  --shadow: 0 18px 50px #0009;
+}
+body { background: #050505; }
+.sidebar { background: #090909; }
+.topbar, .footer { background: #080808; }
+.hero { background: linear-gradient(135deg,#171717,#090909 80%); border-color: #363636; }
+.hero:before { border-color:#404040; box-shadow:0 0 0 52px #ffffff06,0 0 0 105px #ffffff04; }
+.hero p,.hero .hero-symbol {color:#bdbdbd}
+.brand-mark { background:linear-gradient(145deg,#292929,#101010); color:#8edfc3; border:1px solid #454545; }
+.nav-link {color:#bcbcbc}
+.nav-link:hover {background:#202020}
+.nav-link.active {background:#1e2b27;color:#9bedd0}
+.nav-count, .sidebar-progress, .stat, .course-card, .lesson-row, .reading-side, .reader-card,
+.recommend, .search-bar, .icon-btn, .filter-btn, .stat .stat-icon, .status-chip,
+.quiz-panel, .notes-panel {background-color:#111; border-color:#303030}
+.sidebar-progress { background:#131313 }
+.sidebar-progress .meter, .meter {background:#2a2a2a}
+.meter>span {background:linear-gradient(90deg,#65c9aa,#a4d9ca)}
+.status-chip.done,.quiz-right {background:#163127;color:#a4ecc8}
+.stat:nth-child(2) .stat-icon,.stat:nth-child(3) .stat-icon,.stat:nth-child(4) .stat-icon {background:#1c1c1c;color:var(--teal)}
+.resource-banner {background:linear-gradient(120deg,#181818,#0b0b0b);border-color:#353535}
+.pill {background:#1b2824;border-color:#466a5e;color:#a4efcb}
+.btn {background:#8ce3c6;color:#0b1713}
+.btn.secondary,.btn.ghost {background:#212121;color:#f0f0f0;border-color:#3d3d3d}
+.btn.ghost {background:transparent}
+.search-bar:focus-within, .filter-btn.active {background:#1b2823;border-color:#528b78;color:#b5efda}
+.article {color:#d2d2d2}
+.article strong {color:#f8f8f8}
+.article h2 {border-color:#323232}
+.article a,.text-link {color:#9fe7cc}
+.article code {background:#262626;color:#b8efd9}
+.article pre {background:#080808;border-color:#363636;color:#d0e5db}
+.article blockquote {background:#181f1c;border-color:#83d6b7;color:#d4ddd9}
+.article th {background:#1c1c1c}
+.quiz-panel,.notes-panel {background:#101010;border-color:#343434}
+.quiz-option {background:#191919;border-color:#393939;color:#e1e1e1}
+.quiz-option.selected-answer {background:#20332b;border-color:#6cbda0}
+.quiz-question,.notes-panel h3 {color:#eeeeee}
+.notes-panel textarea {background:#090909;color:#f0f0f0;border-color:#424242}
+.progress-ring:after {background:#111}
+.avatar {background:#292929;border:1px solid #515151;color:#f1f1f1}

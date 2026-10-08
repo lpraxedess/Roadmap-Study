@@ -1,42 +1,16 @@
-# Laboratório — Provisionamento SCIM 2.0 — API de laboratório
+# Laboratório 03 — SCIM: entenda o ciclo antes da automação
 
-**Objetivo:** realizar o fluxo principal e diagnosticar uma falha com recursos gratuitos, quando possível.
+**Não comece instalando ferramentas aleatórias.** Primeiro faça o [laboratório 09 — SCIM em localhost](09-scim-mock.md), que contém comandos para instalar/iniciar um servidor didático, criar usuário, consultar, desativar e testar erros 400/404/409.
 
-## Requisitos
+## O que é praticado
 
-Um servidor de teste SCIM que aceite Users/Groups; curl ou cliente HTTP. Escolha versões suportadas, reserve capacidade de CPU/RAM e mantenha serviços acessíveis somente localmente. Nunca execute em ambiente corporativo sem autorização.
+1. Subir a API SCIM didática em `127.0.0.1:8787`.
+2. Criar um usuário via `POST /Users`, comprovar `201`.
+3. Consultar `GET /Users` e comprovar que o objeto existe.
+4. Desativar com `PATCH /Users/{id}` e confirmar `active=false`.
+5. Testar duplicidade, recurso ausente e requisição inválida.
+6. Encerrar o serviço e descartar os dados em memória.
 
-## Preparação
+**Limite importante:** o mock ensina *fluxo* SCIM por HTTP, mas não fornece autenticação, grupos, paginação ou conformidade SCIM integral. A integração posterior com um IdP real exige configuração adicional.
 
-1. Registre data, versão, dependências e topologia.
-2. Use conta e dados exclusivamente fictícios.
-3. Anote estado inicial, procedimento de reset e limite de custo.
-4. Leia documentação oficial da **versão instalada** antes de reproduzir comandos específicos.
-
-## Implementação guiada
-
-Configure endpoint local com autenticação fictícia; leia o schema /Schemas e GET /Users; crie usuário via POST /Users com userName e active; altere active via PATCH e consulte o resultado. Se o servidor escolhido não suportar PATCH, documente a limitação e execute PUT.
-
-## Validação positiva
-
-Comprove que a ação autorizada funciona. Salve a sequência executada, resposta esperada e observação real. Não inclua códigos de autorização, tokens, senhas nem dados pessoais.
-
-## Teste negativo e diagnóstico
-
-Envie payload sem userName ou atributo não suportado; compare status HTTP e objeto de erro SCIM.
-
-Investigue identidade, configuração, escopo, certificados/tokens, autorização, logs e horário; evite dar permissão administrativa apenas para contornar a falha.
-
-## Entrega obrigatória
-
-Tabela GET/POST/PATCH, request/response sanitizados, teste de idempotência e desativação. Anote causa-raiz e uma medida preventiva.
-
-## Critérios de conclusão
-
-- [ ] Explico os componentes sem depender de um produto específico.
-- [ ] Repito a integração de maneira reproduzível.
-- [ ] Demonstro falha, investigação e correção.
-- [ ] Reestabeleço estado seguro e limpo recursos temporários.
-- [ ] Entrego evidências sanitizadas.
-
-[Voltar ao currículo](../curriculo.md)
+[Ir para o procedimento completo e executável](09-scim-mock.md)

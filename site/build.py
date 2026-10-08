@@ -93,7 +93,7 @@ def main() -> None:
     assert len([x for x in items if x["kind"] == "projeto"]) == 6
     assert all(x.get("quiz") for x in items if x["kind"] == "aula"), "Questão de fixação ausente"
     (OUT / "assets" / "content.json").write_text(json.dumps(items, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
-    for name in ("app.js", "styles.css"):
+    for name in ("app.js", "styles.css", "black-theme.css"):
         shutil.copyfile(ROOT / "site" / name, OUT / "assets" / name)
     shutil.copyfile(ROOT / "site" / "index.html", OUT / "index.html")
     (OUT / ".nojekyll").write_text("", encoding="utf-8")

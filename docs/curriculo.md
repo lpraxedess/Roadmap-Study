@@ -36,11 +36,10 @@ O percurso respeita experiência prévia com AD e Entra ID. Faça diagnóstico p
 - [02 — SAML 2.0 — Keycloak e SP de teste](labs/02-saml-keycloak.md)
 - [03 — Provisionamento SCIM 2.0 — API de laboratório](labs/03-scim-local.md)
 - [04 — Microsoft Graph — consultas delegadas e diagnóstico](labs/04-graph-readonly.md)
-- [05 — JML reproduzível — CSV e PowerShell](labs/05-jml-simulacao.md)
+- [05 — JML manual: usuários e grupos reais no Keycloak](labs/05-jml-simulacao.md)
 - [06 — Acesso privilegiado — desenho e validação](labs/06-pam-lab.md)
 - [07 — JML com Python e dry-run](labs/07-jml-python.md)
 - [08 — Simulação local de PIM: ativação JIT, expiração e auditoria](labs/08-pim-simulador.md)
-
 - [09 — SCIM em localhost](labs/09-scim-mock.md)
 - [10 — Segregação de funções no terminal](labs/10-sod-offline.md)
 
