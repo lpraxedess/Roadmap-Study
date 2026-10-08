@@ -1,0 +1,28 @@
+name: Publicar índice IAM
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Preparar site
+        run: |
+          mkdir dist
+          cp index.html dist/index.html
+          touch dist/.nojekyll
+      - name: Instalar ferramenta de publicação
+        run: python -m pip install 'ghp-import>=2.1,<3'
+      - name: Publicar na branch gh-pages
+        run: ghp-import -n -p -f dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
