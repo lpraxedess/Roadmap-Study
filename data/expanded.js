@@ -269,3 +269,30 @@ const ACCESS_NOTES = {
  24:'Purview depende de planos Microsoft 365 / Purview e de workload compatível.',
  25:'Exportação, Log Analytics e retenção podem gerar cobrança.'
 };
+
+
+/* Revisão de qualidade dos 123 tópicos herdados. Os critérios de domínio
+ * são vinculados a ações concretas, sem remover o conteúdo existente. */
+const CONCEPT_REVISIONS = {
+ 'JWT':'JWT é um formato de token com claims que pode ser assinado e/ou criptografado; não equivale a OAuth ou OIDC. Um access token não precisa ter formato JWT e a aplicação não deve assumir isso.',
+ 'Access Token':'Access token é emitido para acesso a um recurso/API; a API valida emissor, público, escopo/papéis, validade e políticas necessárias. Não é um ID token.',
+ 'ID Token':'ID token no OIDC fornece informações de autenticação ao cliente; não substitui a decisão de autorização da API nem serve como bearer token para recursos arbitrários.',
+ 'Scopes':'Scopes representam permissões delegadas expostas por uma API; sua presença não substitui validação de ownership e autorização sobre o objeto.',
+ 'Roles Entra ID':'Funções administrativas do Entra protegem objetos e operações do diretório. Não confundir com Azure RBAC nem com roles internas de aplicativos.',
+ 'SSO':'SSO reutiliza confiança e autenticação em aplicativos, mas cada aplicação continua responsável por aplicar autorização a seus próprios recursos.',
+ 'RBAC':'RBAC relaciona papéis a conjuntos de permissões. Escopos, herança, conflitos e permissões efetivas variam entre implementações e precisam de teste.',
+ 'Zero Trust':'Zero Trust é estratégia arquitetural fundamentada em verificação explícita, menor privilégio e pressuposto de comprometimento; não é um produto.',
+ 'SCIM Users':'SCIM padroniza recursos de identidade para provisionamento; criar conta não equivale a autenticar nem automaticamente conceder autorização na aplicação.',
+ 'SCIM Groups':'Grupos SCIM sincronizam associações no sistema de destino. O significado de cada grupo deve ser acordado com a lógica de autorização da aplicação.',
+ 'Graph API e federação híbrida':'Microsoft Graph é a API de gerenciamento de objetos Microsoft; sincronização e federação híbrida são arquiteturas diferentes e precisam ser estudadas separadamente.',
+ 'MFA Entra ID':'MFA eleva a barreira de autenticação, mas métodos baseados em código e push podem ser vulneráveis a phishing; compare propriedades de resistência.'
+};
+topicGuides.slice(0,16).forEach((section, m) => section.forEach((g, i) => {
+ const name = DATA.modules[m][i+3];
+ const p = practicalGuides[name];
+ if (CONCEPT_REVISIONS[name]) g.concept = CONCEPT_REVISIONS[name];
+ if (/^Explique como /i.test(g.verify) && p && p.steps.length) {
+   g.verify = 'Critério de aceite: ' + p.steps[0] + '; ' +
+      p.steps[p.steps.length-1] + '. Entregue evidência sanitizada do resultado, um teste negativo ou caso de falha e a causa/correção documentadas.';
+ }
+}));
