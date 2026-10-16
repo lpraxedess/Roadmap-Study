@@ -1,0 +1,21 @@
+name: Validar IAM Atlas
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar sintaxe
+        run: |
+          node --check assets/app.js
+          node --check data/catalog.js
+          node --check data/expanded.js
+      - name: Validar currículo e referências
+        run: node --test tests/catalog.test.mjs
