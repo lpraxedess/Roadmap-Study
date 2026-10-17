@@ -24,7 +24,7 @@
 
 /* IAM Atlas · Interface v2 — layouts menores e maior contraste */
 :root{--bg:#070a0b;--panel:#101719;--surface:#172225;--line:#2b3b3d;--text:#edf6f3;--muted:#aebdba;--accent:#81e6c6;--radius:14px;color-scheme:dark}
-html{scroll-behavior:smooth}body{font:15px/1.62 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-width:320px}
+html{scroll-behavior:smooth}body{font:16px/1.62 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-width:320px}
 a{color:#aaf2dc}h1{line-height:1.15}h2,h3{line-height:1.35}*:focus-visible{outline:3px solid var(--accent)!important;outline-offset:3px}
 .app{grid-template-columns:252px minmax(0,1fr);max-width:1920px;margin:auto}
 .side{background:#0b1011;padding:28px 18px;z-index:5}
@@ -130,3 +130,5 @@ a{color:#aaf2dc}h1{line-height:1.15}h2,h3{line-height:1.35}*:focus-visible{outli
  .step-row{padding:12px}.topic-next .btn{flex:1}.cert-heading{align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{scroll-behavior:auto!important}}
+
+@media print{.side,.topbar,.hero-actions,.topic-toolbar,.topic-next,.menu-toggle,.favorite-btn{display:none!important}.app{display:block}.content{max-width:none;padding:0}.study-section{break-inside:avoid}.study-section>summary{background:#fff;color:#111}.guide-surface,.study-assessment{break-inside:avoid}}
