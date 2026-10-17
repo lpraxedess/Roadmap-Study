@@ -15,7 +15,13 @@ function sectionTitle(title,desc,eyebrow){return el("div",{},[text("div",eyebrow
 function btn(label,click,cl="btn"){let x=el("button",{type:"button",class:cl,text:label});x.onclick=click;return x}
 function card(title,body){return el("div",{class:"guide-card"},[text("h3",title),text("p",body)])}
 function meter(p){let box=el("progress",{class:"progress",max:"100",value:String(p)});return box}
-function navigate(next){if(next==="content")next="roadmap";if(next==="review"||next==="settings")next="dashboard";view=next;const route=next==="skill"?"topic/"+activeModule+"/"+activeSkill:next==="module"?"module/"+activeModule:next==="labs"&&activeLab?"lab/"+activeLab:next;if(location.hash.slice(1)!==route)history.pushState(null,"",location.pathname+location.search+"#"+route);document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===(next==="skill"||next==="module"?"roadmap":next)));render();window.scrollTo({top:0,behavior:"auto"})}
+function navigate(next){
+ if(next==="labs"){
+   const entry=Object.entries(TOPIC_PRACTICE).find(([k,rs])=>rs.some(ref=>ref.labId===activeLab));
+   if(entry){[activeModule,activeSkill]=entry[0].split("-").map(Number);next="skill"}
+   else next="roadmap";
+ }
+ if(next==="content")next="roadmap";if(next==="review"||next==="settings")next="dashboard";view=next;const route=next==="skill"?"topic/"+activeModule+"/"+activeSkill:next==="module"?"module/"+activeModule:next==="labs"&&activeLab?"lab/"+activeLab:next;if(location.hash.slice(1)!==route)history.pushState(null,"",location.pathname+location.search+"#"+route);document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===(next==="skill"||next==="module"?"roadmap":next)));render();window.scrollTo({top:0,behavior:"auto"})}
 function openModule(m){activeModule=m;return navigate("module")}
 function openSkill(m,s){activeModule=m;activeSkill=s;return navigate("skill")}
 function overview(){let st=stats(),root=el("div");root.append(sectionTitle("Seu progresso em IAM","Um guia objetivo para aprender identidades e acessos. Explore cada assunto, pesquise, pratique e acompanhe sua evolução.","Visão geral"));
@@ -110,13 +116,17 @@ function restoreHash(){
  let val=decodeURIComponent(location.hash.slice(1)),parts=val.split("/");activeLab=null;
  if(parts[0]==="module"&&/^\d+$/.test(parts[1])&&modules[+parts[1]]){activeModule=+parts[1];view="module"}
  else if(parts[0]==="topic"&&/^\d+$/.test(parts[1])&&/^\d+$/.test(parts[2])&&modules[+parts[1]]&&modules[+parts[1]][+parts[2]+3]){activeModule=+parts[1];activeSkill=+parts[2];view="skill"}
- else if(parts[0]==="lab"&&LABS.some(l=>l.id===parts[1])){activeLab=parts[1];view="labs"}
- else if(["dashboard","roadmap","labs","certs"].includes(val)){view=val}else if(val==="content"){view="roadmap"}else if(["review","settings"].includes(val)){view="dashboard"}
+ else if(parts[0]==="lab"&&LABS.some(l=>l.id===parts[1])){
+  const entry=Object.entries(TOPIC_PRACTICE).find(([key,refs])=>refs.some(ref=>ref.labId===parts[1]));
+  if(entry){[activeModule,activeSkill]=entry[0].split("-").map(Number);view="skill"}
+  else view="roadmap";
+}
+ else if(["dashboard","roadmap","certs"].includes(val)){view=val}else if(val==="labs"){view="roadmap"}else if(val==="content"){view="roadmap"}else if(["review","settings"].includes(val)){view="dashboard"}
  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===(view==="module"||view==="skill"?"roadmap":view)))
 }
 
 function updateTop(){let st=stats();$("#overallTop").textContent=st.progress+"% de domínio estimado"}
-function render(){updateTop();const names={dashboard:"Painel",roadmap:"Roadmap",module:modules[activeModule][1],skill:modules[activeModule][activeSkill+3],labs:activeLab?"Laboratório AtlasCorp":"Laboratório AtlasCorp",certs:"Certificações"};$("#crumb").textContent="ROADMAP - IAM / "+(names[view]||"Painel");document.title=(names[view]||"Painel")+" · ROADMAP - IAM";$("#view").replaceChildren(({dashboard:experienceDashboard,roadmap:experienceRoadmap,module:experienceModule,skill:experienceSkill,labs:experienceLabs,certs:experienceCertifications})[view]())}
+function render(){updateTop();const names={dashboard:"Painel",roadmap:"Roadmap",module:modules[activeModule][1],skill:modules[activeModule][activeSkill+3],certs:"Certificações"};$("#crumb").textContent="ROADMAP - IAM / "+(names[view]||"Painel");document.title=(names[view]||"Painel")+" · ROADMAP - IAM";$("#view").replaceChildren(({dashboard:experienceDashboard,roadmap:experienceRoadmap,module:experienceModule,skill:experienceSkill,certs:experienceCertifications})[view]())}
 document.querySelectorAll(".navbtn").forEach(b=>b.onclick=()=>{if(b.dataset.view==="labs")activeLab=null;navigate(b.dataset.view);let nav=document.querySelector(".side nav");if(nav)nav.classList.remove("nav-open");let toggle=document.querySelector("#navToggle");if(toggle)toggle.setAttribute("aria-expanded","false")});
 const navToggle=document.querySelector("#navToggle");
 if(navToggle)navToggle.onclick=()=>{const nav=document.querySelector(".side nav");const open=nav.classList.toggle("nav-open");navToggle.setAttribute("aria-expanded",String(open));};
