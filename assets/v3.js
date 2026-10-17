@@ -107,6 +107,14 @@ function uxCertificate(c){
    el('div',{},[text('h3',c.name),text('p',c.full,'muted')]),
    text('span',priority.label,'cert-priority')
  ]),text('p',c.about,'muted'),text('p',c.preparation,'v3-preparation'),text('p',priority.note,'v3-priority-note'));
+ if(c.id==='sc100'){
+  card.append(el('p',{class:'v3-cert-prereq',text:'Pré-requisito formal da certificação Expert: além da SC-100, possuir pelo menos uma certificação Associate aceita pela Microsoft (por exemplo SC-300 ou SC-200; confira a relação oficial atual).'}));
+  card.append(exLink('https://learn.microsoft.com/en-us/credentials/certifications/cybersecurity-architect-expert/','Ver requisitos formais da certificação Expert ↗'));
+ }
+ if(c.id==='sc300'){
+  card.append(el('p',{class:'v3-cert-prereq',text:'A versão em inglês da SC-300 terá atualização prevista para 28/10/2026. Compare seus estudos com os objetivos oficiais vigentes na data do exame.'}));
+  card.append(exLink('https://learn.microsoft.com/en-us/credentials/certifications/resources/study-guides/sc-300','Conferir objetivos oficiais da SC-300 ↗'));
+ }
  const links=el('div',{class:'v3-cert-actions'});
  links.append(exLink(c.url,'Ver programa oficial ↗'));
  const check=el('label',{class:'filter-check'}),input=el('input',{type:'checkbox'});
