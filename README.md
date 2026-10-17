@@ -65,7 +65,7 @@ Abra http://localhost:8000.
 Para verificar com Node 20 ou superior:
 
 ~~~sh
-node --test tests/catalog.test.mjs
+node --test tests/*.test.mjs
 node --check assets/app.js
 node --check data/catalog.js
 node --check data/expanded.js
