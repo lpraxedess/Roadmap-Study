@@ -20,4 +20,4 @@ jobs:
           node --check data/learning.js
           node --check assets/experience.js
       - name: Validar currículo e referências
-        run: node --test tests/catalog.test.mjs
+        run: node --test tests/*.test.mjs
