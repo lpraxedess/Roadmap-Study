@@ -51,11 +51,11 @@ test('prioridade de certificação usa classificação transparente',()=>{
 test('rotas legadas seguem para páginas reais sem perder notas',()=>{
  const result=run([
  "navigate('content');const content=location.hash;",
- "navigate('review');const review=location.hash;",
- "navigate('settings');const settings=location.hash;",
+ "navigate('review');const legacyReviewRoute=location.hash;",
+ "navigate('settings');const legacySettingsRoute=location.hash;",
  "openSkill(9,0);const topic=location.hash;",
  "openLab('lab-02');const lab=location.hash;",
- "JSON.stringify({content,review,settings,topic,lab,legacyKey:KEY,companyKey:COMPANY_STEP_KEY})"
+ "JSON.stringify({content,review:legacyReviewRoute,settings:legacySettingsRoute,topic,lab,legacyKey:KEY,companyKey:COMPANY_STEP_KEY})"
  ].join('\n'));
  assert.equal(result.content,'#roadmap');assert.equal(result.review,'#dashboard');assert.equal(result.settings,'#dashboard');
  assert.equal(result.topic,'#topic/9/0');assert.equal(result.lab,'#lab/lab-02');
