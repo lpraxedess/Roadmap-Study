@@ -1,4 +1,4 @@
-# Auditoria minuciosa do IAM Atlas — 16/10/2026
+# Auditoria minuciosa do ROADMAP - IAM — 16/10/2026
 
 ## Escopo e metodologia
 
@@ -59,3 +59,6 @@ O aluno pode iniciar os laboratórios básicos antes de completar toda a teoria.
 - https://learn.microsoft.com/en-us/purview/get-started-with-sensitivity-labels
 - https://csrc.nist.gov/pubs/sp/800/207/final
 - https://pages.nist.gov/800-63-4/
+
+
+**Atualização de interface (17/10/2026):** o Painel, Conteúdo e Roadmap redundantes foram reorganizados em Painel + Roadmap por três níveis; Revisar e Dados deixaram de ser páginas individuais. O laboratório AtlasCorp reúne 16 capítulos e 94 microprocedimentos. Consulte [o novo runbook](./LABORATORIO-ATLASCORP.md) e o [currículo atualizado](./CURRICULO.md). Esta observação registra a evolução posterior à auditoria original.
