@@ -64,6 +64,9 @@ function experienceDashboard(){
  root.append(nextPanel);
  root.append(exGroupHeading('Percurso de aprendizagem'),text('p','Abra uma fase para ver os módulos. É permitido estudar um assunto fora de ordem quando possuir os pré-requisitos.','muted'));
  root.append(exPhaseSections(false));
+ const follow=el('div',{class:'next-panel space-top'});follow.append(el('div',{},[
+   text('h2','Portfólio e carreira'),text('p','A cada fase, produza diagrama de arquitetura, evidência de acesso permitido/negado e runbook de diagnóstico. O projeto final reúne essas entregas.','muted')
+ ]),btn('Abrir projeto final →',()=>exJumpLab('lab-15'),'btn'));root.append(follow);
  return root
 }
 function exPhaseSections(openFirst){
@@ -78,7 +81,7 @@ function exPhaseSections(openFirst){
  });return wrap
 }
 function experienceRoadmap(){
- const root=el('div');root.append(sectionTitle('Mapa de formação IAM','28+ módulos progressivos, sem bloquear exploração. Cada fase conecta os fundamentos aos laboratórios aplicados.','TRILHA DE APRENDIZAGEM'));
+ const root=el('div');root.append(sectionTitle('Mapa de formação IAM','29 módulos progressivos, sem bloquear exploração. Cada fase conecta os fundamentos aos laboratórios aplicados.','TRILHA DE APRENDIZAGEM'));
  root.append(exPhaseSections(false));root.append(el('div',{class:'next-panel space-top'},[
   el('div',{},[text('h2','Prática paralela'),text('p','Não espere concluir todos os módulos teóricos para praticar. Cada laboratório aponta os assuntos necessários.','muted')]),
   btn('Explorar os laboratórios →',()=>{activeLab=null;navigate('labs')},'btn primary')
