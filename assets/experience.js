@@ -64,7 +64,7 @@ function experienceSkill(){
  const m=activeModule,s=activeSkill,key=id(m,s),name=modules[m][s+3],
        info=LESSONS[key],root=el('div',{class:'lesson-page'});
  if(!info)return sectionTitle('Conteúdo indisponível','A aula não está cadastrada.','ROADMAP');
- const theory=TOPIC_THEORY[name]||{},
+ const theory=TOPIC_LEARNING[key]||{},
        topicPractical=TOPIC_PRACTICE[key]||[],
        level=ROADMAP_LEVELS.find(t=>t.ids.includes(m));
  root.append(btn('← '+modules[m][1],()=>openModule(m),'back-link'));
@@ -75,9 +75,9 @@ function experienceSkill(){
  ]));
  const concepts=el('section',{class:'lesson-explanation'});
  const parts=[
-  {title:'O que é?',description:theory.definition||info.knowledge},
-  {title:'Para que serve?',description:theory.purpose||info.significance},
-  {title:'Como funciona?',description:theory.mechanism||info.context}
+  {title:'O que é?',description:theory.definition},
+  {title:'Para que serve?',description:theory.purpose},
+  {title:'Como funciona?',description:theory.mechanism}
  ];
  parts.forEach((part,i)=>{
   concepts.append(el('div',{class:'lesson-concept'},[
@@ -85,13 +85,21 @@ function experienceSkill(){
    el('div',{},[text('h2',part.title),text('p',part.description)])
   ]));
  });
- if(theory.extra)concepts.append(el('div',{class:'lesson-addendum'},[text('strong','No contexto de IAM: '),text('span',theory.extra)]));
+ if(theory.contrast)concepts.append(el('div',{class:'lesson-addendum'},[text('strong','Ponto de atenção: '),text('span',theory.contrast)]));
  root.append(concepts);
- const caution=exSection('Detalhes técnicos, riscos e diferenças',false);
- caution.append(exBox('Atenção',info.mistake,'guide-surface warning-surface'),
-   exBox('Conexões com outras competências',info.distinct),
-   exBox('Onde este conceito se aplica',info.context));
+ const caution=exSection('Como tomar decisões e evitar falhas',false);
+ caution.append(
+   exBox('Pergunta que um profissional de IAM deve responder',theory.question),
+   exBox('Como investigar e decidir',theory.technique),
+   exBox('Erro a evitar',theory.risk,'guide-surface warning-surface')
+ );
  root.append(caution);
+ const check=exSection('Verifique se você compreendeu',false);
+ check.append(exBox('Cenário de estudo',theory.scenario),
+   exBox('O que deve entregar',theory.evidence),
+   exBox('Critério de competência',theory.checkpoint));
+ if(!topicPractical.length)check.append(text('p','Este exercício pode ser respondido com análise, diagrama ou explicação; não implica alterar seu tenant.','muted'));
+ root.append(check);
  if(topicPractical.length){
   const stage=el('section',{class:'lesson-atlascorp'});
   stage.append(el('header',{class:'lesson-atlascorp-head'},[
@@ -107,7 +115,8 @@ function experienceSkill(){
   const summary=text('p','','lesson-progress');
   const setStatus=()=>{
    const completed=topicPractical.filter(ref=>(companyStepState[ref.labId]||{})[ref.taskIndex]===true).length;
-   summary.textContent=completed+' de '+topicPractical.length+' configurações ou verificações concluídas';
+   const supported=topicPractical.filter(ref=>{let ev=practiceProof[stableTaskKey(ref.labId,ref.taskIndex)];return (companyStepState[ref.labId]||{})[ref.taskIndex]===true&&!!ev&&ev.mode==='real'}).length;
+   summary.textContent=completed+'/'+topicPractical.length+' etapas marcadas · '+supported+' executadas no produto (autodeclarado)';
   };
   setStatus();summary.setAttribute('role','status');stage.append(summary);
   for(const [labId,indices] of taskGroups){
@@ -122,9 +131,12 @@ function experienceSkill(){
    for(const taskIndex of indices){
     const task=chapter.tasks[taskIndex],
           done=(companyStepState[labId]||{})[taskIndex]===true;
-    const block=el('details',{class:'lesson-step'});block.open=!done;
+    const block=el('details',{class:'lesson-step'});block.open=!done&&taskIndex===indices.find(i=>(companyStepState[labId]||{})[i]!==true);
     const heading=text('summary',task.title);block.append(heading);
     const body=el('div',{class:'lesson-step-body'});
+    if(taskIndex>0&&(companyStepState[labId]||{})[taskIndex-1]!==true){
+      body.append(el('p',{class:'lesson-preflight',text:'Sequência recomendada: antes desta etapa, revise "'+chapter.tasks[taskIndex-1].title+'". O estudo não está bloqueado, mas o ambiente deve possuir as configurações anteriores.'}));
+    }
     for(const [label,value] of [
       ['Onde configurar',task.path],
       ['Como configurar',task.action],
@@ -145,8 +157,25 @@ function experienceSkill(){
       persist();setStatus();
       block.classList.toggle('completed',input.checked);
     };
-    checked.append(input,text('span','Realizei esta etapa e registrei o resultado. Se foi apenas simulação, informarei isso nas anotações.'));
+    checked.append(input,text('span','Marquei esta etapa e documentei o resultado no ambiente adequado.'));
     body.append(checked);
+    const evidenceKey=stableTaskKey(labId,taskIndex),past=practiceProof[evidenceKey]||{};
+    const evidence=el('div',{class:'lesson-evidence'});
+    evidence.append(text('strong','Como esta etapa foi estudada?'));
+    const mode=el('select',{class:'field','aria-label':'Modalidade de execução: '+task.title});
+    [['','Selecione a modalidade'],['real','Executei em serviço real de laboratório'],['simulado','Simulei tecnicamente'],['teorico','Somente estudei / analisei']].forEach(([value,title])=>mode.append(el('option',{value,text:title})));
+    mode.value=past.mode||'';
+    const proofNote=el('textarea',{class:'field lesson-proof-note',maxlength:'2500','aria-label':'Evidência e diagnóstico da tarefa: '+task.title,placeholder:'Evidência sanitizada, objeto usado, cenário permitido/negado, problema e correção. Não inclua senhas, tokens ou dados pessoais.'});
+    proofNote.value=past.note||'';
+    function updateEvidence(){
+      practiceProof[evidenceKey]={mode:mode.value,note:proofNote.value.slice(0,2500)};
+      persist();setStatus();
+    }
+    mode.onchange=updateEvidence;
+    proofNote.onchange=updateEvidence;
+    proofNote.onblur=updateEvidence;
+    evidence.append(mode,proofNote);
+    body.append(evidence);
     block.append(body);group.append(block);
    }
    stage.append(group);
@@ -154,7 +183,8 @@ function experienceSkill(){
   root.append(stage);
  }
  const materials=exSection('Documentação para aprofundar',false);
- materials.append(exLink(info.reference,'Abrir fonte técnica ↗'));
+ materials.append(exLink(theory.source||info.reference,'Fonte de referência do tema ↗'));
+ (theory.links||[]).forEach(([label,url])=>materials.append(exLink(url,label+' ↗')));
  if(topicPractical.length){
   const seen=new Set;
   topicPractical.forEach(({labId})=>{
@@ -168,7 +198,7 @@ function experienceSkill(){
  root.append(materials);
  const journal=exSection('Meu progresso e anotações',false);
  const status=el('div',{class:'lesson-grade'});
- status.append(text('label','Conhecimento do tema','caption'));
+ status.append(text('span','Minha autoavaliação (não é prova de competência)','caption'));
  const select=el('select',{class:'field','aria-label':'Grau de conhecimento'});
  levels.forEach((l,i)=>select.append(el('option',{value:String(i),text:i+' — '+l})));
  select.value=String(score(m,s));select.onchange=()=>{
@@ -177,7 +207,7 @@ function experienceSkill(){
  };
  status.append(select);
  const notesField=el('textarea',{class:'field notes','aria-label':'Minhas anotações',placeholder:'O que aprendi? Que resultado consegui? Execução real ou simulação? Dúvidas para aprofundar.'});
- notesField.value=notes[key]||'';notesField.oninput=()=>{notes[key]=notesField.value;persist()};
+ notesField.value=notes[key]||'';notesField.onchange=()=>{notes[key]=notesField.value;persist()};notesField.onblur=()=>{notes[key]=notesField.value;persist()};
  journal.append(status,notesField);
  root.append(journal);
  const sequence=ROADMAP_LEVELS.flatMap(l=>l.ids),
