@@ -13,7 +13,7 @@ const CERT_LEVELS=[
 const CERT_FRAMES=['nist','cis','nist53'];
 const CERT_SHOWN=new Set([...CERT_LEVELS.flatMap(l=>l.certs),...CERT_FRAMES]);
 const COMPANY_STEP_KEY='roadmap-iam-company-procedures-v1';
-let companyStepState=read(COMPANY_STEP_KEY);
+let companyStepState={};
 function levelOfModule(id){return ROADMAP_LEVELS.find(l=>l.ids.includes(id))||ROADMAP_LEVELS[2]}
 function goStudy(){navigate('roadmap')}
 function goCompany(id){activeLab=id||null;navigate('labs')}
