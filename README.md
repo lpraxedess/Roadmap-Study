@@ -19,7 +19,7 @@ O projeto possui três áreas: **Painel** (progresso e backup), **Roadmap de est
 
 As fontes oficiais e as anotações ficam em seções opcionais e recolhíveis, sem multiplicar campos obrigatórios.
 
-**Cobertura:** 242 tópicos em 29 módulos; 65 desses tópicos possuem aplicação AtlasCorp. As 94 tarefas da empresa foram redistribuídas por assunto, mantendo suas chaves de progresso e os 16 capítulos como referência de origem.
+**Cobertura:** 242 tópicos em 29 módulos; 63 desses tópicos possuem aplicação AtlasCorp. As 94 tarefas da empresa foram redistribuídas por assunto, mantendo suas chaves de progresso e os 16 capítulos como referência de origem.
 
 ## Evolução da empresa fictícia
 
