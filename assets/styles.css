@@ -288,3 +288,43 @@ h1,h2,h3{color:#f0f5ff}.muted,.caption{color:#a6b4cc}
  .v3-lab-next>.btn{min-width:0;flex:1}
 }
 @media print{.v3-procedure-title,.v3-procedure-body,.v3-level-heading{background:#fff!important;color:#111!important}.v3-procedure,.v3-level-group{break-inside:avoid}.v3-roadmap-search,.v3-primary-actions{display:none}}
+
+
+/* V4 · Aula minimalista. Prática AtlasCorp está dentro do próprio tema. */
+.lesson-page{max-width:1000px;margin:0 auto}
+.lesson-heading{padding:6px 0 14px}
+.lesson-heading h1{font-size:clamp(27px,3vw,42px)}
+.lesson-heading>p{margin-top:10px}
+.lesson-explanation{display:grid;gap:0;border:1px solid #2a4264;border-radius:14px;background:#0b1425;overflow:hidden;margin:15px 0 19px}
+.lesson-concept{display:grid;grid-template-columns:42px minmax(0,1fr);gap:16px;padding:24px 24px;border-bottom:1px solid #233955}
+.lesson-concept:last-child{border-bottom:0}
+.lesson-index{color:#75b0ff;font-size:12px;font-weight:850;letter-spacing:.09em;margin-top:6px}
+.lesson-concept h2{font-size:20px;margin:0 0 10px}
+.lesson-concept p{font-size:15px;line-height:1.78;margin:0;color:#cfdcf0}
+.lesson-addendum{padding:17px 24px;background:#102440;color:#c9ddf6;border-top:1px solid #30527b;line-height:1.7}
+.lesson-atlascorp{border:1px solid #315681;border-radius:15px;margin:26px 0;background:#0b1425;overflow:hidden}
+.lesson-atlascorp-head{padding:25px 26px;background:linear-gradient(105deg,#112d51,#101b32)}
+.lesson-atlascorp-head h2{font-size:23px;margin:6px 0 8px}
+.lesson-atlascorp-head p{font-size:14px;max-width:760px;margin:0}
+.lesson-progress{padding:10px 24px;color:#afd2ff;font-size:13px;font-weight:700;margin:0}
+.lesson-scenario{padding:0 21px 22px}
+.lesson-scenario>h3{font-size:16px;margin:16px 0 4px}
+.lesson-scenario>.muted{font-size:14px}
+.lesson-license{background:#111f34;border-left:3px solid #578bd2;border-radius:7px;padding:12px 15px;margin:13px 0 15px;color:#c7daef;font-size:13px}
+.lesson-step{border:1px solid #2e4b70;border-radius:10px;background:#0d1a2c;margin:10px 0;overflow:hidden}
+.lesson-step>summary{padding:16px 20px;cursor:pointer;font-weight:750;color:#e8f2ff;font-size:14px}
+.lesson-step>summary:hover,.lesson-step[open]>summary{background:#192f4e}
+.lesson-step[open]>summary{border-bottom:1px solid #34557e}
+.lesson-step.completed>summary{color:#afd0ea}
+.lesson-step-body{display:grid;gap:11px;padding:17px 20px}
+.lesson-instruction{padding:8px 0 13px;border-bottom:1px solid #263a57}
+.lesson-instruction:last-of-type{border:0}
+.lesson-instruction strong{color:#9bc9ff;font-size:12px;display:block;margin-bottom:5px}
+.lesson-instruction p{margin:0;line-height:1.75;font-size:14px;color:#d1dfef}
+.lesson-step-check{display:flex;align-items:flex-start;gap:12px;cursor:pointer;color:#c6defb;font-size:13px;line-height:1.6;padding:13px 14px;background:#172c48;border-radius:8px}
+.lesson-step-check input{accent-color:#4a9bff;width:19px;height:19px;flex:none;margin-top:2px}
+.lesson-grade{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:11px 0}
+.lesson-grade .field{min-width:225px}
+.lesson-page .notes{width:100%;max-width:100%;min-height:100px}
+.lesson-page .study-section>summary{font-size:14px}
+@media(max-width:760px){.lesson-concept{grid-template-columns:27px 1fr;gap:11px;padding:18px 13px}.lesson-concept h2{font-size:18px}.lesson-concept p{font-size:14px}.lesson-atlascorp-head{padding:19px 15px}.lesson-atlascorp-head h2{font-size:20px}.lesson-scenario{padding:0 11px 15px}.lesson-progress{padding:12px 15px}.lesson-step>summary{padding:12px 13px}.lesson-step-body{padding:12px}.lesson-addendum{padding:13px 16px}}
