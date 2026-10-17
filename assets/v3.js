@@ -112,7 +112,7 @@ function uxCertificate(c){
  const links=el('div',{class:'v3-cert-actions'});
  links.append(exLink(c.url,'Ver programa oficial ↗'));
  const check=el('label',{class:'filter-check'}),input=el('input',{type:'checkbox'});
- input.checked=certState[c.id]===true;input.onchange=()=>{certState[c.id]=input.checked;persist()};
+ input.checked=certState[c.id]===true||(c.id==='gcps'&&certState.gcpiam===true);input.onchange=()=>{certState[c.id]=input.checked;if(c.id==='gcps')certState.gcpiam=input.checked;persist()};
  check.append(input,text('span','Certificação obtida'));links.append(check);card.append(links);
  let linked=exSection('Ver conhecimentos relacionados',false),box=el('div',{class:'compact-list'});
  (CERT_SKILLS[c.id]||[c.after]).forEach(i=>{if(modules[i])box.append(uxButton(modules[i][1],()=>openModule(i),'btn tiny'))});
