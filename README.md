@@ -17,7 +17,7 @@ O projeto possui três áreas: **Painel** (progresso e backup), **Roadmap de est
 3. **Como funciona?** — mecanismo e decisões técnicas.
 4. **Aplicando na AtlasCorp** — bloco exibido **somente se houver uma tarefa relevante**. Contém cenário da empresa, onde configurar, como executar, justificativa, teste, investigação e registro do resultado na mesma aula.
 
-As fontes oficiais e as anotações ficam em seções opcionais e recolhíveis, sem multiplicar campos obrigatórios.
+As referências oficiais, decisões de segurança, exercícios de verificação e anotações ficam em seções recolhíveis. A leitura principal mantém três blocos, sem transformar todos os fundamentos em laboratórios artificiais.
 
 **Cobertura:** 242 tópicos em 29 módulos; 63 desses tópicos possuem aplicação AtlasCorp. As 94 tarefas da empresa foram redistribuídas por assunto, mantendo suas chaves de progresso e os 16 capítulos como referência de origem.
 
@@ -35,7 +35,7 @@ Use apenas dados fictícios e ambientes autorizados. Teste Conditional Access pr
 
 ## Progresso e privacidade
 
-As marcações, notas e certificados ficam em armazenamento local do navegador; não há validação remota. Os procedimentos AtlasCorp reutilizam as mesmas chaves do laboratório anterior, preservando o histórico de progresso. A importação/exportação JSON e compatibilidade de backups anteriores continuam no Painel. Links antigos de laboratório direcionam ao tema pertinente.
+As marcações, notas e certificações ficam no armazenamento local do navegador; não há validação remota. Cada tarefa AtlasCorp também pode registrar se foi execução real, simulação ou apenas estudo, com uma anotação de evidência sanitizada. Os procedimentos AtlasCorp reutilizam as mesmas chaves do laboratório anterior, preservando o histórico de progresso. A exportação JSON utiliza agora a **versão 8** e inclui evidências detalhadas por tarefa, mantendo compatibilidade de importação com as versões anteriores (2 a 7). Links antigos de laboratório direcionam ao tema pertinente.
 
 ## Estrutura de arquivos
 
@@ -43,6 +43,8 @@ As marcações, notas e certificados ficam em armazenamento local do navegador; 
 - data/catalog.js, data/expanded.js, data/learning.js — conteúdo do currículo.
 - data/company-lab.js — empresa e 94 tarefas práticas.
 - data/topic-practice.js — associação das tarefas aos temas relevantes e explicações adicionais.
+- data/didactics.js — guia de compreensão, decisão profissional, cenário e critério de avaliação para os 242 temas.
+- docs/GUIA-POR-COMPETENCIA.md — manual offline de todas as aulas, fontes e etapas de prática.
 - assets/experience.js — três blocos por aula e etapa AtlasCorp opcional.
 - assets/v3.js — Painel, Roadmap, níveis e certificações.
 - assets/app.js — estado, notas, backup e compatibilidade.
@@ -53,10 +55,19 @@ As marcações, notas e certificados ficam em armazenamento local do navegador; 
 
 Use um servidor HTTP estático na pasta do projeto, por exemplo: python -m http.server 8000.
 
-Com Node.js 22: node --test tests/*.test.mjs.
+Com Node.js 22: node --check data/didactics.js e node --test tests/*.test.mjs.
 
 Fontes: [Microsoft Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing), [Conditional Access](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview), [Entra roles](https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference).
 
 Os manuais completos continuam disponíveis em [Currículo](docs/CURRICULO.md), [AtlasCorp](docs/LABORATORIO-ATLASCORP.md) e [Aulas](docs/REVISAO-ITEM-A-ITEM.md), como consulta opcional. O site não depende de navegação para um laboratório separado.
+
+## Auditoria e implementação
+
+A revisão atual fortalece o estudo dos 242 temas usando as definições existentes, 29 contextos de decisão profissional, exemplos de análise, critérios por competência e fontes verificadas para assuntos críticos. O tema RBAC diferencia direito na aplicação, papéis Entra e Azure RBAC; o tema TCP/IP permanece conceitual. A navegação prática avisa quando outra etapa da empresa ainda não foi marcada.
+
+**Interface:** fundo e superfícies predominantemente pretos; azul aparece para foco, links, estado ativo e ações. As fontes e detalhes técnicos extensos permanecem recolhíveis. A estrutura é acessível por teclado e possui suporte a preferência de movimento reduzido.
+
+**Limites declarados:** a geração de cenários por competência usa o currículo existente e não substitui uma revisão manual por especialista de cada afirmação; a modalidade da execução e a evidência são autodeclaradas; licenças, menus e recursos de nuvem devem ser verificados no tenant próprio; a publicação visual do Pages ainda exige verificação em navegadores desktop/móvel. Consulte [relatório de auditoria](docs/RELATORIO-QUALIDADE-2026-10.md).
+
 
 **Revisão:** outubro de 2026. A profundidade didática das aulas é ampliada progressivamente; consulte sempre fontes oficiais atualizadas.
