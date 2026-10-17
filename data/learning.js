@@ -131,3 +131,126 @@ DATA.modules.forEach((m,i)=>m.slice(3).forEach((name,j)=>{
                    reference:practice.source||guide.url};
  LESSONS[index]=quality;
 }));
+
+/* Laboratórios guiados: ambientes descartáveis, pré-checagens, execução, teste adverso e limpeza. */
+const LAB_DEEP={
+ 'lab-00':{
+ duration:'60–120 minutos',prereq:['Conta de administrador apenas do tenant de laboratório; jamais de empresa real.','Identifique licenças disponíveis e anote o orçamento máximo, mesmo que zero.'],
+ steps:['Desenhe a AtlasCorp com RH, Financeiro, TI, 3 pessoas fictícias e 3 grupos funcionais.','Acesse entra.microsoft.com em tenant de laboratório e localize Entra ID > Overview para registrar apenas tenant ID parcialmente mascarado.','Verifique as licenças disponíveis em Billing/Licenses ou na visão equivalente, sem iniciar compras.','Crie três usuários fictícios no diretório e defina atribuições mínimas; não utilize nomes reais.','Crie grupos GRP-RH, GRP-FIN e GRP-TI e adicione cada usuário ao grupo correspondente.','Crie uma matriz com usuário, ID mascarado, departamento, função e grupos.','Use uma conta administrativa separada; defina como recuperar acesso se a conta de teste ficar bloqueada.','Faça logout e valide que cada usuário de teste existe e possui os grupos pretendidos.','Retire qualquer função elevada adicionada apenas para testar e registre a limpeza.'],
+ expected:'Três usuários e três grupos registrados, associação consistente com o organograma e plano de recuperação/limpeza.',
+ failure:'Se não conseguir criar usuário: revise tenant selecionado, permissão administrativa e limites/licenças; não eleve privilégio em tenant alheio.',
+ cleanup:'Excluir apenas objetos fictícios do laboratório quando terminar o percurso; preserve contas que serão reutilizadas nos laboratórios seguintes.'
+ },
+ 'lab-01':{
+ duration:'90–150 minutos',prereq:['Lab-00 concluído ou ambiente equivalente.','Planilha fictícia de RH com employeeId estável e cargo.'],
+ steps:['Crie CSV sintético employeeId,displayName,department,manager,status sem CPF nem dados reais.','Escolha employeeId como chave de correlação e UPN como identificador de login; documente diferenças.','Simule evento Joiner de uma nova pessoa na planilha.','Crie a conta no Entra e atribua o grupo mínimo de acordo com seu departamento.','Registre grupos e acesso a uma aplicação fictícia antes de qualquer alteração.','Altere o departamento de RH para Financeiro e remova o grupo RH, sem acumular ambos por padrão.','Adicione somente grupos necessários a Financeiro e valide acesso autorizado versus recurso de RH negado.','Simule Leaver, bloqueie login de teste e documente revogação de sessões e permissões; observe que revogação pode não ser imediata em todos os serviços.','Compare relação de empregados ativos com contas no diretório e gere relatório de órfãos.','Faça auditoria de eventos e restaure somente as contas necessárias para os labs seguintes.'],
+ expected:'Matriz JML com acesso concedido, transferido e removido e nenhuma conta ativa sem dono.',
+ failure:'Se grupos não refletirem mudança, cheque sincronização/escopo/fonte autoritativa e atraso de propagação; não crie um segundo usuário para contornar o erro.',
+ cleanup:'Revogar acessos de desligados fictícios; conservar conta neutra para reutilização apenas se necessário.'
+ },
+ 'lab-02':{
+ duration:'90–180 minutos',prereq:['Lab-00 e conta de teste sem privilégios administrativos.','Conditional Access somente com licenciamento elegível; acesso de emergência testado.'],
+ steps:['No Entra, abra Protection > Authentication methods e identifique métodos disponíveis, sem alterar política global.','Associe um método elegível à conta piloto e conclua registro pelo próprio usuário.','Teste login válido e registre hora, aplicativo, método e resultado nos sign-in logs.','Provoque uma senha inválida com poucas tentativas no usuário fictício; evite travar contas reais.','Se houver Entra P1, crie grupo GRP-LAB-CA e inclua exclusivamente a conta piloto.','Crie política Conditional Access de MFA sobre aplicativo de teste em modo Report-only, com contas emergenciais excluídas.','Efetue novo login piloto e observe resultado report-only; anote se a avaliação exigiria MFA.','Valide se haveria impacto em contas de serviço, convidados ou administradores fora do piloto.','Ative somente se o teste estiver correto e existir método de recuperação; repita teste esperado e bloqueio controlado.','Desative/remova a política piloto e compare novamente sign-in logs; registre limitações de licença.'],
+ expected:'Comparação de métodos MFA e logs com decisão real versus report-only, sem bloquear contas de emergência.',
+ failure:'Se não aparecer Conditional Access, primeiro confirme Entra P1; se método não for elegível, confirme Authentication methods policy e grupos.',
+ cleanup:'Desligar política piloto e remover grupo teste; manter apenas os métodos de autenticação planejados para o tenant de laboratório.'
+ },
+ 'lab-03':{
+ duration:'100–180 minutos',prereq:['Entendimento de RBAC versus autenticação.','App de API fictícia ou simulador com GET e PATCH.'],
+ steps:['Defina uma API fictícia /documents/{id} com duas operações: GET e PATCH.','Escreva matriz Leitor:GET, Editor:GET+PATCH, OutroProjeto:nenhum acesso a documentos alheios.','Implemente ou configure validação de role e owner no backend; esconder botões da UI não conta.','Autentique como Leitor e faça GET do documento permitido; registre status HTTP e ID do recurso sintético.','Como Leitor, tente PATCH; confirme 403 em ambiente configurado corretamente.','Como Editor, faça PATCH do documento autorizado e confirme sucesso.','Como Editor, tente acessar documento de outro projeto para testar autorização em nível de objeto.','Compare o modelo de app roles com uma função administrativa Entra e Azure RBAC em exemplos separados.','Remova a role temporária e repita GET/PATCH para verificar mudança efetiva de acesso.','Escreva testes automatizados para negação sem role e objeto de outro projeto.'],
+ expected:'Matriz de papéis e resultados 200/403 coerentes, inclusive validação de ownership no servidor.',
+ failure:'Se acesso negado funcionar apenas na UI, a API está vulnerável; verifique middleware e validação em cada endpoint.',
+ cleanup:'Apagar dados de documentos sintéticos e remover roles temporárias.'
+ },
+ 'lab-04':{
+ duration:'120–210 minutos',prereq:['Conceitos de HTTP, cookies, TLS, OIDC e credenciais de app.','IdP Keycloak local ou Entra e cliente de exemplo autorizado.'],
+ steps:['Crie realm/tenant de teste, usuário fictício e client OIDC com redirect URI exata.','Configure fluxo Authorization Code com PKCE no cliente público e gere valores state e nonce.','Inicie autenticação e anote URLs de autorização, autorização do usuário e callback sem copiar secrets.','Troque code por tokens e identifique audience, issuer, exp, nonce e escopos de dados de teste.','Registre em tabela separada finalidade do ID token e do access token.','Acesse endpoint de API com access token destinado a ele; valide público e escopos.','Altere somente em ambiente de teste a redirect URI para valor não registrado; observe rejeição do IdP.','Simule audience indevida no token e demonstre rejeição pela API de teste.','Se praticar SAML, exporte metadados e verifique assinatura, ACS, entityID e validade das assertions.','Restaure URI correta e finalize sessão, apagando tokens salvos em ferramentas locais.'],
+ expected:'Duas integrações documentadas com validações de segurança e casos de falha intencionais.',
+ failure:'Erros comuns: mismatch de redirect URI, issuer/audience, relógio e ausência de PKCE; compare mensagens dos dois lados.',
+ cleanup:'Revogar secrets temporários, excluir client de teste não reutilizado e limpar histórico com credenciais.'
+ },
+ 'lab-05':{
+ duration:'75–150 minutos',prereq:['Identidade externa diferente de usuário interno.','Tenant de colaboração sob seu controle ou simulação de políticas.'],
+ steps:['Defina cenário de parceiro externo com período de acesso de 30 dias e sponsor do Financeiro.','Especifique qual recurso será compartilhado e quais grupos concedem acesso.','Separe conceitos B2B collaboration, B2B direct connect e contas de cliente.','Revise cross-tenant settings inbound/outbound antes de qualquer convite.','Em ambiente elegível, convide usuário externo de teste e atribua somente grupo/aplicativo necessários.','Confira tipo de usuário, estado de resgate do convite e atribuição ao recurso.','Teste conta convidada autorizada e tentativa de acesso fora de escopo.','Defina prazo, notificações e revisão periódica do sponsor/owner.','Remova grupo e acesso do convidado, valide efeito real da remoção.','Documente etapas e diferença entre apagar convidado e revogar entitlement.'],
+ expected:'Acesso externo temporário com owner, escopo e revogação auditáveis.',
+ failure:'Se convite aceito mas app nega acesso, verifique atribuição, CA aplicável a convidados e políticas de colaboração.',
+ cleanup:'Remover convidados/grupos de teste e convites pendentes desnecessários.'
+ },
+ 'lab-06':{
+ duration:'120–240 minutos',prereq:['Windows/dispositivo descartável autorizado e licença Intune + Entra P1 apropriada.','Contas de emergência excluídas de Conditional Access.'],
+ steps:['Verifique licença atribuída ao usuário piloto e requisitos de inscrição de dispositivo no Intune.','No Entra, identifique se o dispositivo é registered, joined ou hybrid joined; documente diferenças.','Faça enrollment no Intune somente do dispositivo reservado ao laboratório.','Crie política de conformidade para grupo/dispositivo piloto com requisito verificável e reversível.','Force sincronização permitida e observe o estado de compliance e seu horário de atualização.','No Entra, crie CA Report-only exigindo compliant device para aplicativo de teste e grupo piloto.','Faça login em dispositivo conforme e avalie a aba Conditional Access dos sign-in logs.','Simule estado não conforme alterando um requisito seguro e reversível em equipamento de teste.','Compare decisão esperada e executada; preserve evidência dos dois casos.','Desabilite política piloto, restaure requisito do dispositivo e confirme acesso normal.','Desinscreva dispositivo se ele não for necessário para o resto da formação.'],
+ expected:'Sinal de Intune compliance consumido pela política do Entra, com log por cenário e plano de reversão.',
+ failure:'Se CA não recebe estado, cheque inscrição MDM, grupo atribuído, última sync, licença e plataforma suportada.',
+ cleanup:'Remover políticas de teste e enrollment temporário; nunca aplicar retire/wipe em dispositivo pessoal.'
+ },
+ 'lab-07':{
+ duration:'90–180 minutos',prereq:['Assinatura Azure autorizada com orçamento configurado.','Permissão mínima para criar uma identidade gerenciada e recurso descartável.'],
+ steps:['Crie resource group LAB-IAM e configure alertas/orçamento na assinatura de teste.','Defina recurso a ser acessado por uma workload e a operação de leitura necessária.','Crie managed identity apropriada (system-assigned no serviço ou user-assigned) e registre principal ID mascarado.','Crie recurso de teste de baixo custo ou utilize simulação se não houver assinatura.','Atribua papel mínimo à identidade no escopo do recurso, não na assinatura inteira.','Solicite token via mecanismo suportado pela workload, sem secret dentro do script.','Execute operação permitida e observe log do principal e escopo.','Tente operação de gravação sem privilégio e confirme rejeição.','Inspecione Azure Activity Log para operações de role assignment (sujeito à disponibilidade).','Remova role assignment, identidade e recursos criados; confira se o resource group ficou vazio.'],
+ expected:'Acesso por workload sem credencial estática, com papel de leitura e operação de escrita negada.',
+ failure:'AccessDenied: cheque audience do token, principal correto, escopo da role e propagação da atribuição.',
+ cleanup:'Eliminar resource group e recursos faturáveis, com comprovante de exclusão.'
+ },
+ 'lab-08':{
+ duration:'90–150 minutos',prereq:['Ambiente local para API SCIM 2.0 com dados sintéticos.','Conhecimento de JSON e HTTP.'],
+ steps:['Levante um servidor SCIM de laboratório ou mock que siga esquema básico RFC 7643.','Prepare payload de /Users com userName único, externalId e active=true.','Faça POST /Users e anote status, ID gerado e Location sem dados pessoais.','Faça GET /Users/{id} e confira mapeamento entre identificadores de origem e destino.','Execute PATCH para alterar department e confirme resposta com atributo atualizado.','Execute PATCH ou operação suportada que defina active=false e tente autenticação fictícia.','Simule timeout após sucesso do servidor e repita sem criar segunda conta.','Teste tentativa de POST com identificador duplicado e defina política de matching.','Implemente ou descreva paginação e tratamento de HTTP 429/5xx com backoff.','Finalize removendo usuários de teste e escreva contrato de atributos, erros e evidências.'],
+ expected:'SCIM /Users consistente, idempotente e auditável em cenários de criação, alteração e desligamento.',
+ failure:'Se usuários duplicam após timeout, revisar correlação por externalId e leitura prévia antes de retry.',
+ cleanup:'Apagar fixtures e tokens da API; não usar credenciais de aplicação de produção.'
+ },
+ 'lab-09':{
+ duration:'100–180 minutos',prereq:['Inventário de cinco direitos de acesso e owners.','Licença Entra ID Governance/P2 conforme funcionalidade ou simulação auditável.'],
+ steps:['Defina catálogo Financeiro com entitlements Leitor, Editor, Pagamentos e aprovação.','Para cada direito, indique owner, criticidade, validade, justificativa e aprovador.','Modele regra SoD: solicitar pagamento não deve aprovar a mesma operação.','Se habilitado, crie catálogo e access package apontando recursos de laboratório.','Configure política de solicitação, escopo de usuários e duração de concessão.','Simule pedido, aprovação e concessão de acesso temporário.','Teste pedido conflitante SoD e bloqueie ou registre compensação aprovada.','Inicie campanha de Access Review com owner e decisão manter/remover.','Confirme que decisões de remoção foram realmente aplicadas após encerramento/regras da campanha.','Registre trilha de quem solicitou, aprovou, revisou e quando o acesso expirou.'],
+ expected:'Governança com ciclo de solicitação/aprovação/revisão/aplicação e rastros por direito.',
+ failure:'Access review decidido mas acesso ainda ativo: avalie se a campanha terminou e se as decisões foram aplicadas.',
+ cleanup:'Encerrar campanha fictícia e retirar atribuições/grupos de teste.'
+ },
+ 'lab-10':{
+ duration:'100–180 minutos',prereq:['Conta piloto e papel privilegiado restrito; acesso emergencial testado.','Licença PIM elegível ou simulação; Vault local isolado opcional.'],
+ steps:['Escolha função administrativa sensível e liste operações que exigem elevação.','Registre justificativa, approver e janela de ativação JIT.','Se tiver PIM, configure elegibilidade somente da conta administrativa piloto.','Antes de ativar, confirme que operação privilegiada está negada.','Solicite ativação pelo prazo mínimo e cumpra autenticação/justificativa exigida.','Durante ativação, execute apenas uma operação reversível e observe evento de auditoria.','Após prazo, confirme que operação deixa de ser autorizada.','Modele separadamente cofre PAM para segredo sintético e sessão privilegiada controlada.','Documente conta emergencial independente e procedimento de monitoramento.','Remova elegibilidade e confira que nenhuma role permanente ficou atribuída indevidamente.'],
+ expected:'Evidência de privilégio ausente, ativado, expirado e auditoria, sem segredos reais.',
+ failure:'Se a função permanece disponível, cheque roles permanentes herdadas ou associação a grupos elegíveis.',
+ cleanup:'Remover elegibilidade piloto e encerrar Vault de desenvolvimento; não usar credenciais reais.'
+ },
+ 'lab-11':{
+ duration:'90–180 minutos',prereq:['Dados 100% sintéticos e M365/Purview elegível ou simulação.','Proprietário da informação e matriz de classificação definidos.'],
+ steps:['Crie arquivos fictícios: público, interno e confidencial com textos sintéticos.','Defina classificação, responsáveis e regras de compartilhamento de cada documento.','Verifique licenças Purview e papéis mínimos necessários sem usar Global Administrator por padrão.','No portal Purview, crie ou simule rótulo Confidencial com proteção adequada ao escopo.','Aplique rótulo a arquivo de teste, se disponível, e observe efeito real.','Compare leitura por usuário autorizado e não autorizado na aplicação suportada.','Defina política DLP para dado de teste com auditoria antes de bloqueio.','Execute tentativa controlada de compartilhamento e verifique evento ou ausência esperada.','Analise falso positivo/negativo e ajuste escopo da regra em laboratório.','Desative política piloto, revise rótulos e exclua arquivos de teste se necessário.'],
+ expected:'Documento sintético classificado com acesso coerente e DLP revisado sem impactar conteúdo real.',
+ failure:'Rótulo sem criptografia pode não restringir leitura; diferencie classificação de proteção e valide suporte do aplicativo.',
+ cleanup:'Remover escopos/políticas pilotos e arquivos sintéticos, sem afetar conteúdo corporativo.'
+ },
+ 'lab-12':{
+ duration:'75–150 minutos',prereq:['Contas de teste e acesso de leitura aos logs.','KQL em workspace elegível ou amostra estruturada de eventos sintéticos.'],
+ steps:['Faça login válido e inválido controlados na conta fictícia.','Anote hora UTC, usuário, aplicativo, status e correlation ID do evento.','Abra Entra > Monitoring & health > Sign-in logs e filtre pela janela das tentativas.','Compare falha por credencial com falha de Conditional Access em evento apropriado.','Altere associação de grupo piloto e localize alteração em Audit logs.','Selecione campo e tabela KQL conforme schema real do workspace; não assuma nomes em outra fonte.','Execute consulta com where para reduzir período e project para exibir ator, resultado e horário.','Agregue falhas por aplicativo e usuário com summarize count() e explique falsos positivos.','Relacione hipótese, logs e ação corretiva a partir de incidente fictício.','Refaça teste e confirme resolução, preservando somente evidências anonimizadas.'],
+ expected:'Timeline coerente e consulta KQL com registros sintéticos ou tenant de teste, incluindo correção validada.',
+ failure:'Se consulta retorna zero, revise ingestion/retention, timezone, tabela, permissões e filtros antes de concluir que não houve eventos.',
+ cleanup:'Apagar logs exportados com PII e dados de teste após retenção definida.'
+ },
+ 'lab-13':{
+ duration:'120–240 minutos',prereq:['VM Windows Server de avaliação/licenciamento adequado em rede isolada.','DNS de laboratório e snapshot antes das mudanças.'],
+ steps:['Crie rede virtual isolada com servidor e cliente Windows ou Linux de teste.','Instale serviço DNS e AD DS na VM de teste e defina domínio reservado para laboratório.','Promova DC e valide registros DNS SRV necessários à localização de domínio.','Crie OU, usuário e grupo de exemplo; aplique política GPO inofensiva.','Associe cliente ao domínio e obtenha login de usuário de teste.','Execute klist e identifique ticket e servidor de domínio sem compartilhar secrets.','Realize consulta LDAP somente leitura por conta restrita preferindo TLS.','Identifique atributos que serão fontes autoritativas na sincronização híbrida.','Se disponível, teste Entra Connect/Cloud Sync conforme requisitos; caso contrário, desenhe o fluxo e dependências.','Simule troca de departamento no AD e compare evento na nuvem ou no mapeamento teórico.','Desfaça alterações conflitantes e restaure snapshot após coletar evidências.'],
+ expected:'AD com Kerberos, DNS e LDAP válidos e modelo de sincronização claro, sem misturar mecanismos.',
+ failure:'Falha de logon pode envolver relógio, DNS, conectividade de DC e credenciais: diagnostique nessa ordem.',
+ cleanup:'Desconectar VMs da rede e restaurar snapshot/limpar diretório de teste.'
+ },
+ 'lab-14':{
+ duration:'110–180 minutos',prereq:['Conhecimentos OIDC/JWT, role trust e scoping.','Acesso apenas a sandboxes de cloud com controle de custos.'],
+ steps:['Defina pipeline sintético repo/projeto/branch com emissor OIDC e identidade de workload.','Mapeie issuer, audience e subject esperados por trust policy.','Desenhe papel Azure com workload identity federation e role mínima no recurso.','Desenhe papel AWS STS com trust de OIDC e permission policy separada.','Desenhe Google Cloud Workload Identity Pool e service account ou principal autorizado.','Simule token que corresponde ao subject/issuer esperado e observe decisão autorizada.','Simule token de outra branch/projeto e confirme negação prevista.','Compare duração de sessão, escopo e campos registrados em logs de cada cloud.','Identifique recursos que gerariam cobrança, sem criar serviços desnecessários.','Escreva documentação indicando equivalências conceituais e divergências semânticas.'],
+ expected:'Três relacionamentos de confiança documentados e caso adverso de subject/issuer negado.',
+ failure:'Confiança aberta por wildcard amplo deve ser tratada como falha de segurança; limite claims de origem.',
+ cleanup:'Excluir identidades/roles de teste e recursos faturáveis eventualmente criados.'
+ },
+ 'lab-15':{
+ duration:'4–8 horas, distribuídas em sessões',prereq:['Laboratórios anteriores ou documentação de simulação identificada.','Conta de laboratório, owners, exigências de licença, orçamento e rollback.'],
+ steps:['Defina AtlasCorp com RH, Financeiro, TI, parceiros e aplicação interna; registre requisitos de negócio.','Desenhe identidades humanas, convidadas, dispositivo e workload com fontes autoritativas.','Produza modelo de roles, atributos, entitlements, scope e matriz de incompatibilidades SoD.','Implante ou simule usuários, SSO/OIDC e autorização de recursos na aplicação.','Configure um método forte de autenticação e avalie políticas CA em grupo piloto.','Integre sinal de compliance de dispositivo Intune ou documente simulação como tal.','Conceda leitura de recurso Azure a workload sem secret estático, com teste de escrita negada.','Estruture access package/aprovação, access review, conta emergencial e PIM em modo licenciado ou simulado.','Classifique documento de teste com rótulo Purview e defina política de dados quando habilitado.','Execute Joiner, Mover e Leaver com trilha de aprovação e retirada de acessos.','Provoque duas falhas controladas (OIDC inválido e CA/role negada) e faça investigação documentada com logs.','Apresente ameaças, controles, impacto de licença/custo, plano de rollback e indicadores operacionais.','Revise evidências removendo IDs reais, tokens e dados pessoais antes de compartilhar portfólio.'],
+ expected:'Portfólio completo com arquitetura, matriz de permissões, fluxos JML, testes positivos/negativos e diagnóstico.',
+ failure:'Componentes indisponíveis devem ser rotulados como simulação e não como experiência operacional executada.',
+ cleanup:'Remover recursos cloud de teste, políticas e permissões piloto; registrar custos finais.'
+ }
+};
+LABS.forEach(lab=>{
+ const p=LAB_DEEP[lab.id];if(!p)throw Error('Detalhamento ausente: '+lab.id);
+ lab.prerequisites=p.prereq;lab.steps=p.steps;lab.expected=p.expected;lab.troubleshooting=p.failure;
+ lab.cleanup=p.cleanup;lab.duration=p.duration;
+ lab.safety='Ambiente autorizado e contas fictícias. Não compartilhe tokens, senhas, dados pessoais ou capturas identificáveis. Faça backup e registre rollback antes de mudar políticas.';
+ lab.evidence=lab.evidence.concat(['Teste adverso, diagnóstico e correção registrados.','Checklist de limpeza/rollback concluído ou justificado.']);
+});
