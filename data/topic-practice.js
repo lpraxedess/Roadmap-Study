@@ -23,8 +23,7 @@ const TOPIC_TASK_NAMES={
  'Sessões, cookies e revogação','Conditional Access',
  'Logs Entra ID'],
  'lab-03':[
- 'RBAC','Modelagem de roles','Enterprise Applications',
- 'Testes de autorização no backend','RBAC'],
+ 'RBAC','RBAC','RBAC','RBAC','RBAC'],
  'lab-04':[
  'App Registrations','Authorization Code com PKCE','ID Token',
  'Audience','Enterprise Applications'],
