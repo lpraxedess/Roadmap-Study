@@ -205,3 +205,142 @@ function experienceSkill(){
  if(next)nav.append(btn('Próxima aula →',()=>openSkill(...next),'btn primary'));
  root.append(nav);return root
 }
+
+
+function experienceLabs(){
+ const root=el('div'),lab=LABS.find(x=>x.id===activeLab);
+ if(!lab){
+   root.append(sectionTitle('Laboratórios progressivos',
+   'Roteiros reproduzíveis com preparação, execução, diagnóstico, evidências e limpeza. Marque realização real, simulação ou apenas estudo.','PRÁTICA IAM'));
+   const done=LABS.filter(l=>l.evidence.every((_,j)=>(labState[l.id]||{})[j]===true)).length;
+   root.append(el('div',{class:'next-panel'},[
+     el('div',{},[text('strong',done+' de '+LABS.length+' laboratórios com evidências autodeclaradas'),
+       text('p','Todos são ambientes de aprendizagem. Não utilize credenciais corporativas ou recursos de produção.','muted')]),
+     btn('Preparar meu laboratório →',()=>exJumpLab('lab-00'),'btn primary')
+   ]));
+   const list=el('div',{class:'lab-list'});
+   LABS.forEach((l,i)=>{
+     const total=l.steps.length,steps=(labStepState[l.id]||{}),
+     marked=l.steps.filter((_,j)=>steps[j]===true).length;
+     const row=el('button',{type:'button',class:'lab-tile'});
+     row.append(text('span',String(i+1).padStart(2,'0')+' · '+l.phase,'tile-kicker'),
+       text('strong',l.title),text('small',l.goal),
+       el('div',{class:'tile-bottom'},[text('span',marked+'/'+total+' etapas executadas'),text('span',labModes[l.id]||'Não classificado','quiet-badge')]),meter(Math.round(marked/total*100)));
+     row.onclick=()=>exJumpLab(l.id);list.append(row)
+   });root.append(list);return root
+ }
+ root.append(btn('← Todos os laboratórios',()=>{activeLab=null;navigate('labs')},'back-link'),
+ sectionTitle(lab.title,lab.goal,'LABORATÓRIO · '+lab.phase));
+ const stepFlags=labStepState[lab.id]||{},checked=lab.steps.filter((_,j)=>stepFlags[j]===true).length;
+ const intro=el('div',{class:'lab-intro'});
+ intro.append(exBox('Ferramentas e duração',lab.tool+' · '+lab.duration),
+   exBox('Licenciamento',lab.license),
+   exBox('Resultado esperado',lab.expected));
+ root.append(intro,el('div',{class:'notice'},[text('strong','Ambiente seguro: '),text('span',lab.safety)]));
+ const modeRow=el('div',{class:'study-assessment'});
+ modeRow.append(text('h2','Modalidade do laboratório'),text('p','Identifique se a atividade foi realmente executada no serviço, simulada ou estudada no papel.','muted'));
+ const mode=el('select',{class:'field','aria-label':'Modalidade de realização do laboratório'});
+ [['','Não classificado'],['real','Executado no serviço / produto'],['simulado','Executado em simulador ou ambiente alternativo'],['teorico','Somente estudo teórico']].forEach(([v,label])=>mode.append(el('option',{value:v,text:label})));
+ mode.value=labModes[lab.id]||'';mode.onchange=()=>{labModes[lab.id]=mode.value;exSave()};modeRow.append(mode);
+ root.append(modeRow);
+ const pre=exSection('01 · Pré-requisitos e preparação',true);
+ pre.append(exList(lab.prerequisites,false),exBox('Conhecimentos relacionados',lab.theory.join(' · ')));
+ root.append(pre);
+ const actions=exSection('02 · Execução passo a passo',true);
+ const stepsWrap=el('div',{class:'step-list'});
+ const progressText=text('p',checked+' de '+lab.steps.length+' etapas marcadas','caption');progressText.setAttribute('role','status');
+ lab.steps.forEach((description,index)=>{
+   const row=el('label',{class:'step-row'});
+   const check=el('input',{type:'checkbox','aria-label':'Marcar etapa '+(index+1)});
+   check.checked=stepFlags[index]===true;
+   check.onchange=()=>{labStepState[lab.id]??={};labStepState[lab.id][index]=check.checked;
+     exSave();const count=lab.steps.filter((_,j)=>(labStepState[lab.id]||{})[j]===true).length;
+     progressText.textContent=count+' de '+lab.steps.length+' etapas marcadas'};
+   row.append(check,text('span',String(index+1).padStart(2,'0'),'step-counter'),text('span',description));
+   stepsWrap.append(row)
+ });
+ actions.append(progressText,stepsWrap);root.append(actions);
+ const diagnostics=exSection('03 · Verifique e investigue',true);
+ diagnostics.append(exBox('Saída esperada',lab.expected),
+   exBox('Se não funcionar',lab.troubleshooting),
+   exBox('Como desfazer',lab.cleanup));
+ root.append(diagnostics);
+ const alternative=exSection('04 · Alternativa sem licença / recursos',false);
+ alternative.append(exBox('Exercício equivalente ou simulação',lab.fallback),text('p','Registre na modalidade acima: uma simulação não substitui experiência na interface comercial.','muted'));root.append(alternative);
+ const checklist=exSection('05 · Evidências de conclusão',true);
+ checklist.append(text('p','Guarde evidências sanitizadas fora do site. Estes checks são autodeclarados; não há envio de arquivos a um servidor.','muted'));
+ const evState=labState[lab.id]||{};
+ lab.evidence.forEach((evidence,index)=>{
+   const row=el('label',{class:'check-evidence'}),input=el('input',{type:'checkbox','aria-label':'Evidência '+(index+1)});
+   input.checked=evState[index]===true;
+   input.onchange=()=>{labState[lab.id]??={};labState[lab.id][index]=input.checked;exSave();update()};
+   row.append(input,text('span',evidence));checklist.append(row)
+ });
+ const summary=text('p','','assessment-note');summary.setAttribute('role','status');
+ function update(){
+   let n=lab.evidence.filter((_,j)=>(labState[lab.id]||{})[j]===true).length;
+   summary.textContent=n+'/'+lab.evidence.length+' evidências marcadas'+(!labModes[lab.id]?' · Informe a modalidade do laboratório.':'')+
+   (labModes[lab.id]==='teorico'?' · Somente teoria, sem execução real.':'');
+ }
+ update();checklist.append(summary);root.append(checklist);
+ const related=exSection('06 · Conhecimentos relacionados e leitura oficial',false);
+ const links=el('div',{class:'compact-list'});
+ lab.modules.forEach(i=>{if(modules[i])links.append(btn(modules[i][1]+' →',()=>openModule(i),'btn tiny'))});
+ related.append(links,exLink(lab.ref,'Consultar documentação técnica ↗'));root.append(related);
+ return root
+}
+function experienceCertifications(){
+ let root=el('div');
+ root.append(sectionTitle('Certificações e competências','Aproveite a teoria como base e use os objetivos oficiais das provas para dirigir seus laboratórios. Os percentuais são autoavaliações, não simulados de exame.','DESENVOLVIMENTO PROFISSIONAL'));
+ const principal=['sc900','sc300','az104','md102','sc401','sc100'];
+ const renderCert=(cert)=>{
+  const p=el('div',{class:'cert-tile'}),ids=CERT_SKILLS[cert.id]||[cert.after],
+     goals=ids.reduce((n,i)=>n+modules[i].length-3,0),
+     rated=ids.reduce((n,i)=>n+modules[i].slice(3).reduce((v,_,j)=>v+score(i,j),0),0),
+     pct=goals?Math.round(rated/(goals*3)*100):0;
+  p.append(el('div',{class:'cert-heading'},[text('strong',cert.name),text('span',cert.priority,'quiet-badge')]),
+     text('p',cert.about,'muted'),text('p','Preparação: '+cert.preparation,'caption'),text('p','Domínio autodeclarado dos módulos vinculados: '+pct+'%','caption'),meter(pct));
+  const tools=el('div',{class:'cert-links'});tools.append(exLink(cert.url,'Objetivos e informações oficiais ↗'));
+  let marked=el('label',{class:'filter-check'}),ch=el('input',{type:'checkbox','aria-label':'Marcar obtida: '+cert.name});
+  ch.checked=!!certState[cert.id];ch.onchange=()=>{certState[cert.id]=ch.checked;exSave()};
+  marked.append(ch,text('span',cert.priority==='Estudo essencial'?'Framework estudado':'Certificação obtida'));tools.append(marked);p.append(tools);
+  const linked=exSection('Ver módulos associados',false);
+  let buttons=el('div',{class:'compact-list'});
+  ids.forEach(i=>buttons.append(btn(modules[i][1],()=>openModule(i),'btn tiny')));linked.append(buttons);p.append(linked);
+  return p
+ };
+ root.append(exGroupHeading('Trilha principal Microsoft'));let grid=el('div',{class:'cert-grid'});
+ principal.forEach(id=>{let c=certifications.find(x=>x.id===id);if(c)grid.append(renderCert(c))});root.append(grid);
+ const supplementary=certifications.filter(c=>!principal.includes(c.id)&&c.priority!=='Estudo essencial');
+ if(supplementary.length){const more=exSection('Certificações complementares e outras plataformas · '+supplementary.length,false),g=el('div',{class:'cert-grid'});supplementary.forEach(c=>g.append(renderCert(c)));more.append(g);root.append(more)}
+ const norms=certifications.filter(c=>c.priority==='Estudo essencial');
+ if(norms.length){let d=exSection('Normas e frameworks (não são certificações)',false);const g=el('div',{class:'cert-grid'});norms.forEach(c=>g.append(renderCert(c)));d.append(g);root.append(d)}
+ root.append(el('div',{class:'notice'},[text('strong','Observação: '),text('span','Os objetivos SC-300 terão versão atualizada a partir de 28/10/2026. Verifique a data de sua prova e os requisitos formais da certificação.')]));
+ return root
+}
+function experienceReview(){
+ const root=el('div');root.append(sectionTitle('Revisar conhecimentos',
+  'Veja apenas os tópicos relevantes agora. Pesquise, selecione o nível e retorne às competências não consolidadas.','RETENÇÃO E REVISÃO'));
+ const toolbar=el('div',{class:'search-panel'});
+ const q=el('input',{class:'field search-input',type:'search',placeholder:'Filtrar revisão por assunto...', 'aria-label':'Pesquisar revisão'});
+ const level=el('select',{class:'field','aria-label':'Grupo de progresso'});
+ [['pending','Não iniciados / estudando'],['0','Não iniciados'],['1','Estudando'],['2','Praticados'],['3','Dominados'],['all','Todos']].forEach(([v,t])=>level.append(el('option',{value:v,text:t})));
+ const fav=el('label',{class:'filter-check'}),check=el('input',{type:'checkbox'});
+ fav.append(check,text('span','Favoritos'));toolbar.append(q,el('div',{class:'filter-row'},[level,fav]));root.append(toolbar);
+ const summary=text('p','','muted'),results=el('div',{class:'topic-results'});root.append(summary,results);
+ const topics=exOrderedTopics();let cap=35;
+ const draw=()=>{
+  let term=exNormalize(q.value);let items=topics.filter(t=>{
+   if(term&&!exNormalize(t.name+' '+t.desc+' '+modules[t.m][1]).includes(term))return false;
+   if(check.checked&&!favorites[id(t.m,t.s)])return false;
+   if(level.value==='pending')return t.level<2;
+   if(level.value==='all')return true;
+   return String(t.level)===level.value;
+  });
+  summary.textContent=items.length+' temas nesta revisão';
+  results.replaceChildren();items.slice(0,cap).forEach(x=>results.append(exTopicRow(x)));
+  if(items.length>cap)results.append(btn('Ver mais temas',()=>{cap+=35;draw()},'btn load-more'));
+  if(items.length===0)results.append(text('p','Nenhum tópico corresponde aos filtros.','empty'))
+ };
+ q.oninput=level.onchange=check.onchange=()=>{cap=35;draw()};draw();return root
+}
