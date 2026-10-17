@@ -1,9 +1,9 @@
 /* ROADMAP - IAM · three-column product information architecture.
    Core app retains stable legacy IDs; legacy routes redirect to Roadmap or Painel. */
 const ROADMAP_LEVELS=[
- {id:'beginner',name:'Iniciante',subtitle:'Conceitos, infraestrutura, identidade e protocolos',description:'Construa a linguagem técnica necessária antes de administrar o tenant: redes, diretórios, autenticação, autorização e federação.',ids:[0,1,16,2,3,4,5,6,7,8,9]},
- {id:'intermediate',name:'Intermediário',subtitle:'Operação Microsoft e IAM aplicado',description:'Conecte os fundamentos à operação de identidades, Conditional Access, aplicações, dispositivos, Azure, JML e investigação.',ids:[17,18,19,20,21,10,11,12,14,28]},
- {id:'advanced',name:'Avançado',subtitle:'Governança, privilégios, multi-cloud e arquitetura',description:'Trate identidades não humanas, privilégio, dados, governança, incidentes, políticas como código e arquitetura Zero Trust.',ids:[13,22,23,24,25,26,27,15]}
+ {id:'beginner',name:'Iniciante',subtitle:'Conceitos, identidade e primeiros controles',description:'Entenda as bases, conheça o Entra e aplique os primeiros controles corporativos sem configurar infraestrutura desnecessária.',ids:[0,1,16,5,9,4,6,7,8,2,3]},
+ {id:'intermediate',name:'Intermediário',subtitle:'Administração cloud e operações IAM',description:'Aprofunde autenticação, identidade externa, dispositivos, Azure, provisionamento e investigação operacional.',ids:[17,18,19,20,21,10,11,12,14,28]},
+ {id:'advanced',name:'Avançado',subtitle:'Governança, privilégios e arquitetura',description:'Evolua a AtlasCorp com governança, segurança de workloads, dados, multi-cloud e arquitetura.',ids:[13,22,23,24,25,26,27,15]}
 ];
 const CERT_LEVELS=[
  {id:'beginner',name:'Iniciante',intro:'Conheça vocabulário técnico, identidade e operações básicas.',certs:['sc900','itil','oktap']},
@@ -35,11 +35,11 @@ function experienceDashboard(){
  root.append(el('header',{class:'v3-hero'},[
   text('div','ROADMAP - IAM','eyebrow'),
   text('h1','Sua evolução em identidade e acesso'),
-  text('p','Uma formação do iniciante ao avançado. Estude o roadmap e aplique o conhecimento no laboratório corporativo AtlasCorp.','hero-lead')
+  text('p','Do iniciante ao avançado: estude cada assunto e, quando necessário, aplique a configuração da AtlasCorp dentro da própria aula.','hero-lead')
  ]));
  const actions=el('div',{class:'v3-primary-actions'},[
   uxButton('Abrir roadmap de estudos →',goStudy,'btn primary v3-main-action'),
-  uxButton('Continuar laboratório da empresa →',()=>goCompany('lab-00'),'btn v3-main-action')
+  uxButton('Continuar o próximo tema →',()=>{const t=ROADMAP_LEVELS.flatMap(l=>l.ids.flatMap(m=>modules[m].slice(3).map((name,s)=>({m,s,level:score(m,s)})))).find(x=>x.level<3);if(t)openSkill(t.m,t.s);else goStudy()},'btn v3-main-action')
  ]);
  root.append(actions);
  const metrics=el('div',{class:'v3-dashboard-metrics'},[
@@ -47,7 +47,7 @@ function experienceDashboard(){
    exStat('Tópicos dominados',st.mastered+' / '+st.total,'Recomendamos sempre revisão por evidência'),
    exStat('Domínio estimado',st.progress+'%','Não representa avaliação independente')
  ]);root.append(metrics);
- const t=exOrderedTopics().find(x=>x.level>0&&x.level<3)||exOrderedTopics().find(x=>x.level===0);
+ const ordered=ROADMAP_LEVELS.flatMap(l=>l.ids.flatMap(m=>modules[m].slice(3).map((name,s)=>({m,s,name,level:score(m,s)}))));const t=ordered.find(x=>x.level>0&&x.level<3)||ordered.find(x=>x.level===0);
  if(t)root.append(el('div',{class:'v3-resume'},[
   el('div',{},[text('span','CONTINUAR APRENDIZAGEM','eyebrow'),text('h2',t.name),text('p',modules[t.m][1]+' · '+levelOfModule(t.m).name,'muted')]),
   uxButton('Estudar este tema →',()=>openSkill(t.m,t.s),'btn')
@@ -65,7 +65,7 @@ function experienceDashboard(){
 }
 function experienceRoadmap(){
  const root=el('div');
- root.append(uxTop('Roadmap de estudos','Aqui está todo o conteúdo, organizado por nível. Selecione um módulo para ver seus temas e estudar cada aula.','CONTEÚDO · DO BÁSICO AO AVANÇADO'));
+ root.append(uxTop('Roadmap de estudos','Aulas por nível, com teoria e configurações da empresa fictícia AtlasCorp integradas somente aos temas pertinentes.','CONTEÚDO · DO BÁSICO AO AVANÇADO'));
  const search=el('input',{class:'field v3-roadmap-search',type:'search',placeholder:'Pesquisar módulos e assuntos (ex.: OAuth, MFA, SCIM)...','aria-label':'Buscar no roadmap'});
  root.append(search);
  const levelsBox=el('div',{class:'v3-roadmap-levels'}),feedback=text('p','','muted');root.append(feedback,levelsBox);
@@ -87,12 +87,12 @@ function experienceRoadmap(){
     const m=modules[id],percentValue=percent(id),
       row=el('button',{class:'v3-module-row',type:'button'});
     row.append(text('span',String(index+1).padStart(2,'0'),'v3-module-num'),
-      el('span',{class:'v3-module-body'},[text('strong',m[1]),text('small',m[2]),text('span',(m.length-3)+' tópicos','v3-module-count')]),
+      el('span',{class:'v3-module-body'},[text('strong',m[1]),text('small',m[2]),text('span',(m.length-3)+' tópicos · '+m.slice(3).filter((_,j)=>(TOPIC_PRACTICE[id+'-'+j]||[]).length>0).length+' com etapa AtlasCorp','v3-module-count')]),
       el('span',{class:'v3-module-percentage'},[text('strong',percentValue+'%'),meter(percentValue)]));
     row.onclick=()=>openModule(id);rows.append(row)
    });box.append(rows);levelsBox.append(box)
   });
-  feedback.textContent=needle?visible+' módulos encontrados':'Selecione o módulo e avance tema a tema. A progressão é uma sugestão pedagógica, não um bloqueio.';
+  feedback.textContent=needle?visible+' módulos encontrados':'Abra um módulo para ler suas aulas. A AtlasCorp aparece dentro dos temas com aplicação prática, sem laboratório separado.';
   if(!visible)levelsBox.append(text('p','Nenhum módulo encontrado. Tente nome de protocolo ou recurso diferente.','empty'))
  };
  search.oninput=draw;draw();return root
