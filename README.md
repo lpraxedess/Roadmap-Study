@@ -1,109 +1,62 @@
 # ROADMAP - IAM
 
-**Formação progressiva em Identity & Access Management**: teoria independente de fabricante, aplicação prática guiada em Microsoft Entra ID P2 e integração com Azure, Intune e Purview quando houver licenciamento específico.
+Formação progressiva de identidade e gestão de acessos (IAM), com fundamentos independentes de fabricante e aplicação principal em Microsoft Entra ID P2, com módulos opcionais de Azure, Intune, Purview, AD híbrido e multi-cloud.
 
-Este é um projeto educacional **estático**, publicado por GitHub Pages. Não se conecta ao tenant Microsoft nem modifica recursos cloud automaticamente.
+O site é estático e não se conecta ao tenant Microsoft nem altera recursos automaticamente.
 
-## Navegação (quatro seções)
+## Navegação
 
-| Área | Objetivo | O que aparece |
-| --- | --- | --- |
-| **Painel** | Ponto de entrada | Progresso, próxima aula, acesso ao roadmap e ao laboratório, backup/restauração discreto |
-| **Roadmap de estudos** | **Única biblioteca teórica** | 29 módulos e 242 aulas, organizados em Iniciante, Intermediário e Avançado, com pesquisa |
-| **Laboratório AtlasCorp** | **Uma única empresa simulada** | 16 capítulos cumulativos, com 94 procedimentos detalhados, evidências, diagnóstico e rollback |
-| **Certificações** | Desenvolvimento profissional | Iniciante, Intermediário e Avançado; meta principal, recomendadas, complementares e opcionais |
+O projeto possui três áreas: **Painel** (progresso e backup), **Roadmap de estudos** (29 módulos e 242 aulas) e **Certificações** (trilhas por nível).
 
-As páginas redundantes de Conteúdo, Revisar e Dados não estão mais na navegação. O backup permanece no Painel; links antigos continuam sendo tratados como rotas de compatibilidade.
+**A AtlasCorp não é uma página de laboratório separada.** Suas tarefas aparecem diretamente dentro dos temas que exigem configuração ou verificação prática. Assuntos como TCP/IP permanecem conceituais, sem criar ações artificiais no tenant.
 
-### Roadmap: 29 módulos e 242 temas
+## Como cada tema funciona
 
-Cada aula contém conceito, aplicação, pré-requisitos, instruções práticas, teste negativo, verificação, diferenças entre plataformas e links oficiais. Os temas são estudados com a sequência sugerida por nível:
+1. **O que é?** — definição e elementos essenciais.
+2. **Para que serve?** — finalidade em IAM, aplicações e benefícios.
+3. **Como funciona?** — mecanismo e decisões técnicas.
+4. **Aplicando na AtlasCorp** — bloco exibido **somente se houver uma tarefa relevante**. Contém cenário da empresa, onde configurar, como executar, justificativa, teste, investigação e registro do resultado na mesma aula.
 
-- **Iniciante — 11 módulos:** fundamentos de TI e redes, identidade, diretórios, autorização, autenticação, federação e primeiros passos Microsoft Entra ID.
-- **Intermediário — 10 módulos:** administração Entra, MFA/Conditional Access, colaboração externa, Intune, Azure RBAC, JML, SCIM, operação e acesso adaptativo.
-- **Avançado — 8 módulos:** PAM/PIM, identidades não humanas, governança e proteção de dados, telemetria, multi-cloud, policy-as-code e arquitetura Zero Trust.
+As fontes oficiais e as anotações ficam em seções opcionais e recolhíveis, sem multiplicar campos obrigatórios.
 
-A escolha de nível é pedagógica: não corresponde automaticamente à exigência formal de um exame.
+**Cobertura:** 242 tópicos em 29 módulos; 65 desses tópicos possuem aplicação AtlasCorp. As 94 tarefas da empresa foram redistribuídas por assunto, mantendo suas chaves de progresso e os 16 capítulos como referência de origem.
 
-## Laboratório corporativo AtlasCorp
+## Evolução da empresa fictícia
 
-A AtlasCorp é a mesma empresa fictícia em todos os capítulos. O currículo acompanha suas identidades desde a **contratação e o primeiro login** até **autorização, governo do acesso, risco e resposta a incidentes**.
+A AtlasCorp começa com identidade e governança de dados. Aulas de Entra ID preparam usuários e grupos; o tema RBAC ensina papéis funcionais e autorização na aplicação; Conditional Access protege o grupo piloto; outras aulas incorporam SSO, Azure RBAC, SCIM, Intune, convidados, governança, PIM, Purview e operações avançadas.
 
-Há RH, Financeiro, TI, IAM, SecOps, gestores, convidados externos, aplicações, dispositivos e workloads. Os grupos e políticas recebem nomes consistentes, evitando o efeito de 16 laboratórios isolados.
+**Cuidado conceitual:** grupo funcional, app role, papel administrativo Entra e Azure RBAC representam camadas distintas. Não se deve atribuir Global Administrator a um usuário por sua função profissional.
 
-O guia inclui, por exemplo:
+### Licenciamento
 
-1. Criar e inventariar o tenant de laboratório, verificar P2 e estabelecer contas emergenciais.
-2. Admitir Camila, criar sua conta, cadastrar atributos, escolher grupos e associar recursos.
-3. Configurar métodos MFA, registrar passkey quando possível, criar Conditional Access **Report-only** para grupo piloto, executar logins, analisar Sign-in logs, habilitar somente o piloto e recuperar se necessário.
-4. Configurar separadamente políticas P2 de **sign-in risk** e **user risk**, com explicações de quando usá-las e o que é possível testar sem gerar riscos reais artificialmente.
-5. Conceder roles/grupos para Financeiro e validar acesso permitido/negado no backend.
-6. Implementar SSO por OIDC, acesso de convidados, device compliance do Intune e acesso de workload via Azure RBAC.
-7. Governar direitos com aprovação, revisão, PIM; proteger dados no Purview e investigar falhas.
-8. Executar Mover/Leaver, recolher evidências e entregar um projeto final completo.
+Conditional Access e Identity Protection dependem dos planos aplicáveis. Entra ID P2 não fornece automaticamente recursos Intune, Purview, Azure pagos ou todas as capacidades avançadas de Identity Governance. Confira o SKU e as opções disponíveis antes de executar a etapa; caso contrário, registre uma simulação identificada como tal.
 
-Cada um dos **94 procedimentos microguiados** mostra: **onde configurar, como configurar, por que configurar, o que testar e o que investigar se falhar**. Os 16 capítulos ainda têm o checklist operacional original, critérios de aceite, documentação e alternativas de simulação.
+Use apenas dados fictícios e ambientes autorizados. Teste Conditional Access primeiro em Report-only e garanta contas emergenciais protegidas e acessíveis.
 
-**Guia integral:** [docs/LABORATORIO-ATLASCORP.md](docs/LABORATORIO-ATLASCORP.md).
+## Progresso e privacidade
 
-### Entra ID P2 não inclui todos os produtos
+As marcações, notas e certificados ficam em armazenamento local do navegador; não há validação remota. Os procedimentos AtlasCorp reutilizam as mesmas chaves do laboratório anterior, preservando o histórico de progresso. A importação/exportação JSON e compatibilidade de backups anteriores continuam no Painel. Links antigos de laboratório direcionam ao tema pertinente.
 
-Conditional Access básico requer P1 (também incluído no P2); Identity Protection e políticas de risco dependem de P2/planos elegíveis. PIM pode ser utilizado sob condições de licença P2. **Intune, Purview, custos Azure, Azure subscriptions e todas as funções avançadas de Entra ID Governance não estão automaticamente incluídos no Entra P2.** Para cada recurso, confira o requisito do cenário na documentação vigente.
+## Estrutura de arquivos
 
-Não use tenants de produção, contas corporativas reais, dados pessoais, tokens, segredos ou equipamentos de uso pessoal para executar ações destrutivas. Políticas de bloqueio requerem grupo piloto, contas emergenciais protegidas e testadas, análise de impacto, Report-only e plano de reversão.
+- index.html — navegação em três áreas.
+- data/catalog.js, data/expanded.js, data/learning.js — conteúdo do currículo.
+- data/company-lab.js — empresa e 94 tarefas práticas.
+- data/topic-practice.js — associação das tarefas aos temas relevantes e explicações adicionais.
+- assets/experience.js — três blocos por aula e etapa AtlasCorp opcional.
+- assets/v3.js — Painel, Roadmap, níveis e certificações.
+- assets/app.js — estado, notas, backup e compatibilidade.
+- assets/styles.css — identidade visual preta/azul.
+- tests/*.test.mjs e .github/workflows/validate.yml — validação automatizada.
 
-**Fontes essenciais:** [licenciamento Entra](https://learn.microsoft.com/en-us/entra/fundamentals/licensing), [licenciamento Identity Governance](https://learn.microsoft.com/en-us/entra/id-governance/licensing-fundamentals), [Conditional Access com MFA](https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-all-users-mfa-strength), [políticas de risco](https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies).
+## Executar e testar
 
-## Certificações
+Use um servidor HTTP estático na pasta do projeto, por exemplo: python -m http.server 8000.
 
-São separadas por **Iniciante, Intermediário e Avançado**. Cores nas bordas dos cartões distinguem a meta principal (SC-300), a recomendação introdutória (SC-900), especializações complementares (AZ-104, MD-102, SC-401) e opcionais (cloud, IGA, PAM, segurança e auditoria).
+Com Node.js 22: node --test tests/*.test.mjs.
 
-**Não existe uma certificação universalmente obrigatória para trabalhar em IAM.** O termo “principal” reflete a trajetória sugerida neste projeto, não obrigação legal, de mercado ou de certificação. A tela evita exibir em duplicidade uma entrada de Google Professional Cloud Security Engineer presente no catálogo histórico, preservando o registro salvo anteriormente.
+Fontes: [Microsoft Entra licensing](https://learn.microsoft.com/en-us/entra/fundamentals/licensing), [Conditional Access](https://learn.microsoft.com/en-us/entra/identity/conditional-access/overview), [Entra roles](https://learn.microsoft.com/en-us/entra/identity/role-based-access-control/permissions-reference).
 
-## Progresso, backup e privacidade
+Os manuais completos continuam disponíveis em [Currículo](docs/CURRICULO.md), [AtlasCorp](docs/LABORATORIO-ATLASCORP.md) e [Aulas](docs/REVISAO-ITEM-A-ITEM.md), como consulta opcional. O site não depende de navegação para um laboratório separado.
 
-Níveis por tópico (0–3), favoritas, anotações, etapas do laboratório e certificações são armazenados em **localStorage** no navegador. A marcação é autodeclarada; evidências ficam fora do site.
-
-Em **Painel → Backup, restauração e privacidade** é possível exportar/importar JSON e limpar dados. A nova exportação usa **versão 7** e inclui o progresso dos procedimentos AtlasCorp. Importações anteriores, inclusive versão 5 e 6, continuam suportadas, com os índices originais mantidos; registros do laboratório novo só existem em backups versão 7.
-
-Armazene o JSON com cuidado: embora o site não envie dados a um servidor, suas anotações podem conter informações que você decidiu registrar.
-
-## Arquivos
-
-| Caminho | Conteúdo |
-| --- | --- |
-| index.html | Página estática, marca e navegação |
-| assets/styles.css | Interface responsiva preta/azul |
-| assets/app.js | Navegação, persistência e compatibilidade de backup |
-| assets/experience.js | Aula, módulo e componentes compartilhados |
-| assets/v3.js | Painel, roadmap por nível, laboratório e certificações |
-| data/catalog.js + data/expanded.js | 242 tópicos e catálogo de certificações |
-| data/learning.js | Revisão pedagógica das aulas e contexto dos 16 laboratórios |
-| data/company-lab.js | AtlasCorp, 16 capítulos e 94 procedimentos corporativos |
-| docs/LABORATORIO-ATLASCORP.md | Manual operacional integral |
-| docs/CURRICULO.md | Inventário de módulos e laboratório original |
-| docs/REVISAO-ITEM-A-ITEM.md | Descrição das 242 aulas |
-| tests/*.test.mjs | Testes de integridade e interação |
-| .github/workflows/validate.yml | Verificação automatizada no GitHub |
-
-## Executar localmente e testar
-
-O site usa JavaScript puro, sem dependências ou backend. Sirva a pasta por HTTP, por exemplo:
-
-~~~bash
-python -m http.server 8000
-~~~
-
-Abra http://localhost:8000. Com Node 22 ou superior:
-
-~~~bash
-node --check assets/app.js
-node --check assets/experience.js
-node --check assets/v3.js
-node --check data/company-lab.js
-node --test tests/*.test.mjs
-~~~
-
-O Pages publica os arquivos estáticos. Se ocorrer erro ao carregar uma aula, abra o console para verificar scripts e confira o status da publicação.
-
-**Revisão:** 17/10/2026. Interfaces de produtos, licenciamento e conteúdo de certificações mudam; antes de aplicar uma configuração real, valide o procedimento no Microsoft Learn ou documentação oficial do fabricante.
+**Revisão:** outubro de 2026. A profundidade didática das aulas é ampliada progressivamente; consulte sempre fontes oficiais atualizadas.
