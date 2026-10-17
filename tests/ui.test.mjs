@@ -6,7 +6,7 @@ const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const mock=[
 "const mk=(tag='div')=>({tagName:tag.toUpperCase(),children:[],dataset:{},style:{},open:false,checked:false,value:'',textContent:'',classList:{add(){},remove(){},toggle(){}},append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},setAttribute(k,v){this[k]=v},focus(){},click(){}});",
 "const nodes={'#overallTop':mk(),'#crumb':mk(),'#view':mk(),'#navToggle':mk()};",
-"const nav=['dashboard','roadmap','labs','certs'].map(v=>{let n=mk('button');n.dataset.view=v;return n});",
+"const nav=['dashboard','roadmap','certs'].map(v=>{let n=mk('button');n.dataset.view=v;return n});",
 "const document={createElement:mk,querySelector:q=>nodes[q]||mk(),querySelectorAll:q=>nav,addEventListener(){},activeElement:null};",
 "const storage={};const localStorage={getItem:k=>storage[k]||null,setItem:(k,v)=>{storage[k]=v}};",
 "const window={addEventListener(){},scrollTo(){}};",
@@ -15,19 +15,17 @@ const mock=[
 "const navigator={},alert=()=>{},confirm=()=>true;"
 ].join('\n');
 const program=[
-'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js',
+'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js',
 'assets/experience.js','assets/v3.js','assets/app.js'].map(read).join('\n');
 const run=code=>JSON.parse(runInNewContext(mock+'\n'+program+'\n'+code,{}, {timeout:20000}));
-test('telas principais, todos os módulos, aulas e 16 capítulos são montados',()=>{
+test('painel, roadmap, certificações, 29 módulos e 242 aulas são montados',()=>{
  const output=run([
  'let out=[];',
  "for(const [label,fn] of [['dashboard',experienceDashboard],['roadmap',experienceRoadmap],['certs',experienceCertifications]])out.push([label,fn().children.length]);",
- "activeLab=null;out.push(['company',experienceLabs().children.length]);",
  "for(let m=0;m<DATA.modules.length;m++){activeModule=m;out.push(['module-'+m,experienceModule().children.length]);for(let s=0;s<DATA.modules[m].length-3;s++){activeSkill=s;out.push(['topic-'+m+'-'+s,experienceSkill().children.length])}}",
- "for(const lab of LABS){activeLab=lab.id;out.push([lab.id,experienceLabs().children.length])}",
  'JSON.stringify(out)'
  ].join('\n'));
- assert.equal(output.length,4+29+242+16);
+ assert.equal(output.length,3+29+242);
  output.forEach(([label,n])=>assert.ok(n>0,'página vazia: '+label));
 });
 test('roadmap apresenta níveis iniciante, intermediário e avançado',()=>{
@@ -48,17 +46,20 @@ test('prioridade de certificação usa classificação transparente',()=>{
  assert.equal(new Set(c.groups.flat()).size,20);
  assert.deepEqual(c.frame,['nist','cis','nist53']);
 });
-test('rotas legadas seguem para páginas reais sem perder notas',()=>{
+test('rotas legadas do laboratório abrem o tema correspondente no roadmap',()=>{
  const result=run([
- "navigate('content');const content=location.hash;",
- "navigate('review');const legacyReviewRoute=location.hash;",
- "navigate('settings');const legacySettingsRoute=location.hash;",
- "openSkill(9,0);const topic=location.hash;",
- "openLab('lab-02');const lab=location.hash;",
- "JSON.stringify({content,review:legacyReviewRoute,settings:legacySettingsRoute,topic,lab,legacyKey:KEY,companyKey:COMPANY_STEP_KEY})"
+ "navigate('content');const contentRoute=location.hash;",
+ "navigate('review');const reviewRoute=location.hash;",
+ "navigate('settings');const settingsRoute=location.hash;",
+ "openSkill(4,0);const topicRoute=location.hash;",
+ "location.hash='#lab/lab-03';restoreHash();",
+ "JSON.stringify({contentRoute,reviewRoute,settingsRoute,topicRoute,view,activeModule,activeSkill,legacyKey:KEY})"
  ].join('\n'));
- assert.equal(result.content,'#roadmap');assert.equal(result.review,'#dashboard');assert.equal(result.settings,'#dashboard');
- assert.equal(result.topic,'#topic/9/0');assert.equal(result.lab,'#lab/lab-02');
+ assert.equal(result.contentRoute,'#roadmap');
+ assert.equal(result.reviewRoute,'#dashboard');
+ assert.equal(result.settingsRoute,'#dashboard');
+ assert.equal(result.topicRoute,'#topic/4/0');
+ assert.equal(result.view,'skill');
  assert.equal(result.legacyKey,'roadmap-iam-knowledge-v2');
 });
 test('backup e progresso corporativo utilizam chaves locais compatíveis',()=>{
@@ -70,10 +71,23 @@ test('backup e progresso corporativo utilizam chaves locais compatíveis',()=>{
 });
 test('navegação visual tem apenas quatro entradas, sem duplicação',()=>{
  const html=read('index.html');
- assert.equal((html.match(/data-view=/g)||[]).length,4);
- for(const v of ['dashboard','roadmap','labs','certs'])assert.ok(html.includes('data-view="'+v+'"'));
- for(const v of ['content','review','settings'])assert.ok(!html.includes('data-view="'+v+'"'));
+ assert.equal((html.match(/data-view=/g)||[]).length,3);
+ for(const v of ['dashboard','roadmap','certs'])assert.ok(html.includes('data-view="'+v+'"'));
+ for(const v of ['content','review','settings','labs'])assert.ok(!html.includes('data-view="'+v+'"'));
  assert.match(html,/ROADMAP - IAM/);
- const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','assets/experience.js','assets/v3.js','assets/app.js'];
+ const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','assets/experience.js','assets/v3.js','assets/app.js'];
  let pos=-1;for(const asset of assets){let n=html.indexOf(asset);assert.ok(n>pos,asset+' fora de ordem');pos=n}
+});
+
+
+test('AtlasCorp aparece somente nas aulas que realmente possuem procedimento',()=>{
+ const result=run("JSON.stringify({tcp:TOPIC_PRACTICE['0-0']||[],rbac:TOPIC_PRACTICE['4-0']||[],total:Object.values(TOPIC_PRACTICE).reduce((n,items)=>n+items.length,0),topics:Object.keys(TOPIC_PRACTICE).length})");
+ assert.equal(result.tcp.length,0);
+ assert.equal(result.rbac.length,2);
+ assert.equal(result.total,94);
+ assert.ok(result.topics>=60);
+});
+test('mesma ordem de navegação em Roadmap e botão próximo tema',()=>{
+ const result=run("JSON.stringify({roadmap:ROADMAP_LEVELS.flatMap(l=>l.ids),learning:LEARNING_ORDER})");
+ assert.deepEqual(result.roadmap,result.learning);
 });
