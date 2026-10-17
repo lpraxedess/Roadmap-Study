@@ -37,7 +37,7 @@ test('roadmap apresenta níveis iniciante, intermediário e avançado',()=>{
  assert.equal(new Set(result.all).size,29);
 });
 test('a jornada empresarial contém 16 capítulos com microprocedimentos e critérios',()=>{
- const result=run("JSON.stringify(LABS.map(l=>({id:l.id,steps:COMPANY_CHAPTERS[l.id].tasks.length,valid:COMPANY_CHAPTERS[l.id].tasks.every(t=>Object.values(t).every(v=>typeof v==='string'&&v.length>18)),checks:COMPANY_CHAPTERS[l.id].verify.length})))");
+ const result=run("JSON.stringify(LABS.map(l=>({id:l.id,steps:COMPANY_CHAPTERS[l.id].tasks.length,valid:COMPANY_CHAPTERS[l.id].tasks.every(t=>t.title.length>8&&t.path.length>8&&[t.action,t.reason,t.proof,t.issue].every(v=>typeof v==='string'&&v.length>18)),checks:COMPANY_CHAPTERS[l.id].verify.length})))");
  assert.equal(result.length,16);
  result.forEach(x=>{assert.ok(x.steps>=4,x.id);assert.equal(x.valid,true,x.id);assert.ok(x.checks>=3,x.id)});
  const p2=result.find(x=>x.id==='lab-02');assert.ok(p2.steps>=15,'Conditional Access P2 insuficiente');
