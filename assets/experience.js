@@ -135,7 +135,12 @@ function experienceSkill(){
     const heading=text('summary',task.title);block.append(heading);
     const body=el('div',{class:'lesson-step-body'});
     if(taskIndex>0&&(companyStepState[labId]||{})[taskIndex-1]!==true){
-      body.append(el('p',{class:'lesson-preflight',text:'Sequência recomendada: antes desta etapa, revise "'+chapter.tasks[taskIndex-1].title+'". O estudo não está bloqueado, mas o ambiente deve possuir as configurações anteriores.'}));
+      body.append(el('p',{class:'lesson-preflight',text:'Pré-requisito prático ainda não marcado: "'+chapter.tasks[taskIndex-1].title+'". Você pode estudar esta aula, mas evite executar a configuração antes de preparar o ambiente.'}));
+      const owner=Object.entries(TOPIC_PRACTICE).find(([otherKey,refs])=>refs.some(ref=>ref.labId===labId&&ref.taskIndex===taskIndex-1));
+      if(owner&&owner[0]!==key){
+       const [previousModule,previousSkill]=owner[0].split('-').map(Number);
+       body.append(btn('Abrir o tema do pré-requisito →',()=>openSkill(previousModule,previousSkill),'btn tiny'));
+      }
     }
     for(const [label,value] of [
       ['Onde configurar',task.path],
@@ -198,7 +203,7 @@ function experienceSkill(){
  root.append(materials);
  const journal=exSection('Meu progresso e anotações',false);
  const status=el('div',{class:'lesson-grade'});
- status.append(text('span','Minha autoavaliação (não é prova de competência)','caption'));
+ status.append(text('span','Autoavaliação · confirme que consegue explicar e aplicar sem consultar','caption'));
  const select=el('select',{class:'field','aria-label':'Grau de conhecimento'});
  levels.forEach((l,i)=>select.append(el('option',{value:String(i),text:i+' — '+l})));
  select.value=String(score(m,s));select.onchange=()=>{
