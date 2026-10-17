@@ -6,7 +6,7 @@ Este documento funciona como índice estrutural. Para evitar redundância, a [re
 
 ## Uma única sequência teórica
 
-Abra o **Painel** para retomar o estudo ou o **Roadmap de estudos** para escolher o módulo. Os módulos são agrupados de forma pedagógica em três níveis, com avanço livre conforme pré-requisitos. O laboratório caminha em paralelo.
+Abra o **Painel** para retomar o estudo ou o **Roadmap de estudos** para escolher o módulo. Cada aula apresenta O que é, Para que serve e Como funciona. Quando existe aplicação prática, a etapa AtlasCorp aparece dentro da própria aula. Não há laboratório paralelo.
 
 ## 1. Iniciante — Conceitos, infraestrutura, identidade e protocolos
 
@@ -279,7 +279,7 @@ A empresa AtlasCorp tem RH, Financeiro, TI, IAM, SecOps e parceria externa. O am
 15. **Federação de workload entre clouds** — 06 · Integração e arquitetura: 5 procedimentos; Pipeline AtlasCorp precisa acessar ambientes Azure, AWS e Google Cloud com credenciais temporárias. Link: #lab/lab-14
 16. **Projeto final IAM ponta a ponta** — 07 · Capstone: 7 procedimentos; Auditoria exige mostrar que AtlasCorp controla admissão, acesso, autenticação, dispositivos, dados, exceções e revogação. Link: #lab/lab-15
 
-Ao abrir um capítulo: prepare recursos e licenças, leia as decisões de arquitetura, execute procedimentos com onde/como/porquê/validação, marque evidências e documente rollback. **Não habilite políticas de bloqueio fora de grupos piloto ou sem recuperação de emergência.**
+Os 16 capítulos abaixo permanecem como referência histórica e manual offline. No site, as 94 tarefas são incorporadas aos 65 temas pertinentes do Roadmap. **Não habilite políticas de bloqueio fora de grupos piloto ou sem recuperação de emergência.**
 
 ## Certificações por nível
 
