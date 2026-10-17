@@ -132,3 +132,159 @@ a{color:#aaf2dc}h1{line-height:1.15}h2,h3{line-height:1.35}*:focus-visible{outli
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{scroll-behavior:auto!important}}
 
 @media print{.side,.topbar,.hero-actions,.topic-toolbar,.topic-next,.menu-toggle,.favorite-btn{display:none!important}.app{display:block}.content{max-width:none;padding:0}.study-section{break-inside:avoid}.study-section>summary{background:#fff;color:#111}.guide-surface,.study-assessment{break-inside:avoid}}
+
+
+/* ROADMAP - IAM v3 · preto e azul. As cores laterais das certificações têm significado. */
+:root{color-scheme:dark;--bg:#05070d;--panel:#0d1320;--surface:#151d30;--line:#28354c;--text:#eef3ff;--muted:#a6b4cc;--accent:#4a9bff;--blue:#86baff;--radius:15px}
+body{background:var(--bg);color:var(--text);font:15px/1.62 system-ui,-apple-system,"Segoe UI",sans-serif}
+.side{background:#070b15;border-right:1px solid #1e304d}
+.brand{font-size:20px;white-space:nowrap;letter-spacing:-.05em}.brand-blue,.brand b{color:#69aaff}
+.brand .caption{white-space:normal;letter-spacing:0;font-size:11px;color:#96a8c5;font-weight:500}
+.side nav{gap:8px}.navbtn{color:#b5c3da;min-height:48px;border:1px solid transparent}
+.navbtn:hover{background:#15243a;border-color:#284263}.navbtn.active{background:linear-gradient(90deg,#16345f,#0f1b30);border:1px solid #306baa;border-left:3px solid #58a6ff;color:#e2f0ff}
+.side-foot{border-top-color:var(--line)}
+.content{padding-top:24px}.topbar{background:rgba(5,7,13,.95);border-bottom:1px solid #20304b;color:#9db5d6}
+.crumb{font-size:12px}.topright{color:#82b8ff}
+a,.inline-link,.back-link,.source-link{color:#8bc0ff}
+.eyebrow,.tile-kicker,.v3-level-kicker{color:#6daaff}
+h1,h2,h3{color:#f0f5ff}.muted,.caption{color:#a6b4cc}
+.btn{background:#17233a;border:1px solid #324768;color:#eef4ff}.btn:hover{background:#1a3356;border-color:#5d9bd8}
+.btn.primary{background:#2d82f5;border-color:#2d82f5;color:#fff}.btn.primary:hover{background:#4d9dff}
+.field{background:#0f1727;border:1px solid #35476a;color:#eff4ff}
+.field:focus-visible{background:#162540}
+*:focus-visible{outline:3px solid #69abff!important;outline-offset:3px}
+.progress{background:#1e3048;accent-color:#4a9bff}.progress::-webkit-progress-bar{background:#1b2a43}
+.progress::-webkit-progress-value{background:#4a9bff}.progress::-moz-progress-bar{background:#4a9bff}
+.panel,.guide-card,.module,.topic,.cert-card,.stat-card,.guide-surface,.study-assessment,.study-section,.phase-panel,.next-panel,.lab-tile,.topic-row,.v3-certificate{background:#0d1320;border-color:#28354c}
+.study-section>summary{background:#172238}.study-section[open]>summary{border-bottom-color:#2c4971;color:#d8e9ff}
+.study-section>summary:hover{background:#1a3050}
+.study-assessment{border-color:#34547f}.assessment-note{color:#b8d9ff;border-color:#3e6ea7}
+.topic-row:hover{border-color:#5c90ca}.step-row{background:#111c2c;border-color:#283e5b}.step-row:hover{background:#1a2d47}
+.step-counter{color:#8dc0ff}.topic-toolbar .btn{min-height:40px}
+.notice,.hint-line{background:#10213b;border-color:#306aa7;color:#d3e5fd}
+.warning-surface{background:#292119;border-color:#896448}
+.check-evidence{border-color:#2f4362;background:#0d1a2c}
+.check-evidence input,.filter-check input,.step-row input{accent-color:#3f96ff}
+.favorite-btn{background:#172d4c;color:#94c7ff;border-color:#3a6b9a}
+.favorite-btn:hover{border-color:#71b4ff}
+.level{color:#a7c9f4;border-color:#527eaa}
+.source-link{text-decoration-color:#69a6ed;text-underline-offset:3px}
+.menu-toggle{background:#172a46;color:#e9f2ff;border-color:#345883}
+.skip-link{background:#d8eaff;color:#081528}
+.v3-hero{padding:35px 35px 28px;background:radial-gradient(ellipse at 90% 20%,#16345e 0%,transparent 50%),linear-gradient(135deg,#101c32,#090f1d 80%);border:1px solid #304b76;border-radius:18px}
+.v3-hero h1{font-size:clamp(29px,3vw,40px);letter-spacing:-.045em;max-width:720px}
+.v3-hero .hero-lead{max-width:690px;margin:16px 0 0}
+.v3-primary-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:15px 0 18px}
+.v3-main-action{min-height:64px;text-align:left;padding:17px 20px;font-size:15px}
+.v3-dashboard-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.v3-resume{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 24px;border-radius:13px;border:1px solid #344d70;background:#101a2a;margin:18px 0}
+.v3-resume h2{font-size:20px;margin:7px 0}.v3-resume .btn{white-space:nowrap}
+.v3-level-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}
+.v3-level-overview{display:grid;gap:6px;text-align:left;color:#e8f2ff;padding:18px;border:1px solid #2b4362;border-radius:12px;background:#0c1626}
+.v3-level-overview:hover{border-color:#6aabed;background:#11243d}
+.v3-level-overview strong{font-size:16px}.v3-level-overview small{color:#a4b7d4;font-size:12px}
+.v3-level-overview progress{margin:6px 0 0;height:7px}
+.v3-utility-panel{border-radius:12px;border:1px solid #283b59;background:#0b1322;margin:25px 0;overflow:hidden}
+.v3-utility-panel>summary{cursor:pointer;padding:15px 20px;font-weight:600;color:#b4d5ff;background:#101d31}
+.v3-utility-panel>summary:hover{background:#172e4c}
+.v3-utility-panel>.panel{margin:17px;border:0}
+.v3-heading{margin:4px 0 22px}.v3-heading h1{font-size:clamp(29px,3vw,40px)}.v3-heading p{max-width:790px}
+.v3-roadmap-search{display:block;width:100%;min-height:48px;padding:13px 16px;margin:16px 0 22px}
+.v3-roadmap-levels{display:grid;gap:24px;margin-bottom:25px}
+.v3-level-group{overflow:hidden;border:1px solid #2a4467;border-radius:15px;background:#091324}
+.v3-level-heading{padding:23px 25px;display:flex;gap:23px;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#102745,#0e182b)}
+.v3-level-kicker{font-size:12px;text-transform:uppercase;font-weight:800;letter-spacing:.075em}
+.v3-level-heading h2{margin:7px 0;font-size:23px}
+.v3-level-heading p{max-width:750px;margin:0}
+.v3-level-progress{min-width:130px;text-align:right}
+.v3-level-progress strong{color:#a9d2ff;font-size:22px}
+.v3-level-progress small{display:block;color:#9db4d6;font-size:12px}.v3-level-progress progress{height:7px;margin:8px 0 0}
+.v3-module-list{display:grid;gap:0;padding:0 12px 12px}
+.v3-module-row,.v3-lab-row{display:grid;grid-template-columns:52px minmax(0,1fr) 103px;gap:15px;align-items:center;min-width:0;width:100%;background:#0c1627;color:var(--text);text-align:left;border:0;border-bottom:1px solid #243650;padding:18px 13px}
+.v3-module-row:hover,.v3-lab-row:hover{background:#142844;border-radius:8px}
+.v3-module-num{font-size:22px;line-height:1;font-weight:800;color:#457bb7;letter-spacing:-.05em;text-align:center}
+.v3-module-body{min-width:0;display:grid;gap:5px}
+.v3-module-body strong{font-size:15px;line-height:1.3}
+.v3-module-body small{font-size:12px;line-height:1.55;color:#aebdd5}
+.v3-module-count{font-size:11px;color:#75aff2}
+.v3-module-percentage{text-align:right}.v3-module-percentage strong{font-size:13px;color:#acd2ff}.v3-module-percentage progress{height:6px;margin:6px 0 0}
+.v3-legend{display:flex;flex-wrap:wrap;gap:13px;border:1px solid #293e5e;background:#101827;border-radius:12px;padding:14px 19px;margin:12px 0 22px}
+.v3-legend-item{font-size:12px;font-weight:700;padding-left:11px;border-left:4px solid #438cec}
+.leg-main{border-color:#ffbf78}.leg-recommended{border-color:#6bacff}.leg-complement{border-color:#aa91ff}.leg-optional{border-color:#7789a4}
+.v3-cert-section{margin:30px 0}
+.v3-cert-level-header{border-bottom:1px solid #293d58;padding-bottom:10px;margin-bottom:16px}
+.v3-cert-level-header h2{font-size:21px;margin:7px 0}
+.v3-cert-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.v3-certificate{border:1px solid #30415d;border-left:4px solid #7789a4;border-radius:12px;padding:17px 19px}
+.v3-certificate.cert-main{border-left-color:#ffbf78}.v3-certificate.cert-recommended{border-left-color:#6bacff}
+.v3-certificate.cert-complement{border-left-color:#aa91ff}.v3-certificate.cert-optional{border-left-color:#7789a4}
+.v3-cert-title{display:flex;align-items:start;justify-content:space-between;gap:15px}
+.v3-cert-title h3{font-size:16px;margin-bottom:5px}.v3-cert-title p{font-size:12px;line-height:1.45}
+.cert-priority{font-size:11px;font-weight:750;white-space:nowrap;padding:0 0 0 10px;border-left:3px solid currentColor}
+.cert-main .cert-priority{color:#ffd2a0}.cert-recommended .cert-priority{color:#a5ceff}
+.cert-complement .cert-priority{color:#cabdff}.cert-optional .cert-priority{color:#aebdd5}
+.v3-preparation,.v3-priority-note{font-size:13px;color:#a9c0df;line-height:1.6}
+.v3-priority-note{border-top:1px solid #293950;padding-top:9px}
+.v3-cert-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.v3-cert-actions .filter-check{font-size:12px}
+.v3-note{padding:17px 19px;background:#111a2a;border:1px solid #293f60;border-radius:10px;font-size:13px;margin:22px 0}
+.v3-company-intro{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:12px;margin:16px 0}
+.v3-company-intro .guide-surface{margin:0}
+.v3-lab-stage{margin:24px 0;background:#0b1323;border-radius:12px;border:1px solid #294064;overflow:hidden}
+.v3-lab-stage h3{background:linear-gradient(90deg,#142b4a,#111b30);padding:16px 22px;margin:0;font-size:16px;color:#bddbff}
+.v3-lab-stage .v3-module-list{padding:0 13px 11px}
+.v3-company-status{display:flex;align-items:center;gap:12px;border:1px solid #2b4771;background:#102039;padding:13px 18px;border-radius:11px;flex-wrap:wrap}
+.v3-company-status strong{white-space:nowrap;font-size:14px}
+.v3-company-status progress{max-width:260px;margin:0;min-width:110px;flex:1}
+.v3-company-status small{font-size:11px;color:#afc4e6}
+.v3-procedure-header{margin:28px 0 18px}
+.v3-procedure-header h2{font-size:23px;margin:6px 0}
+.v3-procedure-header p{font-size:14px;max-width:800px}
+.v3-procedures{display:grid;gap:10px}
+.v3-procedure{border:1px solid #314c73;background:#0f1a2b;border-radius:11px;overflow:hidden}
+.v3-procedure[open]{border-color:#477fb7}
+.v3-procedure-title{display:grid;grid-template-columns:36px minmax(0,1fr) auto;align-items:center;gap:13px;cursor:pointer;list-style:none;padding:17px 20px}
+.v3-procedure-title::-webkit-details-marker{display:none}
+.v3-procedure-title:hover{background:#182c46}
+.v3-step-id{color:#77b3ff;font-size:13px;font-weight:900}.v3-procedure-title strong{font-size:15px}
+.v3-step-state{font-size:11px;color:#aac2e0}
+.v3-procedure[open] .v3-procedure-title{background:#152b48;border-bottom:1px solid #2b4b71}
+.v3-procedure-body{padding:14px 21px 18px;display:grid;gap:10px}
+.v3-instruction{padding:10px 13px;background:#0b1525;border:1px solid #223958;border-radius:8px}
+.v3-instruction strong{display:block;font-size:12px;color:#9bc7ff;margin-bottom:4px}
+.v3-instruction p{font-size:14px;color:#d0ddee;margin:0;line-height:1.65}
+.v3-procedure-check{display:flex;align-items:center;gap:11px;padding:10px 0 0;font-size:13px;color:#c2d8f5;cursor:pointer}
+.v3-procedure-check input{width:19px;height:19px;accent-color:#3e91fa;flex:none}
+.v3-lab-next{display:flex;justify-content:space-between;gap:11px;margin:22px 0}
+.v3-lab-next>.btn{min-width:175px}
+.v3-company-intro .guide-surface p{font-size:14px}
+.v3-cert-section .study-section>summary{font-size:13px;font-weight:500}
+@media(min-width:1300px){.content{padding-left:clamp(40px,5vw,80px);padding-right:clamp(40px,5vw,80px)}}
+@media(max-width:1030px){.v3-cert-grid{grid-template-columns:1fr}.v3-company-status{gap:8px}}
+@media(max-width:760px){
+ .side{background:#070d19;border-bottom-color:#2c4365}
+ .side nav{background:#0a1424;border-bottom-color:#365d8e}
+ .side .navbtn{border-color:#294164;font-size:13px}
+ .menu-toggle{background:#172b49;color:#f3f7ff;border-color:#345b91}
+ .v3-hero{padding:23px 20px}.v3-hero h1{font-size:30px}
+ .v3-primary-actions{grid-template-columns:1fr}.v3-main-action{min-height:54px}
+ .v3-dashboard-metrics{grid-template-columns:1fr 1fr}.v3-dashboard-metrics .stat-card:last-child{grid-column:1/-1}
+ .v3-resume{flex-direction:column;align-items:stretch;padding:17px}
+ .v3-resume .btn{white-space:normal}
+ .v3-level-strip{grid-template-columns:1fr}
+ .v3-level-heading{padding:17px 15px;gap:12px;align-items:start}
+ .v3-level-heading h2{font-size:17px}
+ .v3-level-progress{min-width:75px}
+ .v3-module-row,.v3-lab-row{grid-template-columns:30px minmax(0,1fr) 54px;gap:8px;padding:13px 4px}
+ .v3-module-num{font-size:17px}.v3-module-body strong{font-size:13px}
+ .v3-module-body small{font-size:11px}.v3-module-percentage strong{font-size:12px}
+ .v3-cert-title{flex-direction:column;gap:3px}.v3-legend{gap:10px;padding:12px}
+ .v3-cert-grid{grid-template-columns:1fr}
+ .v3-procedure-title{padding:12px;grid-template-columns:24px minmax(0,1fr) auto;gap:8px}
+ .v3-step-id{font-size:11px}.v3-procedure-title strong{font-size:13px}
+ .v3-procedure-body{padding:11px}
+ .v3-instruction{padding:10px}.v3-instruction p{font-size:13px}
+ .v3-company-status strong{white-space:normal}
+ .v3-lab-next>.btn{min-width:0;flex:1}
+}
+@media print{.v3-procedure-title,.v3-procedure-body,.v3-level-heading{background:#fff!important;color:#111!important}.v3-procedure,.v3-level-group{break-inside:avoid}.v3-roadmap-search,.v3-primary-actions{display:none}}
