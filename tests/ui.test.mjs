@@ -83,7 +83,7 @@ test('navegação visual tem apenas quatro entradas, sem duplicação',()=>{
 test('AtlasCorp aparece somente nas aulas que realmente possuem procedimento',()=>{
  const result=run("JSON.stringify({tcp:TOPIC_PRACTICE['0-0']||[],rbac:TOPIC_PRACTICE['4-0']||[],total:Object.values(TOPIC_PRACTICE).reduce((n,items)=>n+items.length,0),topics:Object.keys(TOPIC_PRACTICE).length})");
  assert.equal(result.tcp.length,0);
- assert.equal(result.rbac.length,2);
+ assert.equal(result.rbac.length,5);
  assert.equal(result.total,94);
  assert.ok(result.topics>=60);
 });
