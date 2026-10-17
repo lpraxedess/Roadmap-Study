@@ -20,6 +20,7 @@ jobs:
           node --check data/learning.js
           node --check data/company-lab.js
           node --check data/topic-practice.js
+          node --check data/didactics.js
           node --check assets/experience.js
           node --check assets/v3.js
       - name: Validar currículo e referências
