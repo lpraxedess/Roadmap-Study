@@ -130,7 +130,7 @@ const TOPIC_THEORY={
  definition:'RBAC (Role-Based Access Control) é um modelo de autorização que organiza permissões em funções (roles) e atribui essas funções a sujeitos. A decisão depende da role, da operação e do recurso, podendo incluir escopo e regras adicionais.',
  purpose:'Permite conceder acesso conforme as responsabilidades do trabalho, com mínimo privilégio, revisão e segregação de funções. Por exemplo, um analista financeiro pode consultar relatórios sem receber a permissão de aprová-los ou modificar pagamentos.',
  mechanism:'Na AtlasCorp, grupos como SG-ATL-FIN-APP-READ organizam quem precisa de um direito de negócio. A aplicação pode expor uma app role Leitor e associá-la ao grupo; a API ainda deve validar o token e a autorização para cada ação/recurso. Já Entra ID → Roles and administrators delega tarefas administrativas do diretório, e Azure RBAC controla recursos Azure: são superfícies distintas, não equivalentes.',
- extra:'Não atribua o papel Global Administrator a Bruno por ele trabalhar no Financeiro. Para relatórios use o grupo e a role da aplicação, ou autorização de recursos no próprio backend.'
+ extra:'Exemplo AtlasCorp: Bruno → SG-ATL-FIN-APP-READ → app role Leitor → consulta permitida e alteração negada; Renata → grupo de Aprovadores → role de aprovação autorizada; Camila (TI) → sem acesso financeiro. Nenhuma dessas funções de negócio exige Global Administrator. O aplicativo precisa implementar a autorização para cada ação e recurso.'
  },
  'Modelagem de roles':{
  definition:'Modelar roles é definir conjuntos coerentes de ações e recursos necessários a uma atividade profissional, evitando conceder privilégios excessivos para tarefas comuns.',
