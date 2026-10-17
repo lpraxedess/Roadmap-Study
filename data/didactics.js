@@ -65,6 +65,37 @@ const MODULE_DECISION_CONTEXT={
  27:{question:'A política é avaliada e aplicada em toda chamada protegida?',risk:'Usar regra da interface como substituto da enforcement server-side.',focus:'Regras versionadas, testes positivos e negativos e PDP/PEP.'},
  28:{question:'Uma decisão de rede está sendo confundida com autorização da aplicação?',risk:'Implantar controle de tráfego sem planejar reversão da conectividade.',focus:'Private Access, Internet Access, sessão, CA e conectores.'}
 };
+const MODULE_CASE_SCENES={
+ 0:'Bruno não consegue alcançar a página de login do aplicativo financeiro. SecOps precisa identificar se a falha é anterior ao IdP, na conexão ou na aplicação.',
+ 1:'RH informa que uma pessoa mudou de área, mas o inventário do diretório ainda mostra os dados antigos. IAM deve relacionar a identidade a sua fonte autoritativa.',
+ 2:'Uma unidade antiga utiliza domínio Windows com controlador, estações e compartilhamento interno. O time precisa entender a autenticação local e sua dependência de rede.',
+ 3:'A AtlasCorp integra um diretório corporativo antigo a serviços cloud. Uma divergência de atributo impede a correlação correta do usuário.',
+ 4:'Financeiro recebe solicitação de leitura e aprovação de documentos, enquanto TI opera a plataforma. Os direitos precisam ser distinguidos e auditados.',
+ 5:'Funcionário cadastrado pode usar método de autenticação inadequado para uma operação sensível. IAM analisa riscos de phishing e recuperação de conta.',
+ 6:'Portal externo aceita SSO, mas há diferença entre certificados, emissor da assertion e destinatário configurado.',
+ 7:'Aplicação de relatórios utiliza autorização OAuth/OIDC; o cliente e a API exigem tokens para finalidades diferentes.',
+ 8:'Equipe de desenvolvimento configura um IdP local para testar SSO e roles sem expor nenhuma interface administrativa à internet.',
+ 9:'AtlasCorp inicia sua administração de identidades em um tenant Entra. É necessário separar usuários, grupos, aplicativos e privilégios administrativos.',
+ 10:'Workload Financeiro deve ler recurso cloud sem client secret permanente nem papel administrativo amplo.',
+ 11:'RH comunica Joiner, Mover e Leaver; SaaS de destino não pode criar contas duplicadas nem deixar acesso órfão.',
+ 12:'Gestor aprova acesso temporário a dados financeiros. IAM precisa registrar dono, prazo, justificativa e aplicação da remoção.',
+ 13:'Renata precisa de privilégio administrativo somente durante uma janela de manutenção e a organização exige auditoria após expiração.',
+ 14:'SecOps recebeu reclamação de login negado; precisa correlacionar registros de autenticação com mudanças administrativas e decisões de política.',
+ 15:'Um arquiteto apresenta o desenho de identidade de AtlasCorp à segurança e à direção, incluindo falhas e responsáveis por cada decisão.',
+ 16:'RH precisa determinar confiança na pessoa cadastrada enquanto TI define a força do autenticador e a confiança da federação.',
+ 17:'IAM delega administração de grupos e usuários sem conceder acesso irrestrito ao diretório nem aos recursos Azure.',
+ 18:'Uma política de acesso deve reagir a usuários, aplicativos e sinais de risco sem bloquear administradores de recuperação.',
+ 19:'Fornecedor externo entra na AtlasCorp com sponsor e prazo definidos, recebendo exclusivamente o recurso necessário.',
+ 20:'Um dispositivo piloto altera seu estado de compliance e o Entra precisa decidir acesso à aplicação baseada em sinal Intune.',
+ 21:'Um recurso Azure precisa oferecer somente leitura para um principal específico, sem permitir escrita ou delegar a assinatura inteira.',
+ 22:'Pipeline de desenvolvimento solicita token federado para acessar recurso cloud; apenas uma origem de confiança autorizada deve ser aceita.',
+ 23:'Financeiro adota catálogo e pacote de acesso para concessões temporárias, aprovações e revisões automáticas quando licenciadas.',
+ 24:'Documento financeiro sintético é classificado; a equipe deve diferenciar rótulo informativo, criptografia e prevenção de vazamento.',
+ 25:'Uma investigação de acesso reúne eventos de vários serviços com horários, categorias e retenções diferentes.',
+ 26:'Arquiteto compara AWS, Google Cloud e Microsoft Azure sem assumir equivalência de política, trust e autorização.',
+ 27:'Aplicativo interno depende de uma política versionada para determinar se um usuário pode alterar determinado registro.',
+ 28:'Colaboradores remotos precisam acessar aplicativo privado; a rota de rede e a autorização da aplicação devem ser avaliadas separadamente.'
+};
 const SPECIAL_CASES={
  'TCP/IP':{scenario:'O navegador de Bruno falha antes da tela de login. Identifique o que verificar primeiro: conectividade IP, resolução DNS, negociação TLS e chegada ao IdP.',evidence:'Fluxo em quatro etapas com o ponto provável de falha. Não é necessário implantar infraestrutura de rede.'},
  'DNS':{scenario:'O endereço do aplicativo não resolve, mas outro serviço do mesmo tenant funciona. Compare registros, resolvedor e diferença entre DNS e erro de autenticação.',evidence:'Hipótese da falha e consulta apropriada (nslookup, Resolve-DnsName ou dig).'},
@@ -97,8 +128,8 @@ DATA.modules.forEach((module,m)=>module.slice(3).forEach((name,s)=>{
  ].filter(Boolean).join(' ');
  const contrast=overlay.extra||chapter.risk;
  const exercise=SPECIAL_CASES[name]||{
-  scenario:'Para o assunto '+name+', descreva uma situação na qual '+g.importance.charAt(0).toLowerCase()+g.importance.slice(1),
-  evidence:'Explique como distinguir sucesso de falha. Critério do tema: '+g.verify
+  scenario:MODULE_CASE_SCENES[m]+' Analise onde o conhecimento de "'+name+'" atua nesta situação, qual é a decisão de IAM e em que ponto o resultado falharia.',
+  evidence:'Registre uma explicação específica de "'+name+'", indicando o mecanismo, um caso aceitável, uma falha e como reconhecê-la. Referência de aprovação: '+g.verify
  };
  TOPIC_LEARNING[key]={
   definition,purpose,mechanism,contrast,
