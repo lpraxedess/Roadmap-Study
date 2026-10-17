@@ -42,94 +42,150 @@ function exTopicRow(x){
 }
 
 function experienceModule(){
- const root=el('div'),m=modules[activeModule],p=percent(activeModule),idx=LEARNING_ORDER.indexOf(activeModule);
+ const root=el('div'),m=modules[activeModule],p=percent(activeModule),sequence=ROADMAP_LEVELS.flatMap(l=>l.ids),idx=sequence.indexOf(activeModule);
  root.append(btn('← Ver todos os módulos',()=>navigate('roadmap'),'back-link'),sectionTitle(m[1],m[2],LEARNING_PHASE[activeModule]||m[0]));
  let head=el('div',{class:'module-info'},[exStat('Meu progresso',p+'%',m.slice(3).length+' assuntos neste módulo'),
   exBox('Objetivo técnico',MODULE_EDUCATION[activeModule][1]),
   exBox('Erro conceitual a evitar',MODULE_EDUCATION[activeModule][2])]);
  root.append(head);
  if(idx>0)root.append(el('div',{class:'hint-line'},[
-  text('span','Etapa anterior recomendada: '),btn(modules[LEARNING_ORDER[idx-1]][1]+' ↗',()=>openModule(LEARNING_ORDER[idx-1]),'inline-link')
+  text('span','Módulo anterior: '),btn(modules[sequence[idx-1]][1]+' ↗',()=>openModule(sequence[idx-1]),'inline-link')
  ]));
- root.append(exGroupHeading('Aulas deste módulo'),text('p','Cada aula possui conceito, pré-requisitos, prática, teste adverso e critério de aceite.','muted'));
+ root.append(exGroupHeading('Aulas deste módulo'),text('p','Leia cada tema e, quando houver uma configuração necessária, aplique-a diretamente na etapa AtlasCorp da própria aula.','muted'));
  let list=el('div',{class:'topic-results'});m.slice(3).forEach((name,j)=>list.append(exTopicRow({m:activeModule,s:j,name,desc:topicGuides[activeModule][j].concept,level:score(activeModule,j)})));root.append(list);
- let related=LAB_FOR_MODULE[activeModule]||[];
- if(related.length){root.append(exGroupHeading('Laboratórios associados'));let lb=el('div',{class:'compact-list'});
- related.forEach(r=>{let l=LABS.find(x=>x.id===r);if(l)lb.append(btn(l.title+' →',()=>exJumpLab(l.id),'btn'))});root.append(lb)}
+
  return root
 }
 
+
+/* Os três campos essenciais pertencem à aula. A AtlasCorp aparece aqui
+ * somente se o tema tiver tarefas de aplicação genuína. */
 function experienceSkill(){
- const m=activeModule,s=activeSkill,key=id(m,s),name=modules[m][s+3],info=LESSONS[key],root=el('div');
- if(!info)return sectionTitle('Conteúdo indisponível','Esta aula não foi encontrada no currículo.','IAM');
- root.append(btn('← '+modules[m][1],()=>openModule(m),'back-link'),
-   sectionTitle(name,'Uma aula por competência: compreensão, execução, teste adverso, diagnóstico e fontes.','MÓDULO · '+modules[m][1]));
- const buttons=el('div',{class:'topic-toolbar'});
- const fav=btn(favorites[key]?'★ Favorito':'☆ Favoritar',()=>{favorites[key]=!favorites[key];fav.textContent=favorites[key]?'★ Favorito':'☆ Favoritar';fav.setAttribute('aria-pressed',String(!!favorites[key]));exSave()},'btn tiny');
- fav.setAttribute('aria-pressed',String(!!favorites[key]));
- buttons.append(fav,btn('Compartilhar link',()=>{
-   const url=location.href;
-   if(typeof navigator!=='undefined'&&navigator.clipboard?.writeText)navigator.clipboard.writeText(url).then(()=>{copyStatus.textContent='Link copiado.'}).catch(()=>{copyStatus.textContent='Copie o endereço do navegador.'});
-   else copyStatus.textContent='Copie o endereço do navegador.';
- },'btn tiny'));
- const copyStatus=text('span','','caption');copyStatus.setAttribute('role','status');buttons.append(copyStatus);root.append(buttons);
- const warning=ACCESS_NOTES[m];
- if(warning)root.append(el('div',{class:'notice'},[text('strong','Licenciamento e cuidado: '),text('span',warning)]));
- let theory=exSection('01 · Entenda o conceito e as distinções',true);
- theory.append(exBox('Definição e mecanismo',info.knowledge),exBox('Por que isso importa?',info.significance),exBox('Onde aplicar?',info.context),
-  exBox('Conceito que precisa relacionar',info.distinct),exBox('Evite este erro',info.mistake,'guide-surface warning-surface'));
- root.append(theory);
- let practice=exSection('02 · Prepare e execute a prática',true);
- practice.append(text('h3','Antes de começar'),exList(info.requirements,false),
-  text('h3','Procedimento'),exList(info.steps),text('p','Use uma conta fictícia, evite recursos de produção e anote alterações necessárias para rollback.','hint-line'));
- root.append(practice);
- let verify=exSection('03 · Teste, investigue e comprove',false);
- verify.append(text('p','Critério de conclusão: '+info.acceptance,'acceptance'),exList(info.tests),
-   exBox('Forma de trabalhar',info.discipline));root.append(verify);
- let portability=exSection('04 · Transfira o conceito para outras ferramentas',false);
- portability.append(exBox('Princípio transferível',MODULE_CONTEXT[m]?.[1]||info.distinct),
-   exBox('Não assuma equivalência entre fabricantes',MODULE_CONTEXT[m]?.[2]||info.mistake));root.append(portability);
- let related=LAB_FOR_MODULE[m]||[];
- let resources=exSection('05 · Documentação e projeto relacionado',false);
- resources.append(exLink(info.reference,'Abrir documentação técnica deste assunto ↗'));
- if(related.length){resources.append(text('h3','Laboratórios integrados'));const links=el('div',{class:'compact-list'});
- related.slice(0,6).forEach(r=>{let l=LABS.find(x=>x.id===r);if(l)links.append(btn(l.title+' ↗',()=>exJumpLab(r),'btn tiny'))});resources.append(links)}
- root.append(resources);
- let practiceState=lessonChecks[key]||{};
- const assessment=el('section',{class:'study-assessment'});
- assessment.append(text('span','REGISTRO DE APRENDIZAGEM','eyebrow'),text('h2','Minha avaliação'),
-   text('p','Autoavaliação separada da evidência: marque apenas tarefas efetivamente realizadas.','muted'));
- const checks=[
-  ['theory','Consegui explicar o conceito e suas diferenças sem consultar.'],
-  ['practice','Executei a atividade ou identifiquei explicitamente que foi simulação.'],
-  ['failure','Testei resultado adverso ou analisei uma falha plausível com correção.']
+ const m=activeModule,s=activeSkill,key=id(m,s),name=modules[m][s+3],
+       info=LESSONS[key],root=el('div',{class:'lesson-page'});
+ if(!info)return sectionTitle('Conteúdo indisponível','A aula não está cadastrada.','ROADMAP');
+ const theory=TOPIC_THEORY[name]||{},
+       topicPractical=TOPIC_PRACTICE[key]||[],
+       level=ROADMAP_LEVELS.find(t=>t.ids.includes(m));
+ root.append(btn('← '+modules[m][1],()=>openModule(m),'back-link'));
+ root.append(el('header',{class:'lesson-heading'},[
+   text('div',(level?.name||'Roadmap')+' · '+modules[m][1],'eyebrow'),
+   text('h1',name),
+   text('p','Entenda a tecnologia e a necessidade de negócio antes de aplicá-la.','muted')
+ ]));
+ const concepts=el('section',{class:'lesson-explanation'});
+ const parts=[
+  {title:'O que é?',description:theory.definition||info.knowledge},
+  {title:'Para que serve?',description:theory.purpose||info.significance},
+  {title:'Como funciona?',description:theory.mechanism||info.context}
  ];
- checks.forEach(([k,label])=>{
-  const row=el('label',{class:'check-evidence'}),input=el('input',{type:'checkbox'});
-  input.checked=practiceState[k]===true;input.onchange=()=>{lessonChecks[key]??={};lessonChecks[key][k]=input.checked;exSave();updateInfo()};
-  row.append(input,text('span',label));assessment.append(row)
+ parts.forEach((part,i)=>{
+  concepts.append(el('div',{class:'lesson-concept'},[
+   text('span',String(i+1).padStart(2,'0'),'lesson-index'),
+   el('div',{},[text('h2',part.title),text('p',part.description)])
+  ]));
  });
- let choice=el('select',{class:'field','aria-label':'Natureza da experiência'});
- [['','Natureza da experiência (selecionar)'],['real','Prática executada no produto'],['simulado','Simulação documentada'],['teorico','Estudo teórico / análise']].forEach(([v,t])=>choice.append(el('option',{value:v,text:t})));
- choice.value=practiceState.mode||'';choice.onchange=()=>{lessonChecks[key]??={};lessonChecks[key].mode=choice.value;exSave();updateInfo()};
- assessment.append(choice);
- let lev=el('select',{class:'field','aria-label':'Nível de domínio'});levels.forEach((l,i)=>lev.append(el('option',{value:String(i),text:i+' — '+l})));
- lev.value=String(score(m,s));lev.onchange=()=>{state[key]=Number(lev.value);exSave();updateTop();updateInfo()};assessment.append(lev);
- const msg=text('p','','assessment-note');msg.setAttribute('role','status');
- function updateInfo(){let x=lessonChecks[key]||{},check=checks.filter(([k])=>x[k]===true).length;
- msg.textContent='Critérios autodeclarados: '+check+'/3 · Nível: '+levels[score(m,s)]+
- (score(m,s)>=2&&(!x.practice||!x.mode)?' · Falta indicar natureza/evidência da prática.':'')+
- (x.mode==='simulado'?' · Simulação não equivale à execução no serviço real.':'');
+ if(theory.extra)concepts.append(el('div',{class:'lesson-addendum'},[text('strong','No contexto de IAM: '),text('span',theory.extra)]));
+ root.append(concepts);
+ const caution=exSection('Detalhes técnicos, riscos e diferenças',false);
+ caution.append(exBox('Atenção',info.mistake,'guide-surface warning-surface'),
+   exBox('Conexões com outras competências',info.distinct),
+   exBox('Onde este conceito se aplica',info.context));
+ root.append(caution);
+ if(topicPractical.length){
+  const stage=el('section',{class:'lesson-atlascorp'});
+  stage.append(el('header',{class:'lesson-atlascorp-head'},[
+   text('span','ETAPA PRÁTICA · ATLASCORP','eyebrow'),
+   text('h2','Aplicando '+name+' na empresa'),
+   text('p','Você está construindo a mesma empresa fictícia ao longo do Roadmap. As atividades abaixo pertencem a este tema e podem ser realizadas sem sair da aula.','muted')
+  ]));
+  const taskGroups=new Map;
+  topicPractical.forEach(ref=>{
+    if(!taskGroups.has(ref.labId))taskGroups.set(ref.labId,[]);
+    taskGroups.get(ref.labId).push(ref.taskIndex);
+  });
+  const summary=text('p','','lesson-progress');
+  const setStatus=()=>{
+   const completed=topicPractical.filter(ref=>(companyStepState[ref.labId]||{})[ref.taskIndex]===true).length;
+   summary.textContent=completed+' de '+topicPractical.length+' configurações ou verificações concluídas';
+  };
+  setStatus();summary.setAttribute('role','status');stage.append(summary);
+  for(const [labId,indices] of taskGroups){
+   const lab=LABS.find(x=>x.id===labId),
+         chapter=COMPANY_CHAPTERS[labId];
+   const group=el('div',{class:'lesson-scenario'});
+   group.append(text('h3',lab.title),text('p',chapter.incident,'muted'),
+     el('div',{class:'lesson-license'},[
+      text('strong','Antes de começar: '),
+      text('span',lab.license+' Utilize tenant próprio, usuários fictícios, grupo piloto e plano de reversão quando aplicar políticas.')
+     ]));
+   for(const taskIndex of indices){
+    const task=chapter.tasks[taskIndex],
+          done=(companyStepState[labId]||{})[taskIndex]===true;
+    const block=el('details',{class:'lesson-step'});block.open=!done;
+    const heading=text('summary',task.title);block.append(heading);
+    const body=el('div',{class:'lesson-step-body'});
+    for(const [label,value] of [
+      ['Onde configurar',task.path],
+      ['Como configurar',task.action],
+      ['Por que fazer',task.reason],
+      ['Como testar o resultado',task.proof],
+      ['Se não funcionar',task.issue]
+    ]){
+     body.append(el('div',{class:'lesson-instruction'},[
+      text('strong',label),text('p',value)
+     ]));
+    }
+    const checked=el('label',{class:'lesson-step-check'}),
+          input=el('input',{type:'checkbox','aria-label':'Concluir: '+task.title});
+    input.checked=done;
+    input.onchange=()=>{
+      companyStepState[labId]??={};
+      companyStepState[labId][taskIndex]=input.checked;
+      persist();setStatus();
+      block.classList.toggle('completed',input.checked);
+    };
+    checked.append(input,text('span','Realizei esta etapa e registrei o resultado. Se foi apenas simulação, informarei isso nas anotações.'));
+    body.append(checked);
+    block.append(body);group.append(block);
+   }
+   stage.append(group);
+  }
+  root.append(stage);
  }
- updateInfo();assessment.append(msg);
- assessment.append(text('h3','Anotações e dúvidas'));let textarea=el('textarea',{class:'field notes','aria-label':'Anotações do tema',placeholder:'O que observei? Quais erros apareceram? Quais dúvidas levar à documentação?'});textarea.value=notes[key]||'';
- textarea.oninput=()=>{notes[key]=textarea.value;exSave()};assessment.append(textarea);
- root.append(assessment);
- const nav=el('div',{class:'topic-next'}),previous=s>0?[m,s-1]:LEARNING_ORDER.indexOf(m)>0?[LEARNING_ORDER[LEARNING_ORDER.indexOf(m)-1],modules[LEARNING_ORDER[LEARNING_ORDER.indexOf(m)-1]].length-4]:null,
- next=s<modules[m].length-4?[m,s+1]:LEARNING_ORDER.indexOf(m)<LEARNING_ORDER.length-1?[LEARNING_ORDER[LEARNING_ORDER.indexOf(m)+1],0]:null;
- if(previous)nav.append(btn('← Aula anterior',()=>openSkill(...previous),'btn'));
- if(next)nav.append(btn('Próxima aula →',()=>openSkill(...next),'btn primary'));
+ const materials=exSection('Documentação para aprofundar',false);
+ materials.append(exLink(info.reference,'Abrir fonte técnica ↗'));
+ if(topicPractical.length){
+  const seen=new Set;
+  topicPractical.forEach(({labId})=>{
+   if(seen.has(labId))return;
+   seen.add(labId);
+   const lab=LABS.find(x=>x.id===labId);
+   if(lab&&lab.ref!==info.reference)materials.append(exLink(lab.ref,'Procedimento oficial complementar ↗'));
+   (COMPANY_CHAPTERS[labId].docs||[]).forEach(u=>materials.append(exLink(u,'Orientação oficial adicional ↗')));
+  });
+ }
+ root.append(materials);
+ const journal=exSection('Meu progresso e anotações',false);
+ const status=el('div',{class:'lesson-grade'});
+ status.append(text('label','Conhecimento do tema','caption'));
+ const select=el('select',{class:'field','aria-label':'Grau de conhecimento'});
+ levels.forEach((l,i)=>select.append(el('option',{value:String(i),text:i+' — '+l})));
+ select.value=String(score(m,s));select.onchange=()=>{
+  state[key]=Number(select.value);
+  persist();updateTop();
+ };
+ status.append(select);
+ const notesField=el('textarea',{class:'field notes','aria-label':'Minhas anotações',placeholder:'O que aprendi? Que resultado consegui? Execução real ou simulação? Dúvidas para aprofundar.'});
+ notesField.value=notes[key]||'';notesField.oninput=()=>{notes[key]=notesField.value;persist()};
+ journal.append(status,notesField);
+ root.append(journal);
+ const sequence=ROADMAP_LEVELS.flatMap(l=>l.ids),
+       modulePos=sequence.indexOf(m);
+ const previous=s>0?[m,s-1]:(modulePos>0?[sequence[modulePos-1],modules[sequence[modulePos-1]].length-4]:null);
+ const next=s<modules[m].length-4?[m,s+1]:(modulePos<sequence.length-1?[sequence[modulePos+1],0]:null);
+ const nav=el('nav',{class:'topic-next','aria-label':'Sequência das aulas'});
+ if(previous)nav.append(btn('← Tema anterior',()=>openSkill(...previous),'btn'));
+ if(next)nav.append(btn('Próximo tema →',()=>openSkill(...next),'btn primary'));
  root.append(nav);return root
 }
-
-
