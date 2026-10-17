@@ -268,4 +268,47 @@ const COMPANY_CHAPTERS={
  verify:['Pelo menos um caso positivo e um negativo executados com evidência.','JML e privilégio com owner e retirada comprovados.','Licenças, riscos e recursos simulados explicitamente identificados.','Ambiente de teste limpo e custos controlados.']
  }
 };
+
+/* P2: ampliar a trilha de Conditional Access com condições, sessões e risco.
+   Não fabricar incidentes reais nem prometer que a plataforma detectará risco sintético. */
+COMPANY_CHAPTERS['lab-02'].tasks.splice(COMPANY_CHAPTERS['lab-02'].tasks.length-1,0,
+ enterpriseTask('Distinguir políticas e métodos','Entra → Protection → Authentication methods / Conditional Access',
+ 'Documente a diferença entre: quem pode registrar Microsoft Authenticator/passkey (Authentication methods), quando é exigido um método (CA authentication strength) e a autorização final da aplicação. Faça diagrama usuário → método → CA → recurso.',
+ 'Regra de método e regra de acesso se complementam, mas uma não substitui a outra.',
+ 'Matriz: usuário | método registrado | strength exigida | app | decisão.',
+ 'Um usuário pode ter método registrado e ainda falhar por CA ou falta de autorização na app.'),
+ enterpriseTask('Analisar riscos no Identity Protection','Entra ID → Protection → Identity Protection → Risky users / Risky sign-ins',
+ 'Com uma conta licenciada P2, abra relatórios de usuários/entradas arriscadas existentes (se houver) e identifique diferença entre user risk e sign-in risk. Não execute ataques nem dependa de gerar risco real para completar o exercício.',
+ 'Risco de conta se refere a possível comprometimento da identidade; risco de entrada avalia uma tentativa específica.',
+ 'Tabela com definições de nível de risco, proprietários da resposta e ações esperadas, mesmo quando não há registros reais.',
+ 'Tenant limpo pode não possuir eventos de risco; registre "não observado" em vez de inventar uma detecção.'),
+ enterpriseTask('Definir política CA de sign-in risk','Entra ID → Conditional Access → Policies → New policy',
+ 'Crie CA-ATL-004-SIGNIN-RISK: inclua APENAS o grupo piloto (contas de emergência fora do escopo), Target resources conforme cenário controlado, Conditions → Sign-in risk → Medium/High, Grant access → Require authentication strength (MFA forte adequado). Configure sessão Sign-in frequency apropriada, primeiro em Report-only.',
+ 'P2 permite usar sinais de risco de entrada para exigir nova garantia. Escolha os limiares conforme risco e método registrado.',
+ 'Registro dos campos User/Target/Sign-in risk/Grant/Session e política Report-only.',
+ 'Se não houver evento com nível Medium/High, não espere que um login comum aplique a regra. Teste a estrutura e documente limitação.'),
+ enterpriseTask('Definir política CA de user risk','Entra ID → Conditional Access → Policies → New policy',
+ 'Crie política separada CA-ATL-005-USER-RISK: grupo piloto, Target resources → All resources apenas se for seguro para esse grupo, Conditions → User risk → High, Grant access → Require risk remediation e strength apropriada. Observe que as configurações adicionais de sessão/strength podem ser incluídas automaticamente. Comece em Report-only.',
+ 'O comprometimento da identidade exige recuperação própria. Microsoft recomenda não combinar user risk e sign-in risk na MESMA política.',
+ 'Capturas sanitizadas das duas políticas separadas e sua lógica de decisão.',
+ 'Não configure senha-change de usuários híbridos sem requisitos de password writeback e autoatendimento de recuperação.'),
+ enterpriseTask('Verificar status sem fabricar risco','Entra ID → Conditional Access → What If / Sign-in logs',
+ 'Use What If para validar atribuição de usuário, aplicativo e condições suportadas; depois consulte sign-in logs conhecidos, verifique se as políticas de risco foram aplicadas ou não. Caso inexista risco detectado, marque testes de enforcement como "não executáveis neste ambiente" e explique a diferença.',
+ 'Uma condição de risco não pode ser demonstrada como acionada apenas por selecionar o nível em uma política.',
+ 'Registro: política existe, é Report-only, teste de escopo e estado efetivo não acionado ou incidente real do tenant de teste (sem dado pessoal).',
+ 'What If e Report-only não fabricam sinais P2 nem substituem detecção real.'),
+ enterpriseTask('Examinar sessão e localização','Conditional Access → Conditions → Network / Session',
+ 'Projete uma localização nomeada somente se houver rede/IP sob sua administração. Compare Sign-in frequency e Persistent browser session para app de laboratório sem causar loop excessivo de autenticação. Não classifique toda a internet como rede confiável.',
+ 'A localização pode ser sinal adicional; sessão e avaliação contínua dependem do aplicativo e de protocolos.',
+ 'Tabela políticas + impacto de rede/sessão, horários UTC de avaliação e plano de exceção.',
+ 'Endereço compartilhado ou VPN pode invalidar pressupostos de localização.'),
+ enterpriseTask('Revisar combinação de políticas CA','Conditional Access → Policies / Sign-in logs',
+ 'Documente quando duas regras independentes se aplicam simultaneamente: por exemplo MFA e dispositivo conforme. Teste a política piloto MFA separadamente antes de introduzir novas condições. Confirme que todos os requisitos aplicáveis podem precisar ser satisfeitos.',
+ 'Policies combinadas têm efeito cumulativo. Reduz riscos de bloqueio por interseções não planejadas.',
+ 'Matriz de resultados esperados para usuário, dispositivo, app e condição de risco.',
+ 'Não interprete êxito de uma política isolada como êxito do conjunto efetivo.')
+);
+COMPANY_CHAPTERS['lab-02'].verify.push('User risk e sign-in risk tratados em duas políticas P2 separadas, ambas inicialmente Report-only.','Ausência de evento arriscado registrada como limitação, sem fingir teste real de enforcement.');
+COMPANY_CHAPTERS['lab-02'].docs.push('https://learn.microsoft.com/en-us/entra/id-protection/howto-identity-protection-configure-risk-policies','https://learn.microsoft.com/en-us/entra/identity/conditional-access/policy-risk-based-user','https://learn.microsoft.com/en-us/entra/identity/conditional-access/concept-conditional-access-policies');
+
 const COMPANY_ORDER=LABS.map(l=>l.id);
