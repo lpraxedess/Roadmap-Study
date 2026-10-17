@@ -1,6 +1,6 @@
 # ROADMAP - IAM — Currículo atualizado
 
-> 29 módulos, 242 temas, 65 temas com aplicação AtlasCorp e 94 tarefas corporativas reutilizadas. O Roadmap é a única sequência didática da aplicação.
+> 29 módulos, 242 temas, 63 temas com aplicação AtlasCorp e 94 tarefas corporativas reutilizadas. O Roadmap é a única sequência didática da aplicação.
 
 ## Como estudar
 
@@ -417,7 +417,7 @@ Arquiteturas maduras tratam identidades humanas e de máquina com políticas ada
 
 ## Aplicação corporativa nas aulas
 
-Os **94 procedimentos já existentes da AtlasCorp** foram distribuídos por **65 temas**, com o mesmo registro de progresso do laboratório anterior. Isso evita duplicar execução e avaliação. As 16 áreas abaixo identificam a origem das tarefas, mas **não representam uma seção de navegação independente**.
+Os **94 procedimentos já existentes da AtlasCorp** foram distribuídos por **63 temas**, com o mesmo registro de progresso do laboratório anterior. Isso evita duplicar execução e avaliação. As 16 áreas abaixo identificam a origem das tarefas, mas **não representam uma seção de navegação independente**.
 
 ### Preparar laboratório seguro
 
@@ -463,9 +463,9 @@ Os **94 procedimentos já existentes da AtlasCorp** foram distribuídos por **65
 
 5 procedimentos integrados:
 1. **Mapear ações e atores** → RBAC.
-2. **Definir grupos de negócio** → Modelagem de roles.
-3. **Atribuir acesso à aplicação** → Enterprise Applications.
-4. **Provar casos permitidos/negados** → Testes de autorização no backend.
+2. **Definir grupos de negócio** → RBAC.
+3. **Atribuir acesso à aplicação** → RBAC.
+4. **Provar casos permitidos/negados** → RBAC.
 5. **Revogar acesso** → RBAC.
 
 ### Federação SAML e OpenID Connect
