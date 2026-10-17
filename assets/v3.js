@@ -5,6 +5,10 @@ const ROADMAP_LEVELS=[
  {id:'intermediate',name:'Intermediário',subtitle:'Administração cloud e operações IAM',description:'Aprofunde autenticação, identidade externa, dispositivos, Azure, provisionamento e investigação operacional.',ids:[17,18,19,20,21,10,11,12,14,28]},
  {id:'advanced',name:'Avançado',subtitle:'Governança, privilégios e arquitetura',description:'Evolua a AtlasCorp com governança, segurança de workloads, dados, multi-cloud e arquitetura.',ids:[13,22,23,24,25,26,27,15]}
 ];
+/* Uma única ordem para Roadmap, aula seguinte e visão de progresso.
+   Os índices antigos de temas e laboratórios permanecem intocados. */
+LEARNING_ORDER.splice(0,LEARNING_ORDER.length,...ROADMAP_LEVELS.flatMap(level=>level.ids));
+ROADMAP_LEVELS.forEach(level=>level.ids.forEach(moduleId=>{LEARNING_PHASE[moduleId]=level.name}));
 const CERT_LEVELS=[
  {id:'beginner',name:'Iniciante',intro:'Conheça vocabulário técnico, identidade e operações básicas.',certs:['sc900','itil','oktap']},
  {id:'intermediate',name:'Intermediário',intro:'Administração de identidade e certificações complementares da plataforma.',certs:['sc300','az104','md102','sc401','oktaa','gcpace','iso','cobit']},
