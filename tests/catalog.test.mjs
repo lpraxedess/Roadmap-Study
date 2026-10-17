@@ -109,7 +109,7 @@ test('laboratórios possuem preparação, falha e limpeza operacional',()=>{
 
 test('prática da AtlasCorp é vinculada aos temas, sem obrigação artificial para TCP/IP',()=>{
  assert.ok(!d.topicPractice['0-0'],'TCP/IP não requer configuração de tenant');
- assert.equal(d.topicPractice['4-0'].length,2,'RBAC possui exercício integrado');
+ assert.equal(d.topicPractice['4-0'].length,5,'RBAC possui exercício integrado');
  const links=Object.values(d.topicPractice).flat();
  assert.equal(links.length,94);
  const taskCount=d.labs.reduce((n,l)=>n+5,0); // cobertura validada por contagem detalhada abaixo
