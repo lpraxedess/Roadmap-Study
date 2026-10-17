@@ -15,7 +15,7 @@ const mock=[
 "const navigator={},alert=()=>{},confirm=()=>true;"
 ].join('\n');
 const program=[
-'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js',
+'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js',
 'assets/experience.js','assets/v3.js','assets/app.js'].map(read).join('\n');
 const run=code=>JSON.parse(runInNewContext(mock+'\n'+program+'\n'+code,{}, {timeout:20000}));
 test('painel, roadmap, certificações, 29 módulos e 242 aulas são montados',()=>{
@@ -69,13 +69,13 @@ test('backup e progresso corporativo utilizam chaves locais compatíveis',()=>{
  ].join('\n'));
  assert.equal(result.progress,2);assert.equal(result.company,true);assert.equal(result.source,true);
 });
-test('navegação visual tem apenas quatro entradas, sem duplicação',()=>{
+test('navegação visual contém apenas três áreas, sem duplicação',()=>{
  const html=read('index.html');
  assert.equal((html.match(/data-view=/g)||[]).length,3);
  for(const v of ['dashboard','roadmap','certs'])assert.ok(html.includes('data-view="'+v+'"'));
  for(const v of ['content','review','settings','labs'])assert.ok(!html.includes('data-view="'+v+'"'));
  assert.match(html,/ROADMAP - IAM/);
- const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','assets/experience.js','assets/v3.js','assets/app.js'];
+ const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js','assets/experience.js','assets/v3.js','assets/app.js'];
  let pos=-1;for(const asset of assets){let n=html.indexOf(asset);assert.ok(n>pos,asset+' fora de ordem');pos=n}
 });
 
@@ -90,4 +90,46 @@ test('AtlasCorp aparece somente nas aulas que realmente possuem procedimento',()
 test('mesma ordem de navegação em Roadmap e botão próximo tema',()=>{
  const result=run("JSON.stringify({roadmap:ROADMAP_LEVELS.flatMap(l=>l.ids),learning:LEARNING_ORDER})");
  assert.deepEqual(result.roadmap,result.learning);
+});
+
+
+test('242 aulas possuem explicação, caso específico e fonte de consulta',()=>{
+ const items=run("JSON.stringify({all:Object.values(TOPIC_LEARNING).map(v=>({definition:v.definition.length,purpose:v.purpose.length,mechanism:v.mechanism.length,scenario:v.scenario.length,source:v.source,question:v.question})),hasNoArtificialLab:!(TOPIC_PRACTICE['0-0']||[]).length})");
+ assert.equal(items.all.length,242);
+ for(const x of items.all){
+  assert.ok(x.definition>=50,'definição excessivamente curta');
+  assert.ok(x.purpose>=25,'finalidade excessivamente curta');
+  assert.ok(x.mechanism>=70,'explicação de mecanismo curta');
+  assert.ok(x.scenario>=35,'falta cenário de estudo');
+  assert.match(x.source,/^https:\/\//,'fonte ausente');
+  assert.ok(x.question.length>25);
+ }
+ assert.equal(items.hasNoArtificialLab,true);
+});
+test('evidências têm identificadores independentes da posição e são salvas separadamente',()=>{
+ const x=run([
+ "const key=stableTaskKey('lab-03',0);",
+ "practiceProof[key]={mode:'real',note:'Leitura autorizada; escrita negada; registro sanitizado.'};",
+ "companyStepState['lab-03']={0:true};",
+ "persist();",
+ "JSON.stringify({key,proof:JSON.parse(storage[PRACTICE_PROOF_KEY])[key],done:JSON.parse(storage[COMPANY_STEP_KEY])['lab-03'][0],unique:LABS.every(l=>new Set(COMPANY_CHAPTERS[l.id].tasks.map((_,i)=>stableTaskKey(l.id,i))).size===COMPANY_CHAPTERS[l.id].tasks.length)})"
+ ].join('\n'));
+ assert.equal(x.proof.mode,'real');
+ assert.equal(x.done,true);
+ assert.equal(x.unique,true);
+ assert.match(x.key,/^lab-03:/);
+});
+test('backup inclui evidências tipadas e preserva importação legada',()=>{
+ const app=read('assets/app.js');
+ assert.ok(app.includes('version:8,schema:"roadmap-iam-v2"'));
+ assert.ok(app.includes('practiceEvidence:practiceProof'));
+ assert.ok(app.includes('![2,3,4,5,6,7,8].includes(x.version)'));
+ assert.ok(app.includes('if(x.version>=7&&x.companyProcedures'));
+});
+test('cores principais predominantemente pretas e controles acessíveis',()=>{
+ const css=read('assets/styles.css');
+ assert.equal((css.match(/:root\s*\{/g)||[]).length,1);
+ assert.ok(css.includes('background:#000!important'));
+ assert.ok(css.includes('min-height:44px'));
+ assert.ok(css.includes('prefers-reduced-motion:reduce'));
 });
