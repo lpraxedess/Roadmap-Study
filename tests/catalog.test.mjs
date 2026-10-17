@@ -4,8 +4,8 @@ import {readFileSync} from 'node:fs';
 import {runInNewContext} from 'node:vm';
 
 const read = name => readFileSync(new URL('../' + name, import.meta.url), 'utf8');
-const sources = read('data/catalog.js') + '\n' + read('data/expanded.js') + '\n' + read('data/learning.js') + '\n' + read('data/company-lab.js') + '\n' + read('data/topic-practice.js') + '\n' + read('assets/v3.js');
-const payload = runInNewContext(sources + '\nJSON.stringify({modules:DATA.modules,guides:topicGuides,practicals:practicalGuides,labs:LABS,certs:certifications,order:LEARNING_ORDER,phase:LEARNING_PHASE,contexts:MODULE_CONTEXT,links:LAB_FOR_MODULE,lessons:LESSONS,education:MODULE_EDUCATION,topicPractice:TOPIC_PRACTICE,roadmap:ROADMAP_LEVELS})');
+const sources = read('data/catalog.js') + '\n' + read('data/expanded.js') + '\n' + read('data/learning.js') + '\n' + read('data/company-lab.js') + '\n' + read('data/topic-practice.js') + '\n' + read('data/didactics.js') + '\n' + read('assets/v3.js');
+const payload = runInNewContext(sources + '\nJSON.stringify({modules:DATA.modules,guides:topicGuides,practicals:practicalGuides,labs:LABS,certs:certifications,order:LEARNING_ORDER,phase:LEARNING_PHASE,contexts:MODULE_CONTEXT,links:LAB_FOR_MODULE,lessons:LESSONS,education:MODULE_EDUCATION,topicPractice:TOPIC_PRACTICE,roadmap:ROADMAP_LEVELS,learning:TOPIC_LEARNING,contextsByModule:MODULE_DECISION_CONTEXT})');
 const d = JSON.parse(payload);
 const entries = d.modules.flatMap((m,i) => m.slice(3).map((name,j) => ({name, guide:d.guides[i]?.[j],practice:d.practicals[name]})));
 
@@ -112,11 +112,28 @@ test('prática da AtlasCorp é vinculada aos temas, sem obrigação artificial p
  assert.equal(d.topicPractice['4-0'].length,5,'RBAC possui exercício integrado');
  const links=Object.values(d.topicPractice).flat();
  assert.equal(links.length,94);
- const taskCount=d.labs.reduce((n,l)=>n+5,0); // cobertura validada por contagem detalhada abaixo
- assert.ok(taskCount>0);
+ assert.ok(d.labs.length===16);
  const unique=links.map(x=>x.labId+'/'+x.taskIndex);
  assert.equal(new Set(unique).size,links.length,'tarefa associada mais de uma vez');
 });
 test('níveis e navegação seguinte são a mesma trilha curricular',()=>{
  assert.deepEqual(d.order,d.roadmap.flatMap(l=>l.ids));
+});
+
+
+test('as 242 aulas contêm fundamentação distinta, cenário e critério de avaliação',()=>{
+ assert.equal(Object.keys(d.learning).length,242);
+ assert.equal(Object.keys(d.contextsByModule).length,29);
+ const cases=[];
+ for(const [key,topic] of Object.entries(d.learning)){
+  for(const field of ['definition','purpose','mechanism','checkpoint','scenario','evidence','source','question']){
+   assert.equal(typeof topic[field],'string',key+': '+field);
+   assert.ok(topic[field].length>20,key+': '+field+' incompleto');
+  }
+  assert.match(topic.source,/^https:\/\//);
+  cases.push(topic.scenario);
+ }
+ assert.equal(new Set(cases).size,242,'cenários repetidos sem adaptação ao tema');
+ assert.ok(!d.learning['0-0'].isPractical,'TCP/IP indevidamente configurável');
+ assert.equal(d.learning['4-0'].isPractical,true,'RBAC sem prática');
 });
