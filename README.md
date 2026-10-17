@@ -6,11 +6,11 @@ Guia progressivo de **IAM do básico à arquitetura avançada**, com teoria inde
 
 ## O que você encontra
 
-- **28 módulos, 234 tópicos**, cada qual com descrição, contexto, roteiro e critério de conclusão.
+- **29 módulos, 242 tópicos**, cada qual com descrição, contexto, roteiro e critério de conclusão.
 - **16 laboratórios progressivos** com passos, pré-requisitos, licenças, evidências e alternativas sem licença.
 - **24 entradas de certificações e frameworks** incluindo SC-900, SC-300, AZ-104, MD-102, SC-401, SC-100 e caminhos opcionais.
 - Acompanhamento **autodeclarado** do nível de cada assunto (0 a 3), evidências de laboratório separadas e anotações locais.
-- Busca, navegação, links diretos (exemplo: #topic/9/0 e #lab/lab-06), backup e restauração JSON.
+- Pesquisa instantânea com filtros, favoritos, fases recolhíveis, menu móvel, navegação por histórico, links diretos (exemplo: #topic/9/0 e #lab/lab-06), backup e restauração JSON.
 
 ## Como estudar
 
@@ -47,7 +47,7 @@ Use somente ambientes e contas de teste sob sua administração. Nunca publique 
 | assets/styles.css | Aparência responsiva |
 | assets/app.js | Interface e persistência local |
 | data/catalog.js | Conteúdo legado e identificadores originais |
-| data/expanded.js | Correções, 111 tópicos, laboratórios e novas certificações |
+| data/expanded.js | Correções, 119 tópicos, laboratórios e novas certificações |
 | docs/CURRICULO.md | Inventário do conteúdo |
 | tests/catalog.test.mjs | Testes automatizados |
 | .github/workflows/validate.yml | Validação CI |
@@ -69,11 +69,13 @@ node --test tests/catalog.test.mjs
 node --check assets/app.js
 node --check data/catalog.js
 node --check data/expanded.js
+node --check data/learning.js
+node --check assets/experience.js
 ~~~
 
 ## Progresso e privacidade
 
-O progresso e as anotações ficam em localStorage no navegador; **não sincronizam entre dispositivos**. Faça backup JSON antes de limpar dados. A importação continua aceitando backups versão 5 anteriores (schema iam-atlas-123-v1), restaurando níveis, notas e certificações. Novos backups incluem os checklists dos laboratórios.
+O progresso e as anotações ficam em localStorage no navegador; **não sincronizam entre dispositivos**. Faça backup JSON antes de limpar dados. A importação continua aceitando backups versão 5 anteriores (schema iam-atlas-123-v1), restaurando níveis, notas e certificações. Novos backups (versão 6) incluem favoritos, modalidade de execução, avaliações por aula, etapas e evidências de laboratório. Backups antigos da versão 5 continuam aceitos sem deslocar os índices dos tópicos anteriores.
 
 Os 16 módulos originais mantiveram seus índices para preservar chaves antigas. Os novos módulos são anexados ao catálogo e aparecem na ordem do percurso pedagógico.
 
@@ -92,3 +94,19 @@ Os 16 módulos originais mantiveram seus índices para preservar chaves antigas.
 - [Google Cloud IAM](https://cloud.google.com/iam/docs/overview)
 
 **Revisado em 16 de outubro de 2026.** Consulte documentação e objetivos de certificação vigentes antes de prestar exames ou alterar ambientes reais.
+
+
+## Auditoria e evolução curricular
+
+A [revisão item a item](docs/REVISAO-ITEM-A-ITEM.md) oferece para cada aula definição, pré-requisitos, passo a passo, resultado esperado, teste negativo, diagnóstico e ponto de leitura oficial. O [currículo integral](docs/CURRICULO.md) apresenta os laboratórios completos.
+
+**Limitações explícitas:** o conhecimento é autodeclarado; o site não valida credenciais Microsoft e não coleta evidências. A documentação oficial pode mudar e os links são pontos de partida para pesquisa, não garantia de disponibilidade. Os laboratórios com simulação ficam identificados separadamente da execução real.
+
+### Como avançar na carreira
+
+1. **Base:** fundamentos, identidade, protocolos e laboratório AtlasCorp; pratique explicações técnicas.
+2. **Operação:** autenticação, SSO, autorização, Entra, Graph e logs; entregue casos permitidos/negados com evidências.
+3. **Governança e cloud:** JML, SCIM, revisão de direitos, PIM, device compliance, Azure RBAC e Purview.
+4. **Arquitetura:** multi-cloud, workloads, federação, resiliência e projeto final ponta a ponta.
+
+A SC-300 é o principal marco de certificação sugerido; AZ-104, MD-102 e SC-401 são especializações complementares, não exigências para se tornar profissional de IAM. Consulte os programas oficiais antes de marcar exames.
