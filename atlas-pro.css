@@ -703,3 +703,23 @@ html,body{max-width:100%;overflow-x:clip}
 @keyframes atlasDialogContentIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){#detail{width:calc(100vw - 22px);max-height:90dvh;border-radius:16px;padding:20px}#detail[open]{animation-duration:.36s}}
 @media(prefers-reduced-motion:reduce){#detail[open],#detail[open]::backdrop,#detail[open].atlas-dialog-closing,#detail[open].atlas-dialog-closing::backdrop,#detail #detail-body{animation:none!important;filter:none!important;transform:none!important}#detail .dialog-close{transition:none!important}}
+
+/* Modal motion is handled by Web Animations API to avoid competing CSS animations. */
+#detail[open],#detail[open].atlas-dialog-closing,#detail[open]::backdrop,#detail[open].atlas-dialog-closing::backdrop,#detail #detail-body{animation:none!important}
+#detail[open]::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(5px)}
+#detail{transform-origin:center center}
+#detail.atlas-dialog-motion{will-change:opacity,transform,filter}
+/* Shared icon geometry: center SVGs, chevrons, plus signs and close controls. */
+.atlas-icon{display:block;flex:0 0 auto;vertical-align:middle;stroke-linecap:round;stroke-linejoin:round}
+.atlas-nav-glyph,.atlas-topology-icon,.atlas-env-chevron,.atlas-env-stepnum,.topic-indicator,.cert-arrow,.dialog-close,.atlas-sidebar-head .atlas-brand-mark{display:inline-grid!important;place-items:center!important;align-content:center!important;justify-content:center!important;text-align:center!important;line-height:1!important;box-sizing:border-box!important}
+.atlas-nav-glyph .atlas-icon,.atlas-env-chevron .atlas-icon,.cert-arrow .atlas-icon{display:block!important;margin:0!important}
+.topic-indicator{padding:0!important;line-height:1!important;font-family:Arial,system-ui,sans-serif!important;font-weight:400!important}
+.atlas-env-chevron{width:26px!important;height:26px!important;padding:0!important;flex:none!important;transform-origin:center center}
+.atlas-env-chevron .atlas-icon{width:18px!important;height:18px!important}
+.cert-arrow{width:24px!important;height:24px!important;padding:0!important;flex:none!important}
+#detail .dialog-close{display:grid!important;place-items:center!important;float:none!important;position:sticky!important;top:0!important;margin:-6px -7px -34px auto!important;width:36px!important;height:36px!important;padding:0!important;font-family:Arial,system-ui,sans-serif!important;font-size:25px!important;font-weight:400!important;line-height:1!important;z-index:3!important}
+#detail #detail-body{padding-top:10px}
+.atlas-env-toggle{align-items:center!important}
+.atlas-env-status{align-self:center!important}
+.atlas-env-stepnum{line-height:1!important}
+@media(prefers-reduced-motion:reduce){#detail.atlas-dialog-motion{will-change:auto}}
