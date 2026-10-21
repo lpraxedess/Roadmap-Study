@@ -342,9 +342,9 @@ const extraCerts=[
 ['ISC2 CC','ISC2','Básica','Fundamentos complementares de segurança','https://www.isc2.org/certifications/cc'],
 ['Microsoft AZ-900','Microsoft','Básica','Fundamentos complementares de nuvem','https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/'],
 ['Microsoft AZ-104','Microsoft','Intermediária','Administração Azure complementar','https://learn.microsoft.com/en-us/credentials/certifications/azure-administrator/'],
-['Okta Certifications','Okta','Intermediária','Especialização em plataforma Okta','https://www.okta.com/services/certification/'],
-['SailPoint Certifications','SailPoint','Intermediária','Especialização IGA','https://www.sailpoint.com/university/'],
-['CyberArk Certifications','CyberArk','Intermediária','Especialização PAM','https://training.cyberark.com/'],
+['Okta Certified Professional','Okta','Intermediária','Certificação introdutória de Okta para usuários, SSO e controles básicos, sem pré-requisito oficial.','https://www.okta.com/pt-br/services/certification/'],
+['SailPoint Certified Identity Security Administrator','SailPoint','Intermediária','Administração de IGA em SailPoint Identity Security Cloud, incluindo ciclo de vida e revisão de acessos.','https://www.sailpoint.com/university/training-paths/identity-security-administrator'],
+['CyberArk Defender - PAM','CyberArk','Intermediária','Conhecimentos de administração e operação de uma solução PAM, conforme guia oficial Defender.','https://training.cyberark.com/learn/course/external/view/elearning/113/defender-pam-sample-items-study-guide'],
 ['ISACA CISM','ISACA','Avançada','Governança e gestão de segurança','https://www.isaca.org/credentialing/cism']
 ];extraCerts.forEach((x,i)=>certs.push({id:'c'+(4+i),name:x[0],provider:x[1],stage:x[2],desc:x[3],url:x[4]}));certs.forEach(c=>{if(!c.stage)c.stage=['Microsoft SC-300'].includes(c.name)?'Intermediária':['Microsoft SC-100','CISSP'].includes(c.name)?'Avançada':'Básica'});
 
@@ -353,9 +353,9 @@ const certPolicy={
 'Microsoft SC-900':['recommended','Fundamentos de segurança e identidade','Boa porta de entrada para iniciantes no ambiente Microsoft; pode ser substituída por estudo equivalente.'],
 'ISC2 CC':['recommended','Fundamentos gerais de cibersegurança','Alternativa introdutória para consolidar princípios de segurança antes de especializar-se em IAM.'],
 'CompTIA Security+':['recommended','Base ampla de segurança','Ajuda a demonstrar fundamentos transversais como controles, gestão de riscos e autenticação.'],
-'Okta Certifications':['recommended','SSO, autenticação e federação com Okta','Priorize somente se suas vagas-alvo ou projetos utilizarem a plataforma Okta. Consulte as credenciais disponíveis no catálogo oficial.'],
-'SailPoint Certifications':['recommended','Governança de identidades (IGA)','Especialização útil para quem trabalha com campanhas de acesso, JML e processos IGA em SailPoint. Consulte as credenciais oficiais vigentes.'],
-'CyberArk Certifications':['recommended','Gestão de acessos privilegiados (PAM)','Indicada para uma carreira focada em cofres, sessões e operações privilegiadas na plataforma CyberArk. Consulte as opções oficiais atuais.'],
+'Okta Certified Professional':['recommended','SSO, autenticação e federação com Okta','Priorize somente se suas vagas-alvo ou projetos utilizarem a plataforma Okta. Consulte as credenciais disponíveis no catálogo oficial.'],
+'SailPoint Certified Identity Security Administrator':['recommended','Governança de identidades (IGA)','Especialização útil para quem trabalha com campanhas de acesso, JML e processos IGA em SailPoint. Consulte as credenciais oficiais vigentes.'],
+'CyberArk Defender - PAM':['recommended','Gestão de acessos privilegiados (PAM)','Indicada para uma carreira focada em cofres, sessões e operações privilegiadas na plataforma CyberArk. Consulte as opções oficiais atuais.'],
 'Microsoft AZ-900':['optional','Fundamentos de nuvem Azure','Amplia contexto de nuvem, mas não é requisito universal para estudar IAM.'],
 'Microsoft AZ-104':['optional','Operação e administração Azure','Interessante para administradores com forte interface com infraestrutura Azure.'],
 'Microsoft SC-100':['optional','Arquitetura de segurança avançada','Amplia visão de arquitetura e depende da trajetória de segurança escolhida; verifique pré-requisitos oficiais.'],
