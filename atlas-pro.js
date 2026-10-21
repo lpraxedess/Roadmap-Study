@@ -73,15 +73,6 @@ if(e.target.closest('#export'))toast('Arquivo de backup exportado.');
 const btn=e.target.closest('.atlas-btn,.atlas-next-card,.atlas-stage,.atlas-path-card,.atlas-lab-card,.atlas-track-card');
 if(btn&&!reduced.matches){const r=btn.getBoundingClientRect(),circle=document.createElement('span');circle.className='atlas-ripple';const d=Math.max(r.width,r.height)*2;circle.style.width=circle.style.height=d+'px';circle.style.left=e.clientX-r.left+'px';circle.style.top=e.clientY-r.top+'px';btn.append(circle);setTimeout(()=>circle.remove(),600)}
 });
-/* Perspective feedback on the corporate architecture map; respects motion preferences. */
-let atlasTiltNode=null,atlasTiltFrame=0,atlasTiltX=0,atlasTiltY=0;
-function atlasFlushTilt(){atlasTiltFrame=0;const el=atlasTiltNode;if(!el||!el.isConnected)return;el.style.setProperty('--atlas-rx',atlasTiltY+'deg');el.style.setProperty('--atlas-ry',atlasTiltX+'deg')}
-document.addEventListener('pointermove',e=>{if(reduced.matches||e.pointerType==='touch')return;const el=e.target.closest('.atlas-arch-node');if(!el)return;
-if(atlasTiltNode!==el&&atlasTiltNode?.isConnected){atlasTiltNode.style.setProperty('--atlas-rx','0deg');atlasTiltNode.style.setProperty('--atlas-ry','0deg')}
-atlasTiltNode=el;const rect=el.getBoundingClientRect();atlasTiltX=clamp((e.clientX-rect.left)/rect.width-.5,-.5,.5)*8;atlasTiltY=clamp(.5-(e.clientY-rect.top)/rect.height,-.5,.5)*8;
-if(!atlasTiltFrame)atlasTiltFrame=requestAnimationFrame(atlasFlushTilt);
-},{passive:true});
-document.addEventListener('pointerout',e=>{const el=e.target.closest('.atlas-arch-node');if(!el||e.relatedTarget&&el.contains(e.relatedTarget))return;el.style.setProperty('--atlas-rx','0deg');el.style.setProperty('--atlas-ry','0deg');if(atlasTiltNode===el)atlasTiltNode=null},{passive:true});
 /* Unified perspective interaction: delegated, throttled, and disabled for touch/reduced motion. */
 let surfaceFrame=0,surfaceTarget=null,surfaceX=0,surfaceY=0;
 const surfaceSelector='.atlas-stage,.atlas-next-card,.atlas-path-card,.atlas-lab-card,.atlas-track-card,.atlas-progress-feature';
