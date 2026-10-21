@@ -29,3 +29,37 @@ assert.ok(html.includes('Report-only'),'Segurança de CA');
 assert.equal(curriculum.atlasPlan.pricing.totalOnePilot,103.10,'Preço de referência piloto');
 assert.ok(curriculum.atlasPlan.pricing.twoP2OneIntune>150,'Segundo P2 ultrapassa teto');
 console.log('OK: 36 labs, 189 atividades, 4 fases sequenciais, sintaxe e links locais.');
+
+/* Teste de execução do JavaScript inicial em DOM mínimo. Sintaxe válida não garante tela renderizada! */
+const inline=html.split('<script>\\n')[1]?.split('</script>')[0];
+assert.ok(inline,'Script inline encontrado');
+const expected={'#inicio':'Seu progresso','#labs':'Laboratório de IAM','#roadmap':'Roadmap de competências','#certs':'Certificações IAM'};
+for(const [hash,phrase] of Object.entries(expected)){
+ const elements=new Map();
+ const element=id=>{if(!elements.has(id))elements.set(id,{
+  id,innerHTML:'',value:'',dataset:{},hidden:false,style:{},
+  classList:{add(){},remove(){},toggle(){}},
+  setAttribute(){},addEventListener(){},getAttribute(){return ''},
+  querySelector(){return element('child')},querySelectorAll(){return []},
+  closest(){return null},scrollIntoView(){}
+ });return elements.get(id)};
+ const document={
+  getElementById:element,querySelector(){return element('query')},
+  querySelectorAll(){return []},addEventListener(){},createElement(){return element('created')}
+ };
+ const storage={getItem(){return null},setItem(){},removeItem(){}};
+ const window={
+  IAMAtlasCurriculum:curriculum,
+  matchMedia(){return {matches:true}},
+  addEventListener(){},scrollTo(){}
+ };
+ const context={
+  document,window,location:{hash},localStorage:storage,sessionStorage:storage,
+  setTimeout:()=>0,clearTimeout(){},matchMedia:window.matchMedia,
+  requestAnimationFrame:cb=>cb(),confirm:()=>true,alert(){},
+  URL:{},Blob:function(){}
+ };
+ vm.runInNewContext(inline,context,{filename:'inline-'+hash.slice(1)+'.js',timeout:5000});
+ assert.ok(element('app').innerHTML.includes(phrase),'Página '+hash+' não renderizou: '+phrase);
+}
+console.log('OK: renderização real inicial das 4 páginas, além das validações estáticas.');
