@@ -429,3 +429,62 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #d2aa
 .topic-actions .atlas-practice-link .atlas-icon{width:17px;height:17px}
 @media(max-width:760px){.atlas-lesson-theory{padding:15px}.atlas-lesson-theory li{padding:11px 12px 11px 28px;font-size:12px}.atlas-lesson-theory li:before{left:11px;top:13px}.topic-actions .atlas-practice-link{width:100%;justify-content:center}}
 @media(prefers-reduced-motion:reduce){.topic-actions .atlas-practice-link:hover,.topic-actions .atlas-practice-link:active{transform:none!important}}
+
+/* 2026 design-system consolidation — graphite/black canvas, restrained ultraviolet lighting */
+:root{--atlas-bg:#050507;--atlas-panel:#0f1013;--atlas-panel-raised:#15161b;--atlas-line:#292a32;--atlas-text:#f3f2f7;--atlas-muted:#a19eab;--atlas-accent:#b069ff;--atlas-glow:#a453ff29;--atlas-radius:16px}
+html,body{background:#050507!important;color:#f3f2f7!important}
+body{background-image:none!important}
+body:before,body:after{background:none!important;pointer-events:none}
+main{max-width:1680px;min-height:100dvh;overflow:visible;background:#050507!important}
+#app{isolation:isolate;min-height:60vh}
+aside{background:#09090c!important;border-right:1px solid #23232b!important;box-shadow:inset -1px 0 #ffffff06!important}
+aside strong{color:#f3f0f7!important}
+aside button{border:1px solid transparent!important;background:transparent!important;transition:background .2s,color .2s,border-color .2s,transform .2s!important}
+aside button:hover{background:#17151d!important;border-color:#2c2634!important;transform:translateX(2px)}
+aside button.active{background:#19131f!important;border-color:#553473!important;color:#d9b4ff!important;box-shadow:inset 3px 0 #b05dff,0 0 18px #8c38d714!important}
+header,section{scroll-margin-top:25px}
+h1,h2,h3{color:#f4f2f8!important}
+p{color:#a8a4b1!important}
+.atlas-compact-hero,.atlas-env-intro,.atlas-arch,.atlas-starter,.dashboard-banner{background-color:#0d0d11!important;background-image:radial-gradient(ellipse at 94% 0%,#ad5bff0b,transparent 45%)!important;border-color:#2b2632!important;box-shadow:inset 0 1px #ffffff0a,0 16px 35px #0006!important}
+.atlas-compact-hero:before,.atlas-env-intro:before,.dashboard-banner:before{opacity:.32!important}
+.atlas-env-summary{background:#15121a!important;background-image:linear-gradient(140deg,#25192f,#111015)!important;border-color:#654083!important}
+.atlas-compact-meter,.atlas-progress-feature,.atlas-overview-stats .card,.atlas-next-card,.atlas-path-card,.atlas-stage,.atlas-lab-card,.atlas-track-card,.card,.topic-shell,.cert-row,.cert-tile,.atlas-env-stage,.atlas-starter-file{background:#101014!important;border-color:#292731!important;box-shadow:inset 0 1px #ffffff09,0 5px 0 #08080a,0 12px 22px #0005!important}
+.atlas-compact-meter:hover,.atlas-next-card:hover,.atlas-path-card:hover,.atlas-stage:hover,.atlas-lab-card:hover,.atlas-track-card:hover,.card:hover,.topic-shell:hover,.cert-row:hover,.cert-tile:hover,.atlas-env-stage:hover{background:#15131a!important;border-color:#765094!important;box-shadow:inset 0 1px #ffffff13,0 6px 0 #09070c,0 16px 29px #0009,0 0 20px #a257f514!important}
+.atlas-env-toggle,.atlas-env-toggle:hover{background:#101014!important}
+.atlas-env-toggle:hover{background:#17131c!important}
+.atlas-env-stage.is-open{background:#111015!important;border-color:#a15be6!important;box-shadow:0 4px 0 #0b080e,0 16px 30px #000a,0 0 0 1px #7d45a92b!important}
+.atlas-env-stage.is-open .atlas-env-toggle{background:#151019!important}
+.atlas-env-task{background:#101014!important;border-color:#292731!important;box-shadow:none!important}
+.atlas-env-task:has(input:checked){background:#15111a!important;border-color:#674281!important}
+.atlas-env-context,.atlas-lesson-theory,.atlas-lesson-theory li,.atlas-env-assets>span{background:#111014!important;border-color:#302a37!important}
+.atlas-env-context-pill{background:#281634!important}
+.atlas-env-command,.atlas-starter-file>.atlas-env-command{background:#08080a!important}
+.atlas-env-command-head{background:#121015!important}
+.atlas-arch-node{background:#121016!important;border-color:#373040!important}
+.atlas-arch-node:hover{background:#1b1422!important;border-color:#aa69ee!important}
+.atlas-arch-node-icon{background:#211629!important;border-color:#6b4588!important}
+.atlas-env-filter button{background:#121015!important;border-color:#352a40!important}
+.atlas-env-filter button[aria-pressed=true]{background:#321b46!important;border-color:#b273ee!important}
+.atlas-starter-tech,.atlas-arch-indicator{background:#22162d!important}
+.atlas-starter-file[open]{background:#131017!important}
+.atlas-starter-file summary:hover{background:#1b1520!important}
+.atlas-env-safety,.atlas-env-task-note,.note{background:#17111c!important}
+.atlas-lesson-theory{background:#101014!important}
+.atlas-lesson-theory li{background:#15131a!important}
+.atlas-env-summary strong,.atlas-env-stepnum,.atlas-env-task-no{color:#d5aaff!important}
+.atlas-compact-track,.atlas-env-mini-track{background:#25212b!important}
+.atlas-compact-track i,.atlas-env-mini-track i{background:linear-gradient(90deg,#7f3cbb,#bb76ff)!important;box-shadow:0 0 12px #a558f74d!important}
+.atlas-env-task-title input{accent-color:#ad64ef}
+.atlas-env-toggle:focus-visible,.atlas-env-filter button:focus-visible,.atlas-arch-node:focus-visible{outline:2px solid #d4a4ff!important;outline-offset:3px}
+.atlas-env-task .atlas-env-verify{color:#bcb3c5}
+.atlas-env-stages{gap:16px}
+.atlas-arch-flow{gap:13px}
+.atlas-env-body{will-change:auto}
+.atlas-env-body-inner{contain:layout style}
+.atlas-arch-node{will-change:auto}
+.atlas-arch-node:hover{will-change:transform}
+.atlas-env-toggle .atlas-env-chevron{transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+.atlas-env-stage.is-open .atlas-env-chevron{transform:rotate(90deg)}
+@media(max-width:960px){main{overflow:clip}.atlas-env-assets{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:640px){main{padding-bottom:105px}.atlas-env-assets{grid-template-columns:repeat(2,minmax(0,1fr))}.atlas-arch-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.atlas-env-task{padding:14px!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
