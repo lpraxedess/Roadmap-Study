@@ -225,6 +225,56 @@ footer{color:#897d99!important;border-color:#342840!important}
 dialog[open]{animation:panelCinematicIn .42s cubic-bezier(.16,1,.3,1) both}
 dialog::backdrop{animation:detailRise .35s both}
 @media(prefers-reduced-motion:reduce){#app,#app.is-leaving,dialog[open],dialog::backdrop,.topic-panel.expanded .detail-columns section,.cert-row-body.expanded .cert-tile{animation:none!important;transition:none!important;filter:none!important}}
+
+/* Final palette: black is the canvas; purple only for accents */
+:root{background:#08080b!important;color:#f3f3f6!important;--surface:#121216!important;--line:#292930!important;--ink:#f3f3f6!important;--sub:#a1a0a9!important;--violet:#9d72ff}
+html,body{background:#08080b!important;color:#f3f3f6!important}
+body{background-image:none!important}
+aside{background:#0e0e12!important;border-color:#25252c!important;box-shadow:none!important}
+aside strong{color:#f4f4f6!important}
+aside button{color:#a2a1aa!important}
+aside button:hover{background:#1c1c23!important;color:#f5f5f7!important}
+aside button.active{background:#222027!important;color:#c4aaff!important;box-shadow:inset 3px 0 #9d72ff!important}
+aside small{border-color:#28282f!important;color:#85838e!important}
+main{background:transparent!important}
+h1,h2,h3{color:#f4f4f7!important}
+p,.muted,.lead{color:#a4a3ad!important}
+.eyebrow{background:#9d72ff0e!important;border-color:#9d72ff3a!important;color:#b89bff!important}
+.card{background:#131317!important;border-color:#292930!important;box-shadow:none!important}
+.card:hover{background:#18181e!important;border-color:#765aab!important;box-shadow:0 12px 32px #0005!important}
+.card:before{background:radial-gradient(210px circle at var(--px) var(--py),#9d72ff12,transparent 80%)!important}
+.number{color:#f4f4f7!important}
+.tag{background:#9d72ff0d!important;border-color:#9d72ff39!important;color:#bca2ff!important}
+.meter{background:#2b2b32!important}
+.meter span{background:#9d72ff!important;box-shadow:none!important}
+.card button,.primary,.toolbar button,.topic-actions button{background:#8859e5!important;border-color:#8859e5!important;color:#fff!important;box-shadow:none!important}
+.card button:hover,.primary:hover,.toolbar button:hover,.topic-actions button:hover{background:#9e74ef!important;box-shadow:none!important}
+.topic-shell,.cert-row{background:#131317!important;border-color:#2a2a31!important;box-shadow:none!important}
+.topic-shell:hover,.topic-shell.is-open,.cert-row:has(.selected){background:#17171c!important;border-color:#73559d!important;box-shadow:none!important}
+.topic-shell .topic{background:transparent!important}
+.topic small{color:#a19da9!important}
+.topic-indicator{background:#9d72ff0f!important;border-color:#9d72ff3c!important;color:#bda0ff!important}
+.topic-shell.is-open .topic-indicator{background:#9d72ff!important;color:#fff!important}
+.topic-detail-inner{background:#101014!important;border-color:#2c2a32!important}
+.detail-columns section{background:#19191f!important;border-color:#2d2d35!important}
+.detail-label{color:#b89aff!important}
+.detail-columns p,.detail-columns li{color:#b4b1bc!important}
+.topic-actions a{color:#b89aff!important;border-color:#9d72ff55!important}
+.cert-level{background:transparent!important;color:#ddd9e6!important;border-color:#303038!important}
+.cert-level:hover,.cert-level.selected{background:#9d72ff0b!important;border-color:#765aab!important;color:#c0a4ff!important}
+.cert-tile,.cert-tile.required,.cert-tile.essential,.cert-tile.optional,.cert-tile.done{background:#1b1b22!important;border-color:#34343c!important;color:#ecebf1!important}
+.cert-tile:hover{background:#21212a!important;border-color:#8663c2!important;box-shadow:none!important}
+.filter{background:#131318!important;border-color:#34343d!important}
+.note{background:#17151c!important;border-color:#40344d!important;border-left-color:#9d72ff!important}
+dialog{background:#141419!important;border-color:#50405f!important}
+.dashboard-banner{background:#17171c!important;border:1px solid #34313e!important;color:#f4f3f7!important;box-shadow:none!important}
+.dashboard-banner:after{border-color:#9d72ff0c!important}
+.dashboard-banner h2{color:#f4f3f7!important}
+.dashboard-banner p{color:#aaa6b1!important}
+.dashboard-banner .banner-kicker{color:#b79aff!important}
+.dashboard-banner button{background:#8859e5!important;color:#fff!important}
+.dashboard-banner button:hover{background:#9e74ef!important}
+footer{border-color:#28282f!important}
 </style></head><body><aside><strong>◈ IAM Atlas</strong><button data-page="inicio">Visão geral</button><button data-page="roadmap">Roadmap</button><button data-page="certs">Certificações</button><small>Projeto educacional independente.<br>Progresso armazenado apenas neste navegador.</small></aside><main id="app"></main><dialog id="detail"><button class="dialog-close" id="close" aria-label="Fechar">×</button><div id="detail-body"></div></dialog><script>
 const levels=['Fundamentos de TI','Fundamentos de IAM','Protocolos e integrações','Operações e governança','Segurança avançada','Arquitetura e automação'];
 const topics=[
