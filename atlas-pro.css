@@ -723,3 +723,46 @@ html,body{max-width:100%;overflow-x:clip}
 .atlas-env-status{align-self:center!important}
 .atlas-env-stepnum{line-height:1!important}
 @media(prefers-reduced-motion:reduce){#detail.atlas-dialog-motion{will-change:auto}}
+
+/* Unified navigation and accordion motion. One rhythm across roadmap, certifications and labs. */
+:root{--atlas-sidebar-width:228px;--atlas-content-max:1480px;--atlas-motion-ease:cubic-bezier(.22,1,.36,1);--atlas-motion-time:.48s}
+body{--atlas-sidebar-width:228px}
+body>aside#atlas-sidebar{width:calc(var(--atlas-sidebar-width) - 12px)!important;background:#0a0a0d!important;border:1px solid #232029!important;border-radius:15px!important;padding:15px 11px!important;box-shadow:inset 0 1px #ffffff08,0 14px 40px #0008!important}
+body>aside#atlas-sidebar .atlas-sidebar-head{padding:4px 5px 18px!important;margin-bottom:10px!important;border-bottom:1px solid #222027!important}
+body>aside#atlas-sidebar .atlas-sidebar-head strong{font-size:17px!important;letter-spacing:-.65px!important}
+body>aside#atlas-sidebar .atlas-brand-mark{display:grid;place-items:center;width:34px;height:34px;min-width:34px;border:1px solid #6c3c91;border-radius:10px;background:linear-gradient(145deg,#3c2053,#1a1024);box-shadow:inset 0 1px #ffffff24,0 4px 0 #070509,0 0 18px #7f3ab728;color:#d7a4ff!important;font-size:19px!important}
+body>aside#atlas-sidebar>button[data-page]{position:relative;border-radius:10px!important;min-height:47px!important;padding:11px 12px!important;gap:11px!important;color:#a8a2b1!important;font-size:12px!important;font-weight:700!important;box-shadow:none!important}
+body>aside#atlas-sidebar>button[data-page]:hover{background:#17131c!important;border-color:#33283e!important;color:#e9d8f6!important;transform:translateX(2px)!important}
+body>aside#atlas-sidebar>button[data-page].active{background:#1b1424!important;border:1px solid #53356e!important;color:#e2bfff!important;box-shadow:inset 3px 0 #ad65ff,0 0 19px #9043d016!important}
+body>aside#atlas-sidebar .atlas-nav-glyph{width:22px!important;height:22px!important;min-width:22px!important;color:#ad8cc6}
+body>aside#atlas-sidebar>button[data-page].active .atlas-nav-glyph{color:#d5a5ff!important}
+body>aside#atlas-sidebar .atlas-nav-glyph .atlas-icon{width:19px;height:19px}
+.atlas-sidebar-foot{margin-top:auto;display:flex;align-items:center;gap:9px;padding:14px 8px 6px;border-top:1px solid #25202a}
+.atlas-sidebar-foot-dot{width:7px;height:7px;flex:none;border-radius:50%;background:#a76de1;box-shadow:0 0 12px #ae60ef65}
+.atlas-sidebar-foot-text{color:#867e90;font-size:10px;line-height:1.45;white-space:nowrap}
+body>aside#atlas-sidebar>small{display:none!important}
+body.atlas-sidebar-collapsed .atlas-sidebar-foot-text{display:none!important}
+body.atlas-sidebar-collapsed .atlas-sidebar-foot{justify-content:center}
+body.atlas-sidebar-collapsed .atlas-sidebar-head{min-height:66px!important;justify-content:center!important}
+body.atlas-sidebar-collapsed .atlas-brand-mark{margin:auto!important}
+body.atlas-sidebar-collapsed .atlas-brand-label{display:none!important}
+body>main#app{margin-left:var(--atlas-sidebar-width)!important;width:calc(100% - var(--atlas-sidebar-width))!important}
+/* Matching progressive reveal for all three accordion families */
+.topic-panel,.atlas-env-body{display:grid!important;grid-template-rows:0fr!important;opacity:0!important;visibility:hidden;transition:grid-template-rows var(--atlas-motion-time) var(--atlas-motion-ease),opacity .36s ease,visibility 0s linear var(--atlas-motion-time)!important}
+.topic-panel.expanded,.atlas-env-stage.is-open .atlas-env-body{grid-template-rows:1fr!important;opacity:1!important;visibility:visible;transition:grid-template-rows var(--atlas-motion-time) var(--atlas-motion-ease),opacity .36s ease,visibility 0s!important}
+.topic-panel-inner,.atlas-env-body-inner{min-height:0!important;overflow:hidden!important}
+.topic-detail-inner,.atlas-env-body-inner>*{animation:none}
+.topic-panel.expanded .topic-detail-inner,.atlas-env-stage.is-open .atlas-env-body-inner>*{animation:atlasAccordionContent .48s var(--atlas-motion-ease) both}
+.cert-row-body{display:grid!important;grid-template-rows:0fr!important;max-height:none!important;opacity:0!important;visibility:hidden;overflow:hidden!important;transition:grid-template-rows var(--atlas-motion-time) var(--atlas-motion-ease),opacity .36s ease,visibility 0s linear var(--atlas-motion-time)!important}
+.cert-row-body.expanded{grid-template-rows:1fr!important;max-height:none!important;opacity:1!important;visibility:visible;transition:grid-template-rows var(--atlas-motion-time) var(--atlas-motion-ease),opacity .36s ease,visibility 0s!important}
+.cert-body-inner{min-height:0!important;overflow:hidden!important}
+.cert-row-body.expanded .cert-body-inner{animation:atlasAccordionContent .48s var(--atlas-motion-ease) both}
+@keyframes atlasAccordionContent{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.topic-shell .topic,.cert-level,.atlas-env-toggle{transition:background .22s,border-color .22s,color .22s!important}
+.topic-indicator,.atlas-env-chevron,.cert-level .cert-arrow{transition:transform var(--atlas-motion-time) var(--atlas-motion-ease),background .24s,color .24s!important}
+.topic-shell.is-open .topic-indicator{transform:rotate(45deg)}
+.atlas-env-stage.is-open .atlas-env-chevron{transform:rotate(90deg)}
+@media(min-width:1181px){body{--atlas-sidebar-width:228px}body>aside#atlas-sidebar{width:216px!important}}
+@media(min-width:761px) and (max-width:1180px){body{--atlas-sidebar-width:76px}body>aside#atlas-sidebar{width:64px!important}body>aside#atlas-sidebar .atlas-sidebar-foot-text{display:none!important}body>aside#atlas-sidebar .atlas-sidebar-foot{justify-content:center}body>aside#atlas-sidebar .atlas-sidebar-head{min-height:66px!important;justify-content:center!important}body>aside#atlas-sidebar .atlas-brand-label{display:none!important}}
+@media(max-width:760px){body{--atlas-sidebar-width:0px}body>aside#atlas-sidebar{width:min(300px,calc(100vw - 55px))!important}body>aside#atlas-sidebar .atlas-brand-label{display:block!important}body>aside#atlas-sidebar .atlas-sidebar-foot-text{display:block!important}}
+@media(prefers-reduced-motion:reduce){.topic-panel,.atlas-env-body,.cert-row-body{transition:none!important}.topic-panel.expanded .topic-detail-inner,.atlas-env-stage.is-open .atlas-env-body-inner>*,.cert-row-body.expanded .cert-body-inner{animation:none!important}}
