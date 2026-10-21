@@ -488,3 +488,18 @@ p{color:#a8a4b1!important}
 @media(max-width:960px){main{overflow:clip}.atlas-env-assets{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px){main{padding-bottom:105px}.atlas-env-assets{grid-template-columns:repeat(2,minmax(0,1fr))}.atlas-arch-flow{grid-template-columns:repeat(2,minmax(0,1fr))}.atlas-env-task{padding:14px!important}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Unified depth and interactive feedback, without purple page surfaces */
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+.atlas-stage,.atlas-next-card,.atlas-path-card,.atlas-lab-card,.atlas-track-card,.atlas-progress-feature{--surface-rotate-x:0deg;--surface-rotate-y:0deg;transform:perspective(1200px) rotateX(var(--surface-rotate-x)) rotateY(var(--surface-rotate-y)) translateZ(0);transform-origin:center center;transition:transform .16s ease-out,border-color .2s,box-shadow .2s!important}
+.atlas-stage:hover,.atlas-next-card:hover,.atlas-path-card:hover,.atlas-lab-card:hover,.atlas-track-card:hover,.atlas-progress-feature:hover{transform:perspective(1200px) rotateX(var(--surface-rotate-x)) rotateY(var(--surface-rotate-y)) translateY(-3px);box-shadow:inset 0 1px #ffffff1d,0 7px 0 #070608,0 18px 35px #000b,0 0 24px #8f40de14!important}
+.atlas-stage:active,.atlas-next-card:active,.atlas-path-card:active,.atlas-lab-card:active,.atlas-track-card:active{transform:perspective(1200px) translateY(2px) scale(.992)!important}
+}
+.atlas-stage,.atlas-next-card,.atlas-path-card,.atlas-lab-card,.atlas-track-card,.atlas-arch-node,.atlas-env-stage,.atlas-starter-file{backface-visibility:hidden}
+.atlas-env-toggle,.atlas-arch-node,.atlas-env-filter button,.atlas-starter-file summary,.atlas-practice-link{touch-action:manipulation}
+.atlas-env-toggle:hover .atlas-env-title strong,.atlas-arch-node:hover strong{color:#f5e8ff!important}
+.atlas-env-stage .atlas-env-chevron{color:#9d72cb}
+.atlas-env-stage.is-open .atlas-env-chevron{color:#d7a7ff}
+.atlas-env-stage .atlas-env-body{transition:grid-template-rows .38s cubic-bezier(.22,1,.36,1)}
+.atlas-env-stage.is-open .atlas-env-body{transition:grid-template-rows .44s cubic-bezier(.22,1,.36,1)}
+.atlas-arch-node:focus-visible,.atlas-env-toggle:focus-visible,.atlas-env-command-head button:focus-visible,.atlas-starter-file summary:focus-visible{outline:2px solid #c789ff!important;outline-offset:2px}
