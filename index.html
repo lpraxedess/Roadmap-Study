@@ -93,7 +93,7 @@ h2{color:#f2f3ec!important;font-size:clamp(1.25rem,2vw,1.75rem)!important;letter
 h3{color:#f3f4ed!important}
 p,.muted{color:#a0a498!important}
 .lead{max-width:740px!important;margin:0!important;font-size:15px!important;color:#a1a59b!important;line-height:1.75!important}
-.eyebrow{background:#cede6215!important;color:#cede62!important;border:1px solid #cede6245!important;border-radius:8px!important;font-size:10px!important;padding:8px 12px!important;letter-spacing:.15em!important}
+.eyebrow{background:#cede6215!important;color:#b990ff!important;border:1px solid #cede6245!important;border-radius:8px!important;font-size:10px!important;padding:8px 12px!important;letter-spacing:.15em!important}
 .grid{gap:16px!important;margin:24px 0 34px!important}
 .card{background:#171916!important;border:1px solid #30342c!important;border-radius:17px!important;box-shadow:none!important;padding:25px!important;transition:transform .3s,border-color .3s,background .3s!important}
 .card:hover{transform:translateY(-3px)!important;background:#1b1e19!important;border-color:#69764b!important;box-shadow:0 16px 35px #0003!important}
@@ -152,6 +152,79 @@ footer{color:#797f73!important;border-color:#2f342c!important;text-align:left!im
 #app{animation:revealPage .45s ease both!important}
 @media(max-width:760px){aside{position:relative!important;inset:auto!important;width:calc(100% - 24px)!important;margin:12px auto 0!important;padding:14px!important;flex-direction:row!important;flex-wrap:wrap!important;justify-content:center!important;border-radius:15px!important}aside strong{flex-basis:100%!important;text-align:center!important;padding:5px 0 12px!important}aside button{width:auto!important;text-align:center!important;padding:11px 13px!important}aside small{display:none!important}main{margin:0!important;max-width:100%!important;padding:30px 18px 65px!important}.dashboard-banner{padding:26px;display:block}.dashboard-banner button{margin-top:20px}.detail-columns{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* IAM Atlas — cinematic dark violet dashboard, motion study inspired by provided video */
+:root{--lime:#9c6bff!important;--surface:#14101e!important;--line:#302641!important;--ink:#f6f1ff!important;--sub:#a49ab6!important;color:#f6f1ff!important;background:#08060d!important}
+html,body{background:#08060d!important;color:#f6f1ff!important}
+body{background-image:radial-gradient(ellipse 60% 40% at 75% -15%,#542b8b25,transparent 85%)!important}
+aside{background:#100d18!important;border-color:#2d243a!important}
+aside strong{color:#f7f3ff!important}
+aside button{color:#aaa1ba!important}
+aside button:hover{background:#251b36!important;color:#f8f4ff!important}
+aside button.active{background:#8f5bf2!important;color:#fff!important}
+aside small{color:#8e829e!important;border-color:#30263d!important}
+h1,h2,h3{color:#f7f3ff!important}
+p,.muted,.lead{color:#aaa1b9!important}
+.eyebrow{color:#b997ff!important;background:#a26aff12!important;border-color:#9e6eff42!important}
+.card{background:linear-gradient(145deg,#191322,#110e18)!important;border-color:#342941!important}
+.card:hover{background:#21182e!important;border-color:#9c6bff80!important;box-shadow:0 20px 45px #4c20892b!important}
+.card:before{background:radial-gradient(250px circle at var(--px) var(--py),#a36bff25,transparent 80%)!important}
+.number{color:#f8f5ff!important}
+.tag{color:#c5a6ff!important;border-color:#9c6bff50!important;background:#9c6bff17!important}
+.meter{background:#30263e!important}.meter span{background:linear-gradient(90deg,#7741e0,#b990ff)!important}
+.card button,.primary,.toolbar button,.topic-actions button{background:#8f5bf2!important;border-color:#8f5bf2!important;color:white!important}
+.card button:hover,.primary:hover,.toolbar button:hover,.topic-actions button:hover{background:#ab7cff!important}
+.topic-shell,.cert-row{background:#17111f!important;border-color:#352a43!important}
+.topic-shell:hover,.topic-shell.is-open,.cert-row:has(.selected){background:#1d1529!important;border-color:#9360e5!important;box-shadow:0 10px 40px #6633a51e!important}
+.topic-shell .topic{color:#f8f4ff!important}
+.topic small{color:#aaa0ba!important}
+.topic-indicator{background:#9c6bff18!important;color:#c7a7ff!important;border-color:#9c6bff55!important}
+.topic-shell.is-open .topic-indicator{background:#9865ed!important;color:white!important}
+.roadmap-level h2{color:#f2eaff!important}
+.topic-detail-inner{background:#110c1a!important;border-color:#352941!important}
+.detail-columns section{background:#1b1425!important;border-color:#382c47!important}
+.detail-label{color:#b994ff!important}
+.detail-columns p,.detail-columns li{color:#b6aac7!important}
+.topic-actions a,.doc-link{color:#c3a2ff!important;border-color:#a16eff70!important}
+.cert-level{color:#e5d9f3!important;border-color:#392e48!important}
+.cert-level:hover,.cert-level.selected{background:#9862e91a!important;color:#c5a5ff!important;border-color:#9062d2!important}
+.chevron,.cert-arrow{color:#bd99ff!important}
+.cert-tile,.cert-tile.required,.cert-tile.essential,.cert-tile.optional,.cert-tile.done{background:#221a2e!important;color:#f3edff!important;border-color:#40314f!important}
+.cert-tile:hover{background:#2a1e3a!important;border-color:#9c6bff!important}
+.cert-tile.required .cert-dot{background:#b48bff!important;color:#b48bff!important}
+.cert-tile.essential .cert-dot{background:#9571d8!important;color:#9571d8!important}
+.cert-tile.optional .cert-dot{background:#75658c!important;color:#75658c!important}
+.filter{background:#17111e!important;border-color:#443553!important;color:#f5f0ff!important}.filter:focus{outline-color:#9c6bff!important}
+.note{background:#9c6bff0e!important;border-color:#9c6bff48!important;border-left-color:#a878ff!important;color:#d7c3f3!important}
+dialog{background:#181021!important;border-color:#7753a5!important;color:#f6f1ff!important}
+dialog a,a{color:#c5a5ff!important}
+dialog li{color:#c8bad6!important}
+footer{color:#897d99!important;border-color:#342840!important}
+.level-number{color:#c2a0ff!important;border-color:#9c6bff50!important;background:#9c6bff13!important}
+.dashboard-banner{background:linear-gradient(115deg,#9e6af8,#6f3acb)!important;color:white!important;box-shadow:0 18px 50px #6027b533!important}
+.dashboard-banner:after{border-color:#ffffff12!important}
+.dashboard-banner h2{color:#fff!important}.dashboard-banner p{color:#efe2ff!important}
+.dashboard-banner button{background:#130d1c!important;color:#fff!important}.dashboard-banner button:hover{background:#2c1c42!important}
+.dashboard-section-title span{color:#988aa9!important}
+@keyframes panelCinematicIn{0%{opacity:0;transform:translate3d(0,17px,0) scale(.987);filter:blur(5px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}}
+@keyframes panelCinematicOut{to{opacity:0;transform:translate3d(0,-11px,0) scale(.993);filter:blur(3px)}}
+@keyframes detailRise{from{opacity:0;transform:translate3d(0,13px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+@keyframes tileReveal{from{opacity:0;transform:translate3d(16px,0,0) scale(.97)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+#app{animation:panelCinematicIn .65s cubic-bezier(.16,1,.3,1) both!important;will-change:opacity,transform}
+#app.is-leaving{animation:panelCinematicOut .18s ease-in both!important;pointer-events:none}
+.card,.topic-shell,.cert-row{transition:transform .35s cubic-bezier(.16,1,.3,1),border-color .35s,background .35s,box-shadow .35s!important}
+.topic-panel{transition:grid-template-rows .68s cubic-bezier(.16,1,.3,1),opacity .45s!important}
+.topic-panel.expanded .detail-columns section{animation:detailRise .52s cubic-bezier(.16,1,.3,1) both}
+.topic-panel.expanded .detail-columns section:nth-child(2){animation-delay:.07s}
+.topic-panel.expanded .detail-columns section:nth-child(3){animation-delay:.14s}
+.cert-row-body{transition:grid-template-rows .7s cubic-bezier(.16,1,.3,1)!important}
+.cert-row-body.expanded .cert-tile{animation:tileReveal .55s cubic-bezier(.16,1,.3,1) both}
+.cert-row-body.expanded .cert-tile:nth-child(2){animation-delay:.055s}
+.cert-row-body.expanded .cert-tile:nth-child(3){animation-delay:.11s}
+.cert-row-body.expanded .cert-tile:nth-child(4){animation-delay:.165s}
+dialog[open]{animation:panelCinematicIn .42s cubic-bezier(.16,1,.3,1) both}
+dialog::backdrop{animation:detailRise .35s both}
+@media(prefers-reduced-motion:reduce){#app,#app.is-leaving,dialog[open],dialog::backdrop,.topic-panel.expanded .detail-columns section,.cert-row-body.expanded .cert-tile{animation:none!important;transition:none!important;filter:none!important}}
 </style></head><body><aside><strong>◈ IAM Atlas</strong><button data-page="inicio">Visão geral</button><button data-page="roadmap">Roadmap</button><button data-page="certs">Certificações</button><small>Projeto educacional independente.<br>Progresso armazenado apenas neste navegador.</small></aside><main id="app"></main><dialog id="detail"><button class="dialog-close" id="close" aria-label="Fechar">×</button><div id="detail-body"></div></dialog><script>
 const levels=['Fundamentos de TI','Fundamentos de IAM','Protocolos e integrações','Operações e governança','Segurança avançada','Arquitetura e automação'];
 const topics=[
@@ -241,5 +314,5 @@ if(kind==='track'){x=tracks[n];title=x.name;body='<p>'+x.desc+'</p><h3>Competên
 document.getElementById('detail-body').innerHTML='<span class="eyebrow">IAM ATLAS</span><h2>'+title+'</h2>'+body+(id?'<button class="primary" id="mark" data-item="'+id+'">'+(completed.has(id)?'✓ Concluído · Desmarcar':'Marcar como concluído')+'</button>':'');dialog.showModal()}
 document.addEventListener('click',e=>{const toggle=e.target.closest('[data-expand-topic]');if(toggle){const shell=toggle.closest('.topic-shell'),old=document.querySelector('.topic-shell.is-open');if(old&&old!==shell){old.classList.remove('is-open');old.querySelector('.topic').setAttribute('aria-expanded','false');old.querySelector('.topic-panel').classList.remove('expanded')}const open=shell.classList.toggle('is-open');toggle.setAttribute('aria-expanded',String(open));shell.querySelector('.topic-panel').classList.toggle('expanded',open);return}const complete=e.target.closest('[data-complete-topic]');if(complete){const id=complete.dataset.completeTopic;completed.has(id)?completed.delete(id):completed.add(id);localStorage.setItem(KEY,JSON.stringify([...completed]));complete.textContent=completed.has(id)?'✓ Concluído · Desmarcar':'Marcar como concluído';complete.closest('.topic-shell').querySelector('.topic-indicator').textContent=completed.has(id)?'✓':'＋';return}const page=e.target.closest('[data-page]');if(page){if(location.hash!=='#'+page.dataset.page)location.hash=page.dataset.page;else render();return}const item=e.target.closest('[data-kind]');if(item)open(item.dataset.kind,Number(item.dataset.id));if(e.target.closest('[data-stage]')){const b=e.target.closest('[data-stage]');drawCerts(b.getAttribute('aria-expanded')==='true'?'':b.dataset.stage)}if(e.target.id==='mark'){const id=e.target.dataset.item;completed.has(id)?completed.delete(id):completed.add(id);localStorage.setItem(KEY,JSON.stringify([...completed]));dialog.close();render()}if(e.target.id==='export'){const url=URL.createObjectURL(new Blob([JSON.stringify({app:'iam-atlas',completed:[...completed]},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='iam-atlas-progresso.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}if(e.target.id==='import')document.getElementById('file').click();if(e.target.id==='reset'&&confirm('Apagar todas as marcações?')){completed.clear();localStorage.setItem(KEY,'[]');render()}});
 document.addEventListener('change',async e=>{if(e.target.id==='file'){try{const f=e.target.files[0];if(!f||f.size>100000)throw Error('Arquivo inválido');const data=JSON.parse(await f.text());if(data.app!=='iam-atlas'||!Array.isArray(data.completed)||!data.completed.every(x=>ids.includes(x)))throw Error('Formato incompatível');if(confirm('Substituir o progresso atual?')){completed=new Set(data.completed);localStorage.setItem(KEY,JSON.stringify([...completed]));render()}}catch(err){alert('Falha ao importar: '+err.message)}}});
-document.getElementById('close').onclick=()=>dialog.close();document.addEventListener('pointermove',e=>{const c=e.target.closest('.card');if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px')},{passive:true});window.addEventListener('hashchange',render);render();
+document.getElementById('close').onclick=()=>dialog.close();document.addEventListener('pointermove',e=>{const c=e.target.closest('.card');if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px')},{passive:true});let transitionTimer=0;function transitionPage(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){render();return}clearTimeout(transitionTimer);app.classList.add('is-leaving');transitionTimer=setTimeout(()=>{app.classList.remove('is-leaving');render();window.scrollTo({top:0,behavior:'instant'})},175)}window.addEventListener('hashchange',transitionPage);render();
 </script></body></html>
