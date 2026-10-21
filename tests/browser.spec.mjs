@@ -31,7 +31,7 @@ test('evidência exigida e avaliação teórica corrigida',async({page})=>{
  await page.goto('/#lab/onprem/op01');
  const first=page.locator('.course-task').first();
  if(!(await first.evaluate(element=>element.open))) await first.locator('summary').click();
- await first.locator('.course-check input').check();
+ await first.locator('.course-check input').click(); // sem evidência, a UI deve reverter a seleção
  await expect(first.locator('.course-warning')).toContainText('Antes de concluir');
  await page.locator('.course-evidence select').selectOption('simulado');
  await page.locator('.course-evidence textarea').fill('Atividade simulada com evidência sanitizada, UTC e rollback.');
