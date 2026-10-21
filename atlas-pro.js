@@ -1,75 +1,38 @@
-/* IAM Atlas · interaction layer. No external dependencies. */
-(() => {
+/* IAM Atlas · motion, interactive graph and guided-study feedback · zero dependencies */
+(()=>{
 'use strict';
 const appRoot=document.getElementById('app');
 if(!appRoot)return;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let scene=null,revealObserver=null,activeIndex=0,shownResults=[];
-const toastHost=document.createElement('div');toastHost.className='atlas-toast-stack';toastHost.setAttribute('aria-live','polite');toastHost.setAttribute('aria-atomic','false');document.body.append(toastHost);
+let scene=null,revealObserver=null;
+const toastHost=document.createElement('div');toastHost.className='atlas-toast-stack';toastHost.setAttribute('aria-live','polite');document.body.append(toastHost);
 function toast(msg){const el=document.createElement('div');el.className='atlas-toast';el.innerHTML='<b>✦</b><span>'+esc(msg)+'</span>';toastHost.append(el);setTimeout(()=>{el.classList.add('leaving');setTimeout(()=>el.remove(),260)},3100)}
-function entries(){
-const basic=[
-{label:'Visão geral',description:'Dashboard e jornada de estudos',type:'page',page:'inicio',symbol:'⌂'},
-{label:'Roadmap',description:'Todos os níveis e competências',type:'page',page:'roadmap',symbol:'◈'},
-{label:'Laboratórios',description:'Seis desafios práticos de IAM',type:'page',page:'labs',symbol:'▦'},
-{label:'Trilhas de carreira',description:'Cinco caminhos profissionais em IAM',type:'page',page:'trilhas',symbol:'◇'},
-{label:'Certificações',description:'Credenciais por nível',type:'page',page:'certs',symbol:'✧'},
-{label:'Meu progresso',description:'Estatísticas e backup local',type:'page',page:'progresso',symbol:'◷'}
-];
-const skills=(typeof topics!=='undefined'?topics:[]).map(t=>({label:t.title,description:'Roadmap · '+levels[t.level],type:'topic',id:t.id,symbol:'↗'}));
-const credentials=(typeof certs!=='undefined'?certs:[]).map((c,i)=>({label:c.name,description:'Certificações · '+c.provider,type:'cert',index:i,symbol:'✧'}));
-return basic.concat(skills,credentials);
-}
-const dialog=document.createElement('dialog');dialog.className='atlas-command-dialog';dialog.setAttribute('aria-label','Busca rápida do IAM Atlas');
-dialog.innerHTML='<div class="atlas-command-head"><span class="search-icon" aria-hidden="true">⌕</span><input class="atlas-command-input" type="search" autocomplete="off" spellcheck="false" placeholder="Buscar tópicos, páginas ou certificações..." aria-label="Buscar conteúdo"><button class="atlas-cmd-esc" type="button" data-atlas-close aria-label="Fechar pesquisa">ESC</button></div><div class="atlas-command-list" role="listbox" aria-label="Resultados"></div><div class="atlas-command-foot"><span>↑ ↓ navegar · ↵ abrir</span><span>IAM ATLAS / BUSCA RÁPIDA</span></div>';
-document.body.append(dialog);
-const input=dialog.querySelector('.atlas-command-input'),results=dialog.querySelector('.atlas-command-list');
-const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-function commandRender(){
-const q=normalize(input.value.trim());
-shownResults=entries().filter(o=>!q||normalize(o.label+' '+o.description).includes(q)).slice(0,12);
-activeIndex=clamp(activeIndex,0,Math.max(0,shownResults.length-1));
-const html=shownResults.map((e,i)=>'<button type="button" class="atlas-command-item" data-atlas-result="'+i+'" role="option" aria-selected="'+(i===activeIndex)+'"><span class="atlas-cmd-icon" aria-hidden="true">'+esc(e.symbol)+'</span><span class="atlas-cmd-copy"><strong>'+esc(e.label)+'</strong><small>'+esc(e.description)+'</small></span><span class="atlas-cmd-arrow">↗</span></button>').join('');
-results.innerHTML=shownResults.length?html:'<div class="atlas-command-empty">Nenhum resultado encontrado. Tente outro termo.</div>';
-}
-function commandOpen(){if(dialog.open)return;input.value='';activeIndex=0;commandRender();dialog.showModal();requestAnimationFrame(()=>input.focus())}
-function commandClose(){if(dialog.open)dialog.close()}
 function navigate(page){if(location.hash==='#'+page){if(typeof render==='function')render()}else location.hash='#'+page}
 function openTopic(id){
-commandClose();
-try{if(typeof topicFilter!=='undefined')topicFilter='todos'}catch{}
-const navigateAndFind=()=>{const target=Array.from(document.querySelectorAll('[data-expand-topic]')).find(b=>b.dataset.expandTopic===id);if(!target)return false;target.click();target.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'center'});return true};
+const go=()=>{
+const field=document.getElementById('search');if(field&&field.value){field.value='';field.dispatchEvent(new Event('input',{bubbles:true}))}
+const tabs=document.querySelector('[data-topic-filter="todos"]');if(tabs&&tabs.getAttribute('aria-pressed')!=='true')tabs.click();
+const toggle=Array.from(document.querySelectorAll('[data-expand-topic]')).find(b=>b.dataset.expandTopic===id);
+if(!toggle)return false;
+if(toggle.getAttribute('aria-expanded')!=='true')toggle.click();
+toggle.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'center'});
+toggle.focus({preventScroll:true});
+return true;
+};
 navigate('roadmap');
-let attempts=0;
-const retry=()=>{if(navigateAndFind())return;if(++attempts<28)setTimeout(retry,80);else toast('Não foi possível localizar o tópico.')};
-setTimeout(retry,70);
+let tries=0;const retry=()=>{if(go())return;if(++tries<28)setTimeout(retry,75);else toast('Não foi possível localizar a competência.')};setTimeout(retry,75);
 }
-function commandExecute(index){
-const e=shownResults[index];if(!e)return;commandClose();
-if(e.type==='page'){navigate(e.page);return}
-if(e.type==='topic'){openTopic(e.id);return}
-if(e.type==='cert'){
-navigate('certs');let attempts=0;
-const retry=()=>{const c=certs[e.index],button=Array.from(document.querySelectorAll('[data-stage]')).find(b=>b.dataset.stage===c.stage);if(!button){if(++attempts<28)setTimeout(retry,80);return}if(button.getAttribute('aria-expanded')!=='true')button.click();setTimeout(()=>{const tile=document.querySelector('[data-kind="cert"][data-id="'+e.index+'"]');if(tile){tile.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'center'});tile.focus({preventScroll:true})}},200)};
-setTimeout(retry,80);
-}
-}
-dialog.addEventListener('click',e=>{if(e.target.closest('[data-atlas-close]'))commandClose();const row=e.target.closest('[data-atlas-result]');if(row)commandExecute(Number(row.dataset.atlasResult));if(e.target===dialog)commandClose()});
-dialog.addEventListener('keydown',e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!shownResults.length)return;activeIndex=(activeIndex+(e.key==='ArrowDown'?1:-1)+shownResults.length)%shownResults.length;results.querySelectorAll('[data-atlas-result]').forEach((el,i)=>el.setAttribute('aria-selected',String(i===activeIndex)));results.querySelector('[data-atlas-result="'+activeIndex+'"]')?.scrollIntoView({block:'nearest'});}else if(e.key==='Enter'){e.preventDefault();commandExecute(activeIndex)}});
-input.addEventListener('input',()=>{activeIndex=0;commandRender()});
-document.addEventListener('keydown',e=>{const editable=e.target.matches('input,textarea,select,[contenteditable="true"]');if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();dialog.open?commandClose():commandOpen();return}if(e.key==='/'&&!editable&&!dialog.open){e.preventDefault();commandOpen()}});
 document.addEventListener('click',e=>{
-const search=e.target.closest('[data-atlas-command]');if(search){e.preventDefault();commandOpen();return}
-const stage=e.target.closest('[data-atlas-stage]');if(stage){e.preventDefault();const first=topics.find(t=>t.level===Number(stage.dataset.atlasStage));if(first)openTopic(first.id);else navigate('roadmap');return}const jump=e.target.closest('[data-atlas-jump]');if(jump){e.preventDefault();openTopic(jump.dataset.atlasJump);return}
-const completedButton=e.target.closest('[data-complete-topic]');if(completedButton){const id=completedButton.dataset.completeTopic;toast(completed.has(id)?'Competência concluída. Progresso salvo.':'Competência removida do progresso.');return}
-if(e.target.closest('#mark')){toast('Progresso atualizado e salvo neste navegador.');return}
-if(e.target.closest('#export')){toast('Backup de progresso exportado.');return}
-const btn=e.target.closest('.atlas-btn,.atlas-next-card,.atlas-stage,.atlas-command-trigger,.atlas-path-card,.atlas-lab-card,.atlas-track-card');
-if(btn&&!reduced.matches){
-const r=btn.getBoundingClientRect(),circle=document.createElement('span');circle.className='atlas-ripple';const diameter=Math.max(r.width,r.height)*2;circle.style.width=circle.style.height=diameter+'px';circle.style.left=e.clientX-r.left+'px';circle.style.top=e.clientY-r.top+'px';btn.append(circle);setTimeout(()=>circle.remove(),600);
-}
+const stage=e.target.closest('[data-atlas-stage]');if(stage){const t=topics.find(t=>t.level===Number(stage.dataset.atlasStage));if(t){e.preventDefault();openTopic(t.id)}return}
+const jump=e.target.closest('[data-atlas-jump]');if(jump){e.preventDefault();openTopic(jump.dataset.atlasJump);return}
+const scroll=e.target.closest('[data-atlas-scroll]');if(scroll){e.preventDefault();const target=document.getElementById(scroll.dataset.atlasScroll);if(target){target.scrollIntoView({behavior:reduced.matches?'instant':'smooth',block:'start'})}return}
+const completedButton=e.target.closest('[data-complete-topic]');if(completedButton){const id=completedButton.dataset.completeTopic;toast(completed.has(id)?'Competência concluída e salva.':'Competência removida do progresso.')}
+if(e.target.closest('#mark'))toast('Progresso atualizado neste navegador.');
+if(e.target.closest('#export'))toast('Arquivo de backup exportado.');
+const btn=e.target.closest('.atlas-btn,.atlas-next-card,.atlas-stage,.atlas-path-card,.atlas-lab-card,.atlas-track-card');
+if(btn&&!reduced.matches){const r=btn.getBoundingClientRect(),circle=document.createElement('span');circle.className='atlas-ripple';const d=Math.max(r.width,r.height)*2;circle.style.width=circle.style.height=d+'px';circle.style.left=e.clientX-r.left+'px';circle.style.top=e.clientY-r.top+'px';btn.append(circle);setTimeout(()=>circle.remove(),600)}
 });
 function revealSetup(){
 if(revealObserver){revealObserver.disconnect();revealObserver=null}
@@ -139,7 +102,7 @@ scene={canvas,dispose(){stop();observer.disconnect();resizer?.disconnect();canva
 }
 let setupQueued=false,lastCanvas=null;
 function setup(){setupQueued=false;revealSetup();const canvas=document.getElementById('atlas-network');if(canvas!==lastCanvas){lastCanvas=canvas;setup3D(canvas)}}
-new MutationObserver(()=>{if(!setupQueued){setupQueued=true;requestAnimationFrame(setup)}}).observe(appRoot,{childList:true,subtree:true});
+new MutationObserver(records=>{if(!records.some(r=>r.addedNodes.length||r.removedNodes.length))return;if(!setupQueued){setupQueued=true;requestAnimationFrame(setup)}}).observe(appRoot,{childList:true,subtree:true});
 setup();
-window.IAMAtlas={openSearch:commandOpen,notify:toast,goToTopic:openTopic};
+window.IAMAtlas={notify:toast,goToTopic:openTopic};
 })();
