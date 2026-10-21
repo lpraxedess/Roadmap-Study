@@ -104,5 +104,7 @@ let setupQueued=false,lastCanvas=null;
 function setup(){setupQueued=false;revealSetup();const canvas=document.getElementById('atlas-network');if(canvas!==lastCanvas){lastCanvas=canvas;setup3D(canvas)}}
 new MutationObserver(records=>{if(!records.some(r=>r.addedNodes.length||r.removedNodes.length))return;if(!setupQueued){setupQueued=true;requestAnimationFrame(setup)}}).observe(appRoot,{childList:true,subtree:true});
 setup();
+const navIcons={inicio:'home',roadmap:'layers',labs:'flask',certs:'award'};
+document.querySelectorAll('aside [data-page]').forEach(button=>{const glyph=button.querySelector('.atlas-nav-glyph');const icon=navIcons[button.dataset.page];if(glyph&&icon&&typeof atlasIcon==='function')glyph.innerHTML=atlasIcon(icon)});
 window.IAMAtlas={notify:toast,goToTopic:openTopic};
 })();
