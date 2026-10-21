@@ -4,7 +4,7 @@ const rows=[["Noções básicas de redes, máquina de testes","Identifique ender
 const lessons=Object.fromEntries(rows.map((r,i)=>['t'+i,{prerequisites:r[0],steps:r[1].split('|'),verification:r[2],deliverable:r[3],estimated:r[4]}]));
 const labRows=[["Conhecer permissões e grupos","A política foi testada com dois acessos permitidos e dois negados; exceções foram justificadas."],["Conhecer fonte autoritativa RH e diretórios","A trilha descreve criação, movimentação e revogação em prazo definido, com responsável e evidência."],["Conhecer OAuth, OIDC e HTTP","O diagrama identifica cliente, provedor, PKCE, state, escopo e validação de tokens sem segredos reais."],["Conhecer MFA, PAM/PIM e trilhas de auditoria","O runbook prevê aprovação, expiração, revogação e pós-revisão."],["Conhecer IGA, catálogo e SoD","A revisão tem donos, decisões e evidência de remoção ou exceção."],["Conhecer Zero Trust e ciclo de vida","A arquitetura considera identidade, dispositivo, risco, telemetria, métricas e recuperação."]];
 const labs=Object.fromEntries(labRows.map((r,i)=>['l'+i,{prerequisites:r[0],verification:r[1]}]));
-return Object.freeze({lessons,labs});
+return {lessons,labs};
 })();
 
 /* Progressive hands-on environment: all phases share the same Atlas Corp realm. */
