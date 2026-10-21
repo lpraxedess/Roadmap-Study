@@ -31,7 +31,7 @@ assert.ok(curriculum.atlasPlan.pricing.twoP2OneIntune>150,'Segundo P2 ultrapassa
 console.log('OK: 36 labs, 189 atividades, 4 fases sequenciais, sintaxe e links locais.');
 
 /* Teste de execução do JavaScript inicial em DOM mínimo. Sintaxe válida não garante tela renderizada! */
-const inline=html.split('<script>\\n')[1]?.split('</script>')[0];
+const inline=html.split('<script>')[1]?.split('</script>')[0];
 assert.ok(inline,'Script inline encontrado');
 const expected={'#inicio':'Seu progresso','#labs':'Laboratório de IAM','#roadmap':'Roadmap de competências','#certs':'Certificações IAM'};
 for(const [hash,phrase] of Object.entries(expected)){
