@@ -1,0 +1,78 @@
+import {test,expect} from '@playwright/test';
+import {readFile} from 'node:fs/promises';
+
+test('menu, jornadas e capítulos abrem no navegador',async({page})=>{
+ await page.goto('/');
+ await expect(page.locator('#mainNav .navbtn')).toHaveCount(4);
+ await page.locator('#mainNav [data-view="labs"]').click();
+ await expect(page.locator('.course-track')).toHaveCount(2);
+ await page.locator('.course-track').first().getByRole('button',{name:/Abrir jornada/}).click();
+ await expect(page).toHaveURL(/#lab\/onprem$/);
+ await expect(page.locator('.course-stage')).toHaveCount(12);
+ await page.locator('.course-stage').first().click();
+ await expect(page).toHaveURL(/#lab\/onprem\/op01/);
+ await expect(page.locator('fieldset.course-question')).toHaveCount(2);
+ await page.goto('/#lab/cloud');
+ await expect(page.locator('.course-stage')).toHaveCount(16);
+ await page.goto('/#lab/cloud/lab-02');
+ await expect(page.locator('.course-task')).toHaveCount(18);
+});
+test('Azure opcional pode ser dispensado sem concluir suas tarefas',async({page})=>{
+ await page.goto('/#lab/cloud/lab-07');
+ await page.locator('.course-optional textarea').fill('Sem assinatura Azure paga; meta de consumo de recursos zero.');
+ await page.getByRole('button',{name:'Dispensar este capítulo'}).click();
+ await expect(page.locator('.course-optional')).toContainText('Dispensado por justificativa');
+ await page.reload();
+ await expect(page.locator('.course-optional')).toContainText('Dispensado por justificativa');
+ await page.getByRole('button',{name:'← Laboratório Cloud'}).click();
+ await expect(page.locator('.course-overview')).toContainText('1 dispensado(s)');
+});
+test('evidência exigida e avaliação teórica corrigida',async({page})=>{
+ await page.goto('/#lab/onprem/op01');
+ const first=page.locator('.course-task').first();
+ await first.locator('summary').click();
+ await first.locator('.course-check input').check();
+ await expect(first.locator('.course-warning')).toContainText('Antes de concluir');
+ await page.locator('.course-evidence select').selectOption('simulado');
+ await page.locator('.course-evidence textarea').fill('Atividade simulada com evidência sanitizada, UTC e rollback.');
+ await first.locator('.course-check input').check();
+ await page.reload();
+ await expect(page.locator('.course-task').first().locator('.course-check input')).toBeChecked();
+ const qs=page.locator('fieldset.course-question');
+ await qs.nth(0).locator('.course-choice').nth(1).click();
+ await qs.nth(1).locator('.course-choice').nth(0).click();
+ await page.getByRole('button',{name:'Corrigir respostas'}).click();
+ await expect(page.locator('.course-feedback')).toContainText('Aprovado na avaliação teórica');
+});
+test('backup exportado pode restaurar resultado de avaliação',async({page})=>{
+ await page.goto('/#lab/onprem/op01');
+ const evidence=page.locator('.course-evidence');
+ await evidence.locator('select').selectOption('teorico');
+ await evidence.locator('textarea').fill('Leitura completa com riscos e controles documentados para estudo.');
+ const q=page.locator('fieldset.course-question');
+ await q.nth(0).locator('.course-choice').nth(1).click();
+ await q.nth(1).locator('.course-choice').nth(0).click();
+ await page.getByRole('button',{name:'Corrigir respostas'}).click();
+ await page.goto('/#dashboard');
+ await page.locator('.v3-utility-panel > summary').click();
+ const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:/Exportar JSON/}).click()]);
+ const file=await readFile(await download.path());
+ const data=JSON.parse(file.toString());
+ expect(data.courseAssessments['onprem/op01'].score).toBe(100);
+ expect(data.courseLabs.onprem.op01.note).toContain('Leitura completa');
+ await page.evaluate(()=>localStorage.clear());
+ await page.reload();
+ await page.locator('.v3-utility-panel > summary').click();
+ page.on('dialog',dialog=>dialog.accept());
+ await page.locator('input[type=file]').setInputFiles({name:'backup.json',mimeType:'application/json',buffer:file});
+ await expect.poll(async()=>page.evaluate(()=>JSON.parse(localStorage.getItem('roadmap-iam-assessments-v1')||'{}')['onprem/op01']?.score)).toBe(100);
+});
+test('menu mobile abre laboratório',async({page})=>{
+ await page.setViewportSize({width:390,height:844});
+ await page.goto('/');
+ const toggle=page.locator('#navToggle');
+ await toggle.click();
+ await expect(toggle).toHaveAttribute('aria-expanded','true');
+ await page.locator('#mainNav [data-view="labs"]').click();
+ await expect(page.locator('.course-track')).toHaveCount(2);
+});

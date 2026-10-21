@@ -1,0 +1,15 @@
+# Apenas para laboratório isolado. start-dev NÃO pode ficar público.
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.0
+    command: ["start-dev"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: "atlas-admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "\${IAM_KC_ADMIN_PASSWORD:?Defina IAM_KC_ADMIN_PASSWORD no ambiente}"
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - keycloak_lab:/opt/keycloak/data
+    restart: "no"
+volumes:
+  keycloak_lab:

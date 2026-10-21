@@ -16,7 +16,7 @@ const mock=[
 ].join('\n');
 const program=[
 'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js',
-'assets/experience.js','assets/v3.js','data/lab-courses.js','assets/lab-platform.js','assets/app.js'].map(read).join('\n');
+'assets/experience.js','assets/v3.js','data/lab-courses.js','data/course-assessments.js','assets/lab-platform.js','assets/course-quiz.js','assets/app.js'].map(read).join('\n');
 const run=code=>JSON.parse(runInNewContext(mock+'\n'+program+'\n'+code,{}, {timeout:20000}));
 test('painel, roadmap, certificações, 29 módulos e 242 aulas são montados',()=>{
  const output=run([
@@ -75,7 +75,7 @@ test('navegação visual contém quatro áreas com laboratório separado',()=>{
  for(const v of ['dashboard','roadmap','labs','certs'])assert.ok(html.includes('data-view="'+v+'"'));
  for(const v of ['content','review','settings'])assert.ok(!html.includes('data-view="'+v+'"'));
  assert.match(html,/ROADMAP - IAM/);
- const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js','assets/experience.js','assets/v3.js','data/lab-courses.js','assets/lab-platform.js','assets/app.js'];
+ const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js','assets/experience.js','assets/v3.js','data/lab-courses.js','data/course-assessments.js','assets/lab-platform.js','assets/course-quiz.js','assets/app.js'];
  let pos=-1;for(const asset of assets){let n=html.indexOf(asset);assert.ok(n>pos,asset+' fora de ordem');pos=n}
 });
 
@@ -148,4 +148,42 @@ test('rotas dos laboratórios aceitam etapa e preservam legado',()=>{
 test('laboratórios são renderizados e registram progresso sem alterar os dados teóricos',()=>{
  const x=run(["courseLabState.onprem={op01:{steps:{0:true,1:true},mode:'real',note:'Teste seguro e evidenciado'}};persist();","activeLabTrack='onprem';activeLabChapter='op01';const a=experienceLaboratories().children.length;","activeLabTrack='cloud';activeLabChapter='lab-02';const b=experienceLaboratories().children.length;","JSON.stringify({a,b,local:JSON.parse(storage[COURSE_LAB_KEY]).onprem.op01.steps[1]})"].join('\n'));
  assert.ok(x.a>0&&x.b>0);assert.equal(x.local,true);
+});
+
+test('layout usa contêiner e capítulo dispensado não conta como executado',()=>{
+ const x=run([
+ "let home=experienceLaboratories();",
+ "let isGrid=home.children.some(c=>c.className==='course-tracks'&&c.children.length===2);",
+ "const before=courseTrackProgress('cloud');",
+ "const blocked=courseExcludeChapter('lab-07','curto');",
+ "const skipped=courseExcludeChapter('lab-07','Sem Azure pago, meta de consumo zero.');",
+ "const after=courseTrackProgress('cloud');",
+ "const resumed=courseExcludeChapter('lab-07',null);",
+ "const final=courseTrackProgress('cloud');",
+ "JSON.stringify({isGrid,blocked,skipped,after,original:before,final,resumed})"
+ ].join('\n'));
+ assert.equal(x.isGrid,true);assert.equal(x.blocked,false);assert.equal(x.skipped,true);
+ assert.equal(x.after.excluded,1);assert.equal(x.original.total-x.after.total,5);
+ assert.equal(x.final.total,x.original.total);assert.equal(x.after.done,0);
+});
+test('curso exige modalidade e nota, e avaliações teóricas são independentes',()=>{
+ const x=run([
+ "const every=ONPREM_STAGES.every(x=>COURSE_QUIZZES[x.id]?.length===2)&&CLOUD_CHAPTER_ORDER.every(id=>COURSE_QUIZZES[id]?.length===2);",
+ "const valid=Object.values(COURSE_QUIZZES).every(qs=>qs.every(q=>q[2]>=0&&q[2]<q[1].length));",
+ "courseAssessmentState['onprem/op01']={answers:[1,0],score:100,attempts:1,gradedAt:'2026-10-21'};",
+ "persist();",
+ "JSON.stringify({every,valid,good:courseCanClaim('real','Log UTC e teste negado'),bad:courseCanClaim('real',''),quizzes:Object.keys(COURSE_QUIZZES).length,graded:courseQuizPass('onprem','op01'),saved:JSON.parse(storage[COURSE_ASSESS_KEY])['onprem/op01'].score,ui:courseQuiz('onprem','op01').children.length})"
+ ].join('\n'));
+ assert.equal(x.every,true);assert.equal(x.valid,true);assert.equal(x.quizzes,28);
+ assert.equal(x.good,true);assert.equal(x.bad,false);
+ assert.equal(x.graded,true);assert.equal(x.saved,100);assert.ok(x.ui>4);
+});
+test('execução autodeclarada e aprovação de quiz não emitem certificados',()=>{
+ const x=run([
+ "companyStepState['lab-02']={0:true};",
+ "practiceProof[stableTaskKey('lab-02',0)]={mode:'real',note:'Log MFA piloto UTC 2026-10-21'};",
+ "const report=courseEvaluationSummary('cloud');",
+ "JSON.stringify({real:report.real,quiz:report.passed,certs:certifications.filter(c=>certState[c.id]===true).length})"
+ ].join('\n'));
+ assert.equal(x.real,1);assert.equal(x.quiz,0);assert.equal(x.certs,0);
 });

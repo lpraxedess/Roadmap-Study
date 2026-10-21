@@ -1,0 +1,14 @@
+{
+  "name": "roadmap-iam-course",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Testes reais da plataforma de formação IAM",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

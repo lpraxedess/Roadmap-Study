@@ -452,3 +452,16 @@ body{font-size:16px;line-height:1.7}
 .course-bottom{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:28px}
 .course-detail h2{margin-bottom:0}
 @media(max-width:760px){.course-track,.course-board{padding:17px}.course-task summary{padding:15px}.course-task-body{padding:12px}.course-info{padding:14px}}
+
+/* Indicadores de prática, avaliações e capítulos opcionais */
+.course-dashboard-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:14px}
+.course-dashboard-card{padding:18px;display:grid;gap:10px}
+.course-optional{border:1px solid #536585}
+.course-optional textarea{width:100%;min-height:78px;resize:vertical}
+.course-optional .course-bottom{padding:12px 0 0}
+.course-question{border:1px solid #354760;border-radius:10px;margin:14px 0;padding:16px}
+.course-question legend{font-weight:650;color:#e3ebf8;padding:0 6px}
+.course-choice{display:flex;align-items:start;gap:11px;padding:10px;line-height:1.45;cursor:pointer}
+.course-choice input{width:19px;height:19px;accent-color:#69aaff;flex-shrink:0}
+.course-feedback{display:grid;gap:8px}.course-correct{color:#a9dfbc}
+.course-assessment .course-bottom{padding:0}.course-assessment p{line-height:1.6}

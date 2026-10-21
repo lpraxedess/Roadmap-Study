@@ -57,6 +57,15 @@ function experienceDashboard(){
   row.append(text('strong',level.name),text('small',level.ids.length+' módulos · '+p.percent+'%'),meter(p.percent));row.onclick=goStudy;levelBox.append(row)
  });
  root.append(text('h2','Seu percurso'),' ',levelBox);
+ const labPanels=el('section',{class:'course-dashboard-stats'});
+ COURSE_TRACKS.forEach(t=>{
+  const p=courseTrackProgress(t.id),evaluated=courseEvaluationSummary(t.id),box=el('div',{class:'panel course-dashboard-card'});
+  box.append(text('h3',t.title),text('p',p.done+' / '+p.total+' microetapas aplicáveis · '+p.excluded+' capítulos dispensados','caption'),meter(p.total?Math.round(p.done/p.total*100):0),
+   text('p',evaluated.real+' execuções reais autodeclaradas (com notas) · '+evaluated.passed+' / '+evaluated.total+' avaliações aprovadas','caption'),
+   uxButton('Retomar laboratório →',()=>courseSetNav(t.id),'btn'));
+  labPanels.append(box);
+ });
+ root.append(text('h2','Prática e avaliações'),labPanels);
  const details=el('details',{class:'v3-utility-panel'});
  details.append(text('summary','Backup, restauração e privacidade dos meus dados'));
  let panel=settings();details.append(panel);root.append(details);

@@ -90,6 +90,8 @@ function courseTracks(){
  root.append(objectives);
  const progress=courseTrackProgress(track.id);
  root.append(text('p',progress.done+' / '+progress.total+' microetapas aplicáveis · '+progress.stagesDone+' / '+progress.stageCount+' capítulos · '+progress.excluded+' dispensado(s), com justificativa','course-counter'),meter(progress.total?Math.round(progress.done/progress.total*100):0));
+ const summary=courseEvaluationSummary(track.id);
+ root.append(text('p',summary.real+' execuções reais autodeclaradas com nota · '+summary.passed+' / '+summary.total+' avaliações teóricas aprovadas','course-counter'));
  const list=el('div',{class:'course-stage-list'});
  courseStages(track.id).forEach((stage,index)=>{
   const p=courseProgress(track.id,stage.id);
@@ -115,20 +117,27 @@ function courseOnpremDetail(){
   courseInfo('Pré-condição de segurança','Utilize rede Host-only; até 2 VMs simultâneas; dados de pessoas fictícias; senhas fora do repositório; snapshot antes de mudança com potencial de bloqueio.'));
  const moduleId=COURSE_LOCAL_THEORY[stage.id];
  root.append(btn('Revisar teoria correspondente →',()=>openModule(moduleId),'btn'));
+ root.append(courseArtifactLinks(stage.id));
  root.append(text('h2','Execução microdetalhada'));
+ root.append(courseEvidences(data.mode,data.note,(mode,note)=>{data.mode=mode;data.note=note;persist();},stage.title));
  stage.steps.forEach((line,i)=>{
   const block=el('details',{class:'course-task'});block.open=i===Object.keys(data.steps||{}).filter(k=>data.steps[k]).length;
   block.append(text('summary',String(i+1).padStart(2,'0')+' · '+line.split(/[.;]/)[0]));
   const body=el('div',{class:'course-task-body'});
   body.append(courseInfo('Ação',line),courseInfo('Como comprovar',i===stage.steps.length-1?stage.allow:'Registre estado anterior e posterior, saída/registro do comando ou configuração, ator, horário UTC e resultado observado.'));
+  const warning=text('p','','course-warning');
   const checked=courseCheck('Executei ou validei esta microetapa e registrei resultado',data.steps[i]===true,value=>{
+   if(value&&!courseCanClaim(data.mode,data.note)){
+    warning.textContent='Antes de concluir, selecione a modalidade e descreva ao menos 12 caracteres na evidência do capítulo (acima).';
+    checked.querySelector?.('input')&&(checked.querySelector('input').checked=false);return;
+   }
    data.steps[i]=value;persist();courseSetNav('onprem',stage.id);
-  });body.append(checked);block.append(body);root.append(block);
+  });body.append(checked,warning);block.append(body);root.append(block);
  });
  const tests=el('section',{class:'panel course-board'});tests.append(text('h2','Validação, caso negativo e reversão'),
  courseInfo('Teste positivo',stage.allow),courseInfo('Teste negativo',stage.deny),
  courseInfo('Rollback / limpeza',stage.rollback),exLink(stage.source,'Documentação oficial / especificação ↗'));root.append(tests);
- root.append(courseEvidences(data.mode,data.note,(mode,note)=>{data.mode=mode;data.note=note;persist();},stage.title));
+ root.append(courseQuiz('onprem',stage.id));
  root.append(courseBottom('onprem',position,ONPREM_STAGES));
  return root;
 }
@@ -170,11 +179,21 @@ function courseCloudDetail(){
   body.append(courseInfo('Onde configurar / preparar',task.path),
    courseInfo('Ação guiada',task.action),courseInfo('Justificativa de negócio e risco',task.reason),
    courseInfo('Teste positivo / evidência',task.proof),courseInfo('Falha / diagnóstico',task.issue));
-  body.append(courseCheck('Concluí esta tarefa e validei o resultado',complete,value=>{
-   companyStepState[lab.id]??={};companyStepState[lab.id][i]=value;persist();courseSetNav('cloud',lab.id);
-  }));
   const key=stableTaskKey(lab.id,i),e=practiceProof[key]||{};
   body.append(courseEvidences(e.mode,e.note,(mode,note)=>{practiceProof[key]={mode,note};persist();},task.title));
+  const warning=text('p','','course-warning');
+  const checked=courseCheck('Concluí esta tarefa e validei o resultado',complete,value=>{
+   const evidence=practiceProof[key];
+   if(value&&!courseCanClaim(evidence?.mode,evidence?.note)){
+    warning.textContent='Selecione modalidade e registre pelo menos 12 caracteres de evidência nesta tarefa.';
+    checked.querySelector?.('input')&&(checked.querySelector('input').checked=false);return;
+   }
+   if(value&&courseIsExcluded('cloud',lab.id)){
+    warning.textContent='Retome o capítulo dispensado antes de registrar execução.';
+    checked.querySelector?.('input')&&(checked.querySelector('input').checked=false);return;
+   }
+   companyStepState[lab.id]??={};companyStepState[lab.id][i]=value;persist();courseSetNav('cloud',lab.id);
+  });body.append(checked,warning);
   block.append(body);root.append(block);
  });
  const appendix=el('details',{class:'study-section'});appendix.append(text('summary','Roteiro completo de implementação e pontos adicionais de diagnóstico'));
@@ -184,6 +203,7 @@ function courseCloudDetail(){
  done.append(exList(chapter.verify));
  if(lab.evidence?.length)done.append(text('h3','Evidências esperadas'),exList(lab.evidence));
  done.append(exLink(lab.ref,'Referência oficial de apoio ↗'));root.append(done);
+ root.append(courseQuiz('cloud',lab.id));
  root.append(courseBottom('cloud',position,CLOUD_CHAPTER_ORDER.map(id=>({id}))));
  return root;
 }

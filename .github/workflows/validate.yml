@@ -27,3 +27,14 @@ jobs:
           node --check assets/lab-platform.js
       - name: Validar currículo e referências
         run: node --test tests/*.test.mjs
+
+      - name: Testar API SCIM local (stdlib Python)
+        run: |
+          python3 -m py_compile labs/local/scim_server.py labs/local/oidc_app.py
+          python3 -m unittest discover -s labs/local/tests -p 'test_*.py'
+      - name: Preparar testes de navegador real
+        run: |
+          npm install --no-audit --no-fund
+          npx playwright install chromium --with-deps
+      - name: Testar navegação, progresso e backup no Chromium
+        run: npm run test:browser

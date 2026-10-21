@@ -56,3 +56,14 @@ Sirva a pasta via HTTP estático, por exemplo com python -m http.server 8000. Co
 O GitHub Actions executa verificações de sintaxe, integridade e DOM simulado. Isso não substitui testes em navegador real nem execução das configurações. A documentação anterior permanece em docs/ como referência; sua organização pode divergir da navegação nova.
 
 **Revisão:** outubro de 2026. Confirme sempre as condições atuais de licenças e serviços.
+
+## Laboratórios executáveis e avaliações (atualização)
+
+Consulte [labs/README.md](labs/README.md) e [labs/local/README.md](labs/local/README.md) para os scripts Active Directory, Keycloak em Docker, API SCIM, aplicação OIDC e SP SAML com pré-requisitos e rollback.
+
+- AtlasCorp preserva objectId de camila.ti entre os capítulos Cloud 00 e 01; a admissão não duplica identidade.
+- Azure, Purview e multi-cloud podem ser **dispensados com justificativa**, sem contar como feitos nem impedir as demais atividades.
+- Novas marcações exigem modalidade real, simulação ou teoria e descrição sanitizada. Marcas antigas são preservadas como histórico não verificado.
+- 56 questões formativas (duas por capítulo), com pontuação, feedback e tentativas, separadas das execuções reais autodeclaradas. Não equivalem a exame supervisionado.
+- O backup JSON (formato versão 8 compatível) foi ampliado com courseAssessments e os status opcionais, mantendo leitura de backups anteriores.
+- A execução real contra serviços Keycloak, Windows e tenant Microsoft depende de instalações e validações feitas pelo estudante. Os testes do site não certificam essas configurações.
