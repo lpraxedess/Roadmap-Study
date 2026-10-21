@@ -4,6 +4,51 @@
 const appRoot=document.getElementById('app');
 if(!appRoot)return;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+/* Sidebar controller: remembers desktop preference, adapts to viewport, closes mobile drawer. */
+const sidebar=document.getElementById('atlas-sidebar');
+const sidebarToggle=document.getElementById('atlas-sidebar-toggle');
+const mobileMenu=document.getElementById('atlas-mobile-menu');
+const backdrop=document.getElementById('atlas-nav-backdrop');
+const navBreakpoint=window.matchMedia('(max-width:760px)');
+const compactBreakpoint=window.matchMedia('(max-width:1100px)');
+const navStorageKey='iam-atlas-sidebar-v1';
+let navPreference=null;
+try{const saved=localStorage.getItem(navStorageKey);if(saved==='expanded'||saved==='collapsed')navPreference=saved}catch{}
+function navApply(){
+const mobile=navBreakpoint.matches;
+const collapsed=!mobile&&(navPreference==='collapsed'||(navPreference===null&&compactBreakpoint.matches));
+document.body.classList.toggle('atlas-sidebar-collapsed',collapsed);
+document.body.classList.toggle('atlas-sidebar-user-expanded',!mobile&&navPreference==='expanded');
+sidebarToggle?.setAttribute('aria-expanded',String(!collapsed));
+sidebarToggle?.setAttribute('aria-label',collapsed?'Expandir menu lateral':'Recolher menu lateral');
+sidebarToggle?.setAttribute('title',collapsed?'Expandir menu':'Recolher menu');
+sidebar?.querySelectorAll('[data-page]').forEach(btn=>{const name=btn.querySelector('.atlas-nav-label')?.textContent?.trim();if(name)btn.setAttribute('aria-label',name);btn.title=collapsed?name:''});
+if(!mobile)navCloseMobile();
+}
+function navCloseMobile(){
+document.body.classList.remove('atlas-mobile-nav-open');
+mobileMenu?.setAttribute('aria-expanded','false');
+mobileMenu?.setAttribute('aria-label','Abrir menu de navegação');
+}
+function navOpenMobile(){
+document.body.classList.add('atlas-mobile-nav-open');
+mobileMenu?.setAttribute('aria-expanded','true');
+mobileMenu?.setAttribute('aria-label','Fechar menu de navegação');
+}
+sidebarToggle?.addEventListener('click',()=>{
+if(navBreakpoint.matches){navCloseMobile();return}
+const currentlyCollapsed=document.body.classList.contains('atlas-sidebar-collapsed');
+navPreference=currentlyCollapsed?'expanded':'collapsed';
+try{localStorage.setItem(navStorageKey,navPreference)}catch{}
+navApply();
+});
+mobileMenu?.addEventListener('click',()=>document.body.classList.contains('atlas-mobile-nav-open')?navCloseMobile():navOpenMobile());
+backdrop?.addEventListener('click',navCloseMobile);
+sidebar?.addEventListener('click',event=>{if(event.target.closest('[data-page]')&&navBreakpoint.matches)navCloseMobile()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('atlas-mobile-nav-open')){navCloseMobile();mobileMenu?.focus()}});
+window.addEventListener('resize',navApply,{passive:true});
+navApply();
+
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let scene=null,revealObserver=null;
