@@ -38,7 +38,7 @@ const env=c.environment;
 env.stages[8].title='Marco de validação do IAM local';
 env.stages[8].subtitle='Checagem do núcleo antes das integrações';
 env.stages.push(...stages);
-env.catalog={
+c.catalog={
  company:'Atlas Corp',domain:'atlas.test',realm:'atlas-corp',
  people:[{name:'Ana Costa',role:'RH',group:'rh'},{name:'Bruno Lima',role:'Financeiro',group:'financeiro'},{name:'Clara Nunes',role:'TI',group:'ti'},{name:'Diego Reis',role:'Gestor',group:'gestores'},{name:'Eva Rocha',role:'Terceiro',group:'terceiros'},{name:'Felipe Luz',role:'Analista',group:'operacoes'}],
  nodes:[{id:'hr',label:'RH · fonte'},{id:'directory',label:'AD / LDAP'},{id:'idp',label:'Keycloak · IdP'},{id:'apps',label:'Aplicações'},{id:'iga',label:'midPoint · IGA'},{id:'pam',label:'OpenBao · PAM'},{id:'cloud',label:'Entra ID P2'},{id:'endpoint',label:'Intune Plan 1'}],
