@@ -4,27 +4,14 @@
 const appRoot=document.getElementById('app');
 if(!appRoot)return;
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
-/* Sidebar controller: remembers desktop preference, adapts to viewport, closes mobile drawer. */
+/* Automatic navigation layout. Sidebar and content share a single responsive width. */
 const sidebar=document.getElementById('atlas-sidebar');
-const sidebarToggle=document.getElementById('atlas-sidebar-toggle');
 const mobileMenu=document.getElementById('atlas-mobile-menu');
 const backdrop=document.getElementById('atlas-nav-backdrop');
 const navBreakpoint=window.matchMedia('(max-width:760px)');
-const compactBreakpoint=window.matchMedia('(max-width:1100px)');
-const navStorageKey='iam-atlas-sidebar-v1';
-let navPreference=null;
-try{const saved=localStorage.getItem(navStorageKey);if(saved==='expanded'||saved==='collapsed')navPreference=saved}catch{}
-function navApply(){
-const mobile=navBreakpoint.matches;
-const collapsed=!mobile&&(navPreference==='collapsed'||(navPreference===null&&compactBreakpoint.matches));
-document.body.classList.toggle('atlas-sidebar-collapsed',collapsed);
-document.body.classList.toggle('atlas-sidebar-user-expanded',!mobile&&navPreference==='expanded');
-sidebarToggle?.setAttribute('aria-expanded',String(!collapsed));
-sidebarToggle?.setAttribute('aria-label',collapsed?'Expandir menu lateral':'Recolher menu lateral');
-sidebarToggle?.setAttribute('title',collapsed?'Expandir menu':'Recolher menu');
-sidebar?.querySelectorAll('[data-page]').forEach(btn=>{const name=btn.querySelector('.atlas-nav-label')?.textContent?.trim();if(name)btn.setAttribute('aria-label',name);btn.title=collapsed?name:''});
-if(!mobile)navCloseMobile();
-}
+const compactBreakpoint=window.matchMedia('(max-width:1180px)');
+const navItems=sidebar?.querySelectorAll('[data-page]')||[];
+let navRaf=0;
 function navCloseMobile(){
 document.body.classList.remove('atlas-mobile-nav-open');
 mobileMenu?.setAttribute('aria-expanded','false');
@@ -35,18 +22,25 @@ document.body.classList.add('atlas-mobile-nav-open');
 mobileMenu?.setAttribute('aria-expanded','true');
 mobileMenu?.setAttribute('aria-label','Fechar menu de navegação');
 }
-sidebarToggle?.addEventListener('click',()=>{
-if(navBreakpoint.matches){navCloseMobile();return}
-const currentlyCollapsed=document.body.classList.contains('atlas-sidebar-collapsed');
-navPreference=currentlyCollapsed?'expanded':'collapsed';
-try{localStorage.setItem(navStorageKey,navPreference)}catch{}
-navApply();
+function navApply(){
+navRaf=0;
+const mobile=navBreakpoint.matches;
+const compact=!mobile&&compactBreakpoint.matches;
+document.body.classList.toggle('atlas-sidebar-collapsed',compact);
+document.body.classList.remove('atlas-sidebar-user-expanded');
+navItems.forEach(btn=>{
+const name=btn.querySelector('.atlas-nav-label')?.textContent?.trim();
+if(name){btn.setAttribute('aria-label',name);btn.title=compact?name:''}
 });
+if(!mobile)navCloseMobile();
+}
+function navSchedule(){if(navRaf)return;navRaf=requestAnimationFrame(navApply)}
 mobileMenu?.addEventListener('click',()=>document.body.classList.contains('atlas-mobile-nav-open')?navCloseMobile():navOpenMobile());
 backdrop?.addEventListener('click',navCloseMobile);
 sidebar?.addEventListener('click',event=>{if(event.target.closest('[data-page]')&&navBreakpoint.matches)navCloseMobile()});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('atlas-mobile-nav-open')){navCloseMobile();mobileMenu?.focus()}});
-window.addEventListener('resize',navApply,{passive:true});
+window.addEventListener('resize',navSchedule,{passive:true});
+if(typeof ResizeObserver!=='undefined'){const navResize=new ResizeObserver(navSchedule);navResize.observe(document.documentElement)}
 navApply();
 
 const clamp=(n,min,max)=>Math.max(min,Math.min(max,n));
