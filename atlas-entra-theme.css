@@ -64,3 +64,12 @@ button:focus-visible,a:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 @media(max-width:720px){.atlas-atlas-phasegrid{grid-template-columns:1fr 1fr;gap:8px}.atlas-atlas-phase{padding:12px;min-height:110px}.atlas-atlas-phase strong{font-size:12px}.atlas-atlas-rules{padding:18px}.atlas-license-list{grid-template-columns:1fr}.atlas-doclinks a{max-width:100%;overflow-wrap:anywhere}}
 @media(max-width:420px){.atlas-atlas-phasegrid{grid-template-columns:1fr}.atlas-atlas-phase{min-height:0}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
+
+.atlas-price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:17px 0}
+.atlas-price-grid>div{background:#050d14;border:1px solid #193a51;border-radius:9px;padding:15px 16px;display:flex;flex-direction:column;gap:7px}
+.atlas-price-grid small{font-size:10px;color:#76a5ca;letter-spacing:.09em;font-weight:700}
+.atlas-price-grid strong{font-size:clamp(1.3rem,2vw,1.85rem);letter-spacing:-.045em;white-space:nowrap}
+.atlas-price-grid span{font-size:11px;color:#8da8bc}
+.atlas-price-grid .atlas-price-total{border-color:#296d9d;background:#091c2b}
+.atlas-atlas-rules a{color:#97cfee!important}
+@media(max-width:720px){.atlas-price-grid{grid-template-columns:1fr;gap:7px}.atlas-price-grid>div{padding:12px 14px}}
