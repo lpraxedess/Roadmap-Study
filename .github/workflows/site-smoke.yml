@@ -1,0 +1,16 @@
+name: Verificar renderização IAM Atlas
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+      - name: Executar teste do currículo e das páginas
+        run: node tests/smoke.cjs
