@@ -155,9 +155,10 @@ const ONPREM_STAGES=[
  ],'Cinco provas independentes reproduzidas com evidência real ou claramente rotulada simulação.','Nenhuma integração não executada pode ser relatada como concluída.','Desligue ambientes, mantenha cópias seguras e valide plano de restauração; nunca faça rollback indiscriminado em produção.','https://csrc.nist.gov/pubs/sp/800/207/final')
 ];
 const CLOUD_CHAPTER_ORDER=['lab-00','lab-01','lab-02','lab-03','lab-04','lab-05','lab-06','lab-07','lab-08','lab-09','lab-10','lab-11','lab-12','lab-13','lab-14','lab-15'];
+const CLOUD_OPTIONAL_CHAPTERS=['lab-07','lab-11','lab-14']; // Azure, Purview, multi-cloud: opcionais por licença/custo.
 const CLOUD_PREREQUISITES={
  'lab-00':'Tenant gratuito próprio e inventário de licenças. Duas contas de emergência testadas antes de políticas restritivas.',
- 'lab-01':'Identidades, matrizes de negócio e grupos de base criados.',
+ 'lab-01':'Reutilize camila.ti criada no capítulo 00; correlacione por objectId/employeeId sem duplicar. Matrizes de negócio e grupos de base criados.',
  'lab-02':'P2 para conta piloto, método MFA registrado e contas de emergência verificadas. CA começa em Report-only.',
  'lab-03':'Aplicativo de teste com autorização efetiva para permitir/negar.',
  'lab-04':'Aplicativo de teste e entendimento de OAuth/OIDC, SAML, redirect URI e validação de tokens.',

@@ -18,9 +18,18 @@ function courseProgress(track,chapter){
  return {done,total,pct:Math.round(100*done/total)};
 }
 function courseTrackProgress(track){
- const stages=courseStages(track),all=stages.map(x=>courseProgress(track,x.id));
+ const stages=courseStages(track),eligible=stages.filter(s=>!courseIsExcluded(track,s.id)),all=eligible.map(x=>courseProgress(track,x.id));
  return {done:all.reduce((s,x)=>s+x.done,0),total:all.reduce((s,x)=>s+x.total,0),
-  stagesDone:all.filter(x=>x.done===x.total).length,stageCount:stages.length};
+  stagesDone:all.filter(x=>x.done===x.total).length,stageCount:eligible.length,
+  excluded:stages.length-eligible.length,allStages:stages.length};
+}
+function courseIsExcluded(track,id){return track==='cloud'&&CLOUD_OPTIONAL_CHAPTERS.includes(id)&&courseLabState.cloud?.[id]?.status==='excluded'}
+function courseExcludeChapter(id,reason){
+ if(!CLOUD_OPTIONAL_CHAPTERS.includes(id))return false;
+ const record=courseStateOf('cloud',id);
+ if(reason===null){delete record.status;delete record.reason;persist();return true}
+ if(typeof reason!=='string'||reason.trim().length<12)return false;
+ record.status='excluded';record.reason=reason.trim().slice(0,500);persist();return true;
 }
 function courseSetNav(track=null,chapter=null){
  activeLabTrack=track;activeLabChapter=chapter;navigate('labs');
@@ -55,10 +64,11 @@ function courseSummary(){
  COURSE_TRACKS.forEach(t=>{
   const p=courseTrackProgress(t.id),card=el('article',{class:'course-track'});
   card.append(text('span',t.subtitle,'eyebrow'),text('h2',t.title),text('p',t.summary,'muted'),
-   text('p',p.stagesDone+' / '+p.stageCount+' capítulos · '+p.done+' / '+p.total+' microetapas concluídas','course-counter'),meter(p.total?Math.round(p.done/p.total*100):0));
+   text('p',p.stagesDone+' / '+p.stageCount+' capítulos aplicáveis · '+p.done+' / '+p.total+' microetapas · '+p.excluded+' dispensado(s)','course-counter'),meter(p.total?Math.round(p.done/p.total*100):0));
   card.append(btn('Abrir jornada →',()=>courseSetNav(t.id),'btn primary'));
-  root.append(card);
+  cards.append(card);
  });
+ root.append(cards);
  root.append(text('h2','Como executar com segurança'));
  const ol=exList([
  'Leia a aula correspondente no Roadmap e confira o pré-requisito do capítulo.',
@@ -79,12 +89,12 @@ function courseTracks(){
  const objectives=el('section',{class:'panel course-board'});objectives.append(text('h2','Competências e entregas'),exList(track.objectives));
  root.append(objectives);
  const progress=courseTrackProgress(track.id);
- root.append(text('p',progress.done+' / '+progress.total+' microetapas · '+progress.stagesDone+' capítulos completos (autodeclarado)','course-counter'),meter(progress.total?Math.round(progress.done/progress.total*100):0));
+ root.append(text('p',progress.done+' / '+progress.total+' microetapas aplicáveis · '+progress.stagesDone+' / '+progress.stageCount+' capítulos · '+progress.excluded+' dispensado(s), com justificativa','course-counter'),meter(progress.total?Math.round(progress.done/progress.total*100):0));
  const list=el('div',{class:'course-stage-list'});
  courseStages(track.id).forEach((stage,index)=>{
   const p=courseProgress(track.id,stage.id);
   const b=el('button',{type:'button',class:'course-stage'});
-  b.append(text('span',String(index+1).padStart(2,'0')+' · '+p.done+'/'+p.total+' microetapas','eyebrow'),
+  b.append(text('span',String(index+1).padStart(2,'0')+' · '+(courseIsExcluded(track.id,stage.id)?'Dispensado (não executado)':p.done+'/'+p.total+' microetapas'),'eyebrow'),
    text('strong',stage.title),text('small',stage.goal),meter(p.pct));b.onclick=()=>courseSetNav(track.id,stage.id);list.append(b);
  });root.append(list);
  root.append(el('p',{class:'muted',text:'Os procedimentos da jornada Cloud reutilizam as 94 tarefas da AtlasCorp e seu histórico original. O laboratório local acrescenta sua própria sequência, com progresso independente.'}));
@@ -135,6 +145,21 @@ function courseCloudDetail(){
  if(chapter.prerequisites?.length)root.append(text('h3','Antes de configurar'),exList(chapter.prerequisites));
  if(chapter.decisions?.length)root.append(text('h3','Decisões de arquitetura'),exList(chapter.decisions));
  if(lab.modules?.length)root.append(btn('Revisar conteúdo do Roadmap →',()=>openModule(lab.modules[0]),'btn'));
+ if(CLOUD_OPTIONAL_CHAPTERS.includes(lab.id)){
+  const skip=el('section',{class:'panel course-board course-optional'});
+  skip.append(text('h2','Capítulo opcional · depende de serviços/licenças'),
+    text('p','Dispensar não é concluir e não atribui experiência prática. A atividade deixa de pesar no progresso da jornada principal. É possível retomá-la depois.','muted'));
+  const note=el('textarea',{class:'field',maxlength:'500',placeholder:'Por que não executarei este capítulo? Ex.: recursos Azure desativados e orçamento Azure de R$ 0.'});
+  note.value=courseLabState.cloud?.[lab.id]?.reason||'';
+  const status=text('p',courseIsExcluded('cloud',lab.id)?'Dispensado por justificativa registrada. Nenhuma execução foi declarada.':'','course-counter');
+  const controls=el('div',{class:'course-bottom'});
+  controls.append(btn('Dispensar este capítulo',()=>{
+    if(!courseExcludeChapter(lab.id,note.value)){status.textContent='Explique o motivo em pelo menos 12 caracteres.';return}
+    courseSetNav('cloud',lab.id);
+  },'btn'),btn('Retomar este capítulo',()=>{courseExcludeChapter(lab.id,null);courseSetNav('cloud',lab.id)},'btn'));
+  skip.append(note,controls,status);root.append(skip);
+  if(courseIsExcluded('cloud',lab.id))root.append(text('p','Este capítulo foi dispensado e não conta como prática nem no denominador da jornada. O roteiro segue disponível para consulta.','course-warning'));
+ }
  root.append(text('h2','Microprocedimentos da empresa'));
  chapter.tasks.forEach((task,i)=>{
   const complete=courseStepDone('cloud',lab.id,i),block=el('details',{class:'course-task'});

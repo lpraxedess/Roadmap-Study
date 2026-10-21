@@ -64,7 +64,7 @@ function experienceDashboard(){
 }
 function experienceRoadmap(){
  const root=el('div');
- root.append(uxTop('Roadmap de estudos','Aulas por nível, com teoria e configurações da empresa fictícia AtlasCorp integradas somente aos temas pertinentes.','CONTEÚDO · DO BÁSICO AO AVANÇADO'));
+ root.append(uxTop('Roadmap de estudos','Aulas por nível com teoria e cenários AtlasCorp; execute as configurações na área Laboratórios.','CONTEÚDO · DO BÁSICO AO AVANÇADO'));
  const search=el('input',{class:'field v3-roadmap-search',type:'search',placeholder:'Pesquisar módulos e assuntos (ex.: OAuth, MFA, SCIM)...','aria-label':'Buscar no roadmap'});
  root.append(search);
  const levelsBox=el('div',{class:'v3-roadmap-levels'}),feedback=text('p','','muted');root.append(feedback,levelsBox);
