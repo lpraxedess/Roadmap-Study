@@ -30,7 +30,7 @@ test('Azure opcional pode ser dispensado sem concluir suas tarefas',async({page}
 test('evidência exigida e avaliação teórica corrigida',async({page})=>{
  await page.goto('/#lab/onprem/op01');
  const first=page.locator('.course-task').first();
- await first.locator('summary').click();
+ if(!(await first.evaluate(element=>element.open))) await first.locator('summary').click();
  await first.locator('.course-check input').check();
  await expect(first.locator('.course-warning')).toContainText('Antes de concluir');
  await page.locator('.course-evidence select').selectOption('simulado');
