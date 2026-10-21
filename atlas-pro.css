@@ -685,3 +685,21 @@ html,body{max-width:100%;overflow-x:clip}
 .atlas-env-body-inner>.atlas-starter .atlas-starter-bottom{margin-top:13px}
 .atlas-env-body-inner>.atlas-starter .atlas-starter-warning{font-size:10px!important;margin-top:12px;padding-top:11px}
 .atlas-env-body-inner>.atlas-starter .atlas-section-eyebrow{font-size:9px}
+
+/* Refined certification detail transitions: scale, depth and progressive backdrop */
+#detail{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(610px,calc(100vw - 32px));max-width:610px;max-height:min(84dvh,850px);padding:clamp(22px,3vw,34px);overflow-y:auto;overscroll-behavior:contain;border:1px solid #62437b;border-radius:20px;background:linear-gradient(145deg,#19141f,#0e0e12 65%);color:#f1edf7;box-shadow:inset 0 1px #ffffff19,0 32px 90px #000d,0 0 55px #853ac01c;transform-origin:50% 38%;will-change:transform,opacity}
+#detail[open]{animation:atlasDialogIn .48s cubic-bezier(.18,.9,.22,1) both}
+#detail[open]::backdrop{background:rgba(0,0,0,.72);backdrop-filter:blur(7px);animation:atlasDialogBackdropIn .38s ease both}
+#detail[open].atlas-dialog-closing{animation:atlasDialogOut .27s cubic-bezier(.55,0,.85,.25) both;pointer-events:none}
+#detail[open].atlas-dialog-closing::backdrop{animation:atlasDialogBackdropOut .27s ease both}
+#detail #detail-body{animation:atlasDialogContentIn .53s .07s cubic-bezier(.2,.85,.25,1) both}
+#detail .dialog-close{position:sticky;top:0;float:right;z-index:2;display:grid;place-items:center;width:34px;height:34px;margin:-6px -7px 0 10px;padding:0;border:1px solid #473455;border-radius:10px;background:#211727;color:#d8b5f5;font-size:23px;line-height:1;cursor:pointer;box-shadow:inset 0 1px #ffffff18,0 3px 0 #09070d;transition:transform .2s,background .2s,border-color .2s}
+#detail .dialog-close:hover{transform:translateY(-2px);background:#342041;border-color:#a56adf}
+#detail .dialog-close:focus-visible{outline:2px solid #d5a6ff;outline-offset:3px}
+@keyframes atlasDialogIn{0%{opacity:0;transform:perspective(950px) translateY(38px) rotateX(-6deg) scale(.94);filter:blur(5px)}55%{opacity:1;filter:blur(0)}100%{opacity:1;transform:perspective(950px) translateY(0) rotateX(0) scale(1);filter:blur(0)}}
+@keyframes atlasDialogOut{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(18px) scale(.965)}}
+@keyframes atlasDialogBackdropIn{from{background:rgba(0,0,0,0);backdrop-filter:blur(0)}to{background:rgba(0,0,0,.72);backdrop-filter:blur(7px)}}
+@keyframes atlasDialogBackdropOut{from{background:rgba(0,0,0,.72);backdrop-filter:blur(7px)}to{background:rgba(0,0,0,0);backdrop-filter:blur(0)}}
+@keyframes atlasDialogContentIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){#detail{width:calc(100vw - 22px);max-height:90dvh;border-radius:16px;padding:20px}#detail[open]{animation-duration:.36s}}
+@media(prefers-reduced-motion:reduce){#detail[open],#detail[open]::backdrop,#detail[open].atlas-dialog-closing,#detail[open].atlas-dialog-closing::backdrop,#detail #detail-body{animation:none!important;filter:none!important;transform:none!important}#detail .dialog-close{transition:none!important}}
