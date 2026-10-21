@@ -556,3 +556,51 @@ body>aside#atlas-sidebar>button[data-page]{justify-content:flex-start!important;
 body>aside#atlas-sidebar .atlas-sidebar-toggle{transform:none!important}
 }
 @media(prefers-reduced-motion:reduce){body>aside#atlas-sidebar,body>main#app{transition:none!important}}
+
+/* Responsive layout v2: automatic collapse, no manual state and consistent alignment */
+:root{--atlas-content-max:1480px;--atlas-sidebar-width:256px}
+body{--atlas-sidebar-width:256px}
+body.atlas-sidebar-collapsed{--atlas-sidebar-width:76px}
+body>aside#atlas-sidebar .atlas-sidebar-head{justify-content:flex-start!important;min-height:53px!important}
+body>aside#atlas-sidebar .atlas-sidebar-head strong{margin:0!important}
+body>main#app{box-sizing:border-box!important;max-width:none!important;margin-inline-start:var(--atlas-sidebar-width)!important;margin-inline-end:0!important;width:calc(100% - var(--atlas-sidebar-width))!important;min-width:0!important;overflow:visible!important}
+#app>header,#app>.atlas-topbar,#app>.atlas-compact-hero,#app>.atlas-env-intro,#app>.atlas-env-assets,#app>.atlas-env-safety,#app>.atlas-arch,#app>.atlas-starter,#app>.atlas-env-stages,#app>.atlas-env-filter,#app>.atlas-env-tailnote,#app>.roadmap-level,#app>.grid,#app>.dashboard-banner,#app>.atlas-section,#app>.atlas-section-heading{width:100%;max-width:var(--atlas-content-max);margin-left:auto;margin-right:auto}
+#app .roadmap-level,#app .topic-shell,#app .topic-detail-inner,#app .atlas-env-stage,#app .atlas-env-body-inner{min-width:0}
+#app .atlas-env-stages,#app .roadmap-level,#app .grid{width:100%}
+#app .topic-shell,#app .atlas-env-stage{box-sizing:border-box}
+#app .topic-toggle,#app .atlas-env-toggle{max-width:100%;min-width:0}
+#app .atlas-env-title,#app .atlas-env-title strong,#app .atlas-env-title>span{min-width:0;overflow-wrap:anywhere}
+#app .atlas-env-command pre{overflow-x:auto;overflow-wrap:anywhere}
+#app .atlas-env-command code{white-space:pre-wrap;overflow-wrap:anywhere}
+#app .atlas-arch-flow{grid-template-columns:repeat(4,minmax(0,1fr))}
+body>aside#atlas-sidebar .atlas-sidebar-toggle{display:none!important}
+@media(min-width:1181px){
+body{--atlas-sidebar-width:256px}
+body>aside#atlas-sidebar{padding-inline:13px!important}
+body>aside#atlas-sidebar .atlas-sidebar-head{flex-direction:row!important;min-height:53px!important}
+body>aside#atlas-sidebar .atlas-brand-label,body>aside#atlas-sidebar .atlas-nav-label,body>aside#atlas-sidebar>small{display:block!important}
+body>aside#atlas-sidebar>button[data-page]{justify-content:flex-start!important;padding:12px 13px!important}
+}
+@media(min-width:761px) and (max-width:1180px){
+body{--atlas-sidebar-width:76px}
+body>aside#atlas-sidebar{padding-inline:10px!important}
+body>aside#atlas-sidebar .atlas-sidebar-head{min-height:60px!important;flex-direction:row!important;justify-content:center!important}
+body>aside#atlas-sidebar .atlas-sidebar-head strong{padding:0!important;justify-content:center!important}
+body>aside#atlas-sidebar .atlas-brand-label,body>aside#atlas-sidebar .atlas-nav-label,body>aside#atlas-sidebar>small{display:none!important}
+body>aside#atlas-sidebar>button[data-page]{justify-content:center!important;padding:12px 8px!important}
+body>main#app{padding:32px clamp(16px,2.4vw,34px) 78px!important}
+#app .atlas-arch-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+body{--atlas-sidebar-width:0px}
+body>main#app{margin:0!important;width:100%!important;max-width:100%!important;padding:85px clamp(14px,4vw,24px) 85px!important;overflow:visible!important}
+body>aside#atlas-sidebar .atlas-sidebar-head{justify-content:flex-start!important}
+body>aside#atlas-sidebar .atlas-brand-label,body>aside#atlas-sidebar .atlas-nav-label,body>aside#atlas-sidebar>small{display:block!important}
+#app .atlas-arch-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+#app .atlas-env-assets{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:430px){
+#app .atlas-arch-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+#app .atlas-env-assets{grid-template-columns:repeat(2,minmax(0,1fr))}
+#app .atlas-env-title>span{font-size:11px}
+}
