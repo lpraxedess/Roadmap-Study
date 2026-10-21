@@ -420,6 +420,7 @@ const atlasCorpTopology=()=>'<section class="atlas-corp-blueprint"><span class="
 const atlasCorpUsers=()=>{
 const people=window.IAMAtlasCurriculum.catalog?.people||[];
 return '<section class="atlas-corp-users"><h3>Catálogo fictício · Atlas Corp</h3><p>Crie estas identidades na OU AtlasLab do <b>AD DS existente</b>, conforme etapa 04. A sincronização ocorre depois de conferir domínio, agente e escopo. Admin cloud-only e piloto licenciado devem ser administrados separadamente.</p><div class="atlas-corp-table-wrap"><table><thead><tr><th>Identidade</th><th>Área</th><th>Grupo AD</th><th>Tipo</th><th>Gestor fictício</th></tr></thead><tbody>'+people.map(person=>'<tr><td><b>'+atlasSafe(person.username)+'</b><small>'+atlasSafe(person.name)+'</small></td><td>'+atlasSafe(person.role)+'</td><td><code>'+atlasSafe(person.group)+'</code></td><td>'+atlasSafe(person.employeeType)+'</td><td>'+atlasSafe(person.managerId)+'</td></tr>').join('')+'</tbody></table></div><p><b>Observação:</b> o nome e o e-mail de login precisam respeitar o domínio efetivamente configurado no seu AD e no tenant; não configure um domínio fictício como se estivesse verificado. Você pode manter contas auxiliares sem P2, mas não aplicar recursos premium a elas sem licenciamento.</p></section>';
+};
 const atlasLabsPage=()=>{
 const env=window.IAMAtlasCurriculum.environment,p=atlasEnvStats(),plan=window.IAMAtlasCurriculum.atlasPlan;
 const groups=[['core','01 · AD existente'],['microsoft','02 · IAM Entra completo'],['local','03 · Intune após IAM'],['hybrid','04 · Entra + Intune']];
