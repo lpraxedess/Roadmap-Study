@@ -77,7 +77,7 @@ const ONPREM_STAGES=[
  'Ingresse WIN11-LAB no domínio fictício usando conta autorizada; reinicie e verifique o objeto de computador na OU prevista.',
  'No Group Policy Management, crie GPO-LAB-BLOQUEIO-TELA e vincule-a à OU de testes, não à floresta inteira.',
  'Aplique configuração reversível de bloqueio de tela ou aviso legal, executando gpupdate /force no cliente.',
- 'Execute gpresult /r e gpresult /h C:\IAM-LAB\gpresult.html no cliente; registre GPO efetivamente aplicada e escopo.',
+ 'Execute gpresult /r e gpresult /h C:\\IAM-LAB\\gpresult.html no cliente; registre GPO efetivamente aplicada e escopo.',
  'Mova o computador para OU fora do escopo e confirme resultado após atualização das políticas.'
  ],'Cliente ingressado no domínio e GPO aparece em gpresult com configuração observável.','Computador fora do escopo não recebe a política de teste.','Desvincule GPO ou reverta snapshot do cliente; não exclua GPOs padrão de domínio.','https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview'),
  localStage('op07','Kerberos, LDAP e diagnóstico de autenticação',
