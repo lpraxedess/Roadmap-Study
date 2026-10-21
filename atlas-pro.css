@@ -669,3 +669,14 @@ body>main#app{margin-left:var(--atlas-sidebar-width)!important;width:calc(100% -
 @media(min-width:761px) and (max-width:1180px){body{--atlas-sidebar-width:76px}body>aside#atlas-sidebar{width:64px!important}body>aside#atlas-sidebar .atlas-sidebar-foot-text{display:none!important}body>aside#atlas-sidebar .atlas-sidebar-foot{justify-content:center}body>aside#atlas-sidebar .atlas-sidebar-head{min-height:66px!important;justify-content:center!important}body>aside#atlas-sidebar .atlas-brand-label{display:none!important}}
 @media(max-width:760px){body{--atlas-sidebar-width:0px}body>aside#atlas-sidebar{width:min(300px,calc(100vw - 55px))!important}body>aside#atlas-sidebar .atlas-brand-label{display:block!important}body>aside#atlas-sidebar .atlas-sidebar-foot-text{display:block!important}}
 @media(prefers-reduced-motion:reduce){.topic-panel,.atlas-env-body,.cert-row-body{transition:none!important}.topic-panel.expanded .topic-detail-inner,.atlas-env-stage.is-open .atlas-env-body-inner>*,.cert-row-body.expanded .cert-body-inner{animation:none!important}}
+
+/* Compact practical architecture and explicit lab identity worksheet */
+.atlas-corp-blueprint,.atlas-corp-users{margin:16px 0 22px;padding:clamp(15px,2.5vw,23px);border:1px solid #33273c;border-radius:14px;background:#0d0c11;color:#e8e3ec}
+.atlas-corp-blueprint h2{font-size:19px;margin:8px 0}.atlas-corp-blueprint p,.atlas-corp-users p{color:#b4aabb;font-size:12px;line-height:1.7}
+.atlas-corp-flow{display:flex;align-items:stretch;gap:9px;margin-top:16px}.atlas-corp-flow>div{flex:1;min-width:0;padding:13px;border:1px solid #42304e;border-radius:10px;background:#15101b;display:flex;flex-direction:column;gap:7px}
+.atlas-corp-flow>div small{font-size:9px;letter-spacing:1px;color:#b784e1}.atlas-corp-flow>div strong{font-size:13px;color:#eee2f7}.atlas-corp-flow>div span{font-size:11px;color:#aaa0af;line-height:1.45}.atlas-corp-flow>b{align-self:center;color:#b882ed;font-size:21px}
+.atlas-corp-secondary>div{background:#100f14;border-color:#302838}
+.atlas-corp-users h3{font-size:16px;margin:0 0 10px}.atlas-corp-users code{color:#d3a3ff}
+.atlas-corp-table-wrap{width:100%;overflow-x:auto;margin:14px 0}.atlas-corp-table-wrap table{width:100%;border-collapse:collapse;min-width:390px;font-size:12px}.atlas-corp-table-wrap th,.atlas-corp-table-wrap td{padding:10px 12px;border-bottom:1px solid #322a39;text-align:left}.atlas-corp-table-wrap th{color:#b889e4;font-size:10px;text-transform:uppercase;letter-spacing:.6px}.atlas-corp-table-wrap td small{display:block;color:#8e8695;font-size:10px;margin-top:3px}
+@container atlas-page (max-width:720px){.atlas-corp-flow{flex-wrap:wrap}.atlas-corp-flow>div{flex:1 1 42%}.atlas-corp-flow>b{display:none}}
+@container atlas-page (max-width:430px){.atlas-corp-flow{flex-direction:column}.atlas-corp-flow>div{flex-basis:auto}}
