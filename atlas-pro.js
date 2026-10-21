@@ -13,6 +13,8 @@ function entries(){
 const basic=[
 {label:'Visão geral',description:'Dashboard e jornada de estudos',type:'page',page:'inicio',symbol:'⌂'},
 {label:'Roadmap',description:'Todos os níveis e competências',type:'page',page:'roadmap',symbol:'◈'},
+{label:'Laboratórios',description:'Seis desafios práticos de IAM',type:'page',page:'labs',symbol:'▦'},
+{label:'Trilhas de carreira',description:'Cinco caminhos profissionais em IAM',type:'page',page:'trilhas',symbol:'◇'},
 {label:'Certificações',description:'Credenciais por nível',type:'page',page:'certs',symbol:'✧'},
 {label:'Meu progresso',description:'Estatísticas e backup local',type:'page',page:'progresso',symbol:'◷'}
 ];
@@ -60,11 +62,11 @@ input.addEventListener('input',()=>{activeIndex=0;commandRender()});
 document.addEventListener('keydown',e=>{const editable=e.target.matches('input,textarea,select,[contenteditable="true"]');if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();dialog.open?commandClose():commandOpen();return}if(e.key==='/'&&!editable&&!dialog.open){e.preventDefault();commandOpen()}});
 document.addEventListener('click',e=>{
 const search=e.target.closest('[data-atlas-command]');if(search){e.preventDefault();commandOpen();return}
-const jump=e.target.closest('[data-atlas-jump]');if(jump){e.preventDefault();openTopic(jump.dataset.atlasJump);return}
+const stage=e.target.closest('[data-atlas-stage]');if(stage){e.preventDefault();const first=topics.find(t=>t.level===Number(stage.dataset.atlasStage));if(first)openTopic(first.id);else navigate('roadmap');return}const jump=e.target.closest('[data-atlas-jump]');if(jump){e.preventDefault();openTopic(jump.dataset.atlasJump);return}
 const completedButton=e.target.closest('[data-complete-topic]');if(completedButton){const id=completedButton.dataset.completeTopic;toast(completed.has(id)?'Competência concluída. Progresso salvo.':'Competência removida do progresso.');return}
 if(e.target.closest('#mark')){toast('Progresso atualizado e salvo neste navegador.');return}
 if(e.target.closest('#export')){toast('Backup de progresso exportado.');return}
-const btn=e.target.closest('.atlas-btn,.atlas-next-card,.atlas-stage,.atlas-command-trigger');
+const btn=e.target.closest('.atlas-btn,.atlas-next-card,.atlas-stage,.atlas-command-trigger,.atlas-path-card,.atlas-lab-card,.atlas-track-card');
 if(btn&&!reduced.matches){
 const r=btn.getBoundingClientRect(),circle=document.createElement('span');circle.className='atlas-ripple';const diameter=Math.max(r.width,r.height)*2;circle.style.width=circle.style.height=diameter+'px';circle.style.left=e.clientX-r.left+'px';circle.style.top=e.clientY-r.top+'px';btn.append(circle);setTimeout(()=>circle.remove(),600);
 }
@@ -122,13 +124,13 @@ ctx.globalAlpha=1;
 function resize(){const r=canvas.getBoundingClientRect();width=Math.max(0,r.width);height=Math.max(0,r.height);dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);draw()}
 const observer=new IntersectionObserver(items=>{visible=items[0].isIntersecting;if(visible)start();else stop()},{threshold:.04});
 const resizer=typeof ResizeObserver!=='undefined'?new ResizeObserver(resize):null;
-function step(){raf=0;const easing=dragging?.24:.075;yaw+=(targetYaw-yaw)*easing;pitch+=(targetPitch-pitch)*easing;if(!dragging){targetYaw+=.0032}draw();if(visible&&!document.hidden&&!reduced.matches)raf=requestAnimationFrame(step)}
+function step(){raf=0;const easing=dragging ? 0.24 : 0.075;yaw+=(targetYaw-yaw)*easing;pitch+=(targetPitch-pitch)*easing;if(!dragging){targetYaw+=.0032}draw();if(visible&&!document.hidden&&!reduced.matches)raf=requestAnimationFrame(step)}
 function start(){if(!raf&&!reduced.matches&&visible&&!document.hidden)raf=requestAnimationFrame(step);else draw()}
 function stop(){if(raf){cancelAnimationFrame(raf);raf=0}}
 function onDown(e){dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)}
 function onMove(e){if(!dragging)return;targetYaw+=(e.clientX-lastX)*.009;targetPitch=clamp(targetPitch+(e.clientY-lastY)*.007,-1.2,1.2);lastX=e.clientX;lastY=e.clientY;if(reduced.matches){yaw=targetYaw;pitch=targetPitch;draw()}}
 function onUp(){dragging=false}
-function onKey(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();targetYaw+=(e.key==='ArrowRight'?.24:e.key==='ArrowLeft'?-.24:0);targetPitch=clamp(targetPitch+(e.key==='ArrowDown'?.2:e.key==='ArrowUp'?-.2:0),-1.2,1.2);if(reduced.matches){yaw=targetYaw;pitch=targetPitch;draw()}}}
+function onKey(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();targetYaw+=(e.key==='ArrowRight'?0.24:e.key==='ArrowLeft'?-0.24:0);targetPitch=clamp(targetPitch+(e.key==='ArrowDown'?0.2:e.key==='ArrowUp'?-0.2:0),-1.2,1.2);if(reduced.matches){yaw=targetYaw;pitch=targetPitch;draw()}}}
 function onVisibility(){document.hidden?stop():start()}
 canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointermove',onMove);canvas.addEventListener('pointerup',onUp);canvas.addEventListener('pointercancel',onUp);canvas.addEventListener('keydown',onKey);document.addEventListener('visibilitychange',onVisibility);
 if(resizer)resizer.observe(canvas);else window.addEventListener('resize',resize);
