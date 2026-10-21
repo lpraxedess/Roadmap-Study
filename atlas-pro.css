@@ -673,3 +673,15 @@ html,body{max-width:100%;overflow-x:clip}
 .atlas-topology-node{min-height:70px}
 }
 @media(prefers-reduced-motion:reduce){.atlas-topology-node{transition:none!important}.atlas-topology-node:hover{transform:none}}
+
+/* Minimal laboratory flow: setup is contextual to stage one, not a separate dashboard */
+.atlas-env-body-inner>.atlas-starter{margin:0 0 19px!important;padding:17px!important;background:#0d0d10!important;border:1px solid #2f2838!important;border-radius:13px!important;box-shadow:none!important}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-head{margin-bottom:12px}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-head h2{font-size:16px;margin:6px 0}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-head p{font-size:11px}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-tech{padding:8px;font-size:9px;box-shadow:none}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-files{gap:7px}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-file{border-radius:8px;box-shadow:none!important}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-bottom{margin-top:13px}
+.atlas-env-body-inner>.atlas-starter .atlas-starter-warning{font-size:10px!important;margin-top:12px;padding-top:11px}
+.atlas-env-body-inner>.atlas-starter .atlas-section-eyebrow{font-size:9px}
