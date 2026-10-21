@@ -415,3 +415,17 @@ button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #d2aa
 .atlas-env-task-title{position:relative}
 @media(max-width:760px){.atlas-starter{padding:19px}.atlas-starter-head{flex-direction:column;align-items:flex-start}.atlas-starter-bottom .atlas-env-command{width:100%;min-width:0}.atlas-starter-file summary{padding:12px}.atlas-starter-tech{font-size:9px}}
 @media(prefers-reduced-motion:reduce){.atlas-starter-expand .atlas-icon{transition:none!important}}
+
+/* Syllabus depth and guided-practice linking */
+.atlas-lesson-theory{margin:17px 0 20px;padding:21px 23px;border:1px solid #604079;border-radius:13px;background:radial-gradient(circle at top right,#9e60ee16,transparent 58%),#16121b;box-shadow:inset 0 1px 0 #ffffff0c,0 8px 18px #0005}
+.atlas-lesson-theory>span{display:flex;align-items:center;gap:9px;color:#d0a8ff!important}
+.atlas-lesson-theory>span:before{content:"";width:7px;height:7px;border-radius:50%;background:#ad65ff;box-shadow:0 0 11px #ae6cff}
+.atlas-lesson-theory ul{list-style:none;padding:0;margin:15px 0 0;display:grid;gap:10px}
+.atlas-lesson-theory li{position:relative;padding:12px 14px 12px 35px;margin:0;border-radius:9px;border:1px solid #383046;background:#1e1927;color:#cfc3d9;font-size:13px;line-height:1.65}
+.atlas-lesson-theory li:before{content:"◆";position:absolute;left:13px;top:14px;color:#ab76eb;font-size:9px}
+.topic-actions .atlas-practice-link{display:inline-flex;align-items:center;gap:9px;min-height:42px;padding:11px 15px;border:1px solid #845abb!important;background:linear-gradient(150deg,#332143,#21172c)!important;color:#e5cbff!important;border-radius:10px;box-shadow:inset 0 1px 0 #ffffff29,0 4px 0 #100a17,0 10px 17px #0007!important;font:750 12px system-ui,sans-serif;transition:transform .2s,border-color .2s,box-shadow .2s!important}
+.topic-actions .atlas-practice-link:hover{transform:translateY(-3px)!important;background:linear-gradient(145deg,#4a2b69,#291c38)!important;border-color:#b47af1!important;box-shadow:inset 0 1px 0 #ffffff30,0 6px 0 #100a17,0 15px 24px #0009,0 0 18px #8d3cd729!important}
+.topic-actions .atlas-practice-link:active{transform:translateY(2px)!important;box-shadow:inset 0 2px 8px #0007,0 1px 0 #100a17!important}
+.topic-actions .atlas-practice-link .atlas-icon{width:17px;height:17px}
+@media(max-width:760px){.atlas-lesson-theory{padding:15px}.atlas-lesson-theory li{padding:11px 12px 11px 28px;font-size:12px}.atlas-lesson-theory li:before{left:11px;top:13px}.topic-actions .atlas-practice-link{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.topic-actions .atlas-practice-link:hover,.topic-actions .atlas-practice-link:active{transform:none!important}}
