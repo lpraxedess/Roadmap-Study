@@ -43,6 +43,24 @@ atlasTiltNode=el;const rect=el.getBoundingClientRect();atlasTiltX=clamp((e.clien
 if(!atlasTiltFrame)atlasTiltFrame=requestAnimationFrame(atlasFlushTilt);
 },{passive:true});
 document.addEventListener('pointerout',e=>{const el=e.target.closest('.atlas-arch-node');if(!el||e.relatedTarget&&el.contains(e.relatedTarget))return;el.style.setProperty('--atlas-rx','0deg');el.style.setProperty('--atlas-ry','0deg');if(atlasTiltNode===el)atlasTiltNode=null},{passive:true});
+/* Unified perspective interaction: delegated, throttled, and disabled for touch/reduced motion. */
+let surfaceFrame=0,surfaceTarget=null,surfaceX=0,surfaceY=0;
+const surfaceSelector='.atlas-stage,.atlas-next-card,.atlas-path-card,.atlas-lab-card,.atlas-track-card,.atlas-progress-feature';
+function paintSurface(){surfaceFrame=0;const el=surfaceTarget;if(!el?.isConnected)return;el.style.setProperty('--surface-rotate-x',surfaceY+'deg');el.style.setProperty('--surface-rotate-y',surfaceX+'deg')}
+document.addEventListener('pointermove',e=>{
+if(reduced.matches||e.pointerType!=='mouse')return;
+const el=e.target.closest(surfaceSelector);if(!el)return;
+if(surfaceTarget&&surfaceTarget!==el){surfaceTarget.style.removeProperty('--surface-rotate-x');surfaceTarget.style.removeProperty('--surface-rotate-y')}
+surfaceTarget=el;const r=el.getBoundingClientRect();
+surfaceX=clamp((e.clientX-r.left)/r.width-.5,-.5,.5)*4;
+surfaceY=clamp(.5-(e.clientY-r.top)/r.height,-.5,.5)*4;
+if(!surfaceFrame)surfaceFrame=requestAnimationFrame(paintSurface);
+},{passive:true});
+document.addEventListener('pointerout',e=>{
+const el=e.target.closest(surfaceSelector);if(!el||(e.relatedTarget&&el.contains(e.relatedTarget)))return;
+el.style.removeProperty('--surface-rotate-x');el.style.removeProperty('--surface-rotate-y');
+if(surfaceTarget===el)surfaceTarget=null;
+},{passive:true});
 function revealSetup(){
 if(revealObserver){revealObserver.disconnect();revealObserver=null}
 const els=appRoot.querySelectorAll('.atlas-stage,.atlas-next-card,.atlas-section-heading,.atlas-progress-feature');
@@ -94,7 +112,7 @@ ctx.globalAlpha=1;
 });
 }
 function resize(){const r=canvas.getBoundingClientRect();width=Math.max(0,r.width);height=Math.max(0,r.height);dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);draw()}
-const observer=new IntersectionObserver(items=>{visible=items[0].isIntersecting;if(visible)start();else stop()},{threshold:.04});
+const observer=typeof IntersectionObserver==='undefined'?null:new IntersectionObserver(items=>{visible=items[0].isIntersecting;if(visible)start();else stop()},{threshold:.04});
 const resizer=typeof ResizeObserver!=='undefined'?new ResizeObserver(resize):null;
 function step(){raf=0;const easing=dragging ? 0.24 : 0.075;yaw+=(targetYaw-yaw)*easing;pitch+=(targetPitch-pitch)*easing;if(!dragging){targetYaw+=.0032}draw();if(visible&&!document.hidden&&!reduced.matches)raf=requestAnimationFrame(step)}
 function start(){if(!raf&&!reduced.matches&&visible&&!document.hidden)raf=requestAnimationFrame(step);else draw()}
@@ -106,8 +124,8 @@ function onKey(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'||e.key==='ArrowUp
 function onVisibility(){document.hidden?stop():start()}
 canvas.addEventListener('pointerdown',onDown);canvas.addEventListener('pointermove',onMove);canvas.addEventListener('pointerup',onUp);canvas.addEventListener('pointercancel',onUp);canvas.addEventListener('keydown',onKey);document.addEventListener('visibilitychange',onVisibility);
 if(resizer)resizer.observe(canvas);else window.addEventListener('resize',resize);
-observer.observe(canvas);resize();start();
-scene={canvas,dispose(){stop();observer.disconnect();resizer?.disconnect();canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointermove',onMove);canvas.removeEventListener('pointerup',onUp);canvas.removeEventListener('pointercancel',onUp);canvas.removeEventListener('keydown',onKey);document.removeEventListener('visibilitychange',onVisibility);if(!resizer)window.removeEventListener('resize',resize)}};
+if(observer)observer.observe(canvas);resize();start();
+scene={canvas,dispose(){stop();if(observer)observer.disconnect();resizer?.disconnect();canvas.removeEventListener('pointerdown',onDown);canvas.removeEventListener('pointermove',onMove);canvas.removeEventListener('pointerup',onUp);canvas.removeEventListener('pointercancel',onUp);canvas.removeEventListener('keydown',onKey);document.removeEventListener('visibilitychange',onVisibility);if(!resizer)window.removeEventListener('resize',resize)}};
 }
 let setupQueued=false,lastCanvas=null;
 function setup(){setupQueued=false;revealSetup();const canvas=document.getElementById('atlas-network');if(canvas!==lastCanvas){lastCanvas=canvas;setup3D(canvas)}}
