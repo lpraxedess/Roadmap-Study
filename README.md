@@ -19,15 +19,15 @@ O Cloud parte de um tenant gratuito existente. **Entra ID P2 e Intune Plan 1** p
 
 ## Política de orçamento do laboratório (21/10/2026)
 
-**Teto global de gastos: R$ 200 por mês**, incluindo impostos, assinaturas e todo consumo Azure. Não interprete esse orçamento como autorização automática para compras.
+**Teto global de gastos: R$ 200 por mês**, incluindo impostos e assinaturas. **Meta de consumo de recursos Azure: R$ 0/mês.** O crédito de avaliação Azure de **US$ 200 (dólares)** já foi consumido e não deve ser confundido com o teto recorrente de **R$ 200 (reais)**. Não interprete o orçamento como autorização automática para compras.
 
 - **Referência Microsoft Brasil, antes de impostos e com compromisso/pagamento anual:** Entra ID P2 R$ 57,30/usuário/mês + Intune Plan 1 R$ 45,80/usuário/mês = R$ 103,10/usuário/mês.
 - **Alternativa de pacote para avaliar:** Enterprise Mobility + Security E5, R$ 103,30/usuário/mês nas condições anuais anunciadas. Inclui Entra ID P2 e Intune, com outras funcionalidades, mas não todo Intune Suite e nem toda governança avançada.
-- **Azure:** planejar gasto operacional de até **R$ 40 por mês** após impostos, liberando recursos pagos somente em exercícios específicos; preferir conta gratuita/crédito de avaliação quando houver elegibilidade. Não implantar VMs, gateways, Log Analytics ou outros recursos permanentes sem calcular custo e plano de limpeza.
-- **Reserva:** cerca de R$ 56,70 entre a referência EMS E5 e o teto, para impostos, ajustes de preço ou despesas não planejadas. Se o valor final da contratação ultrapassar a margem, reduza o Azure ou não contrate.
-- **Alerta não é bloqueio:** budgets do Azure não interrompem serviços nem impedem cobrança. Criar alertas em 50%, 75% e 90% do limite interno para Azure, conferir custos todos os dias em que houver recursos pagos, desligar/deletar recursos ao final e revisar recursos com cobrança residual.
+- **Azure não obrigatório para IAM:** custo planejado de **R$ 0/mês**. O crédito de avaliação do Azure de US$ 200 já foi utilizado pelo estudante; não pressupor renovação ou novos créditos. Entra ID, Graph, MFA, Conditional Access, PIM de funções do diretório, aplicativos e Intune não dependem de consumo pago de recursos Azure, mas funcionalidades premium exigem licenças adequadas. Azure RBAC, Key Vault, Managed Identities para recursos Azure e aplicações hospedadas no Azure formam apenas uma extensão **opcional** da trilha avançada, e só podem gerar custos com aprovação específica e estimativa por exercício.
+- **Reserva:** o teto de R$ 200/mês cobre licenças, impostos e eventuais custos explicitamente autorizados. Sem Azure pago, o saldo não precisa ser gasto: reserve-o para diferenças de cobrança ou aquisição adicional de licenças para pessoas participantes. Uma contratação acima do teto não é permitida.
+- **Azure somente se autorizado:** se optar pelo módulo avançado Azure, defina orçamento específico para aquele período e crie alertas em 50%, 75% e 90%. Alertas não bloqueiam cobranças; exclua recursos e confira cobranças residuais após os testes.
 - **Compromisso anual:** valores anunciados como `usuário/mês, pago anualmente` podem exigir cobrança anual e renovação automática. Como o teto do usuário é mensal, não assumir que uma assinatura anual satisfaz a condição de fluxo de caixa. Verificar disponibilidade e preço de contratação realmente mensal antes de comprar.
-- **Trials:** registrar início, término, elegibilidade e renovação em cada laboratório; não assumir crédito de US$ 200 do Azure, pois a oferta gratuita depende de elegibilidade para novos clientes.
+- **Trials:** registrar início, término, elegibilidade, custos e renovação em cada laboratório. Não criar contas novas para tentar contornar critérios do crédito gratuito Azure nem presumir que testes premium são cobertos automaticamente.
 
 Fontes oficiais para revisar antes de qualquer compra:
 - https://www.microsoft.com/pt-br/security/business/microsoft-entra-pricing
