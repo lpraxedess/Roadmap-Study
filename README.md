@@ -17,6 +17,26 @@ O laboratório local considera Windows 11, Ryzen 5 5600, 16 GB de RAM, 1 TB e Vi
 
 O Cloud parte de um tenant gratuito existente. **Entra ID P2 e Intune Plan 1** possibilitam testes premium para usuários/dispositivos devidamente licenciados, mas não cobrem todos os funcionários fictícios. Entra ID Governance, Purview, Azure e Global Secure Access podem exigir licenças adicionais. Trials dependem de elegibilidade, orçamento e termos de cancelamento. Simulações e alternativas locais não equivalem a integrações comerciais testadas.
 
+## Política de orçamento do laboratório (21/10/2026)
+
+**Teto global de gastos: R$ 200 por mês**, incluindo impostos, assinaturas e todo consumo Azure. Não interprete esse orçamento como autorização automática para compras.
+
+- **Referência Microsoft Brasil, antes de impostos e com compromisso/pagamento anual:** Entra ID P2 R$ 57,30/usuário/mês + Intune Plan 1 R$ 45,80/usuário/mês = R$ 103,10/usuário/mês.
+- **Alternativa de pacote para avaliar:** Enterprise Mobility + Security E5, R$ 103,30/usuário/mês nas condições anuais anunciadas. Inclui Entra ID P2 e Intune, com outras funcionalidades, mas não todo Intune Suite e nem toda governança avançada.
+- **Azure:** planejar gasto operacional de até **R$ 40 por mês** após impostos, liberando recursos pagos somente em exercícios específicos; preferir conta gratuita/crédito de avaliação quando houver elegibilidade. Não implantar VMs, gateways, Log Analytics ou outros recursos permanentes sem calcular custo e plano de limpeza.
+- **Reserva:** cerca de R$ 56,70 entre a referência EMS E5 e o teto, para impostos, ajustes de preço ou despesas não planejadas. Se o valor final da contratação ultrapassar a margem, reduza o Azure ou não contrate.
+- **Alerta não é bloqueio:** budgets do Azure não interrompem serviços nem impedem cobrança. Criar alertas em 50%, 75% e 90% do limite interno para Azure, conferir custos todos os dias em que houver recursos pagos, desligar/deletar recursos ao final e revisar recursos com cobrança residual.
+- **Compromisso anual:** valores anunciados como `usuário/mês, pago anualmente` podem exigir cobrança anual e renovação automática. Como o teto do usuário é mensal, não assumir que uma assinatura anual satisfaz a condição de fluxo de caixa. Verificar disponibilidade e preço de contratação realmente mensal antes de comprar.
+- **Trials:** registrar início, término, elegibilidade e renovação em cada laboratório; não assumir crédito de US$ 200 do Azure, pois a oferta gratuita depende de elegibilidade para novos clientes.
+
+Fontes oficiais para revisar antes de qualquer compra:
+- https://www.microsoft.com/pt-br/security/business/microsoft-entra-pricing
+- https://www.microsoft.com/pt-br/security/business/endpoint-management/microsoft-intune
+- https://www.microsoft.com/pt-br/microsoft-365/enterprise-mobility-security/compare-plans-and-pricing
+- https://azure.microsoft.com/pt-br/pricing/purchase-options/azure-account
+- https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/tutorial-acm-create-budgets
+- https://learn.microsoft.com/pt-br/entra/fundamentals/licensing
+
 Nenhum passo autoriza alterar produção. Garanta contas administrativas de emergência funcionais antes de Conditional Access restritivo. Comece em Report-only. Não registre senhas, tokens ou dados reais.
 
 ## Progresso e backup
