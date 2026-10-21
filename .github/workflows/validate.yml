@@ -23,5 +23,7 @@ jobs:
           node --check data/didactics.js
           node --check assets/experience.js
           node --check assets/v3.js
+          node --check data/lab-courses.js
+          node --check assets/lab-platform.js
       - name: Validar currículo e referências
         run: node --test tests/*.test.mjs

@@ -33,10 +33,11 @@ function experienceDashboard(){
  root.append(el('header',{class:'v3-hero'},[
   text('div','ROADMAP - IAM','eyebrow'),
   text('h1','Sua evolução em identidade e acesso'),
-  text('p','Do iniciante ao avançado: estude cada assunto e, quando necessário, aplique a configuração da AtlasCorp dentro da própria aula.','hero-lead')
+  text('p','Formação do básico à arquitetura: teoria no Roadmap, execução guiada nos laboratórios locais e Cloud.','hero-lead')
  ]));
  const actions=el('div',{class:'v3-primary-actions'},[
   uxButton('Abrir roadmap de estudos →',goStudy,'btn primary v3-main-action'),
+  uxButton('Abrir laboratórios →',()=>courseSetNav(),'btn v3-main-action'),
   uxButton('Continuar o próximo tema →',()=>{const t=ROADMAP_LEVELS.flatMap(l=>l.ids.flatMap(m=>modules[m].slice(3).map((name,s)=>({m,s,level:score(m,s)})))).find(x=>x.level<3);if(t)openSkill(t.m,t.s);else goStudy()},'btn v3-main-action')
  ]);
  root.append(actions);

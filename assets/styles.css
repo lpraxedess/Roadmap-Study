@@ -415,3 +415,40 @@ body{font-size:16px;line-height:1.7}
  .v3-hero{padding:24px 19px}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Plataforma IAM: jornadas independentes de teoria e laboratório. */
+.course-home,.course-overview,.course-detail{display:grid;gap:20px;min-width:0}
+.course-tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px}
+.course-track,.course-stage,.course-info,.course-task,.course-evidence,.course-theory-link{background:#090b0f;border:1px solid #2b3340;border-radius:12px;color:#f0f3f8}
+.course-track{padding:24px;display:flex;flex-direction:column;gap:14px}
+.course-track h2{font-size:21px;margin:4px 0}
+.course-track p{line-height:1.7;margin:0}
+.course-track .btn{align-self:start;margin-top:auto}
+.course-counter{font-size:14px;color:#aed1ff}
+.course-stage-list{display:grid;gap:11px}
+.course-stage{width:100%;text-align:left;padding:20px;display:grid;gap:9px;cursor:pointer;font:inherit}
+.course-stage strong{font-size:17px}
+.course-stage small{color:#b9c3d1;font-size:14px;line-height:1.6}
+.course-stage:hover,.course-stage:focus-visible{border-color:#78b6ff;background:#131b28}
+.course-stage progress,.course-track progress{width:100%}
+.course-info{padding:17px 20px;line-height:1.7}
+.course-info strong{font-size:14px;color:#aed1ff}
+.course-info p{margin:6px 0 0;color:#d6dce6;white-space:pre-wrap;overflow-wrap:anywhere}
+.course-task{overflow:hidden}
+.course-task summary{min-height:50px;background:#111723;padding:18px 20px;cursor:pointer;font-weight:650;line-height:1.5}
+.course-task summary:hover{background:#15243a}
+.course-task-body{padding:15px;display:grid;gap:14px}
+.course-check{display:flex;align-items:start;gap:12px;padding:15px;border:1px solid #30415a;border-radius:8px;background:#111b2a;line-height:1.5}
+.course-check input{height:20px;width:20px;accent-color:#65a4f8;flex-shrink:0}
+.course-evidence{padding:18px;display:grid;gap:12px}
+.course-evidence h4{margin:0;color:#b6d7ff}
+.course-evidence textarea{min-height:125px;resize:vertical;line-height:1.6}
+.course-board{padding:20px}
+.course-board h2{font-size:20px}
+.course-theory-link{padding:22px;display:grid;gap:12px}
+.course-theory-link .btn{justify-self:start}
+.course-procedure li{margin-bottom:11px;line-height:1.7}
+.course-warning{border-left:3px solid #8dbbff;padding:12px 16px;background:#111723}
+.course-bottom{display:flex;gap:12px;flex-wrap:wrap;padding-bottom:28px}
+.course-detail h2{margin-bottom:0}
+@media(max-width:760px){.course-track,.course-board{padding:17px}.course-task summary{padding:15px}.course-task-body{padding:12px}.course-info{padding:14px}}

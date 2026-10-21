@@ -6,7 +6,7 @@ const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const mock=[
 "const mk=(tag='div')=>({tagName:tag.toUpperCase(),children:[],dataset:{},style:{},open:false,checked:false,value:'',textContent:'',classList:{add(){},remove(){},toggle(){}},append(...x){this.children.push(...x)},replaceChildren(...x){this.children=x},setAttribute(k,v){this[k]=v},focus(){},click(){}});",
 "const nodes={'#overallTop':mk(),'#crumb':mk(),'#view':mk(),'#navToggle':mk()};",
-"const nav=['dashboard','roadmap','certs'].map(v=>{let n=mk('button');n.dataset.view=v;return n});",
+"const nav=['dashboard','roadmap','labs','certs'].map(v=>{let n=mk('button');n.dataset.view=v;return n});",
 "const document={createElement:mk,querySelector:q=>nodes[q]||mk(),querySelectorAll:q=>nav,addEventListener(){},activeElement:null};",
 "const storage={};const localStorage={getItem:k=>storage[k]||null,setItem:(k,v)=>{storage[k]=v}};",
 "const window={addEventListener(){},scrollTo(){}};",
@@ -16,16 +16,16 @@ const mock=[
 ].join('\n');
 const program=[
 'data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js',
-'assets/experience.js','assets/v3.js','assets/app.js'].map(read).join('\n');
+'assets/experience.js','assets/v3.js','data/lab-courses.js','assets/lab-platform.js','assets/app.js'].map(read).join('\n');
 const run=code=>JSON.parse(runInNewContext(mock+'\n'+program+'\n'+code,{}, {timeout:20000}));
 test('painel, roadmap, certificações, 29 módulos e 242 aulas são montados',()=>{
  const output=run([
  'let out=[];',
- "for(const [label,fn] of [['dashboard',experienceDashboard],['roadmap',experienceRoadmap],['certs',experienceCertifications]])out.push([label,fn().children.length]);",
+ "for(const [label,fn] of [['dashboard',experienceDashboard],['roadmap',experienceRoadmap],['labs',experienceLaboratories],['certs',experienceCertifications]])out.push([label,fn().children.length]);",
  "for(let m=0;m<DATA.modules.length;m++){activeModule=m;out.push(['module-'+m,experienceModule().children.length]);for(let s=0;s<DATA.modules[m].length-3;s++){activeSkill=s;out.push(['topic-'+m+'-'+s,experienceSkill().children.length])}}",
  'JSON.stringify(out)'
  ].join('\n'));
- assert.equal(output.length,3+29+242);
+ assert.equal(output.length,4+29+242);
  output.forEach(([label,n])=>assert.ok(n>0,'página vazia: '+label));
 });
 test('roadmap apresenta níveis iniciante, intermediário e avançado',()=>{
@@ -46,7 +46,7 @@ test('prioridade de certificação usa classificação transparente',()=>{
  assert.equal(new Set(c.groups.flat()).size,20);
  assert.deepEqual(c.frame,['nist','cis','nist53']);
 });
-test('rotas legadas do laboratório abrem o tema correspondente no roadmap',()=>{
+test('rotas legadas do laboratório abrem a jornada Cloud',()=>{
  const result=run([
  "navigate('content');const contentRoute=location.hash;",
  "navigate('review');const reviewRoute=location.hash;",
@@ -59,7 +59,7 @@ test('rotas legadas do laboratório abrem o tema correspondente no roadmap',()=>
  assert.equal(result.reviewRoute,'#dashboard');
  assert.equal(result.settingsRoute,'#dashboard');
  assert.equal(result.topicRoute,'#topic/4/0');
- assert.equal(result.view,'skill');
+ assert.equal(result.view,'labs');
  assert.equal(result.legacyKey,'roadmap-iam-knowledge-v2');
 });
 test('backup e progresso corporativo utilizam chaves locais compatíveis',()=>{
@@ -69,13 +69,13 @@ test('backup e progresso corporativo utilizam chaves locais compatíveis',()=>{
  ].join('\n'));
  assert.equal(result.progress,2);assert.equal(result.company,true);assert.equal(result.source,true);
 });
-test('navegação visual contém apenas três áreas, sem duplicação',()=>{
+test('navegação visual contém quatro áreas com laboratório separado',()=>{
  const html=read('index.html');
- assert.equal((html.match(/data-view=/g)||[]).length,3);
- for(const v of ['dashboard','roadmap','certs'])assert.ok(html.includes('data-view="'+v+'"'));
- for(const v of ['content','review','settings','labs'])assert.ok(!html.includes('data-view="'+v+'"'));
+ assert.equal((html.match(/data-view=/g)||[]).length,4);
+ for(const v of ['dashboard','roadmap','labs','certs'])assert.ok(html.includes('data-view="'+v+'"'));
+ for(const v of ['content','review','settings'])assert.ok(!html.includes('data-view="'+v+'"'));
  assert.match(html,/ROADMAP - IAM/);
- const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js','assets/experience.js','assets/v3.js','assets/app.js'];
+ const assets=['data/catalog.js','data/expanded.js','data/learning.js','data/company-lab.js','data/topic-practice.js','data/didactics.js','assets/experience.js','assets/v3.js','data/lab-courses.js','assets/lab-platform.js','assets/app.js'];
  let pos=-1;for(const asset of assets){let n=html.indexOf(asset);assert.ok(n>pos,asset+' fora de ordem');pos=n}
 });
 
@@ -132,4 +132,20 @@ test('cores principais predominantemente pretas e controles acessíveis',()=>{
  assert.ok(css.includes('background:#000!important'));
  assert.ok(css.includes('min-height:44px'));
  assert.ok(css.includes('prefers-reduced-motion:reduce'));
+});
+
+
+test('duas jornadas práticas e 94 procedimentos originais preservados',()=>{
+ const x=run("JSON.stringify({tracks:COURSE_TRACKS.map(t=>t.id),local:ONPREM_STAGES.map(s=>s.steps.length),cloud:CLOUD_CHAPTER_ORDER.length,micro:CLOUD_CHAPTER_ORDER.reduce((n,id)=>n+COMPANY_CHAPTERS[id].tasks.length,0)})");
+ assert.deepEqual(x.tracks,['onprem','cloud']);assert.equal(x.local.length,12);
+ assert.ok(x.local.every(n=>n>=6));assert.equal(x.cloud,16);assert.equal(x.micro,94);
+});
+test('rotas dos laboratórios aceitam etapa e preservam legado',()=>{
+ const x=run(["courseSetNav('onprem','op03');const local=location.hash;","courseSetNav('cloud','lab-02');const cloud=location.hash;","location.hash='#lab/lab-03';restoreHash();","JSON.stringify({local,cloud,view,activeLabTrack,activeLabChapter})"].join('\n'));
+ assert.equal(x.local,'#lab/onprem/op03');assert.equal(x.cloud,'#lab/cloud/lab-02');
+ assert.equal(x.view,'labs');assert.equal(x.activeLabTrack,'cloud');assert.equal(x.activeLabChapter,'lab-03');
+});
+test('laboratórios são renderizados e registram progresso sem alterar os dados teóricos',()=>{
+ const x=run(["courseLabState.onprem={op01:{steps:{0:true,1:true},mode:'real',note:'Teste seguro e evidenciado'}};persist();","activeLabTrack='onprem';activeLabChapter='op01';const a=experienceLaboratories().children.length;","activeLabTrack='cloud';activeLabChapter='lab-02';const b=experienceLaboratories().children.length;","JSON.stringify({a,b,local:JSON.parse(storage[COURSE_LAB_KEY]).onprem.op01.steps[1]})"].join('\n'));
+ assert.ok(x.a>0&&x.b>0);assert.equal(x.local,true);
 });
