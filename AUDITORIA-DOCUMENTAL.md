@@ -43,6 +43,14 @@ Este projeto é um currículo de aprendizagem, não uma confirmação automatiza
 ## Limitações e pendências
 
 - Nenhuma das 369 instruções foi testada individualmente na interface real; a conferência documental foi direcionada aos procedimentos de maior risco.
-- Todos os 37 links de competência são referências indicadas, mas apenas 14 competências tiveram fonte documental diretamente comparada nesta revisão.
+- Todos os 37 links de competência são referências indicadas, mas 18 competências tiveram fonte documental diretamente comparada nesta revisão.
 - Testes reais pendentes: Cloud Sync, integração SAML/OIDC ponta a ponta, provisionamento SCIM remoto, PIM licenciado, JumpServer e Intune.
 - Interfaces, preços, licenças e menus podem mudar; confirmar no portal e documentação antes de alterar configurações.
+
+## Ampliação da revisão — 22/10/2026
+
+- `iam-0-1`: funções do diretório Entra não são equivalentes a funções Azure RBAC. [Fonte](https://learn.microsoft.com/pt-br/entra/identity/role-based-access-control/custom-overview).
+- `iam-1-0`: como AD DS já existe, não repetir promoção/instalação de controlador. [Fonte](https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview).
+- `iam-1-2`: aplicar GPO a uma OU piloto, evitando alterações na Default Domain Policy. [Fonte](https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview).
+- `iam-7-2`: baseline Intune requer Plan 1, perfil piloto e RBAC adequado. [Fonte](https://learn.microsoft.com/en-us/intune/intune-service/protect/security-baselines-configure).
+- Discussões de profissionais em fóruns de IAM reiteram a importância de laboratórios funcionais e do cuidado com requisitos de tenants; esses relatos são informativos, não substituem especificações de fabricantes.

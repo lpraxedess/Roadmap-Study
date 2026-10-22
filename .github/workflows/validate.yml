@@ -1,0 +1,19 @@
+name: Verificar Roadmap IAM
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verificar sintaxe
+        run: node --check app.js
+      - name: Validar módulos, links e integridade
+        run: node tests/validate-roadmap.mjs
