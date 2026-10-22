@@ -70,3 +70,6 @@
 
 /* Progressive enhancement: keep content visible if JavaScript does not execute. */
 html:not(.js-motion) .phase{opacity:1;transform:none;animation:none;transition:none}
+
+/* Curriculum: distinguish prerequisites from execution and validation */
+.lesson-orientation{grid-column:1/-1;border:1px solid #29485b;border-radius:9px;background:linear-gradient(110deg,#0a1b28,#0a1018);padding:15px 17px}.lesson-orientation p{font-size:12px;line-height:1.8;color:#a9bfd0;margin:8px 0 0}.lesson-orientation p:last-child{color:#d0e2ef}.lesson-orientation .content-label{color:#8edcff}.guide-steps li{scroll-margin-top:100px}.study-item{padding-bottom:9px}.study-item+ .study-item{border-top:1px solid #172d3d;padding-top:10px}.lesson-orientation,.lab-resources,.guided-lab,.validation{min-width:0}@media(max-width:650px){.lesson-orientation{padding:13px}.task-content{gap:12px}}
