@@ -93,4 +93,6 @@ assert.ok(css.includes('.experience-grid')&&css.includes('.experience-art'),'Des
 assert.ok(css.includes('prefers-reduced-motion:reduce'),'Respeitar movimento reduzido');
 assert.ok(motion.includes('IntersectionObserver')&&motion.includes('pointermove'),'Interações progressivas ausentes');
 assert.ok(motion.includes('reduce.matches'),'Animações devem respeitar acessibilidade');
-console.log('STUDIO DESIGN OK: 4 cartões, movimento acessível e tema preto/violeta.');
+console.log('INTERAÇÕES OK: 4 cartões e movimento acessível.');
+
+assert.ok(!css.includes('/* Correção global: violeta único'),'Patch cromático antigo não removido');
