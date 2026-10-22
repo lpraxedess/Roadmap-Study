@@ -15,7 +15,29 @@ jobs:
           node-version: '22'
       - name: Verificar sintaxe
         run: |
+          node --check curriculum.js
           node --check app.js
           node --check navigation.js
+          node --check motion.js
       - name: Validar módulos, links e integridade
         run: node tests/validate-roadmap.mjs
+  browser:
+    name: Teste visual e navegação
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testar interface em Chrome headless
+        run: node tests/ui-smoke.mjs
+      - name: Guardar capturas para auditoria
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-roadmap-iam
+          path: _artifacts/*.png
+          if-no-files-found: ignore
+          retention-days: 7

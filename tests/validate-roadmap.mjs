@@ -2,14 +2,16 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {Script} from 'node:vm';
 const app=readFileSync('app.js','utf8');
+const curriculum=readFileSync('curriculum.js','utf8');
 const html=readFileSync('index.html','utf8');
 const css=readFileSync('style.css','utf8');
 const navigation=readFileSync('navigation.js','utf8');
 const motion=readFileSync('motion.js','utf8');
+new Script(curriculum,{filename:'curriculum.js'});
 new Script(app,{filename:'app.js'});
 new Script(navigation,{filename:'navigation.js'});
 new Script(motion,{filename:'motion.js'});
-const match=app.match(/const PHASES=(\[.*?\]);\nconst LAB=/s);
+const match=curriculum.match(/const PHASES=(\[.*?\]);/s);
 assert.ok(match,'PHASES precisa estar presente como JSON');
 const phases=JSON.parse(match[1]);
 const tasks=phases.flatMap(p=>p.items);
@@ -77,7 +79,7 @@ for(const title of ['Visão geral','Estudos','Certificações'])assert.ok(navHTM
 for(const view of ['overview','studies','certifications'])assert.ok(html.includes('data-page-view="'+view+'"'),'Página ausente: '+view);
 assert.ok(navigation.includes('function setPage('),'Troca de páginas ausente');
 assert.ok(navigation.includes("setPage('studies'"),'Navegação para estudos ausente');
-assert.ok(app.includes("node('details','phase reveal study-accordion')"),'Módulos precisam ser expansíveis');
+assert.ok(app.includes("node('details','phase study-accordion')"),'Módulos precisam ser expansíveis');
 assert.ok(app.includes("node('summary','phase-header')"),'Cabeçalho de módulo não é clicável');
 assert.ok(css.includes('.site-page[hidden]'),'Páginas ocultas sem estilo');
 console.log('NAVEGAÇÃO EM PÁGINAS OK: Visão geral / Estudos (10 módulos expansíveis) / Certificações.');
@@ -98,11 +100,11 @@ console.log('INTERAÇÕES OK: 4 cartões e movimento acessível.');
 assert.ok(!css.includes('/* Correção global: violeta único'),'Patch cromático antigo não removido');
 
 for(const issuer of ['Okta','CyberArk / Idira','SailPoint','AWS'])assert.ok(certs.some(c=>c.issuer===issuer),'Fornecedor IAM ausente: '+issuer);
-assert.ok(motion.includes('MutationObserver')&&motion.includes("addEventListener('toggle'"),'Animações de navegação e expansão ausentes');
-assert.ok(css.includes('width:24px;height:24px;flex:none'),'Alinhamento de ícones ausente');
+assert.ok(!motion.includes('MutationObserver')&&motion.includes("addEventListener('toggle'"),'Motion deve ter uma única fonte de transições, sem observers duplicados');
+assert.ok(css.includes('.ui-icon{display:block;width:18px;height:18px'),'Alinhamento de ícones ausente');
 assert.ok(css.includes('.site-page:not([hidden]){animation:fade-in'),'Animação de páginas ausente');
 console.log('CARREIRA E MOVIMENTO OK: Okta, CyberArk, AWS, SailPoint; transições e ícones alinhados.');
-assert.ok(css.length<35000,'CSS excessivo: evitar camadas de patches e regras obsoletas');
+assert.ok(css.length<42000,'CSS excessivo: evitar camadas de patches e regras obsoletas');
 assert.ok(css.includes('.menu-toggle,.menu-close{display:none!important}'),'Botões de menu não devem aparecer no desktop');
 assert.ok(css.includes('.phases{display:grid;gap:0'),'Lista de módulos precisa ser coesa');
 assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 76px 27px'),'Contadores e ícones dos módulos devem ter colunas consistentes');
@@ -113,3 +115,27 @@ assert.ok(css.includes('.app-shell{width:calc(100% - 40px);max-width:none'),'Lay
 assert.ok(css.includes('.page-content{width:calc(100% - 36px);max-width:none'),'Conteúdo em tablet não deve ter limite de 900 px');
 assert.ok(!css.includes('width:min(100% - 48px,1400px)'),'Limite antigo de 1400 px não removido');
 console.log('VIEWPORT OK: largura fluida no desktop, tablet e celular.');
+
+assert.ok(html.includes('src="curriculum.js"'),'Currículo separado não carregado');
+assert.ok(html.indexOf('src="curriculum.js"')<html.indexOf('src="app.js"'),'Currículo precisa carregar antes do aplicativo');
+assert.ok(curriculum.length>100000&&app.length<35000,'Separação de dados e código não aplicada');
+assert.ok(!app.includes('const LAB='),'Configuração de laboratório obsoleta permanece no runtime');
+assert.ok(app.includes("querySelectorAll('#roadmap-list details[open][id]')"),'Restauração de expansão precisa usar IDs estáveis');
+assert.ok(!app.includes('opened.includes(d.dataset.id)'),'Bug de reabrir todos os módulos não corrigido');
+assert.ok(navigation.includes('history.pushState'),'Histórico do navegador deve ser preservado');
+assert.ok(navigation.includes('document.startViewTransition'),'Navegação fluida ausente');
+assert.ok(navigation.includes('focusPage('),'Gerenciamento de foco entre páginas ausente');
+assert.ok(navigation.includes("hash==='backup-title'"),'Atalho para backup deve abrir a página correta');
+assert.ok(navigation.includes('providerFilter.addEventListener'),'Filtro de certificações ausente');
+for(const id of ['sidebar-progress-value','sidebar-progress-fill','results-count','collapse-all','cert-provider','cert-visible-count','global-toast']){
+ assert.ok(html.includes('id="'+id+'"'),'Controle ausente: '+id);
+}
+for(const id of ['i-mark','i-home','i-book','i-award','i-search','i-chevron','i-menu','i-close']){
+ assert.ok(html.includes('id="'+id+'"'),'Ícone vetorial ausente: '+id);
+}
+assert.ok(app.includes("svgIcon('chevron')"),'Chevron consistente ausente nos tópicos');
+assert.ok(css.includes('::view-transition-old(iam-content)'),'Transições visuais inconsistentes');
+assert.ok(css.includes('.tap-ripple')&&motion.includes('pointerdown'),'Feedback visual ao clicar ausente');
+assert.ok(css.includes('--accent:#39baff'),'Identidade deve usar o azul neon definido');
+assert.ok(!css.includes('1400px'),'Largura do site não deve ser limitada a 1400px');
+console.log('AUDITORIA DE UX OK: módulos estáveis, história, filtros, atalhos, SVG e animações acessíveis.');

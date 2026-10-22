@@ -15,19 +15,27 @@ Roadmap progressivo de IAM, disponível como site estático em https://lpraxedes
 ## Organização
 
 - `index.html`: interface da página.
-- `style.css`: layout e animações, incluindo preferência por movimento reduzido.
-- `app.js`: currículo, interações e armazenamento local (sem backend).
+- `style.css`: sistema visual, layout responsivo e feedback de interação.
+- `curriculum.js`: os 10 módulos, 37 competências e 369 passos, separados do código da interface.
+- `app.js`: renderização dos estudos, filtros e armazenamento local (sem backend).
+- `navigation.js`: troca de páginas, menu acessível, histórico e 18 certificações.
+- `motion.js`: feedback de toque/click, animações discretas e respeito a movimento reduzido.
 - `AUDITORIA-DOCUMENTAL.md`: fontes verificadas, limitações e correções fundamentadas.
-- `tests/validate-roadmap.mjs`: verificações estruturais e sintáticas com Node.js, sem dependências externas.
+- `tests/validate-roadmap.mjs`: verificações estruturais e de regressões.
+- `tests/ui-smoke.mjs`: teste de interface em Chrome/Chromium real via CDP (desktop e mobile), sem pacotes npm; gera capturas em `_artifacts/` durante o CI.
 
 ## Testes
 
 ```sh
+node --check curriculum.js
 node --check app.js
+node --check navigation.js
+node --check motion.js
 node tests/validate-roadmap.mjs
+node tests/ui-smoke.mjs  # requer Chrome ou Chromium no PATH
 ```
 
-Estes testes **não** representam execução real dos laboratórios nem teste de navegação visual em um browser. Fontes e caminhos de menu podem mudar. Consulte os links atualizados antes de aplicar configurações.
+Os testes estruturais não executam laboratórios reais; o teste de navegador cobre troca de páginas, drawer móvel, filtros, persistência e overflow horizontal, mas **não substitui uma revisão visual humana**. Fontes e caminhos de menu podem mudar. Consulte os links atualizados antes de aplicar configurações.
 
 ## Dados e privacidade
 
@@ -35,11 +43,14 @@ O progresso geral permanece em `roadmap-iam-progress-v2`; as confirmações dos 
 
 ## Menu lateral e certificações — 22/10/2026
 
-- **Desktop:** menu lateral persistente, com atalhos para os dez módulos e progresso de cada módulo.
+- **Desktop:** menu lateral persistente com **3 páginas**: Visão geral, Estudos e Certificações. Os dez módulos ficam dentro de Estudos, inicialmente recolhidos. Progresso geral aparece na lateral.
 - **Celular e tablet:** botão **Menu** abre um painel; feche pelo botão, pelo fundo escurecido ou com `Escape`. A navegação permite teclado e mantém indicador da seção ativa.
-- **Roadmap de certificações:** nove opções distribuídas entre iniciante, intermediário e avançado. Eixo recomendado: **SC-900 → SC-300 → SC-100**; as demais são caminhos complementares, não requisitos obrigatórios.
+- **Roadmap de certificações:** 18 opções de Microsoft, ISC2, ISACA, Okta, CyberArk, SailPoint e AWS, com filtro por fornecedor, agrupadas por nível. Eixo recomendado: **SC-900 → SC-300 → SC-100**; as demais são caminhos complementares, não requisitos obrigatórios.
 - Status das certificações: **Planejada / Em preparação / Conquistada**. Armazenado em `roadmap-iam-certifications-v1`, exportável/importável no backup JSON v3.
 - O status **Conquistada é autodeclarado** e não comprova emissão da certificação. Consulte os links oficiais para requisitos, disponibilidade e preços.
+- **Busca rápida:** pressione `/` ou `Ctrl/⌘ + K` para abrir Estudos e focar a busca; `Escape` limpa a pesquisa. Use **Recolher módulos** para fechar os módulos abertos.
+- **Navegação:** utiliza histórico do navegador e transições de página progressivas quando suportadas; respeita `prefers-reduced-motion` do sistema. Os ícones usam SVG local, sem dependências externas.
+- Os códigos de certificação e requisitos podem mudar: confirme os detalhes sempre no fornecedor oficial.
 
 ### Atualizações de exames importantes
 
@@ -56,3 +67,7 @@ Referências oficiais:
 - [Provas Microsoft descontinuadas](https://learn.microsoft.com/en-us/credentials/support/retired-certification-exams)
 - [CISSP](https://www.isc2.org/certifications/cissp)
 - [CISM](https://www.isaca.org/credentialing/cism/get-cism-certified)
+- [Okta](https://www.okta.com/pt-br/services/certification/)
+- [CyberArk / Idira](https://training.cyberark.com/)
+- [SailPoint](https://community.sailpoint.com/programs/certifications-and-credentials)
+- [AWS](https://aws.amazon.com/pt/certification/)

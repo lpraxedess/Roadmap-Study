@@ -82,22 +82,39 @@ const pageLinks=[...sidebar.querySelectorAll('[data-page]')];
 const views=new Map([...document.querySelectorAll('[data-page-view]')].map(view=>[view.dataset.pageView,view]));
 const pageHash={overview:'#visao-geral',studies:'#estudos',certifications:'#certificacoes'};
 let currentPage='overview';
+function focusPage(page){
+ const title=views.get(page)?.querySelector('h1,h2');
+ if(title){title.setAttribute('tabindex','-1');title.focus({preventScroll:true})}
+}
 function setPage(page,options={}){
  if(!views.has(page))page='overview';
- currentPage=page;
- for(const [name,view] of views)view.hidden=name!==page;
- for(const link of pageLinks){
-  const active=link.dataset.page===page;
-  link.classList.toggle('is-active',active);
-  if(active)link.setAttribute('aria-current','page');
-  else link.removeAttribute('aria-current');
+ const changed=currentPage!==page||views.get(page).hidden;
+ const update=()=>{
+  currentPage=page;
+  for(const [name,view] of views)view.hidden=name!==page;
+  for(const link of pageLinks){
+   const active=link.dataset.page===page;
+   link.classList.toggle('is-active',active);
+   if(active)link.setAttribute('aria-current','page');
+   else link.removeAttribute('aria-current');
+  }
+  closeSidebar(false);
+ };
+ if(changed&&!options.instant&&!reduced.matches&&typeof document.startViewTransition==='function'){
+  const transition=document.startViewTransition(update);
+  if(options.focus)transition.finished.then(()=>focusPage(page)).catch(()=>focusPage(page));
+ }else{
+  update();
+  if(options.focus)focusPage(page);
  }
- closeSidebar(false);
- if(!options.keepHash&&history.replaceState)history.replaceState(null,'',pageHash[page]);
- if(!options.preserveScroll)window.scrollTo({top:0,behavior:'instant'});
+ if(!options.keepHash&&location.hash!==pageHash[page]){
+  const mode=options.replace?'replaceState':'pushState';
+  history[mode](null,'',pageHash[page]);
+ }
+ if(!options.preserveScroll)window.scrollTo(0,0);
 }
-function showStudyItem(id){
- setPage('studies',{keepHash:true,preserveScroll:true});
+function showStudyItem(id,options={}){
+ setPage('studies',{keepHash:true,preserveScroll:true,instant:true});
  const taskId=id.startsWith('task-')?id:null;
  let target=document.getElementById(id);
  if(!target){
@@ -111,12 +128,13 @@ function showStudyItem(id){
   const module=target.closest('.study-accordion');
   if(module)module.open=true;
   if(taskId&&target.tagName==='DETAILS')target.open=true;
+  if(!options.keepHash&&location.hash!=='#'+id)history.pushState(null,'','#'+id);
   target.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'start'});
  }
 }
 for(const link of pageLinks)link.addEventListener('click',event=>{
  event.preventDefault();
- setPage(link.dataset.page);
+ setPage(link.dataset.page,{focus:true});
 });
 document.addEventListener('click',event=>{
  const anchor=event.target.closest('a[href^="#"]');
@@ -124,26 +142,35 @@ document.addEventListener('click',event=>{
  const hash=anchor.getAttribute('href').slice(1);
  if(hash==='roadmap-title'||hash.startsWith('module-')||hash.startsWith('task-')){
   event.preventDefault();
-  if(hash==='roadmap-title'){setPage('studies');document.getElementById('roadmap-title')?.scrollIntoView()}
+  if(hash==='roadmap-title'){setPage('studies',{focus:true})}
   else showStudyItem(hash);
- }else if(hash==='certifications-title'){
-  event.preventDefault();setPage('certifications');
- }else if(hash==='inicio'){
-  event.preventDefault();setPage('overview');
+ }else if(hash==='certifications-title'||hash==='backup-title'){
+  event.preventDefault();
+  setPage('certifications',{focus:true});
+  if(hash==='backup-title')document.getElementById(hash)?.scrollIntoView({behavior:reduced.matches?'auto':'smooth'});
+ }else if(hash==='inicio'||hash==='infra-title'||hash==='method-title'){
+  event.preventDefault();
+  setPage('overview',{focus:true});
+  if(hash==='infra-title'||hash==='method-title')document.getElementById(hash)?.scrollIntoView({behavior:reduced.matches?'auto':'smooth'});
  }
 });
-const initialHash=location.hash.slice(1);
-if(initialHash==='estudos'||initialHash==='roadmap-title')setPage('studies',{keepHash:true});
-else if(initialHash==='certificacoes'||initialHash==='certifications-title')setPage('certifications',{keepHash:true});
-else if(initialHash.startsWith('module-')||initialHash.startsWith('task-')){setPage('studies',{keepHash:true});window.requestAnimationFrame(()=>showStudyItem(initialHash))}
-else setPage('overview',{keepHash:true});
-window.addEventListener('hashchange',()=>{
+function restoreLocation(){
  const hash=location.hash.slice(1);
- if(hash==='estudos')setPage('studies',{keepHash:true});
- else if(hash==='certificacoes')setPage('certifications',{keepHash:true});
- else if(hash==='visao-geral')setPage('overview',{keepHash:true});
- else if(hash.startsWith('module-')||hash.startsWith('task-'))showStudyItem(hash);
-});
+ if(hash==='estudos'||hash==='roadmap-title')setPage('studies',{keepHash:true,instant:true});
+ else if(hash==='certificacoes'||hash==='certifications-title'||hash==='backup-title'){
+  setPage('certifications',{keepHash:true,instant:true});
+  if(hash==='backup-title')requestAnimationFrame(()=>document.getElementById(hash)?.scrollIntoView());
+ }else if(hash.startsWith('module-')||hash.startsWith('task-')){
+  setPage('studies',{keepHash:true,instant:true});
+  requestAnimationFrame(()=>showStudyItem(hash,{keepHash:true}));
+ }else if(hash==='infra-title'||hash==='method-title'){
+  setPage('overview',{keepHash:true,instant:true});
+  requestAnimationFrame(()=>document.getElementById(hash)?.scrollIntoView());
+ }else setPage('overview',{keepHash:true,instant:true});
+}
+restoreLocation();
+window.addEventListener('popstate',restoreLocation);
+window.addEventListener('hashchange',restoreLocation);
 // Certificações: plano de carreira independente de conclusão das competências.
 const certIds=new Set(CERTIFICATIONS.map(c=>c.id));
 function loadCertStates(){
@@ -154,6 +181,13 @@ function loadCertStates(){
  }catch{return {}}
 }
 let certStates=loadCertStates();
+const providerFilter=document.getElementById('cert-provider');
+for(const issuer of [...new Set(CERTIFICATIONS.map(c=>c.issuer))].sort((a,b)=>a.localeCompare(b,'pt-BR'))){
+ const option=el('option','',issuer==='CyberArk / Idira'?'CyberArk':issuer);
+ option.value=issuer;
+ providerFilter.append(option);
+}
+providerFilter.addEventListener('change',renderCertifications);
 const levelsContainer=document.getElementById('certification-levels');
 function refreshCertStats(){
  const count=CERTIFICATIONS.filter(c=>certStates[c.id]==='earned').length;
@@ -165,7 +199,12 @@ function showCertStorageWarning(){
 }
 function renderCertifications(){
  levelsContainer.replaceChildren();
+ const selectedProvider=providerFilter.value;
+ let visible=0;
  for(const level of CERT_LEVELS){
+  const filtered=CERTIFICATIONS.filter(c=>c.level===level.id&&(selectedProvider==='all'||c.issuer===selectedProvider));
+  if(!filtered.length)continue;
+  visible+=filtered.length;
   const section=el('section','cert-level cert-level-'+level.id);
   section.id='cert-stage-'+level.id;
   const head=el('div','cert-level-header');
@@ -174,7 +213,7 @@ function renderCertifications(){
   head.append(el('span','cert-level-index',level.stage),heading);
   section.append(head);
   const grid=el('div','cert-list');
-  for(const cert of CERTIFICATIONS.filter(c=>c.level===level.id)){
+  for(const cert of filtered){
    const card=el('article','cert-card'+(cert.category==='Trilha principal'?' cert-primary':''));
    card.dataset.status=certStates[cert.id]||'planned';
    const top=el('div','cert-card-top');
@@ -217,6 +256,7 @@ function renderCertifications(){
   section.append(grid);
   levelsContainer.append(section);
  }
+ document.getElementById('cert-visible-count').textContent=visible+' de '+CERTIFICATIONS.length+' certificações';
  refreshCertStats();
 }
 renderCertifications();
