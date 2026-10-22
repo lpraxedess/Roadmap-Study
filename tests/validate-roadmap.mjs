@@ -5,8 +5,10 @@ const app=readFileSync('app.js','utf8');
 const html=readFileSync('index.html','utf8');
 const css=readFileSync('style.css','utf8');
 const navigation=readFileSync('navigation.js','utf8');
+const motion=readFileSync('motion.js','utf8');
 new Script(app,{filename:'app.js'});
 new Script(navigation,{filename:'navigation.js'});
+new Script(motion,{filename:'motion.js'});
 const match=app.match(/const PHASES=(\[.*?\]);\nconst LAB=/s);
 assert.ok(match,'PHASES precisa estar presente como JSON');
 const phases=JSON.parse(match[1]);
@@ -84,3 +86,11 @@ assert.ok(navigation.includes("el('details','cert-more')"),'Detalhes de certific
 assert.ok(navigation.includes("el('div','cert-list')"),'Certificações devem ser organizadas por lista');
 assert.ok(css.includes('.cert-card-top')&&css.includes('.cert-more-body'),'Estilos compactos ausentes');
 console.log('CERTIFICAÇÕES COMPACTAS OK: requisitos e laboratórios sob demanda.');
+
+assert.equal((html.match(/class="experience-card"/g)||[]).length,4,'Quatro cartões interativos da visão geral');
+assert.ok(html.includes('src="motion.js"'),'Animações progressivas não carregadas');
+assert.ok(css.includes('.experience-grid')&&css.includes('.experience-art'),'Design studio ausente');
+assert.ok(css.includes('prefers-reduced-motion:reduce'),'Respeitar movimento reduzido');
+assert.ok(motion.includes('IntersectionObserver')&&motion.includes('pointermove'),'Interações progressivas ausentes');
+assert.ok(motion.includes('reduce.matches'),'Animações devem respeitar acessibilidade');
+console.log('STUDIO DESIGN OK: 4 cartões, movimento acessível e tema preto/violeta.');
