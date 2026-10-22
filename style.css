@@ -27,3 +27,43 @@
 
 /* Audit: keyboard visibility, reduced motion, learning scope */
 :where(a,button,input,summary):focus-visible{outline:2px solid #65d2ff;outline-offset:4px}.guide-scope{margin:12px 0 0;padding:10px 12px;border-left:2px solid #d0a364;color:#cbb99e;font-size:11px;line-height:1.8;background:#241b111f}button,.import{min-height:40px}#empty[hidden]{display:none!important}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Motion system: progressive reveal, responsive feedback and integration flow */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1);--motion-fast:180ms;--motion-normal:360ms;--motion-slow:620ms}
+.phase{animation:none;opacity:0;transform:translate3d(0,22px,0);transition:opacity var(--motion-slow) var(--motion-ease),transform var(--motion-slow) var(--motion-ease),border-color var(--motion-normal),box-shadow var(--motion-normal);transition-delay:var(--reveal-delay,0ms),var(--reveal-delay,0ms),0ms,0ms}
+.phase.is-visible{opacity:1;transform:translate3d(0,0,0)}
+.phase.is-visible:hover{transform:translate3d(0,-3px,0)}
+.task-summary{position:relative;border-radius:7px;transition:background var(--motion-fast),color var(--motion-fast)}
+.task-summary:before{content:"";position:absolute;left:0;top:18%;height:64%;width:2px;border-radius:2px;background:#32baff;transform:scaleY(0);transform-origin:center;transition:transform var(--motion-normal) var(--motion-ease)}
+.task[open]>.task-summary{background:linear-gradient(90deg,#0b2436,#0e192500)}
+.task[open]>.task-summary:before{transform:scaleY(1)}
+.task-content{animation:content-arrive var(--motion-normal) var(--motion-ease) both}
+@keyframes content-arrive{from{opacity:0;transform:translate3d(0,-8px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+.task-check{transition:background var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-normal),transform var(--motion-fast) var(--motion-ease)}
+.task-check:active{transform:scale(.88)}
+.task-check:checked{animation:check-pop 300ms var(--motion-ease)}
+@keyframes check-pop{0%{transform:scale(.8)}65%{transform:scale(1.12)}100%{transform:scale(1)}}
+.task-badge{transition:color var(--motion-fast),border-color var(--motion-fast),background var(--motion-fast)}
+.task[open] .task-badge{background:#0a2335;border-color:#2d6b93}
+.chevron{transition:transform var(--motion-normal) var(--motion-ease)}
+.guide-steps li{transition:background var(--motion-fast),padding-left var(--motion-normal) var(--motion-ease);border-radius:6px}
+.guide-steps li:hover{background:#0d26364d;padding-left:34px}
+.guide-steps li:before{transition:box-shadow var(--motion-normal),background var(--motion-normal)}
+.guide-steps li:hover:before{background:#38c5ff;box-shadow:0 0 15px #00aaff8c}
+.architecture{position:relative;isolation:isolate}
+.architecture b{display:inline-flex;align-items:center;justify-content:center;min-width:12px;animation:flow-arrow 3.6s ease-in-out infinite}
+.architecture b:nth-of-type(2){animation-delay:.35s}.architecture b:nth-of-type(3){animation-delay:.7s}.architecture b:nth-of-type(4){animation-delay:1.05s}
+@keyframes flow-arrow{0%,100%{opacity:.4;transform:translateX(-3px)}45%{opacity:1;transform:translateX(3px);text-shadow:0 0 12px #1ab9ff}}
+.architecture span{transition:transform var(--motion-normal) var(--motion-ease),border-color var(--motion-normal),box-shadow var(--motion-normal)}
+.architecture span:hover{transform:translateY(-3px);border-color:#42bfff;box-shadow:0 7px 20px #008cff1f}
+.dashboard{transition:border-color var(--motion-normal),box-shadow var(--motion-normal)}
+.dashboard:hover{border-color:#2b6286;box-shadow:0 20px 70px #0007,0 0 48px #007bff15}
+.progress-track span{position:relative;transition:width 750ms var(--motion-ease)}
+.progress-track span:after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,#ffffff50 50%,transparent 75%);transform:translateX(-120%);animation:progress-sheen 3.5s ease-in-out infinite}
+@keyframes progress-sheen{0%,35%{transform:translateX(-120%)}75%,100%{transform:translateX(120%)}}
+.infra-details[open] .infra-body{animation:content-arrive var(--motion-normal) var(--motion-ease) both}
+.filters button{transition:color var(--motion-fast),background var(--motion-fast),border-color var(--motion-fast),box-shadow var(--motion-fast),transform var(--motion-fast)}
+.filters button:active,.actions button:active{transform:scale(.97)}
+.search{transition:border-color var(--motion-normal),box-shadow var(--motion-normal)}
+@media(hover:none){.phase.is-visible:hover{transform:none}.guide-steps li:hover{padding-left:28px}.architecture span:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.phase{opacity:1!important;transform:none!important;transition:none!important}.phase.is-visible:hover{transform:none!important}.task-content,.infra-details[open] .infra-body,.architecture b,.progress-track span:after,.task-check:checked{animation:none!important}.guide-steps li:hover{padding-left:28px}.progress-track span{transition:none!important}}
