@@ -54,7 +54,7 @@ async function screenshot(name){
 }
 try{
  let debugPort;
- for(let n=0;n<80;n++){
+ for(let n=0;n<240;n++){
   const active=join(profile,'DevToolsActivePort');
   if(existsSync(active)){debugPort=Number(readFileSync(active,'utf8').split('\n')[0]);break}
   if(browser.exitCode!==null)throw Error('Chrome encerrou antes do DevTools iniciar');
