@@ -54,7 +54,7 @@ for(const c of certs){
 }
 assert.deepEqual(certs.filter(c=>c.category==='Trilha principal').map(c=>c.code),['SC-900','SC-300','SC-100']);
 assert.ok(!certs.some(c=>['AZ-500','MS-102'].includes(c.code)),'Exames descontinuados ou em descontinuação não devem integrar a trilha');
-for(const id of ['menu-toggle','sidebar','nav-scrim','menu-close','sidebar-modules','sidebar-modules-total','certifications-title','certification-levels','cert-progress']){
+for(const id of ['menu-toggle','sidebar','nav-scrim','menu-close','sidebar-modules','sidebar-study','certifications-title','certification-levels','cert-progress']){
  assert.ok(html.includes('id="'+id+'"'),'ID de navegação ausente: '+id);
 }
 assert.ok(html.includes('src="navigation.js"'),'Script de navegação ausente');
@@ -67,3 +67,13 @@ for(const selector of ['.sidebar','.sidebar-module','.nav-scrim','.cert-levels',
  assert.ok(css.includes(selector),'Estilo ausente: '+selector);
 }
 console.log('CERTIFICAÇÕES E NAVEGAÇÃO OK:',certs.length,'certificações em 3 níveis, menu lateral, backup integrado.');
+
+const navHTML=html.slice(html.indexOf('<nav class="sidebar-nav"'),html.indexOf('</nav>',html.indexOf('<nav class="sidebar-nav"')));
+assert.equal((navHTML.match(/class="sidebar-link sidebar-primary/g)||[]).length,3,'Menu principal deve ter exatamente 3 entradas');
+for(const title of ['Visão geral','Estudos','Certificações'])assert.ok(navHTML.includes(title),'Item principal ausente: '+title);
+assert.ok(navHTML.indexOf('id="sidebar-modules"')>navHTML.indexOf('id="sidebar-study"'),'Módulos precisam estar dentro de Estudos');
+assert.ok(navigation.includes("el('details','sidebar-module-group')"),'Módulos não expansíveis');
+assert.ok(navigation.includes("sidebar-topic-group"),'Assuntos não aninhados');
+assert.ok(navigation.includes("Laboratório prático"),'Links para laboratórios ausentes');
+assert.ok(navigation.includes("resetStudyFilters()"),'Navegação não restaura assuntos filtrados');
+console.log('MENU HIERÁRQUICO OK: Visão geral → Estudos (módulos → assuntos → laboratórios) → Certificações.');
