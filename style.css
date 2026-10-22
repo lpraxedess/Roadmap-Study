@@ -566,3 +566,74 @@ img,svg,video,canvas{max-width:100%;height:auto}
 .site-page:not([hidden]){animation:page-enter .42s cubic-bezier(.22,1,.36,1)}
 @keyframes page-enter{from{opacity:.55;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.study-accordion::details-content,.task::details-content,.cert-more::details-content{transition:none!important}.site-page:not([hidden]){animation:none!important}.sidebar-link,.filters button,.actions button,.cert-card,.study-accordion>.phase-header,.task-summary{transition:none!important;transform:none!important}}
+
+/* Densidade informacional: compactar navegação e resumos sem esconder instruções */
+:root{--ui-space:12px;--ui-radius:10px}
+.app-shell{gap:clamp(14px,1.4vw,22px)}
+.sidebar{border-radius:12px}
+.sidebar-top{padding:17px 16px}
+.sidebar-nav{padding:12px 10px;gap:4px}
+.sidebar-primary{min-height:42px;padding:9px 11px;border-radius:8px}
+.sidebar-foot{padding:13px 16px}
+.hero{min-height:0;padding-top:44px;padding-bottom:27px}
+.hero h1{font-size:clamp(38px,4.5vw,60px);margin:16px 0}
+.hero>p{font-size:13px;line-height:1.6}
+.hero-actions{margin-top:18px}
+.hero-actions a{padding:10px 14px}
+.hero-meta{margin-top:15px}
+.experience-section{margin:0 0 24px}
+.experience-heading{margin-bottom:13px}
+.experience-heading h2{font-size:clamp(26px,2.8vw,36px);margin:7px 0}
+.experience-grid{gap:10px}
+.experience-card{min-height:155px;padding:13px;border-radius:11px}
+.experience-art{height:80px;transform:scale(.75);transform-origin:50% 35%}
+.experience-bottom strong{font-size:13px}
+.experience-bottom small{font-size:10px;margin-top:3px}
+.dashboard{padding:18px 20px;border-radius:11px}
+.learning-method{padding:18px 20px}
+.method-steps{gap:9px}
+.method-steps>div{padding:12px}
+.roadmap{padding-top:23px}
+.section-heading{margin-bottom:14px}
+.section-heading h2{font-size:clamp(25px,2.8vw,36px)}
+.filters{gap:7px}
+.filters button{padding:9px 13px;min-height:36px}
+.search{min-height:38px}
+.phases{gap:10px}
+.phase{border-radius:11px;margin-bottom:10px}
+.phase-header,.study-accordion>.phase-header{min-height:69px;padding:14px 18px;gap:12px}
+.phase-header h3{font-size:16px;margin:0 0 3px}
+.phase-header p{font-size:11px;line-height:1.45}
+.phase-num{width:35px;height:35px;font-size:12px}
+.study-accordion>.phase-header:after{width:26px;height:26px;font-size:19px}
+.module-blueprint{padding:14px 18px;gap:10px 20px}
+.module-blueprint h4,.module-blueprint strong{font-size:10px}
+.module-blueprint p,.module-blueprint li{font-size:11px;line-height:1.55}
+.tasks{padding:0 14px 9px}
+.task{margin:0;border-radius:7px}
+.task-summary{min-height:48px;padding:10px 11px;gap:10px}
+.task-summary strong,.task-summary h4{font-size:12px}
+.task-summary .task-status{font-size:10px}
+.task-content{padding:14px 16px 20px}
+.lesson-orientation,.guided-lab,.validation{padding:14px;border-radius:9px}
+.task-content p,.task-content li,.lesson-orientation p,.guided-lab p,.guide-steps li,.module-blueprint p{font-size:13px;line-height:1.65}
+.guide-steps{gap:9px}
+.guide-steps li{padding:11px 12px}
+.step-verify{padding:8px 10px}
+.certifications{padding:20px 22px}
+.certifications-heading h2{font-size:clamp(26px,2.8vw,36px)}
+.cert-main-path{margin-top:14px}
+.cert-statline{margin:15px 0 11px}
+.cert-levels{gap:17px}
+.cert-level-header{margin-bottom:8px;padding-bottom:9px}
+.cert-list{gap:6px}
+.cert-card{padding:11px 14px;border-radius:8px}
+.cert-card h4{font-size:12px}
+.cert-summary{margin-top:5px;font-size:11px;line-height:1.55}
+.cert-more{margin-top:7px;padding-top:7px}
+.cert-more-body{gap:10px 18px;padding-top:10px}
+.cert-select{min-height:31px}
+.backup{padding:18px 20px}
+@media(max-width:1050px){.hero{padding-top:33px}.experience-card{min-height:155px}}
+@media(max-width:680px){.hero{padding:30px 0 22px}.hero h1{font-size:clamp(34px,8.7vw,48px)}.experience-card{min-height:145px;padding:10px}.experience-art{height:73px}.phase-header,.study-accordion>.phase-header{padding:12px 13px;min-height:61px}.module-blueprint{padding:12px 13px}.tasks{padding:0 9px 8px}.task-content{padding:12px}.certifications{padding:16px 13px}.cert-card{padding:11px}.dashboard,.learning-method{padding:15px}}
+@media(prefers-reduced-motion:reduce){.experience-art{transition:none}}
