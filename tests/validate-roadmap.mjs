@@ -108,3 +108,8 @@ assert.ok(css.includes('.phases{display:grid;gap:0'),'Lista de módulos precisa 
 assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 76px 27px'),'Contadores e ícones dos módulos devem ter colunas consistentes');
 assert.ok(css.includes('.cert-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))'),'Certificações devem usar grade responsiva');
 console.log('REDESIGN LIMPO OK: CSS enxuto, menu contextual, listas compactas e alinhamento.');
+
+assert.ok(css.includes('.app-shell{width:calc(100% - 40px);max-width:none'),'Layout desktop deve ocupar toda largura');
+assert.ok(css.includes('.page-content{width:calc(100% - 36px);max-width:none'),'Conteúdo em tablet não deve ter limite de 900 px');
+assert.ok(!css.includes('width:min(100% - 48px,1400px)'),'Limite antigo de 1400 px não removido');
+console.log('VIEWPORT OK: largura fluida no desktop, tablet e celular.');
