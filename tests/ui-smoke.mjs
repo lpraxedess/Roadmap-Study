@@ -47,6 +47,7 @@ async function until(expression,label){
  throw Error('Falha aguardando: '+label);
 }
 async function screenshot(name){
+ await pause(520); // Capture only after the view-transition finishes.
  const result=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
  mkdirSync(join(root,'_artifacts'),{recursive:true});
  writeFileSync(join(root,'_artifacts',name+'.png'),Buffer.from(result.data,'base64'));
@@ -93,6 +94,7 @@ try{
  await evaluate('document.querySelector("[data-page=certifications]").click()');
  await until('!document.querySelector("#page-certifications").hidden','navegação Certificações');
  assert.equal(await evaluate('document.querySelectorAll(".cert-card").length'),18,'Certificações incompletas');
+ await screenshot('certifications-desktop');
  const provider=await evaluate('(()=>{const el=document.querySelector("#cert-provider");el.value="Okta";el.dispatchEvent(new Event("change",{bubbles:true}));return document.querySelectorAll(".cert-card").length})()');
  assert.equal(provider,3,'Filtro por fornecedor não funciona');
  const earned=await evaluate('(()=>{const el=document.querySelector(".cert-card .cert-select");el.value="earned";el.dispatchEvent(new Event("change",{bubbles:true}));return JSON.parse(localStorage.getItem("roadmap-iam-certifications-v1")||"{}")["okta-pro"]})()');
@@ -110,7 +112,13 @@ try{
  await evaluate('document.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
  assert.ok(!await evaluate('document.body.classList.contains("nav-open")'),'Escape não fechou o drawer');
  await screenshot('studies-mobile');
- console.log('BROWSER SMOKE OK: desktop 1600px, mobile 390px, estudo, persistência, filtros, histórico e drawer.');
+ for(const width of [320,768,1200,2560]){
+  await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<=1050});
+  await pause(110);
+  const size=await evaluate('({page:document.documentElement.scrollWidth,viewport:innerWidth})');
+  assert.ok(size.page<=size.viewport+2,'Overflow horizontal '+width+'px: '+JSON.stringify(size));
+ }
+ console.log('BROWSER SMOKE OK: 320, 390, 768, 1200, 1600 e 2560px; estudo, persistência, filtros, histórico e drawer.');
 }catch(error){
  console.error('TESTE DE NAVEGADOR FALHOU:',error?.stack||error);
  process.exitCode=1;

@@ -21,6 +21,7 @@ Roadmap progressivo de IAM, disponível como site estático em https://lpraxedes
 - `navigation.js`: troca de páginas, menu acessível, histórico e 18 certificações.
 - `motion.js`: feedback de toque/click, animações discretas e respeito a movimento reduzido.
 - `AUDITORIA-DOCUMENTAL.md`: fontes verificadas, limitações e correções fundamentadas.
+- `AUDITORIA-UX-TECNICA.md`: diagnóstico de interface, refatoração e cobertura de testes.
 - `tests/validate-roadmap.mjs`: verificações estruturais e de regressões.
 - `tests/ui-smoke.mjs`: teste de interface em Chrome/Chromium real via CDP (desktop e mobile), sem pacotes npm; gera capturas em `_artifacts/` durante o CI.
 
@@ -35,7 +36,7 @@ node tests/validate-roadmap.mjs
 node tests/ui-smoke.mjs  # requer Chrome ou Chromium no PATH
 ```
 
-Os testes estruturais não executam laboratórios reais; o teste de navegador cobre troca de páginas, drawer móvel, filtros, persistência e overflow horizontal, mas **não substitui uma revisão visual humana**. Fontes e caminhos de menu podem mudar. Consulte os links atualizados antes de aplicar configurações.
+Os testes estruturais não executam laboratórios reais; o teste de navegador cobre troca de páginas, drawer móvel, filtros, persistência e overflow horizontal em múltiplas larguras, mas **não substitui uma revisão visual humana**. Fontes e caminhos de menu podem mudar. Consulte os links atualizados antes de aplicar configurações.
 
 ## Dados e privacidade
 
