@@ -54,7 +54,7 @@ for(const c of certs){
 }
 assert.deepEqual(certs.filter(c=>c.category==='Trilha principal').map(c=>c.code),['SC-900','SC-300','SC-100']);
 assert.ok(!certs.some(c=>['AZ-500','MS-102'].includes(c.code)),'Exames descontinuados ou em descontinuação não devem integrar a trilha');
-for(const id of ['menu-toggle','sidebar','nav-scrim','menu-close','sidebar-modules','sidebar-study','certifications-title','certification-levels','cert-progress']){
+for(const id of ['menu-toggle','sidebar','nav-scrim','menu-close','page-overview','page-studies','page-certifications','certifications-title','certification-levels','cert-progress']){
  assert.ok(html.includes('id="'+id+'"'),'ID de navegação ausente: '+id);
 }
 assert.ok(html.includes('src="navigation.js"'),'Script de navegação ausente');
@@ -63,17 +63,19 @@ assert.ok(app.includes("card.id='module-'+p.id"),'Âncoras de módulos ausentes'
 assert.ok(app.includes("iam:roadmap-rendered"),'Atualização do menu após render ausente');
 assert.ok(app.includes('certifications:getCertificationsForBackup()'),'Certificações não incluídas no backup');
 assert.ok(app.includes("iam:certifications-imported"),'Atualização após importação ausente');
-for(const selector of ['.sidebar','.sidebar-module','.nav-scrim','.cert-levels','.cert-card','.cert-select','.menu-toggle']){
+for(const selector of ['.sidebar','.study-accordion','.nav-scrim','.cert-levels','.cert-card','.cert-select','.menu-toggle']){
  assert.ok(css.includes(selector),'Estilo ausente: '+selector);
 }
 console.log('CERTIFICAÇÕES E NAVEGAÇÃO OK:',certs.length,'certificações em 3 níveis, menu lateral, backup integrado.');
 
+
 const navHTML=html.slice(html.indexOf('<nav class="sidebar-nav"'),html.indexOf('</nav>',html.indexOf('<nav class="sidebar-nav"')));
-assert.equal((navHTML.match(/class="sidebar-link sidebar-primary/g)||[]).length,3,'Menu principal deve ter exatamente 3 entradas');
-for(const title of ['Visão geral','Estudos','Certificações'])assert.ok(navHTML.includes(title),'Item principal ausente: '+title);
-assert.ok(navHTML.indexOf('id="sidebar-modules"')>navHTML.indexOf('id="sidebar-study"'),'Módulos precisam estar dentro de Estudos');
-assert.ok(navigation.includes("el('details','sidebar-module-group')"),'Módulos não expansíveis');
-assert.ok(navigation.includes("sidebar-topic-group"),'Assuntos não aninhados');
-assert.ok(navigation.includes("Laboratório prático"),'Links para laboratórios ausentes');
-assert.ok(navigation.includes("resetStudyFilters()"),'Navegação não restaura assuntos filtrados');
-console.log('MENU HIERÁRQUICO OK: Visão geral → Estudos (módulos → assuntos → laboratórios) → Certificações.');
+assert.equal((navHTML.match(/class="sidebar-link sidebar-primary/g)||[]).length,3,'Menu principal deve ter 3 opções');
+for(const title of ['Visão geral','Estudos','Certificações'])assert.ok(navHTML.includes(title),'Menu sem '+title);
+for(const view of ['overview','studies','certifications'])assert.ok(html.includes('data-page-view="'+view+'"'),'Página ausente: '+view);
+assert.ok(navigation.includes('function setPage('),'Troca de páginas ausente');
+assert.ok(navigation.includes("setPage('studies'"),'Navegação para estudos ausente');
+assert.ok(app.includes("node('details','phase reveal study-accordion')"),'Módulos precisam ser expansíveis');
+assert.ok(app.includes("node('summary','phase-header')"),'Cabeçalho de módulo não é clicável');
+assert.ok(css.includes('.site-page[hidden]'),'Páginas ocultas sem estilo');
+console.log('NAVEGAÇÃO EM PÁGINAS OK: Visão geral / Estudos (10 módulos expansíveis) / Certificações.');

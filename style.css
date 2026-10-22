@@ -268,3 +268,18 @@ footer.wrap{width:min(1498px,calc(100% - 48px));margin-inline:auto}
 @keyframes nav-tree-in{from{opacity:.45;transform:translateY(-5px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:1050px){.sidebar-nav{padding:15px 13px}.sidebar-study-content{margin-left:14px}.sidebar-topic{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.sidebar-study-content,.sidebar-topic-list{animation:none}.sidebar-expand,.sidebar-module-chevron{transition:none}}
+
+/* Navegação por páginas e acordeão de módulos */
+.site-page[hidden]{display:none!important}
+.site-page{min-width:0;animation:page-enter .22s ease-out}
+.sidebar-nav{display:grid;gap:7px}
+.sidebar-primary{width:100%;min-height:48px;font-size:13px}
+.study-accordion{overflow:hidden}
+.study-accordion>.phase-header{cursor:pointer;list-style:none;user-select:none}
+.study-accordion>.phase-header::-webkit-details-marker{display:none}
+.study-accordion>.phase-header:after{content:'+';display:grid;place-items:center;flex:none;width:30px;height:30px;margin-left:10px;border:1px solid #2b6685;border-radius:8px;color:#7cdaff;font-size:23px;font-weight:450}
+.study-accordion[open]>.phase-header:after{content:'−'}
+.study-accordion>.phase-header:hover{background:#10293a}
+.study-accordion>.phase-header:focus-visible{outline:2px solid #60d3ff;outline-offset:-3px}
+@keyframes page-enter{from{opacity:.7;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.site-page{animation:none}}

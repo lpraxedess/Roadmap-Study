@@ -68,112 +68,73 @@ document.addEventListener('keydown',event=>{
  if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
 });
 closeSidebar(false);
-const menuTarget=document.getElementById('sidebar-modules');
-const studyGroup=document.getElementById('sidebar-study');
-const modulesById=new Map(PHASES.map(p=>[p.id,p]));
-const topicById=new Map(PHASES.flatMap(p=>p.items.map(t=>[t.id,{phase:p,topic:t}])));
-for(const [index,phase] of PHASES.entries()){
- const module=el('details','sidebar-module-group');
- module.dataset.moduleId=phase.id;
- const summary=el('summary','sidebar-module-summary');
- const number=el('span','sidebar-module-no',String(index+1).padStart(2,'0'));
- const name=el('span','sidebar-module-name',phase.title);
- const counter=el('span','sidebar-module-progress','0/'+phase.items.length);
- counter.id='sidebar-count-'+phase.id;
- const chevron=el('span','sidebar-module-chevron','⌄');
- summary.append(number,name,counter,chevron);
- const contents=el('div','sidebar-topic-list');
- const overview=el('a','sidebar-link sidebar-module-overview','Visão do módulo');
- overview.href='#module-'+phase.id;overview.dataset.navTarget='module-'+phase.id;
- contents.append(overview);
- for(const [topicIndex,topic] of phase.items.entries()){
-  const group=el('div','sidebar-topic-group');
-  const topicLink=el('a','sidebar-link sidebar-topic');
-  topicLink.href='#task-'+topic.id;
-  topicLink.dataset.navTarget='task-'+topic.id;
-  const topicNumber=el('span','sidebar-topic-no',String(topicIndex+1).padStart(2,'0'));
-  const topicName=el('span','sidebar-topic-name',topic.title);
-  topicLink.append(topicNumber,topicName);
-  const labLink=el('a','sidebar-link sidebar-lab','↳ Laboratório prático');
-  labLink.href='#task-'+topic.id;labLink.dataset.navTarget='lab-'+topic.id;
-  labLink.setAttribute('aria-label','Abrir laboratório: '+topic.title);
-  group.append(topicLink,labLink);contents.append(group);
+// Três páginas internas. Estudos exibe dez módulos inicialmente recolhidos.
+const pageLinks=[...sidebar.querySelectorAll('[data-page]')];
+const views=new Map([...document.querySelectorAll('[data-page-view]')].map(view=>[view.dataset.pageView,view]));
+const pageHash={overview:'#visao-geral',studies:'#estudos',certifications:'#certificacoes'};
+let currentPage='overview';
+function setPage(page,options={}){
+ if(!views.has(page))page='overview';
+ currentPage=page;
+ for(const [name,view] of views)view.hidden=name!==page;
+ for(const link of pageLinks){
+  const active=link.dataset.page===page;
+  link.classList.toggle('is-active',active);
+  if(active)link.setAttribute('aria-current','page');
+  else link.removeAttribute('aria-current');
  }
- module.append(summary,contents);menuTarget.append(module);
-}
-function refreshModuleProgress(){
- const completed=typeof done!=='undefined'?done:new Set();
- for(const p of PHASES){
-  const value=p.items.filter(t=>completed.has(t.id)).length;
-  const badge=document.getElementById('sidebar-count-'+p.id);
-  if(badge){badge.textContent=value+'/'+p.items.length;badge.classList.toggle('is-complete',value===p.items.length)}
- }
-}
-function resetStudyFilters(){
- const search=document.getElementById('search');
- if(search&&search.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}))}
- const filter=document.querySelector('[data-filter="all"]');
- if(filter&&!filter.classList.contains('active'))filter.click();
-}
-function revealNavTarget(targetId){
- let target=document.getElementById(targetId);
- if(!target&&(targetId.startsWith('module-')||targetId.startsWith('task-'))){
-  resetStudyFilters();
-  target=document.getElementById(targetId);
- }
- if(target?.tagName==='DETAILS')target.open=true;
- return target;
-}
-sidebar.addEventListener('click',event=>{
- const a=event.target.closest('a[href^="#"]');
- if(!a)return;
- const id=a.getAttribute('href').slice(1);
- const target=revealNavTarget(id);
- if(!target)return;
- event.preventDefault();
  closeSidebar(false);
- if(history.replaceState)history.replaceState(null,'','#'+id);
- if(id.startsWith('task-')){studyGroup.open=true;const item=topicById.get(id.slice(5));if(item){const group=menuTarget.querySelector('[data-module-id="'+item.phase.id+'"]');if(group)group.open=true}}
- target.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'start'});
- highlightNav(id,a.dataset.navTarget?.startsWith('lab-')?'lab-'+id.slice(5):undefined);
-});
-function highlightNav(id,preferred){
- const targetId=preferred||id;
- sidebar.querySelectorAll('a[data-nav-target]').forEach(a=>{
-  const active=a.dataset.navTarget===targetId;
-  a.classList.toggle('is-active',active);
-  if(active)a.setAttribute('aria-current','location');
-  else a.removeAttribute('aria-current');
- });
- const primary=sidebar.querySelectorAll('.sidebar-primary');
- primary.forEach(a=>a.classList.remove('is-active-parent'));
- if(id==='certifications-title'){const link=sidebar.querySelector('[data-nav-target="certifications-title"]');link?.classList.add('is-active-parent')}
- else if(id==='inicio'||id==='infra-title'){const link=sidebar.querySelector('[data-nav-target="inicio"]');link?.classList.add('is-active-parent')}
- else{studyGroup.querySelector('summary')?.classList.add('is-active-parent')}
+ if(!options.keepHash&&history.replaceState)history.replaceState(null,'',pageHash[page]);
+ if(!options.preserveScroll)window.scrollTo({top:0,behavior:'instant'});
 }
-let scrollQueued=false;
-function updateActiveNav(){
- scrollQueued=false;
- const cert=document.getElementById('certifications-title');
- const roadmap=document.getElementById('roadmap-title');
- if(cert&&cert.getBoundingClientRect().top<=190){highlightNav('certifications-title');return}
- if(!roadmap||roadmap.getBoundingClientRect().top>190){highlightNav('inicio');return}
- let active='roadmap-title';
- for(const phase of PHASES){
-  const section=document.getElementById('module-'+phase.id);
-  if(section&&section.getBoundingClientRect().top<=200)active='module-'+phase.id;
-  for(const topic of phase.items){
-   const task=document.getElementById('task-'+topic.id);
-   if(task&&task.getBoundingClientRect().top<=220)active='task-'+topic.id;
-  }
+function showStudyItem(id){
+ setPage('studies',{keepHash:true,preserveScroll:true});
+ const taskId=id.startsWith('task-')?id:null;
+ let target=document.getElementById(id);
+ if(!target){
+  const search=document.getElementById('search');
+  if(search&&search.value){search.value='';search.dispatchEvent(new Event('input',{bubbles:true}))}
+  const all=document.querySelector('[data-filter="all"]');
+  if(all&&!all.classList.contains('active'))all.click();
+  target=document.getElementById(id);
  }
- highlightNav(active);
+ if(target){
+  const module=target.closest('.study-accordion');
+  if(module)module.open=true;
+  if(taskId&&target.tagName==='DETAILS')target.open=true;
+  target.scrollIntoView({behavior:reduced.matches?'auto':'smooth',block:'start'});
+ }
 }
-window.addEventListener('scroll',()=>{if(scrollQueued)return;scrollQueued=true;window.requestAnimationFrame(updateActiveNav)},{passive:true});
-window.addEventListener('iam:roadmap-rendered',()=>{refreshModuleProgress();if(!scrollQueued){scrollQueued=true;window.requestAnimationFrame(updateActiveNav)}});
-refreshModuleProgress();
-updateActiveNav();
-
+for(const link of pageLinks)link.addEventListener('click',event=>{
+ event.preventDefault();
+ setPage(link.dataset.page);
+});
+document.addEventListener('click',event=>{
+ const anchor=event.target.closest('a[href^="#"]');
+ if(!anchor||sidebar.contains(anchor)||pageLinks.includes(anchor))return;
+ const hash=anchor.getAttribute('href').slice(1);
+ if(hash==='roadmap-title'||hash.startsWith('module-')||hash.startsWith('task-')){
+  event.preventDefault();
+  if(hash==='roadmap-title'){setPage('studies');document.getElementById('roadmap-title')?.scrollIntoView()}
+  else showStudyItem(hash);
+ }else if(hash==='certifications-title'){
+  event.preventDefault();setPage('certifications');
+ }else if(hash==='inicio'){
+  event.preventDefault();setPage('overview');
+ }
+});
+const initialHash=location.hash.slice(1);
+if(initialHash==='estudos'||initialHash==='roadmap-title')setPage('studies',{keepHash:true});
+else if(initialHash==='certificacoes'||initialHash==='certifications-title')setPage('certifications',{keepHash:true});
+else if(initialHash.startsWith('module-')||initialHash.startsWith('task-')){setPage('studies',{keepHash:true});window.requestAnimationFrame(()=>showStudyItem(initialHash))}
+else setPage('overview',{keepHash:true});
+window.addEventListener('hashchange',()=>{
+ const hash=location.hash.slice(1);
+ if(hash==='estudos')setPage('studies',{keepHash:true});
+ else if(hash==='certificacoes')setPage('certifications',{keepHash:true});
+ else if(hash==='visao-geral')setPage('overview',{keepHash:true});
+ else if(hash.startsWith('module-')||hash.startsWith('task-'))showStudyItem(hash);
+});
 // Certificações: plano de carreira independente de conclusão das competências.
 const certIds=new Set(CERTIFICATIONS.map(c=>c.id));
 function loadCertStates(){

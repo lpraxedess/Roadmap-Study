@@ -27,7 +27,7 @@ function render(){
  PHASES.forEach((p,i)=>{
   const items=p.items.filter(t=>(filter==='all'||(filter==='done'?done.has(t.id):!done.has(t.id)))&&[p.title,p.environment,p.outcome,t.title,t.evidence,t.guide.platform,t.guide.where,...t.guide.steps.map(s=>s.text),...t.study.map(s=>s.topic+' '+s.detail),...t.practice.map(s=>s.text)].join(' ').toLocaleLowerCase('pt-BR').includes(query));
   if(!items.length)return;visible+=items.length;
-  const card=node('section','phase reveal'),head=node('div','phase-header'),heading=node('div','phase-heading'),idx=node('span','phase-index',String(i+1).padStart(2,'0')),info=node('div'),title=node('h3','',p.title),desc=node('p','',p.desc),count=node('span','phase-count',p.items.filter(t=>done.has(t.id)).length+' / '+p.items.length);
+  const card=node('details','phase reveal study-accordion'),head=node('summary','phase-header'),heading=node('div','phase-heading'),idx=node('span','phase-index',String(i+1).padStart(2,'0')),info=node('div'),title=node('h3','',p.title),desc=node('p','',p.desc),count=node('span','phase-count',p.items.filter(t=>done.has(t.id)).length+' / '+p.items.length);
   card.id='module-'+p.id;info.append(title,desc);heading.append(idx,info);head.append(heading,count);card.append(head);
   const blueprint=node('div','module-blueprint'),setup=node('div'),setupTag=node('span','content-label','AMBIENTE NECESSÁRIO'),setupText=node('p','',p.environment),outcome=node('div'),outcomeTag=node('span','content-label','ENTREGA DO MÓDULO'),outcomeText=node('p','',p.outcome),req=node('p','module-requirement','ℹ '+p.requirements);
   setup.append(setupTag,setupText);outcome.append(outcomeTag,outcomeText);blueprint.append(setup,outcome,req);card.append(blueprint);
