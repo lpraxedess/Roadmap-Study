@@ -14,6 +14,8 @@ jobs:
         with:
           node-version: '22'
       - name: Verificar sintaxe
-        run: node --check app.js
+        run: |
+          node --check app.js
+          node --check navigation.js
       - name: Validar módulos, links e integridade
         run: node tests/validate-roadmap.mjs

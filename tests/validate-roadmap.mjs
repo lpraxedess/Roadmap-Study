@@ -4,7 +4,9 @@ import {Script} from 'node:vm';
 const app=readFileSync('app.js','utf8');
 const html=readFileSync('index.html','utf8');
 const css=readFileSync('style.css','utf8');
+const navigation=readFileSync('navigation.js','utf8');
 new Script(app,{filename:'app.js'});
+new Script(navigation,{filename:'navigation.js'});
 const match=app.match(/const PHASES=(\[.*?\]);\nconst LAB=/s);
 assert.ok(match,'PHASES precisa estar presente como JSON');
 const phases=JSON.parse(match[1]);
@@ -38,3 +40,30 @@ assert.ok(app.includes('version:3,completed'),'Exportação v3 ausente');
 assert.ok(app.includes('![2,3].includes'),'Compatibilidade com importação v2 ausente');
 assert.equal(tasks.filter(t=>t.review==='referencia-conferida').length,18);
 console.log('VALIDAÇÃO ESTRUTURAL OK:',phases.length,'módulos,',tasks.length,'competências,',stepKeys.length,'passos, 18 referências confrontadas.');
+
+const certMatch=navigation.match(/const CERTIFICATIONS=(\[.*?\]);\nconst CERT_STORAGE_KEY=/s);
+assert.ok(certMatch,'Lista CERTIFICATIONS não encontrada');
+const certs=JSON.parse(certMatch[1]);
+assert.equal(certs.length,9,'Quantidade de certificações');
+assert.equal(new Set(certs.map(c=>c.id)).size,certs.length,'IDs de certificações duplicados');
+assert.equal(new Set(certs.map(c=>c.code)).size,certs.length,'Códigos de certificações duplicados');
+for(const c of certs){
+ assert.ok(['beginner','intermediate','advanced'].includes(c.level),c.code+': nível inválido');
+ assert.ok(c.title&&c.summary&&c.prerequisite&&c.labs&&c.next,c.code+': conteúdo incompleto');
+ assert.ok(/^https:\/\//.test(c.url),c.code+': URL oficial inválida');
+}
+assert.deepEqual(certs.filter(c=>c.category==='Trilha principal').map(c=>c.code),['SC-900','SC-300','SC-100']);
+assert.ok(!certs.some(c=>['AZ-500','MS-102'].includes(c.code)),'Exames descontinuados ou em descontinuação não devem integrar a trilha');
+for(const id of ['menu-toggle','sidebar','nav-scrim','menu-close','sidebar-modules','sidebar-modules-total','certifications-title','certification-levels','cert-progress']){
+ assert.ok(html.includes('id="'+id+'"'),'ID de navegação ausente: '+id);
+}
+assert.ok(html.includes('src="navigation.js"'),'Script de navegação ausente');
+assert.ok(html.includes('aria-expanded="false"'),'Botão de menu sem estado ARIA');
+assert.ok(app.includes("card.id='module-'+p.id"),'Âncoras de módulos ausentes');
+assert.ok(app.includes("iam:roadmap-rendered"),'Atualização do menu após render ausente');
+assert.ok(app.includes('certifications:getCertificationsForBackup()'),'Certificações não incluídas no backup');
+assert.ok(app.includes("iam:certifications-imported"),'Atualização após importação ausente');
+for(const selector of ['.sidebar','.sidebar-module','.nav-scrim','.cert-levels','.cert-card','.cert-select','.menu-toggle']){
+ assert.ok(css.includes(selector),'Estilo ausente: '+selector);
+}
+console.log('CERTIFICAÇÕES E NAVEGAÇÃO OK:',certs.length,'certificações em 3 níveis, menu lateral, backup integrado.');
