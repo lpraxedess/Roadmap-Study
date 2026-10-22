@@ -22,7 +22,7 @@ const port=server.address().port;
 const chrome=process.env.CHROME_PATH||['google-chrome','google-chrome-stable','chromium','chromium-browser'].find(name=>spawnSync('which',[name],{stdio:'ignore'}).status===0);
 if(!chrome){server.close();throw Error('Chrome ou Chromium não encontrado para o teste de interface')}
 const profile=mkdtempSync(join(tmpdir(),'iam-smoke-'));
-const browser=spawn(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-first-run','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});
+const browser=spawn(chrome,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--no-first-run' ,'--remote-allow-origins=*','--remote-debugging-port=0','--user-data-dir='+profile,'about:blank'],{stdio:'ignore'});
 let socket;
 let sequence=0;
 const pending=new Map();
@@ -111,11 +111,18 @@ try{
  assert.ok(!await evaluate('document.body.classList.contains("nav-open")'),'Escape não fechou o drawer');
  await screenshot('studies-mobile');
  console.log('BROWSER SMOKE OK: desktop 1600px, mobile 390px, estudo, persistência, filtros, histórico e drawer.');
+}catch(error){
+ console.error('TESTE DE NAVEGADOR FALHOU:',error?.stack||error);
+ process.exitCode=1;
 }finally{
  for(const item of pending.values()){clearTimeout(item.timer);item.reject(Error('CDP encerrado'))}
  pending.clear();
  if(socket&&socket.readyState===WebSocket.OPEN)socket.close();
- browser.kill('SIGTERM');
+ if(browser.exitCode===null){
+  browser.kill('SIGTERM');
+  await Promise.race([new Promise(resolve=>browser.once('exit',resolve)),pause(1200)]);
+ }
  await new Promise(resolve=>server.close(resolve));
- rmSync(profile,{recursive:true,force:true});
+ try{rmSync(profile,{recursive:true,force:true,maxRetries:8,retryDelay:120})}
+ catch(error){console.warn('Aviso ao limpar perfil temporário do Chrome:',error.message)}
 }
