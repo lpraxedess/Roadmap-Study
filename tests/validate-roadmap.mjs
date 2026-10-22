@@ -46,7 +46,7 @@ console.log('VALIDAÇÃO ESTRUTURAL OK:',phases.length,'módulos,',tasks.length,
 const certMatch=navigation.match(/const CERTIFICATIONS=(\[.*?\]);\nconst CERT_STORAGE_KEY=/s);
 assert.ok(certMatch,'Lista CERTIFICATIONS não encontrada');
 const certs=JSON.parse(certMatch[1]);
-assert.equal(certs.length,9,'Quantidade de certificações');
+assert.equal(certs.length,18,'Quantidade de certificações');
 assert.equal(new Set(certs.map(c=>c.id)).size,certs.length,'IDs de certificações duplicados');
 assert.equal(new Set(certs.map(c=>c.code)).size,certs.length,'Códigos de certificações duplicados');
 for(const c of certs){
@@ -96,3 +96,9 @@ assert.ok(motion.includes('reduce.matches'),'Animações devem respeitar acessib
 console.log('INTERAÇÕES OK: 4 cartões e movimento acessível.');
 
 assert.ok(!css.includes('/* Correção global: violeta único'),'Patch cromático antigo não removido');
+
+for(const issuer of ['Okta','CyberArk / Idira','SailPoint','AWS'])assert.ok(certs.some(c=>c.issuer===issuer),'Fornecedor IAM ausente: '+issuer);
+assert.ok(motion.includes('MutationObserver')&&motion.includes("addEventListener('toggle'"),'Animações de navegação e expansão ausentes');
+assert.ok(css.includes('.sidebar-symbol{width:24px;height:24px'),'Alinhamento de ícones ausente');
+assert.ok(css.includes('::details-content'),'Transição de expansão ausente');
+console.log('CARREIRA E MOVIMENTO OK: Okta, CyberArk, AWS, SailPoint; transições e ícones alinhados.');

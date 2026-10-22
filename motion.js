@@ -19,6 +19,39 @@
   card.addEventListener('pointerleave',()=>reset(card));
   card.addEventListener('blur',()=>reset(card));
  }
+ // Feedback visível nas trocas de página e na expansão de módulos.
+ const play=(node,frames,options)=>{
+  if(reduce.matches||!node||typeof node.animate!=='function')return;
+  node.animate(frames,{duration:options.duration||380,easing:'cubic-bezier(.22,1,.36,1)',fill:'none'});
+ };
+ const pages=[...document.querySelectorAll('.site-page')];
+ const pageObserver=new MutationObserver(records=>{
+  for(const record of records){
+   const page=record.target;
+   if(page.hidden)continue;
+   play(page,[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'translateY(0)'}],{duration:420});
+   page.querySelectorAll('.experience-card,.cert-level,.phase').forEach((item,index)=>{
+    if(index>9)return;
+    if(reduce.matches||typeof item.animate!=='function')return;
+    item.animate([{opacity:.25,transform:'translateY(12px)'},{opacity:1,transform:'translateY(0)'}],{duration:400,delay:Math.min(index,6)*45,easing:'cubic-bezier(.22,1,.36,1)'});
+   });
+  }
+ });
+ for(const page of pages)pageObserver.observe(page,{attributes:true,attributeFilter:['hidden']});
+ document.addEventListener('toggle',event=>{
+  const panel=event.target;
+  if(!(panel instanceof HTMLDetailsElement)||!panel.open)return;
+  if(panel.matches('.study-accordion')){
+   const children=[...panel.children].filter(child=>child.tagName!=='SUMMARY');
+   children.slice(0,8).forEach((child,index)=>{
+    if(reduce.matches||typeof child.animate!=='function')return;
+    child.animate([{opacity:0,transform:'translateY(-9px)'},{opacity:1,transform:'translateY(0)'}],{duration:360,delay:index*25,easing:'cubic-bezier(.22,1,.36,1)'});
+   });
+  }else if(panel.matches('.task,.cert-more')){
+   const child=[...panel.children].find(el=>el.tagName!=='SUMMARY');
+   play(child,[{opacity:0,transform:'translateY(-8px)'},{opacity:1,transform:'translateY(0)'}],{duration:330});
+  }
+ },true);
  if(!('IntersectionObserver' in window)||reduce.matches)return;
  const observer=new IntersectionObserver(entries=>{
   for(const entry of entries){

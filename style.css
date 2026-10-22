@@ -540,3 +540,29 @@ img,svg,video,canvas{max-width:100%;height:auto}
 @media(max-width:680px){.app-shell>.page-content{width:calc(100% - 28px)}.topbar .nav{width:calc(100% - 28px)}.topbar .nav-right{gap:8px}.nav-right .live{display:none}.hero{padding-right:0}.hero:after{opacity:.2}.hero h1{font-size:clamp(35px,9.2vw,58px)}.phase-header{flex-wrap:wrap;gap:10px}.phase-header:after{margin-left:auto}.module-blueprint,.cert-more-body{grid-template-columns:1fr}.cert-next,.cert-official{grid-column:auto}.cert-card-top{flex-wrap:wrap}.dashboard,.learning-method,.lab-infra,.certifications{padding:clamp(15px,4vw,24px)}}
 @media(max-width:420px){.experience-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.experience-card{min-height:160px;padding:11px}.logo{font-size:12px;letter-spacing:0}.nav-start{padding:9px;font-size:10px}.phase-header{padding:14px 12px}.task-summary{padding:13px 4px}.hero h1{font-size:clamp(34px,10vw,42px)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* Ícones alinhados e microinterações perceptíveis, sem alterar o fluxo de estudo */
+.sidebar-symbol,.logo-mark,.experience-arrow,.sidebar-foot-dot,.phase-num,.cert-level-index,.menu-toggle .hamburger,.menu-close,.study-accordion>.phase-header:after,.task-summary .task-check,.task-summary .task-status{flex-shrink:0}
+.sidebar-symbol,.logo-mark,.experience-arrow,.phase-num,.cert-level-index,.study-accordion>.phase-header:after{display:inline-grid;place-items:center;line-height:1;text-align:center;vertical-align:middle}
+.sidebar-symbol{width:24px;height:24px;font-size:17px;margin-right:8px}
+.logo-mark{width:27px;height:27px;line-height:1;font-size:23px}
+.sidebar-primary{display:flex;align-items:center;gap:8px}
+.sidebar-primary .sidebar-symbol{margin-right:0}
+.experience-arrow{width:30px;height:30px;font-size:16px}
+.phase-num{width:40px;height:40px}
+.cert-level-index{width:34px;height:34px}
+.menu-toggle{display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.menu-toggle .hamburger{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:18px;height:18px}
+.menu-close{display:grid;place-items:center}
+.study-accordion>.phase-header{align-items:center}
+.study-accordion>.phase-header:after{width:30px;height:30px;margin-left:auto}
+.study-accordion::details-content,.task::details-content,.cert-more::details-content{content-visibility:visible;opacity:0;transition:opacity .35s ease,block-size .4s cubic-bezier(.22,1,.36,1);block-size:0;overflow:clip}
+.study-accordion[open]::details-content,.task[open]::details-content,.cert-more[open]::details-content{opacity:1;block-size:auto}
+@supports(interpolate-size:allow-keywords){:root{interpolate-size:allow-keywords}}
+.sidebar-link,.filters button,.actions button,.nav-start,.hero-primary,.hero-secondary,.cert-card,.cert-official,.cert-select,.study-accordion>.phase-header,.task-summary,.experience-card{transition:background-color .3s ease,border-color .3s ease,color .3s ease,box-shadow .35s ease,transform .35s cubic-bezier(.22,1,.36,1)}
+.sidebar-link:hover,.filters button:hover,.cert-official:hover{transform:translateX(2px)}
+.task-summary:hover{box-shadow:inset 3px 0 #2289c5}
+.cert-card:hover{transform:translateY(-2px)}
+.site-page:not([hidden]){animation:page-enter .42s cubic-bezier(.22,1,.36,1)}
+@keyframes page-enter{from{opacity:.55;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.study-accordion::details-content,.task::details-content,.cert-more::details-content{transition:none!important}.site-page:not([hidden]){animation:none!important}.sidebar-link,.filters button,.actions button,.cert-card,.study-accordion>.phase-header,.task-summary{transition:none!important;transform:none!important}}
