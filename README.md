@@ -72,3 +72,11 @@ Referências oficiais:
 - [CyberArk / Idira](https://training.cyberark.com/)
 - [SailPoint](https://community.sailpoint.com/programs/certifications-and-credentials)
 - [AWS](https://aws.amazon.com/pt/certification/)
+
+## Continuidade e filtros de estudo
+
+O painel inicial apresenta **Retomar estudos** e progresso percentual por módulo. Ao abrir uma competência, seu identificador é salvo localmente em `roadmap-iam-last-topic-v1`; o botão **Retomar** reabre a competência, inclusive após recarregar a página. O backup JSON v3 exporta opcionalmente `lastTask`, sem alterar as chaves de progresso anteriores. A importação aceita backups v2 e v3; **Zerar** também apaga o último tópico.
+
+Em **Estudos**, os filtros avançados permitem selecionar módulo, faixa de aprofundamento (01–03 fundamentos, 04–07 intermediário e 08–10 avançado), tecnologia mencionada no material e certificação. A associação entre certificações e módulos utiliza as referências de laboratórios cadastradas e serve como orientação, não como equivalência oficial entre conteúdos e exames. A busca textual continua combinável com os filtros e o botão **Limpar filtros** restaura a lista completa.
+
+Os testes automatizados verificam retomada, persistência, filtros, navegação e responsividade. As faixas de aprofundamento são uma classificação editorial da trilha, não uma dificuldade oficial emitida por certificadoras.

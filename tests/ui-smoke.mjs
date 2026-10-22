@@ -90,6 +90,16 @@ try{
  await evaluate('(()=>{const mod=document.querySelector(".study-accordion");mod.open=true;const task=mod.querySelector(".task");task.open=true;for(const step of task.querySelectorAll(".step-confirm")){step.checked=true;step.dispatchEvent(new Event("change",{bubbles:true}))}const box=task.querySelector(".task-check");box.checked=true;box.dispatchEvent(new Event("change",{bubbles:true}));return true})()');
  const state=await evaluate('({modules:document.querySelectorAll(".study-accordion[open]").length,tasks:document.querySelectorAll("#roadmap-list .task[open]").length,done:JSON.parse(localStorage.getItem("roadmap-iam-progress-v2")||"[]").length})');
  assert.deepEqual(state,{modules:1,tasks:1,done:1},'Restauração de módulos e progresso incorreta');
+ await until('localStorage.getItem("roadmap-iam-last-topic-v1")!==null','último tópico persistido');
+ const remembered=await evaluate('localStorage.getItem("roadmap-iam-last-topic-v1")');
+ assert.ok(remembered,'Último tópico não foi registrado');
+ const progress=await evaluate('({rows:document.querySelectorAll(".module-progress-row").length,resume:document.querySelector("#resume-link").getAttribute("href")})');
+ assert.equal(progress.rows,10,'Painel de progresso não exibe todos os módulos');
+ assert.equal(progress.resume,'#task-'+remembered,'Retomada não aponta para o tópico salvo');
+ const filtered=await evaluate('(()=>{const el=document.querySelector("#module-filter");el.value=el.options[1].value;el.dispatchEvent(new Event("change",{bubbles:true}));return document.querySelectorAll(".study-accordion").length})()');
+ assert.equal(filtered,1,'Filtro de módulo não funciona');
+ await evaluate('document.querySelector("#clear-study-filters").click()');
+ assert.equal(await evaluate('document.querySelectorAll(".study-accordion").length'),10,'Limpar filtros não restaurou módulos');
  await screenshot('study-desktop');
  await evaluate('document.querySelector("[data-page=certifications]").click()');
  await until('!document.querySelector("#page-certifications").hidden','navegação Certificações');
@@ -111,6 +121,7 @@ try{
  assert.ok(await evaluate('document.body.classList.contains("nav-open")'),'Drawer mobile não abriu');
  await evaluate('document.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}))');
  assert.ok(!await evaluate('document.body.classList.contains("nav-open")'),'Escape não fechou o drawer');
+ assert.equal(await evaluate('localStorage.getItem("roadmap-iam-last-topic-v1")'),remembered,'Último tópico não sobreviveu ao reload');
  await screenshot('studies-mobile');
  for(const width of [320,768,1200,2560]){
   await send('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:width<=1050});

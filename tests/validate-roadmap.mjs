@@ -139,3 +139,12 @@ assert.ok(css.includes('.tap-ripple')&&motion.includes('pointerdown'),'Feedback 
 assert.ok(css.includes('--accent:#39baff'),'Identidade deve usar o azul neon definido');
 assert.ok(!css.includes('1400px'),'Largura do site não deve ser limitada a 1400px');
 console.log('AUDITORIA DE UX OK: módulos estáveis, história, filtros, atalhos, SVG e animações acessíveis.');
+
+for(const id of ['resume-title','resume-module','resume-link','module-progress-list','module-filter','level-filter','tech-filter','cert-study-filter','clear-study-filters'])assert.ok(html.includes('id="'+id+'"'),'Painel ou filtro ausente: '+id);
+assert.ok(app.includes("const LAST_KEY='roadmap-iam-last-topic-v1'"),'Persistência do último tópico ausente');
+assert.ok(app.includes('function updateLearningDashboard()'),'Resumo por módulo ausente');
+assert.ok(app.includes('function resetStudyFilters()'),'Limpeza dos filtros ausente');
+assert.ok(app.includes('lastTask:lastTask'),'Backup deve preservar último tópico');
+assert.ok(app.includes('clearLastTask();save();render()'),'Zerar deve limpar o último tópico');
+assert.ok(css.includes('.advanced-filters{')&&css.includes('.module-progress-list{'),'Estilos de filtros e progresso ausentes');
+console.log('EVOLUÇÃO OK: retomada, progresso por módulo, filtros avançados e backup compatível.');
