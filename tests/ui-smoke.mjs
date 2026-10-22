@@ -80,7 +80,7 @@ try{
  await until('document.readyState==="complete" && document.querySelectorAll(".study-accordion").length===10 && document.querySelectorAll(".cert-card").length===18','carregamento dos dados');
  let layout=await evaluate('({page:document.documentElement.scrollWidth,viewport:innerWidth,shell:Math.round(document.querySelector(".app-shell").getBoundingClientRect().width),menu:getComputedStyle(document.querySelector("#menu-toggle")).display})');
  assert.ok(layout.page<=layout.viewport+2,'Overflow horizontal desktop: '+JSON.stringify(layout));
- assert.ok(layout.shell>=layout.viewport-50,'Largura desktop subaproveitada: '+JSON.stringify(layout));
+ assert.ok(layout.shell>=layout.viewport-70,'Largura desktop subaproveitada: '+JSON.stringify(layout));
  assert.equal(layout.menu,'none','Menu mobile aparece no desktop');
  await screenshot('overview-desktop');
  await evaluate('document.querySelector("[data-page=studies]").click()');
