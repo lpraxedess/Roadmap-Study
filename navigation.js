@@ -160,27 +160,22 @@ function renderCertifications(){
   const section=el('section','cert-level cert-level-'+level.id);
   section.id='cert-stage-'+level.id;
   const head=el('div','cert-level-header');
-  head.append(el('span','cert-level-index',level.stage),el('div','cert-level-heading'));
-  head.lastChild.append(el('h3','',level.title),el('p','',level.caption));
+  const heading=el('div','cert-level-heading');
+  heading.append(el('h3','',level.title),el('p','',level.caption));
+  head.append(el('span','cert-level-index',level.stage),heading);
   section.append(head);
+  const grid=el('div','cert-list');
   for(const cert of CERTIFICATIONS.filter(c=>c.level===level.id)){
    const card=el('article','cert-card'+(cert.category==='Trilha principal'?' cert-primary':''));
    card.dataset.status=certStates[cert.id]||'planned';
-   const eyebrow=el('div','cert-card-meta');
-   eyebrow.append(el('span','cert-code',cert.code),el('span','cert-category',cert.category));
-   const title=el('h4','',cert.title);
-   const issuer=el('p','cert-issuer',cert.issuer);
-   const summary=el('p','cert-summary',cert.summary);
-   const labs=el('div','cert-detail'),labsName=el('span','cert-detail-name','ALINHAMENTO AO ROADMAP'),labsValue=el('p','',cert.labs);
-   labs.append(labsName,labsValue);
-   const prerequisites=el('div','cert-detail'),preName=el('span','cert-detail-name','REQUISITOS E CUIDADOS'),preValue=el('p','',cert.prerequisite);
-   prerequisites.append(preName,preValue);
-   const next=el('p','cert-next','Como se preparar: '+cert.next);
-   const a=el('a','cert-official','Documentação e exame oficiais ↗');
-   a.href=cert.url;a.target='_blank';a.rel='noopener noreferrer';
-   const row=el('div','cert-choice'),label=el('label','cert-choice-label','Seu status'),select=el('select','cert-select');
-   select.id='cert-state-'+cert.id;
-   label.htmlFor=select.id;
+   const top=el('div','cert-card-top');
+   const identity=el('div','cert-card-identity');
+   const meta=el('div','cert-card-meta');
+   meta.append(el('span','cert-code',cert.code));
+   if(cert.category==='Trilha principal')meta.append(el('span','cert-category','Trilha principal'));
+   identity.append(meta,el('h4','',cert.title),el('p','cert-issuer',cert.issuer));
+   const row=el('div','cert-choice'),label=el('label','cert-choice-label','Status'),select=el('select','cert-select');
+   select.id='cert-state-'+cert.id;label.htmlFor=select.id;
    for(const option of CERT_STATUSES){
     const o=el('option','',option.text);
     o.value=option.value;o.selected=(certStates[cert.id]||'planned')===option.value;
@@ -188,16 +183,29 @@ function renderCertifications(){
    }
    select.setAttribute('aria-label','Situação da certificação '+cert.code);
    select.addEventListener('change',()=>{
-    certStates[cert.id]=select.value;
-    card.dataset.status=select.value;
-    try{localStorage.setItem(CERT_STORAGE_KEY,JSON.stringify(certStates))}
-    catch{showCertStorageWarning()}
+    certStates[cert.id]=select.value;card.dataset.status=select.value;
+    try{localStorage.setItem(CERT_STORAGE_KEY,JSON.stringify(certStates))}catch{showCertStorageWarning()}
     refreshCertStats();
    });
    row.append(label,select);
-   card.append(eyebrow,title,issuer,summary,labs,prerequisites,next,a,row);
-   section.append(card);
+   top.append(identity,row);
+   const summary=el('p','cert-summary',cert.summary);
+   const details=el('details','cert-more');
+   const disclosure=el('summary','cert-more-toggle','Ver preparação e requisitos');
+   const body=el('div','cert-more-body');
+   const labs=el('div','cert-detail'),labsName=el('span','cert-detail-name','LABORATÓRIOS RELACIONADOS'),labsValue=el('p','',cert.labs);
+   labs.append(labsName,labsValue);
+   const prerequisites=el('div','cert-detail'),preName=el('span','cert-detail-name','PRÉ-REQUISITOS'),preValue=el('p','',cert.prerequisite);
+   prerequisites.append(preName,preValue);
+   const next=el('p','cert-next','Como se preparar: '+cert.next);
+   const a=el('a','cert-official','Consultar certificação oficial ↗');
+   a.href=cert.url;a.target='_blank';a.rel='noopener noreferrer';
+   body.append(labs,prerequisites,next,a);
+   details.append(disclosure,body);
+   card.append(top,summary,details);
+   grid.append(card);
   }
+  section.append(grid);
   levelsContainer.append(section);
  }
  refreshCertStats();

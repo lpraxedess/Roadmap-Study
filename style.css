@@ -283,3 +283,51 @@ footer.wrap{width:min(1498px,calc(100% - 48px));margin-inline:auto}
 .study-accordion>.phase-header:focus-visible{outline:2px solid #60d3ff;outline-offset:-3px}
 @keyframes page-enter{from{opacity:.7;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){.site-page{animation:none}}
+
+/* Certificações: layout editorial compacto, uma etapa por faixa */
+.certifications{margin:24px 0 48px;padding:clamp(20px,3vw,34px);background:#0b1520;border-color:#243d50;box-shadow:none}
+.certifications-heading h2{font-size:clamp(27px,3vw,37px);margin:10px 0}
+.certifications-heading>p{max-width:620px;line-height:1.7}
+.cert-main-path{margin-top:22px;padding:10px 14px;gap:5px;background:#0d2232;border-color:#28475b}
+.cert-main-path>div{padding:6px 10px}
+.cert-main-path strong{font-size:21px}
+.cert-main-path small{font-size:9px}
+.cert-statline{margin:22px 0 13px}
+.cert-levels{display:flex;flex-direction:column;gap:25px}
+.cert-level{display:block;min-width:0;padding:0;border:0;background:transparent}
+.cert-level-header{display:flex;align-items:center;gap:12px;padding:0 0 13px;border-bottom:1px solid #2b4051;margin:0 0 11px}
+.cert-level-index{width:34px;height:34px;font-size:13px;border-radius:8px}
+.cert-level-heading h3{font-size:17px}
+.cert-level-heading p{font-size:11px}
+.cert-list{display:grid;grid-template-columns:1fr;gap:8px}
+.cert-card{display:block;min-width:0;margin:0;padding:16px 18px;background:#0d1a27;border:1px solid #243b4d;border-radius:10px;box-shadow:none}
+.cert-card:hover{transform:none;box-shadow:none;border-color:#3b6986}
+.cert-card.cert-primary{background:#0e2130;border-color:#28516b}
+.cert-card-top{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.cert-card-identity{min-width:0;flex:1}
+.cert-card-meta{justify-content:flex-start;gap:10px;margin-bottom:4px}
+.cert-code{font-size:15px}
+.cert-category{padding:2px 6px;font-size:8px}
+.cert-card h4{font-size:13px;line-height:1.4}
+.cert-issuer{font-size:10px;margin:3px 0 0;color:#88aec4}
+.cert-summary{font-size:11.5px;line-height:1.65;margin:9px 0 0;color:#a5bdcd}
+.cert-choice{border:0;padding:0;display:flex;align-items:flex-start;flex-direction:column;gap:5px;flex:none;min-width:140px}
+.cert-choice-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#849db1}
+.cert-select{min-height:34px;width:145px;font-size:11px}
+.cert-more{margin-top:11px;border-top:1px solid #253e50;padding-top:10px}
+.cert-more-toggle{list-style:none;display:inline-flex;align-items:center;gap:8px;color:#8dd7f6;font-size:11px;font-weight:750;cursor:pointer;padding:3px 0}
+.cert-more-toggle::-webkit-details-marker{display:none}
+.cert-more-toggle:after{content:'+';font-size:16px;font-weight:500}
+.cert-more[open]>.cert-more-toggle:after{content:'−'}
+.cert-more-toggle:focus-visible{outline:2px solid #54cfff;outline-offset:3px;border-radius:3px}
+.cert-more-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px 22px;padding:14px 0 4px}
+.cert-detail{padding:0;border:0}
+.cert-detail-name{font-size:9px}
+.cert-detail p,.cert-next{font-size:11px;line-height:1.65;margin:5px 0 0}
+.cert-next{grid-column:1/-1}
+.cert-official{grid-column:1/-1;display:inline-flex;width:max-content;max-width:100%;padding:9px 12px;font-size:11px}
+.cert-footnote{margin-top:26px}
+.cert-retirement{margin-top:10px}
+@media(max-width:850px){.cert-levels{display:flex;flex-direction:column}.cert-level{display:block}.cert-list{display:grid;grid-template-columns:1fr}.cert-card{margin:0}}
+@media(max-width:650px){.certifications{padding:20px 14px}.cert-main-path{padding:10px 6px}.cert-main-path>div{padding:5px 3px}.cert-main-path strong{font-size:17px}.cert-card{padding:14px 12px}.cert-card-top{align-items:flex-start;gap:10px}.cert-choice{min-width:112px}.cert-select{width:112px;font-size:10px}.cert-more-body{grid-template-columns:1fr}.cert-next,.cert-official{grid-column:1}.cert-levels{gap:24px}}
+@media(max-width:410px){.cert-card-top{flex-direction:column}.cert-choice{flex-direction:row;align-items:center;width:100%;justify-content:space-between}.cert-card-meta{flex-wrap:wrap}.cert-main-path small{font-size:7px}}

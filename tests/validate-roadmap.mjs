@@ -79,3 +79,8 @@ assert.ok(app.includes("node('details','phase reveal study-accordion')"),'Módul
 assert.ok(app.includes("node('summary','phase-header')"),'Cabeçalho de módulo não é clicável');
 assert.ok(css.includes('.site-page[hidden]'),'Páginas ocultas sem estilo');
 console.log('NAVEGAÇÃO EM PÁGINAS OK: Visão geral / Estudos (10 módulos expansíveis) / Certificações.');
+
+assert.ok(navigation.includes("el('details','cert-more')"),'Detalhes de certificação devem ser recolhidos');
+assert.ok(navigation.includes("el('div','cert-list')"),'Certificações devem ser organizadas por lista');
+assert.ok(css.includes('.cert-card-top')&&css.includes('.cert-more-body'),'Estilos compactos ausentes');
+console.log('CERTIFICAÇÕES COMPACTAS OK: requisitos e laboratórios sob demanda.');
