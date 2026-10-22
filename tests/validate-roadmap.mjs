@@ -5,7 +5,7 @@ const app=readFileSync('app.js','utf8');
 const html=readFileSync('index.html','utf8');
 const css=readFileSync('style.css','utf8');
 new Script(app,{filename:'app.js'});
-const match=app.match(/const PHASES=(\\[.*?\\]);\\nconst LAB=/s);
+const match=app.match(/const PHASES=(\[.*?\]);\nconst LAB=/s);
 assert.ok(match,'PHASES precisa estar presente como JSON');
 const phases=JSON.parse(match[1]);
 const tasks=phases.flatMap(p=>p.items);
