@@ -67,3 +67,6 @@
 .search{transition:border-color var(--motion-normal),box-shadow var(--motion-normal)}
 @media(hover:none){.phase.is-visible:hover{transform:none}.guide-steps li:hover{padding-left:28px}.architecture span:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.phase{opacity:1!important;transform:none!important;transition:none!important}.phase.is-visible:hover{transform:none!important}.task-content,.infra-details[open] .infra-body,.architecture b,.progress-track span:after,.task-check:checked{animation:none!important}.guide-steps li:hover{padding-left:28px}.progress-track span{transition:none!important}}
+
+/* Progressive enhancement: keep content visible if JavaScript does not execute. */
+html:not(.js-motion) .phase{opacity:1;transform:none;animation:none;transition:none}
