@@ -331,3 +331,58 @@ footer.wrap{width:min(1498px,calc(100% - 48px));margin-inline:auto}
 @media(max-width:850px){.cert-levels{display:flex;flex-direction:column}.cert-level{display:block}.cert-list{display:grid;grid-template-columns:1fr}.cert-card{margin:0}}
 @media(max-width:650px){.certifications{padding:20px 14px}.cert-main-path{padding:10px 6px}.cert-main-path>div{padding:5px 3px}.cert-main-path strong{font-size:17px}.cert-card{padding:14px 12px}.cert-card-top{align-items:flex-start;gap:10px}.cert-choice{min-width:112px}.cert-select{width:112px;font-size:10px}.cert-more-body{grid-template-columns:1fr}.cert-next,.cert-official{grid-column:1}.cert-levels{gap:24px}}
 @media(max-width:410px){.cert-card-top{flex-direction:column}.cert-choice{flex-direction:row;align-items:center;width:100%;justify-content:space-between}.cert-card-meta{flex-wrap:wrap}.cert-main-path small{font-size:7px}}
+
+/* Preto profundo: superfícies neutras, azul reservado a ações e estados */
+:root{color-scheme:dark;background:#050505;--surface:#0b0b0c;--surface-raised:#111113;--border:#292a2e;--ink:#f1f3f6;--muted:#a8adb7}
+html,body{background:#050505;color:#f1f3f6}
+.ambient{background:radial-gradient(ellipse 55% 32% at 72% 10%,rgba(28,70,110,.07),transparent 80%);opacity:.6}
+.topbar{background:rgba(5,5,6,.94);border-bottom-color:#242426}
+.sidebar{background:#0a0a0c;border-color:#27272b;box-shadow:0 18px 50px #0008}
+.sidebar-top,.sidebar-foot{border-color:#242427}
+.sidebar-link:hover,.sidebar-primary.is-active-parent,.sidebar-link.is-active{background:#151619;border-color:#34383e}
+.sidebar-link.is-active:before{background:#43bfff}
+.sidebar-module-summary:hover,.sidebar-module-group[open]>.sidebar-module-summary{background:#17181a;border-color:#34363a}
+.sidebar-module-no,.sidebar-topic-no{background:#141517;border-color:#30333a}
+.sidebar-study-content,.sidebar-topic-list{border-left-color:#2c2d32}
+.sidebar-primary{color:#d4d8df}
+.sidebar-caption,.sidebar-eyebrow,.sidebar-foot{color:#a3acb8}
+.menu-toggle,.menu-close{background:#111113;border-color:#34373d}
+.hero h1 em{background:linear-gradient(115deg,#fff,#a8dfff 72%,#53bfff);background-clip:text}
+.dashboard{background:#0d0d0f;border-color:#2b2d32;box-shadow:0 18px 60px #0008}
+.dashboard:after{background:transparent}
+.progress-track{background:#222326}
+.learning-method{background:#0d0d0f;border-color:#292b30;box-shadow:none}
+.method-steps>div{background:#121214;border-color:#292b30}
+.method-cta{background:#11334a}
+.lab-infra,.lab-infra .infra-card,.infra-card,.module-blueprint,.phase,.guided-lab,.lesson-orientation,.validation{background:#0d0d0f;border-color:#292b30}
+.phase{background:#0b0b0d}
+.phase-header,.study-accordion>.phase-header{background:#0e0e10}
+.study-accordion>.phase-header:hover{background:#18191c}
+.task-summary:hover,.task-content,.study-nav a{background:#101012}
+.guide-steps li.step-checked{background:#10211f}
+.guide-steps li:hover{background:#17191d}
+.step-verify{background:#131417;border-color:#34373d}
+.step-checked .step-verify{background:#10211f}
+.source-notice{background:#131416;border-color:#303239}
+.source-reviewed{background:#10201e;border-color:#31504c}
+.source-pending{background:#211c15;border-color:#564633}
+.search,.search input,.filters button{background:#101012;border-color:#303138}
+.filters button.active{background:#102637}
+.actions button,.import{background:#141518;border-color:#30343b}
+.certifications{background:#080809;border-color:#26272b}
+.cert-main-path{background:#101113;border-color:#2b3036}
+.cert-level{background:transparent;border-color:transparent}
+.cert-level-header{border-bottom-color:#303137}
+.cert-level-index{background:#161719;border-color:#33363b}
+.cert-card,.cert-card.cert-primary{background:#111113;border-color:#2a2c31}
+.cert-card.cert-primary{border-left:3px solid #319ad0}
+.cert-card:hover{border-color:#4a505a}
+.cert-card[data-status="earned"]{border-color:#3e786f}
+.cert-category,.cert-card.cert-primary .cert-category{border-color:#343941}
+.cert-more,.cert-detail,.cert-choice{border-color:#2c2e33}
+.cert-select{background:#17181b;border-color:#393b42}
+.cert-retirement{background:#151412}
+.cert-official{background:#11171c;border-color:#355267}
+.backup{background:#0c0c0e;border-color:#292b30}
+.site-page{background:transparent}
+@media(max-width:1050px){.sidebar{background:#0a0a0c}.nav-scrim{background:rgba(0,0,0,.8)}}
