@@ -99,6 +99,12 @@ assert.ok(!css.includes('/* Correção global: violeta único'),'Patch cromátic
 
 for(const issuer of ['Okta','CyberArk / Idira','SailPoint','AWS'])assert.ok(certs.some(c=>c.issuer===issuer),'Fornecedor IAM ausente: '+issuer);
 assert.ok(motion.includes('MutationObserver')&&motion.includes("addEventListener('toggle'"),'Animações de navegação e expansão ausentes');
-assert.ok(css.includes('.sidebar-symbol{width:24px;height:24px'),'Alinhamento de ícones ausente');
-assert.ok(css.includes('::details-content'),'Transição de expansão ausente');
+assert.ok(css.includes('width:24px;height:24px;flex:none'),'Alinhamento de ícones ausente');
+assert.ok(css.includes('.site-page:not([hidden]){animation:fade-in'),'Animação de páginas ausente');
 console.log('CARREIRA E MOVIMENTO OK: Okta, CyberArk, AWS, SailPoint; transições e ícones alinhados.');
+assert.ok(css.length<35000,'CSS excessivo: evitar camadas de patches e regras obsoletas');
+assert.ok(css.includes('.menu-toggle,.menu-close{display:none!important}'),'Botões de menu não devem aparecer no desktop');
+assert.ok(css.includes('.phases{display:grid;gap:0'),'Lista de módulos precisa ser coesa');
+assert.ok(css.includes('grid-template-columns:minmax(0,1fr) 76px 27px'),'Contadores e ícones dos módulos devem ter colunas consistentes');
+assert.ok(css.includes('.cert-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))'),'Certificações devem usar grade responsiva');
+console.log('REDESIGN LIMPO OK: CSS enxuto, menu contextual, listas compactas e alinhamento.');
