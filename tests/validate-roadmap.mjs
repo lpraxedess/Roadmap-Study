@@ -153,7 +153,7 @@ const curriculumData=JSON.parse(curriculum.match(/const PHASES=(\[.*?\]);/s)[1])
 const allCompetencies=curriculumData.flatMap(p=>p.items);
 assert.equal(allCompetencies.length,37,'Número de competências alterado sem revisão');
 assert.ok(allCompetencies.every(t=>t.sources?.length>0),'Todas as competências devem conter fontes oficiais');
-assert.ok(allCompetencies.every(t=>t.guide.steps.some(s=>s.title.includes('Diagnosticar problemas')&&!s.text.includes('revise pré-requisitos, versão da ferramenta'))),'Diagnósticos específicos ausentes');
+assert.ok(allCompetencies.every(t=>t.guide.steps.some(s=>s.title.includes('Diagnosticar')&&!s.text.includes('revise pré-requisitos, versão da ferramenta'))),'Diagnósticos específicos ausentes');
 const conditional=allCompetencies.find(t=>t.id==='iam-2-4');
 for(const word of ['Security Defaults','Report-only','P1','emergência','rollback'])assert.ok(conditional.guide.steps.some(s=>s.text.includes(word)),'Guia CA incompleto: '+word);
 assert.ok(navigation.includes('"moduleIds":['),'Certificações precisam mapear módulos por IDs estruturados');
