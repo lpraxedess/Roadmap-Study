@@ -148,3 +148,15 @@ assert.ok(app.includes('lastTask:lastTask'),'Backup deve preservar último tópi
 assert.ok(app.includes('clearLastTask();save();render()'),'Zerar deve limpar o último tópico');
 assert.ok(css.includes('.advanced-filters{')&&css.includes('.module-progress-list{'),'Estilos de filtros e progresso ausentes');
 console.log('EVOLUÇÃO OK: retomada, progresso por módulo, filtros avançados e backup compatível.');
+
+const curriculumData=JSON.parse(curriculum.match(/const PHASES=(\[.*?\]);/s)[1]);
+const allCompetencies=curriculumData.flatMap(p=>p.items);
+assert.equal(allCompetencies.length,37,'Número de competências alterado sem revisão');
+assert.ok(allCompetencies.every(t=>t.sources?.length>0),'Todas as competências devem conter fontes oficiais');
+assert.ok(allCompetencies.every(t=>t.guide.steps.some(s=>s.title.includes('Diagnosticar problemas')&&!s.text.includes('revise pré-requisitos, versão da ferramenta'))),'Diagnósticos específicos ausentes');
+const conditional=allCompetencies.find(t=>t.id==='iam-2-4');
+for(const word of ['Security Defaults','Report-only','P1','emergência','rollback'])assert.ok(conditional.guide.steps.some(s=>s.text.includes(word)),'Guia CA incompleto: '+word);
+assert.ok(navigation.includes('"moduleIds":['),'Certificações precisam mapear módulos por IDs estruturados');
+assert.ok(app.includes('execution-mode-select')&&app.includes('executionModes:executionModes'),'Tipo de execução e backup ausentes');
+assert.ok(css.includes('html,body{background:#050505}')&&css.includes('background:#121212'),'Base visual deve ser preta e grafite');
+console.log('AUDITORIA DE CONTEÚDO OK: fontes, diagnósticos, CA, modos de execução e superfícies pretas.');

@@ -5,6 +5,9 @@ const tasks=PHASES.flatMap(p=>p.items),valid=new Set(tasks.map(t=>t.id));
 let done=new Set(),checkedSteps=new Set(),filter='all',query='',storageAvailable=true;
 const LAST_KEY='roadmap-iam-last-topic-v1';
 let lastTask=null,studyModule='all',studyLevel='all',studyTech='all',studyCert='all';
+const MODE_KEY='roadmap-iam-execution-mode-v1';
+let executionModes={};
+try{const stored=JSON.parse(localStorage.getItem(MODE_KEY)||'{}');if(stored&&typeof stored==='object'&&!Array.isArray(stored))for(const [id,mode] of Object.entries(stored))if(valid.has(id)&&['real','simulation'].includes(mode))executionModes[id]=mode}catch{storageAvailable=false}
 const stepIds=new Set(PHASES.flatMap(p=>p.items.flatMap(t=>t.guide.steps.map((s,i)=>t.id+'#'+i)))),totalSteps=stepIds.size;
 const $=id=>document.getElementById(id);
 try{const saved=localStorage.getItem(LAST_KEY);if(valid.has(saved))lastTask=saved}catch{storageAvailable=false}
@@ -33,12 +36,12 @@ function navigateToTask(id){
  rememberTask(id);
 }
 function updateLearningDashboard(){
- const current=tasks.find(t=>t.id===lastTask)||tasks.find(t=>!done.has(t.id))||tasks[0];
+ const current=tasks.find(t=>t.id===lastTask&&!done.has(t.id))||tasks.find(t=>!done.has(t.id))||tasks.find(t=>t.id===lastTask)||tasks[0];
  const phase=PHASES.find(p=>p.items.some(t=>t.id===current?.id));
  $('resume-title').textContent=current?current.title:'Todas as competências concluídas';
  $('resume-module').textContent=phase?phase.title:'Revisão da trilha';
  $('resume-link').href=current?'#task-'+current.id:'#roadmap-title';
- $('resume-link').textContent=lastTask?'Retomar tópico →':'Iniciar tópico →';
+ $('resume-link').textContent=lastTask&&!done.has(lastTask)?'Retomar tópico →':'Próxima pendência →';
  const list=$('module-progress-list');list.replaceChildren();
  PHASES.forEach((p,i)=>{
   const completed=p.items.filter(t=>done.has(t.id)).length;
@@ -74,7 +77,7 @@ function render(){
  const next=tasks.find(t=>!done.has(t.id));updateLearningDashboard();$('next').replaceChildren();if(next){const a=node('a','next-link','Continuar estudos → '+next.title);a.href='#task-'+next.id;a.addEventListener('click',event=>{event.preventDefault();navigateToTask(next.id)});$('next').append(a)}else $('next').textContent='Todas as competências concluídas.';
  $('phase-total').textContent=PHASES.length+' módulos';$('task-total').textContent=total+' competências';updateStepTotals();
  const continueLink=document.querySelector('.nav-start');
- if(continueLink){const target=tasks.find(t=>t.id===lastTask)||next;continueLink.href=target?'#task-'+target.id:'#roadmap-title';continueLink.textContent=target?'CONTINUAR →':'REVISAR →'}
+ if(continueLink){const target=tasks.find(t=>t.id===lastTask&&!done.has(t.id))||next||tasks.find(t=>t.id===lastTask);continueLink.href=target?'#task-'+target.id:'#roadmap-title';continueLink.textContent=target?'CONTINUAR →':'REVISAR →'}
  const sidebarValue=$('sidebar-progress-value'),sidebarFill=$('sidebar-progress-fill');
  if(sidebarValue)sidebarValue.textContent=pct+'%';
  if(sidebarFill)sidebarFill.style.width=pct+'%';
@@ -82,8 +85,8 @@ function render(){
  PHASES.forEach((p,i)=>{
   const level=i<3?'beginner':i<7?'intermediate':'advanced';
   const cert=typeof CERTIFICATIONS!=='undefined'?CERTIFICATIONS.find(c=>c.id===studyCert):null;
-  const certModules=cert?[...cert.labs.matchAll(/\b(?:0[1-9]|10)\b/g)].map(match=>Number(match[0])):[];
-  const items=p.items.filter(t=>(studyModule==='all'||studyModule===p.id)&&(studyLevel==='all'||studyLevel===level)&&(studyCert==='all'||(certModules.length?certModules.includes(i+1):normalize([p.title,t.title,t.guide.platform].join(' ')).includes(normalize(cert?.issuer))))&&(filter==='all'||(filter==='done'?done.has(t.id):!done.has(t.id)))&&[p.title,p.environment,p.outcome,t.title,t.evidence,t.guide.platform,t.guide.where,...t.guide.steps.map(s=>s.text),...t.study.map(s=>s.topic+' '+s.detail),...t.practice.map(s=>s.text)].join(' ').toLocaleLowerCase('pt-BR').includes(query)&& (studyTech==='all'||normalize([p.title,p.desc,t.title,t.guide.platform,t.guide.where,...t.guide.steps.map(s=>s.text)].join(' ')).includes(normalize(studyTech))));
+  const certModules=cert?(cert.moduleIds||[]):[];
+  const items=p.items.filter(t=>(studyModule==='all'||studyModule===p.id)&&(studyLevel==='all'||studyLevel===level)&&(studyCert==='all'||certModules.includes(i+1))&&(filter==='all'||(filter==='done'?done.has(t.id):!done.has(t.id)))&&[p.title,p.environment,p.outcome,t.title,t.evidence,t.guide.platform,t.guide.where,...t.guide.steps.map(s=>s.text),...t.study.map(s=>s.topic+' '+s.detail),...t.practice.map(s=>s.text)].join(' ').toLocaleLowerCase('pt-BR').includes(query)&& (studyTech==='all'||normalize([p.title,p.desc,t.title,t.guide.platform,t.guide.where,...t.guide.steps.map(s=>s.text)].join(' ')).includes(normalize(studyTech))));
   if(!items.length)return;visible+=items.length;
   const card=node('details','phase study-accordion'),head=node('summary','phase-header'),heading=node('div','phase-heading'),idx=node('span','phase-index',String(i+1).padStart(2,'0')),info=node('div'),title=node('h3','',p.title),desc=node('p','',p.desc),count=node('span','phase-count',p.items.filter(t=>done.has(t.id)).length+' / '+p.items.length);
   card.id='module-'+p.id;info.append(title,desc);heading.append(idx,info);head.append(heading,count);card.append(head);
@@ -95,7 +98,7 @@ function render(){
    chevron.append(svgIcon('chevron'));
    check.type='checkbox';check.checked=complete;check.setAttribute('aria-label','Concluir após confirmar os passos: '+t.title);
    check.addEventListener('click',e=>e.stopPropagation());
-   check.addEventListener('change',()=>{if(check.checked&&t.guide.steps.some((s,i)=>!checkedSteps.has(t.id+'#'+i))){check.checked=false;details.open=true;const remaining=t.guide.steps.filter((s,i)=>!checkedSteps.has(t.id+'#'+i)).length;message('Confirme os '+remaining+' passos restantes antes de concluir.');const missing=details.querySelector('.step-confirm:not(:checked)');if(missing)missing.focus({preventScroll:true});return}check.checked?done.add(t.id):done.delete(t.id);save();refreshKeepingOpen('details[data-id="'+t.id+'"] .task-check')});
+   check.addEventListener('change',()=>{if(check.checked&&!executionModes[t.id]){check.checked=false;details.open=true;message('Selecione execução REAL ou SIMULAÇÃO antes de concluir.');details.querySelector('.execution-mode-select')?.focus({preventScroll:true});return}if(check.checked&&t.guide.steps.some((s,i)=>!checkedSteps.has(t.id+'#'+i))){check.checked=false;details.open=true;const remaining=t.guide.steps.filter((s,i)=>!checkedSteps.has(t.id+'#'+i)).length;message('Confirme os '+remaining+' passos restantes antes de concluir.');const missing=details.querySelector('.step-confirm:not(:checked)');if(missing)missing.focus({preventScroll:true});return}check.checked?done.add(t.id):done.delete(t.id);save();refreshKeepingOpen('details[data-id="'+t.id+'"] .task-check')});
    summary.append(check,name,badge,chevron);details.dataset.id=t.id;details.id='task-'+t.id;details.append(summary);
    const content=node('div','task-content');
    const theory=node('div','content-block'),theoryLabel=node('span','content-label','ESTUDAR'),studyList=node('div','study-list');
@@ -125,7 +128,20 @@ function render(){
     label.append(input,caption);li.append(h,p,label);guideSteps.append(li)});
    guided.append(guideSteps);
    const validation=node('div','validation'),validationTitle=node('span','content-label','CRITÉRIO DE CONCLUSÃO'),validationText=node('p','',t.evidence),validationMode=node('span','validation-mode',t.mode);
-   validation.append(validationTitle,validationText,validationMode);
+   const executionLabel=node('label','execution-mode-label','COMO VOCÊ EXECUTOU ESTE LABORATÓRIO?');
+   const executionSelect=node('select','execution-mode-select');
+   executionSelect.setAttribute('aria-label','Tipo de execução: '+t.title);
+   for(const [value,label] of [['','Selecione antes de concluir'],['real','REAL — executei e conferi no ambiente'],['simulation','SIMULAÇÃO — exercício documental']]){const option=node('option','',label);option.value=value;executionSelect.append(option)}
+   executionSelect.value=executionModes[t.id]||'';
+   executionSelect.addEventListener('change',()=>{
+    if(executionSelect.value)executionModes[t.id]=executionSelect.value;else delete executionModes[t.id];
+    if(done.has(t.id)){done.delete(t.id);check.checked=false;badge.textContent='Pendente';details.classList.remove('done')}
+    try{localStorage.setItem(MODE_KEY,JSON.stringify(executionModes))}catch{storageAvailable=false}
+    save();refreshKeepingOpen();
+   });
+   executionLabel.append(executionSelect);
+   const executionNotice=node('p','execution-mode-notice','O progresso é autodeclarado: selecionar REAL não verifica o Entra ID, AD ou Intune. Guarde evidências sanitizadas e resultados de testes.');
+   validation.append(validationTitle,validationText,validationMode,executionLabel,executionNotice);
    content.append(orientation,resource,theory,lab,guided,validation,link);details.append(content);body.append(details);
   });card.append(body);list.append(card);
  });
@@ -133,7 +149,7 @@ function render(){
  const results=$('results-count');if(results){const modules=list.querySelectorAll('.study-accordion').length;results.textContent=modules+' módulos · '+visible+' competências exibidas'}
  if(typeof window.CustomEvent==='function')window.dispatchEvent(new CustomEvent('iam:roadmap-rendered'));
 }
-$('resume-link').addEventListener('click',event=>{const current=tasks.find(t=>t.id===lastTask)||tasks.find(t=>!done.has(t.id));if(current){event.preventDefault();navigateToTask(current.id)}});
+$('resume-link').addEventListener('click',event=>{const current=tasks.find(t=>t.id===lastTask&&!done.has(t.id))||tasks.find(t=>!done.has(t.id))||tasks.find(t=>t.id===lastTask);if(current){event.preventDefault();navigateToTask(current.id)}});
 document.getElementById('roadmap-list').addEventListener('toggle',event=>{
  const item=event.target;
  if(item instanceof HTMLDetailsElement&&item.open&&item.classList.contains('task'))rememberTask(item.dataset.id);
@@ -168,8 +184,8 @@ $('collapse-all').addEventListener('click',()=>{
 });
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',x===b?'true':'false')});render()}));
 function getCertificationsForBackup(){try{const value=JSON.parse(localStorage.getItem('roadmap-iam-certifications-v1')||'{}');return value&&typeof value==='object'&&!Array.isArray(value)?value:{}}catch{return {}}}
-$('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:3,completed:[...done],steps:[...checkedSteps],certifications:getCertificationsForBackup(),lastTask:lastTask,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download='roadmap-iam-backup.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);message('Backup exportado.')});
-$('import').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>100000)throw Error('Arquivo muito grande');const data=JSON.parse(await file.text());if(![2,3].includes(data.version)||!Array.isArray(data.completed)||!data.completed.every(id=>typeof id==='string'&&valid.has(id)))throw Error('Formato incompatível');if(data.completed.length>tasks.length)throw Error('Backup contém itens demais');if(data.version===3&&(!Array.isArray(data.steps)||data.steps.length>totalSteps||!data.steps.every(id=>typeof id==='string'&&stepIds.has(id))))throw Error('Passos do backup inválidos');if(data.lastTask!==undefined&&data.lastTask!==null&&!valid.has(data.lastTask))throw Error('Último tópico inválido');if(data.certifications!==undefined&&(data.certifications===null||typeof data.certifications!=='object'||Array.isArray(data.certifications)||Object.keys(data.certifications).length>30||!Object.entries(data.certifications).every(([key,value])=>/^[a-z0-9-]{1,30}$/.test(key)&&['planned','studying','earned'].includes(value))))throw Error('Plano de certificações inválido');if(!confirm('A importação substituirá seu progresso atual ('+done.size+' competências). Continuar?')){message('Importação cancelada.');return}done=new Set(data.completed);checkedSteps=new Set(data.version===3?data.steps:[]);lastTask=data.lastTask&&valid.has(data.lastTask)?data.lastTask:null;try{if(lastTask)localStorage.setItem(LAST_KEY,lastTask);else localStorage.removeItem(LAST_KEY)}catch{storageAvailable=false}save();render();if(data.certifications!==undefined){try{localStorage.setItem('roadmap-iam-certifications-v1',JSON.stringify(data.certifications));document.dispatchEvent(new Event('iam:certifications-imported'))}catch{storageAvailable=false}}message(storageAvailable?'Backup importado e salvo.':'Backup importado apenas nesta sessão; exporte uma cópia.')}catch(err){message('Erro: '+err.message)}finally{e.target.value=''}});
-$('reset').addEventListener('click',()=>{if(confirm('Apagar competências, passos e plano de certificações deste navegador?')){done.clear();checkedSteps.clear();clearLastTask();save();render();try{localStorage.removeItem('roadmap-iam-certifications-v1');document.dispatchEvent(new Event('iam:certifications-imported'))}catch{storageAvailable=false}message(storageAvailable?'Progresso e plano de certificações zerados.':'Progresso zerado apenas nesta sessão; armazenamento indisponível.')}});
+$('export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({version:3,completed:[...done],steps:[...checkedSteps],certifications:getCertificationsForBackup(),lastTask:lastTask,executionModes:executionModes,exportedAt:new Date().toISOString()},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=node('a');a.href=url;a.download='roadmap-iam-backup.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);message('Backup exportado.')});
+$('import').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>100000)throw Error('Arquivo muito grande');const data=JSON.parse(await file.text());if(![2,3].includes(data.version)||!Array.isArray(data.completed)||!data.completed.every(id=>typeof id==='string'&&valid.has(id)))throw Error('Formato incompatível');if(data.completed.length>tasks.length)throw Error('Backup contém itens demais');if(data.version===3&&(!Array.isArray(data.steps)||data.steps.length>totalSteps||!data.steps.every(id=>typeof id==='string'&&stepIds.has(id))))throw Error('Passos do backup inválidos');if(data.lastTask!==undefined&&data.lastTask!==null&&!valid.has(data.lastTask))throw Error('Último tópico inválido');if(data.executionModes!==undefined&&(data.executionModes===null||typeof data.executionModes!=='object'||Array.isArray(data.executionModes)||Object.keys(data.executionModes).length>tasks.length||!Object.entries(data.executionModes).every(([id,mode])=>valid.has(id)&&['real','simulation'].includes(mode))))throw Error('Modos de execução inválidos');if(data.certifications!==undefined&&(data.certifications===null||typeof data.certifications!=='object'||Array.isArray(data.certifications)||Object.keys(data.certifications).length>30||!Object.entries(data.certifications).every(([key,value])=>/^[a-z0-9-]{1,30}$/.test(key)&&['planned','studying','earned'].includes(value))))throw Error('Plano de certificações inválido');if(!confirm('A importação substituirá seu progresso atual ('+done.size+' competências). Continuar?')){message('Importação cancelada.');return}done=new Set(data.completed);checkedSteps=new Set(data.version===3?data.steps:[]);executionModes=data.executionModes||{};try{localStorage.setItem(MODE_KEY,JSON.stringify(executionModes))}catch{storageAvailable=false}lastTask=data.lastTask&&valid.has(data.lastTask)?data.lastTask:null;try{if(lastTask)localStorage.setItem(LAST_KEY,lastTask);else localStorage.removeItem(LAST_KEY)}catch{storageAvailable=false}save();render();if(data.certifications!==undefined){try{localStorage.setItem('roadmap-iam-certifications-v1',JSON.stringify(data.certifications));document.dispatchEvent(new Event('iam:certifications-imported'))}catch{storageAvailable=false}}message(storageAvailable?'Backup importado e salvo.':'Backup importado apenas nesta sessão; exporte uma cópia.')}catch(err){message('Erro: '+err.message)}finally{e.target.value=''}});
+$('reset').addEventListener('click',()=>{if(confirm('Apagar competências, passos e plano de certificações deste navegador?')){done.clear();checkedSteps.clear();executionModes={};try{localStorage.removeItem(MODE_KEY)}catch{storageAvailable=false}clearLastTask();save();render();try{localStorage.removeItem('roadmap-iam-certifications-v1');document.dispatchEvent(new Event('iam:certifications-imported'))}catch{storageAvailable=false}message(storageAvailable?'Progresso e plano de certificações zerados.':'Progresso zerado apenas nesta sessão; armazenamento indisponível.')}});
 render();
 try{if(localStorage.getItem(OLD)&&!localStorage.getItem(KEY))message('Novo currículo: o progresso anterior não foi migrado. Exporte seu backup antigo antes de atualizar.')}catch{message('Armazenamento indisponível. Exporte um backup para preservar o progresso.')}

@@ -87,7 +87,7 @@ try{
  await evaluate('document.querySelector("[data-page=studies]").click()');
  await until('!document.querySelector("#page-studies").hidden','navegação Estudos');
  assert.equal(await evaluate('document.querySelectorAll(".study-accordion[open]").length'),0,'Módulos deveriam iniciar recolhidos');
- await evaluate('(()=>{const mod=document.querySelector(".study-accordion");mod.open=true;const task=mod.querySelector(".task");task.open=true;for(const step of task.querySelectorAll(".step-confirm")){step.checked=true;step.dispatchEvent(new Event("change",{bubbles:true}))}const box=task.querySelector(".task-check");box.checked=true;box.dispatchEvent(new Event("change",{bubbles:true}));return true})()');
+ await evaluate('(()=>{const mod=document.querySelector(".study-accordion");mod.open=true;const task=mod.querySelector(".task");task.open=true;const mode=task.querySelector(".execution-mode-select");mode.value="real";mode.dispatchEvent(new Event("change",{bubbles:true}));const current=document.querySelector(".study-accordion .task");current.open=true;for(const step of current.querySelectorAll(".step-confirm")){step.checked=true;step.dispatchEvent(new Event("change",{bubbles:true}))}const box=current.querySelector(".task-check");box.checked=true;box.dispatchEvent(new Event("change",{bubbles:true}));return true})()');
  const state=await evaluate('({modules:document.querySelectorAll(".study-accordion[open]").length,tasks:document.querySelectorAll("#roadmap-list .task[open]").length,done:JSON.parse(localStorage.getItem("roadmap-iam-progress-v2")||"[]").length})');
  assert.deepEqual(state,{modules:1,tasks:1,done:1},'Restauração de módulos e progresso incorreta');
  await until('localStorage.getItem("roadmap-iam-last-topic-v1")!==null','último tópico persistido');
@@ -95,11 +95,12 @@ try{
  assert.ok(remembered,'Último tópico não foi registrado');
  const progress=await evaluate('({rows:document.querySelectorAll(".module-progress-row").length,resume:document.querySelector("#resume-link").getAttribute("href")})');
  assert.equal(progress.rows,10,'Painel de progresso não exibe todos os módulos');
- assert.equal(progress.resume,'#task-'+remembered,'Retomada não aponta para o tópico salvo');
+ assert.notEqual(progress.resume,'#task-'+remembered,'Retomada deve priorizar próxima competência pendente');
  const filtered=await evaluate('(()=>{const el=document.querySelector("#module-filter");el.value=el.options[1].value;el.dispatchEvent(new Event("change",{bubbles:true}));return document.querySelectorAll(".study-accordion").length})()');
  assert.equal(filtered,1,'Filtro de módulo não funciona');
  await evaluate('document.querySelector("#clear-study-filters").click()');
  assert.equal(await evaluate('document.querySelectorAll(".study-accordion").length'),10,'Limpar filtros não restaurou módulos');
+ assert.equal(await evaluate('JSON.parse(localStorage.getItem("roadmap-iam-execution-mode-v1")||"{}")["'+"iam-0-0"+'"]'),'real','Modo de execução não persistiu');
  await screenshot('study-desktop');
  await evaluate('document.querySelector("[data-page=certifications]").click()');
  await until('!document.querySelector("#page-certifications").hidden','navegação Certificações');

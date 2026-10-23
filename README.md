@@ -80,3 +80,15 @@ O painel inicial apresenta **Retomar estudos** e progresso percentual por módul
 Em **Estudos**, os filtros avançados permitem selecionar módulo, faixa de aprofundamento (01–03 fundamentos, 04–07 intermediário e 08–10 avançado), tecnologia mencionada no material e certificação. A associação entre certificações e módulos utiliza as referências de laboratórios cadastradas e serve como orientação, não como equivalência oficial entre conteúdos e exames. A busca textual continua combinável com os filtros e o botão **Limpar filtros** restaura a lista completa.
 
 Os testes automatizados verificam retomada, persistência, filtros, navegação e responsividade. As faixas de aprofundamento são uma classificação editorial da trilha, não uma dificuldade oficial emitida por certificadoras.
+
+## Auditoria técnica e identidade visual — outubro de 2026
+
+A interface usa superfícies pretas e grafite, mantendo o azul apenas como cor de destaque, foco e progresso.
+
+As 37 competências agora possuem links de referência, observações de diagnóstico contextualizadas e critérios de aceite que distinguem execução **REAL** de **SIMULAÇÃO**. A classificação é uma declaração do estudante, não uma verificação automática do tenant. O tipo de execução deve ser selecionado para concluir uma competência, é salvo em `roadmap-iam-execution-mode-v1` e incluído no backup JSON v3 como campo opcional `executionModes`. Backups anteriores continuam aceitos. Se a execução for alterada, a competência volta ao estado pendente para nova confirmação.
+
+O laboratório de Conditional Access ensina a verificar Security Defaults, licenciamento P1, contas de emergência, políticas de substituição, Report-only, migração segura, testes e reversão. **Nunca desative Security Defaults somente para experimentar CA sem preparar proteções equivalentes e recuperar o acesso administrativo.** Sem condições de execução segura, mantenha Security Defaults e marque a atividade como simulação.
+
+O painel de retomada prioriza competências ainda pendentes. A correspondência entre certificações e módulos agora é armazenada por números explícitos, sem interpretar textos de descrição em tempo de execução.
+
+Os links documentais foram cadastrados, mas isso não representa verificação ao vivo de cada URL nem validação de cada operação contra um tenant real. Os testes automatizados verificam estrutura, renderização, persistência e fluxos básicos; não substituem execução manual em AD, Entra, Intune, PIM, SCIM e produtos de terceiros.
