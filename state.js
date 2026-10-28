@@ -70,7 +70,7 @@ globalThis.IAMState = (() => {
   }
   function canComplete(data,id) {
    const task = byId.get(id);
-   return !!task && MODES.includes(data.modes[id]) && (data.notes[id] || '').trim().length >= 12 && task.guide.steps.every(s => data.steps.includes(id + '/' + s.id)) && task.acceptance.every(s => data.tests.includes(id + '/' + s.id));
+   return !!task && MODES.includes(data.modes[id]) && task.guide.steps.every(s => data.steps.includes(id + '/' + s.id)) && task.acceptance.every(s => data.tests.includes(id + '/' + s.id));
   }
   let data = blank();
   try {
