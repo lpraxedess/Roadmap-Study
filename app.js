@@ -12,7 +12,6 @@ const filters={query:'',module:'all',level:'all',tech:'all',cert:'all',status:'a
 const normalize = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function node(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;}
 function link(text,href,cls=''){const el=node('a',cls,text);el.href=href;return el;}
-function external(text,url){const a=link(text+' ↗',url);a.target='_blank';a.rel='noopener noreferrer';return a;}
 function message(text){$('message').textContent=text;const toast=$('global-toast');toast.textContent=text;toast.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),5000);}
 function sync(){state=store.get();$('storage-warning').hidden=store.available();}
 function commit(change){const ok=store.update(change);sync();if(!ok)message('Não foi possível salvar. Exporte um backup desta sessão antes de sair.');return ok;}
@@ -66,12 +65,10 @@ function renderLesson(t){
  summary.addEventListener('click',()=>{if(!details.open){commit(d=>{d.lastTask=t.id});dashboard();}});
  const content=node('div','task-content'),intro=block('Nesta aula');
  intro.append(node('p','lesson-meta',({beginner:'Fundamentos',intermediate:'Intermediário',advanced:'Avançado'}[t.difficulty])+' · '+'Atividade '+String(t.sequence).padStart(2,'0')));
- const requirements=node('details','lesson-extra');requirements.append(node('summary','','Recursos necessários'),node('p','',t.lab.resource+' '+t.lab.costNote));intro.append(requirements);
- intro.prepend(link('↗ '+t.stageLabel+' · consultar o desenho','#arch-stage-'+t.stageId,'lesson-architecture-link'));
  intro.append(node('p','lesson-action','O que você vai construir: '+t.labAction));
  content.append(intro);
  const study=block('1. Entenda o conceito');for(const item of t.study){study.append(node('h5','',item.topic),node('p','',item.detail));}content.append(study);
- const lab=block('2. Execute e observe');lab.append(node('p','lesson-platform',t.guide.platform),node('p','muted',t.guide.where));
+ const lab=block('2. Execute e observe');
  const steps=node('ol','guide-steps');
  const firstPending=t.guide.steps.findIndex(step=>!state.steps.includes(t.id+'/'+step.id));
  const active=Math.min(t.guide.steps.length-1,Math.max(0,guidePositions[t.id]??(firstPending<0?t.guide.steps.length-1:firstPending)));
@@ -85,7 +82,7 @@ function renderLesson(t){
  }lab.append(steps);const guideNav=node('div','guide-navigation');for(const [label,delta] of [['← Passo anterior',-1],['Próximo passo →',1]]){const button=node('button','button secondary',label);button.type='button';button.disabled=showAll||(delta<0?active===0:active===t.guide.steps.length-1);button.id='guide-'+(delta<0?'prev-':'next-')+t.id;button.addEventListener('click',()=>{guidePositions[t.id]=active+delta;preserveRender('step-'+t.id+'-'+t.guide.steps[active+delta].id);});guideNav.append(button);}const all=node('button','text-action',showAll?'Mostrar um passo por vez':'Ver todos os passos');all.type='button';all.id='guide-all-'+t.id;all.addEventListener('click',()=>{if(showAll)expandedGuides.delete(t.id);else expandedGuides.add(t.id);preserveRender(all.id);});guideNav.append(all);lab.append(guideNav);content.append(lab);
  const verification=block('3. Valide os resultados');
  for(const test of t.acceptance){const key=t.id+'/'+test.id,inputId='test-'+t.id+'-'+test.id;verification.append(checkbox(inputId,test.text,state.tests.includes(key),checked=>{commit(d=>{d.tests=checked?[...d.tests,key]:d.tests.filter(x=>x!==key)});preserveRender(inputId);}));}
- const extra=node('details','lesson-extra');extra.append(node('summary','','Desafio e como desfazer'),node('p','',t.challenge),node('p','muted','Como desfazer: '+t.rollback));verification.append(extra);content.append(verification);
+ content.append(verification);
  const evidence=block('Concluir aula');const modeLabel=node('label','field-label','Tipo de execução'),select=node('select','execution-mode-select');select.id='mode-'+t.id;
  for(const [value,text] of [['','Selecione'],['real','Prática real — executei todos os critérios'],['mixed','Parcial — parte real, parte simulada'],['simulation','Simulação — somente estudo documental']]){const opt=node('option','',text);opt.value=value;select.append(opt);}select.value=state.modes[t.id]||'';modeLabel.htmlFor=select.id;
  select.addEventListener('change',()=>{commit(d=>{if(select.value)d.modes[t.id]=select.value;else delete d.modes[t.id];d.completed=d.completed.filter(id=>id!==t.id)});preserveRender(select.id);});evidence.append(modeLabel,select);
@@ -94,7 +91,6 @@ function renderLesson(t){
  const buttons=node('div','lesson-actions'),finish=node('button','button',complete?'Reabrir lição':'Concluir aula');finish.id='complete-'+t.id;finish.type='button';
  finish.addEventListener('click',()=>{commit(d=>{d.notes[t.id]=notes.value});const wasComplete=state.completed.includes(t.id);if(!wasComplete&&!store.canComplete(t.id)){message('Confirme as etapas e os resultados; selecione como realizou a aula.');select.focus();return;}commit(d=>{d.completed=wasComplete?d.completed.filter(id=>id!==t.id):[...d.completed,t.id];if(!wasComplete)d.legacy=d.legacy.filter(id=>id!==t.id)});preserveRender(finish.id);});
  const exportEvidence=node('button','button secondary','Baixar evidência');exportEvidence.type='button';exportEvidence.addEventListener('click',()=>download('Aurora-'+t.id+'.md','# '+t.title+'\n\nData: '+new Date().toISOString()+'\nVersão: '+CURRICULUM_VERSION+'\nModo: '+(state.modes[t.id]||'Não definido')+'\n\n'+(state.notes[t.id]||'Sem evidência registrada')+'\n\n'+t.acceptance.map(a=>'- ['+(state.tests.includes(t.id+'/'+a.id)?'x':' ')+'] '+a.text).join('\n')));buttons.append(finish);notebook.append(exportEvidence);evidence.append(buttons);content.append(evidence);
- const sources=node('details','lesson-extra');sources.append(node('summary','','Consultar referências'));for(const source of t.sources)sources.append(external(source.label,source.url));sources.append(node('p','muted','Revisão editorial: '+t.reviewedAt+'. '+(t.testedAt?'Teste registrado: '+t.testedAt:'Procedimento de produto não executado automaticamente pelo portal. Confira a versão, suporte e licenças atuais.')));content.append(sources);
  const index=orderedTasks.findIndex(x=>x.id===t.id),lessonNav=node('nav','lesson-sequence');lessonNav.setAttribute('aria-label','Ordem de construção');if(index>0)lessonNav.append(link('← Tema anterior: '+orderedTasks[index-1].title,'#task-'+orderedTasks[index-1].id));if(index<orderedTasks.length-1)lessonNav.append(link('Próximo tema: '+orderedTasks[index+1].title+' →','#task-'+orderedTasks[index+1].id));content.append(lessonNav);details.append(content);return details;
 }
 function render(){
