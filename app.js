@@ -3,6 +3,7 @@ const $ = id => document.getElementById(id);
 const tasks = PHASES.flatMap(p => p.items);
 const orderedTasks=[...tasks].sort((a,b)=>a.sequence-b.sequence);
 const guidePositions={},expandedGuides=new Set();
+let currentLesson=null;
 let storage;
 try { storage=window.localStorage; } catch { storage={getItem(){throw Error('indisponível')},setItem(){throw Error('indisponível')}}; }
 const store = IAMState.create(PHASES,CERTIFICATIONS,storage);
@@ -18,17 +19,23 @@ function commit(change){const ok=store.update(change);sync();if(!ok)message('Nã
 function download(name,text,type='text/plain;charset=utf-8') {const url=URL.createObjectURL(new Blob([text],{type}));const a=link('',url);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 function preserveRender(focusId){const open=[...document.querySelectorAll('#roadmap-list details[open][id]')].map(e=>e.id);const active=focusId||document.activeElement?.id;render();for(const id of open)if($(id))$(id).open=true;if(active&&$(active))$(active).focus({preventScroll:true});}
 function resetFilters(){for(const key of Object.keys(filters))filters[key]=key==='query'?'':'all';$('search').value='';for(const id of ['module','level','tech','cert','track'])if($(id+'-filter'))$(id+'-filter').value='all';document.querySelectorAll('[data-filter]').forEach(b=>{b.classList.toggle('active',b.dataset.filter==='all');b.setAttribute('aria-pressed',String(b.dataset.filter==='all'))});}
+function showStudyList(){
+ currentLesson=null;document.querySelector('.roadmap').hidden=false;$('lesson-reader').hidden=true;
+}
+function openLesson(id,focus=true){
+ const t=tasks.find(t=>t.id===id);if(!t)return;
+ currentLesson=id;document.querySelector('.roadmap').hidden=true;
+ const reader=$('lesson-reader');reader.hidden=false;reader.replaceChildren(link('← Voltar à trilha','#estudos','reader-back'),renderLesson(t));
+ if(focus){const title=reader.querySelector('h2');title.focus({preventScroll:true});window.scrollTo(0,0);}
+}
 function reveal(id,options={}){
- if(id.startsWith('task-')&&!tasks.some(t=>'task-'+t.id===id)||id.startsWith('module-')&&!PHASES.some(p=>'module-'+p.id===id))return;
- if(!$(id)){resetFilters();render();}
+ const isTask=id.startsWith('task-'),t=tasks.find(t=>'task-'+t.id===id);
+ if(isTask&&!t)return;
+ if(!isTask&&!PHASES.some(p=>'module-'+p.id===id))return;
  window.IAMNavigation?.show('studies',{history:false,focus:false});
- const target=$(id);if(!target)return;
- const phase=target.closest('.study-accordion');if(phase)phase.open=true;
- if(target.tagName==='DETAILS')target.open=true;
  if(!options.keepHash&&location.hash!=='#'+id)history.pushState(null,'','#'+id);
- target.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
- target.querySelector('summary')?.focus({preventScroll:true});
- if(id.startsWith('task-')){commit(d=>{d.lastTask=id.slice(5)});dashboard();}
+ if(isTask){commit(d=>{d.lastTask=t.id});dashboard();openLesson(t.id);}
+ else {showStudyList();if(!$(id)){resetFilters();render();}$(id)?.scrollIntoView({block:'start'});}
 }
 function nextTask(){const candidates=orderedTasks;return candidates.find(t=>t.id===state.lastTask&&!state.completed.includes(t.id))||candidates.find(t=>!state.completed.includes(t.id));}
 function dashboard(){
@@ -54,8 +61,8 @@ function matches(task,phase){
 function block(title){const e=node('section','lesson-block');e.append(node('h4','',title));return e;}
 function checkbox(id,text,checked,onchange){const label=node('label','check-row'),input=node('input');input.type='checkbox';input.id=id;input.checked=checked;input.addEventListener('change',()=>onchange(input.checked));label.append(input,node('span','',text));return label;}
 function renderLesson(t){
- const complete=state.completed.includes(t.id),details=node('details','task'+(complete?' done':''));details.id='task-'+t.id;
- const summary=node('summary','task-summary');summary.append(node('span','task-title',t.title),node('span','task-badge',complete?'Concluída':state.legacy.includes(t.id)?'Revisar':'Pendente'));details.append(summary);
+ const complete=state.completed.includes(t.id),details=node('article','task lesson-reader-card'+(complete?' done':''));details.id='task-'+t.id;
+ const summary=node('header','reader-heading'),title=node('h2','',t.title);title.tabIndex=-1;summary.append(title,node('span','task-badge',complete?'Concluída':state.legacy.includes(t.id)?'Revisar':'Em estudo'));details.append(summary);
  summary.addEventListener('click',()=>{if(!details.open){commit(d=>{d.lastTask=t.id});dashboard();}});
  const content=node('div','task-content'),intro=block('Nesta aula');
  intro.append(node('p','lesson-meta',({beginner:'Fundamentos',intermediate:'Intermediário',advanced:'Avançado'}[t.difficulty])+' · '+'Atividade '+String(t.sequence).padStart(2,'0')));
@@ -93,13 +100,14 @@ function renderLesson(t){
 function render(){
  dashboard();const list=$('roadmap-list');list.replaceChildren();let count=0;
  for(const phase of PHASES){const items=phase.items.filter(t=>matches(t,phase));if(!items.length)continue;count+=items.length;
-  const card=node('details','study-accordion');card.id='module-'+phase.id;
-  const head=node('summary','phase-header'),titles=node('span');titles.append(node('span','phase-index',phase.number===0?'INÍCIO':String(phase.number).padStart(2,'0')),node('strong','',phase.title),node('small','',phase.desc));head.append(titles,node('span','phase-count',phase.items.filter(t=>state.completed.includes(t.id)).length+' / '+phase.items.length));card.append(head);
+  const card=node('section','study-accordion');card.id='module-'+phase.id;
+  const head=node('div','phase-header'),titles=node('span');titles.append(node('span','phase-index',phase.number===0?'INÍCIO':String(phase.number).padStart(2,'0')),node('strong','',phase.title),node('small','',phase.desc));head.append(titles,node('span','phase-count',phase.items.filter(t=>state.completed.includes(t.id)).length+' / '+phase.items.length));card.append(head);
   const blueprint=node('details','module-blueprint');blueprint.append(node('summary','','Sobre este módulo'));blueprint.append(node('p','',phase.environment),node('p','muted',phase.requirements),node('p','expected','Entrega: '+phase.outcome));card.append(blueprint);
-  const lessons=node('div','tasks');for(const t of [...items].sort((a,b)=>a.sequence-b.sequence))lessons.append(renderLesson(t));card.append(lessons);list.append(card);
+  const lessons=node('div','tasks');for(const t of [...items].sort((a,b)=>a.sequence-b.sequence)){const a=link('','#task-'+t.id,'lesson-entry');a.append(node('span','entry-number',String(t.sequence).padStart(2,'0')),node('span','entry-title',t.title),node('span','entry-status',state.completed.includes(t.id)?'✓ Concluída':'Estudar →'));lessons.append(a);}card.append(lessons);list.append(card);
  }
- $('results-count').textContent=count+' de '+tasks.length+' lições';$('empty').hidden=count>0;
+ $('results-count').textContent=count+' de '+tasks.length+' lições';$('empty').hidden=count>0;if(currentLesson)openLesson(currentLesson,false);
 }
+const reader=node('div','lesson-reader');reader.id='lesson-reader';reader.hidden=true;$('page-studies').append(reader);
 for(const p of PHASES){const opt=node('option','',p.title);opt.value=p.id;$('module-filter').append(opt);}
 for(const tech of [...new Set(tasks.flatMap(t=>t.technologies))].sort()){const opt=node('option','',tech);opt.value=tech;$('tech-filter').append(opt);}
 for(const c of CERTIFICATIONS){const opt=node('option','',c.code);opt.value=c.id;$('cert-filter').append(opt);}
@@ -115,6 +123,6 @@ $('export').addEventListener('click',()=>download('roadmap-iam-backup-v4.json',J
 $('import-button').addEventListener('click',()=>$('import').click());
 $('import').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1000000)throw Error('Arquivo maior que 1 MB.');const data=JSON.parse(await file.text());store.validate(data);if(!confirm('Substituir o progresso desta sessão pelo backup?'))return;const saved=store.import(data);sync();render();window.IAMNavigation?.renderCertifications();message(saved?(store.notice()||'Backup importado e salvo.'): 'Importado somente nesta sessão. Exporte um backup antes de sair.');}catch(error){message('Importação não realizada: '+error.message);}finally{e.target.value='';}});
 $('reset').addEventListener('click',()=>{if(!confirm('Zerar lições, evidências e certificações? Exporte antes se deseja guardar o histórico.'))return;const saved=store.reset();sync();render();window.IAMNavigation?.renderCertifications();message(saved?'Progresso zerado.':'Zerado somente nesta sessão; armazenamento indisponível.');});
-window.IAMApp={reveal,render,resetFilters,store,getState:()=>state,commit,message};
+window.IAMApp={showStudyList,reveal,render,resetFilters,store,getState:()=>state,commit,message};
 sync();render();
 if(store.notice())message(store.notice());

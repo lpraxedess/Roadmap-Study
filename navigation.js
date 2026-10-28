@@ -14,6 +14,7 @@
  function show(page,options={}){
   if(!hashes[page])page='overview';
   setDrawer(false,false);
+  if(page==='studies')window.IAMApp?.showStudyList();
   if(page==='architecture')window.IAMArchitecture?.render();
   for(const v of views)v.hidden=v.dataset.pageView!==page;
   for(const a of links){const active=a.dataset.page===page;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
