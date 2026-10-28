@@ -54,6 +54,7 @@ function checkbox(id,text,checked,onchange){const label=node('label','check-row'
 function renderLesson(t){
  const complete=state.completed.includes(t.id),details=node('details','task'+(complete?' done':''));details.id='task-'+t.id;
  const summary=node('summary','task-summary');summary.append(node('span','task-title',t.title),node('span','task-badge',complete?'Concluída':state.legacy.includes(t.id)?'Revisar':'Pendente'));details.append(summary);
+ summary.addEventListener('click',()=>{if(!details.open){commit(d=>{d.lastTask=t.id});dashboard();}});
  const content=node('div','task-content'),intro=block('Antes de começar');
  intro.append(node('p','lesson-meta',({beginner:'Fundamentos',intermediate:'Intermediário',advanced:'Avançado'}[t.difficulty])+' · '+t.tracks.map(x=>({local:'Local',microsoft:'Microsoft/híbrido',premium:'Premium'}[x])).join(' / ')),node('p','',t.evidence));
  if(t.prerequisiteIds.length){const list=node('div','prerequisite-links');list.append(node('span','','Preparação: '));for(const id of t.prerequisiteIds){const prev=tasks.find(x=>x.id===id);list.append(link((state.completed.includes(id)?'✓ ':'↗ ')+(prev?.title||id),'#task-'+id));}intro.append(list);}

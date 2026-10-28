@@ -90,6 +90,8 @@ globalThis.IAMState = (() => {
    change(next);
    // Revision is stamped when the new activity is actually edited.
    for (const t of tasks) if (next.steps.some(id => id.startsWith(t.id + '/')) || next.tests.some(id => id.startsWith(t.id + '/'))) next.revisions[t.id] = t.revision;
+   // Editing a current lesson reopens it; only imports/revisions create legacy history.
+   next.completed = next.completed.filter(id => canComplete(next,id));
    data = parse(next);
    return save();
   }
