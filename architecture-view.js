@@ -1,6 +1,6 @@
 'use strict';
 window.IAMArchitecture=(()=>{
- let selected='build';
+ let selected='build',expandedDiagram=false;
  function diagram(){
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 1390 515');svg.setAttribute('class','architecture-topology-svg');svg.setAttribute('role','img');svg.setAttribute('aria-label','Topologia: CL01 usa AD/DNS; AD sincroniza para Entra; navegador no HOST01 autentica no Keycloak e usa APP01; operador aplica SCIM no cadastro da APP01. Linhas tracejadas representam ações manuais, não conectores automáticos.');
   const el=(tag,attrs={},text)=>{const n=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))n.setAttribute(k,String(v));if(text!==undefined)n.textContent=text;return n;};
@@ -33,7 +33,9 @@ window.IAMArchitecture=(()=>{
  function render(){
   const root=document.getElementById('architecture-content');if(!root)return;root.replaceChildren();
   const topology=section('arch-topology','A topologia da Aurora','Desenho fixo do laboratório, com comunicação, sincronização e ação manual diferenciadas. Em telas menores, deslize a topologia horizontalmente.');
-  const drawing=node('div','topology-scroll');drawing.tabIndex=0;drawing.setAttribute('role','region');drawing.setAttribute('aria-label','Diagrama horizontal completo da empresa');drawing.append(diagram());topology.append(drawing);
+  const zoom=node('button','button secondary topology-zoom',expandedDiagram?'Ajustar diagrama à largura':'Ampliar para ler os detalhes');zoom.type='button';zoom.setAttribute('aria-pressed',String(expandedDiagram));
+  const drawing=node('div','topology-scroll');drawing.classList.toggle('is-expanded',expandedDiagram);drawing.tabIndex=0;drawing.setAttribute('role','region');drawing.setAttribute('aria-label','Diagrama horizontal completo da empresa');drawing.append(diagram());
+  zoom.addEventListener('click',()=>{expandedDiagram=!expandedDiagram;drawing.classList.toggle('is-expanded',expandedDiagram);zoom.textContent=expandedDiagram?'Ajustar diagrama à largura':'Ampliar para ler os detalhes';zoom.setAttribute('aria-pressed',String(expandedDiagram));});topology.append(zoom,drawing);
   const region=node('div','topology-scroll');region.tabIndex=0;region.setAttribute('role','region');region.setAttribute('aria-label','Topologia horizontal da empresa Aurora, cinco camadas');
   const line=node('div','topology-line');
   for(const [i,title,subtitle,values,href] of [

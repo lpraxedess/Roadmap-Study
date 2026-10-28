@@ -13,20 +13,20 @@ const PHASES=[
     "items": [
       {
         "id": "prep-route",
-        "title": "Escolher percurso e preparar suas ferramentas",
+        "title": "Conhecer a empresa e preparar a construção",
         "url": "https://www.keycloak.org/getting-started/getting-started-docker",
         "study": [
           {
-            "topic": "O que você vai construir",
-            "detail": "A Aurora é uma empresa fictícia com Financeiro, Jurídico e TI. Ana terá a mesma identidade nos eventos do RH, no provedor de login e na aplicação. O portal orienta; os serviços executam no seu computador."
+            "topic": "A empresa vem antes da ferramenta",
+            "detail": "A Arquitetura define quem são as pessoas, seus vínculos, grupos, sistemas e resultados esperados. Você não precisa inventar uma empresa enquanto estuda: cada ação das aulas usa esse contrato."
           },
           {
-            "topic": "Três percursos",
-            "detail": "Local: Python, Keycloak e aplicação/API. Microsoft: tenant Entra e Windows/AD para cenários híbridos. Premium: Intune, PIM e IGA conforme licença. Percursos são filtros de estudo, não equivalências entre produtos."
+            "topic": "Um laboratório construído por você",
+            "detail": "As etapas seguem rede, diretório, identidade cloud, IdP, aplicação e controles. Você instala serviços e cria configurações manualmente, entendendo os limites entre cada sistema. Recursos licenciados são identificados quando aparecem."
           },
           {
-            "topic": "Evidência e progresso",
-            "detail": "Estudar não é executar. Uma simulação é útil, mas não prova que o serviço funciona. Registre estado inicial, resultado observado e um teste que deveria falhar. Nunca copie senhas, tokens ou chaves para as notas."
+            "topic": "Conferir não é apenas avançar",
+            "detail": "Próximo passo muda a leitura, sem registrar execução. Confirme somente depois de executar e comparar o resultado. Uma parte não disponível deve ficar identificada como simulação ou pendência prática."
           }
         ],
         "practice": [],
@@ -141,7 +141,7 @@ const PHASES=[
         ],
         "recall": {
           "question": "Qual componente da Arquitetura esta lição constrói e qual evidência demonstra o resultado?",
-          "answer": "Arquitetura lida, rh.csv criado e ambiente de trabalho definido. A Aurora é uma empresa fictícia com Financeiro, Jurídico e TI. Ana terá a mesma identidade nos eventos do RH, no provedor de login e na aplicação. O portal orienta; os serviços executam no seu computador."
+          "answer": "Registrar a empresa e rh.csv, os eventos J001/M001/L001 e as ferramentas necessárias. A Arquitetura define quem são as pessoas, seus vínculos, grupos, sistemas e resultados esperados. Você não precisa inventar uma empresa enquanto estuda: cada ação das aulas usa esse contrato."
         },
         "reviewedAt": "2026-10-28",
         "testedAt": null,
@@ -730,7 +730,7 @@ const PHASES=[
         "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
         "guide": {
           "platform": "DC01 / CL01 → resolução, conexão e confiança",
-          "platformUrl": "https://docs.python.org/3/library/socket.html#socket.getaddrinfo",
+          "platformUrl": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname",
           "where": "DC01 / CL01 → resolução, conexão e confiança",
           "steps": [
             {
@@ -787,8 +787,8 @@ const PHASES=[
         },
         "sources": [
           {
-            "label": "DNS Windows Server",
-            "url": "https://learn.microsoft.com/en-us/windows-server/networking/dns/dns-top"
+            "label": "Resolve-DnsName no Windows",
+            "url": "https://learn.microsoft.com/en-us/powershell/module/dnsclient/resolve-dnsname"
           }
         ],
         "revision": "2026.10.28.2",
@@ -2955,8 +2955,8 @@ const PHASES=[
             "detail": "Joiner cria vínculo e acesso inicial. Mover troca acesso removendo o anterior. Leaver retira acesso e encerra vínculo. employeeId permanece estável; departamento e status mudam. Um email não deve ser sua única correlação."
           },
           {
-            "topic": "No cenário Aurora",
-            "detail": "A prévia mostra intenção; --apply altera destinos. O provisionador da aplicação construída reconcilia SCIM e Keycloak, mas não é uma transação distribuída. Se o segundo falhar, resta um estado parcial: corrija a causa e repita o mesmo arquivo."
+            "topic": "Orquestração observável antes de automação",
+            "detail": "Nesta etapa, você aplica o evento em cada fronteira: AD, conferência do Entra, Keycloak e cadastro da APP01 por SCIM. Não há script de orquestração pronto. Se uma fronteira falhar, compare o estado do RH com cada destino e corrija a divergência sem criar outra pessoa."
           }
         ],
         "practice": [],
@@ -3121,7 +3121,7 @@ const PHASES=[
         ],
         "recall": {
           "question": "Qual componente da Arquitetura esta lição constrói e qual evidência demonstra o resultado?",
-          "answer": "J001/M001/L001 executados por fronteira, com matriz antes/depois e correlação do mesmo E001. Joiner cria vínculo e acesso inicial. Mover troca acesso removendo o anterior. Leaver retira acesso e encerra vínculo. employeeId permanece estável; departamento e status mudam. Um email não deve ser sua única correlação."
+          "answer": "Executar J001, M001 e L001 manualmente, observando cada fronteira e cada decisão de acesso. Joiner cria vínculo e acesso inicial. Mover troca acesso removendo o anterior. Leaver retira acesso e encerra vínculo. employeeId permanece estável; departamento e status mudam. Um email não deve ser sua única correlação."
         },
         "reviewedAt": "2026-10-28",
         "testedAt": null,
