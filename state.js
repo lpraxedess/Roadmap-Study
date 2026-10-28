@@ -16,10 +16,10 @@ globalThis.IAMState = (() => {
   function parse(raw, strict = true) {
    if (!object(raw) || ![2,3,4].includes(raw.version)) throw Error('Versão de backup incompatível.');
    const data = blank();
-   function ids(value, allowed, name, required = false) {
+   function ids(value, allowed, name, required = false, retired = false) {
     if (value === undefined && !required) return [];
     if (!Array.isArray(value) || value.length > 10000 || !value.every(id => typeof id === 'string' && allowed.has(id))) {
-     if (strict) throw Error(name + ' inválidos.');
+     if (strict && !retired) throw Error(name + ' inválidos.');
      return Array.isArray(value) ? unique(value.filter(id => allowed.has(id))) : [];
     }
     return unique(value);
@@ -30,8 +30,10 @@ globalThis.IAMState = (() => {
     if (raw.steps !== undefined && (!Array.isArray(raw.steps) || !raw.steps.every(x => typeof x === 'string' && /^iam-\d+-\d+#\d+$/.test(x)))) throw Error('Passos antigos inválidos.');
     data.legacy = completed;
    } else {
-    data.steps = ids(raw.steps, steps, 'Passos', true);
-    data.tests = ids(raw.tests, tests, 'Testes', true);
+    if(strict&&typeof raw.curriculumVersion!=='string')throw Error('Versão do currículo ausente.');
+    const retired=typeof raw.curriculumVersion==='string'&&raw.curriculumVersion!==CURRICULUM_VERSION;
+    data.steps = ids(raw.steps, steps, 'Passos', true, retired);
+    data.tests = ids(raw.tests, tests, 'Testes', true, retired);
     data.legacy = ids(raw.legacy, byId, 'Histórico');
     for (const [field, allowed, max] of [['modes',MODES,40],['certifications',STATUSES,40]]) {
      const source = raw[field];
