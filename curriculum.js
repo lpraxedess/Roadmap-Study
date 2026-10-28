@@ -84,8 +84,16 @@ const PHASES=[
         },
         "sources": [
           {
-            "label": "Referência oficial",
-            "url": "https://www.keycloak.org/getting-started/getting-started-docker"
+            "label": "Instalar Python",
+            "url": "https://www.python.org/downloads/"
+          },
+          {
+            "label": "Instalar Docker e Compose",
+            "url": "https://docs.docker.com/get-started/get-docker/"
+          },
+          {
+            "label": "Instalar PowerShell",
+            "url": "https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell"
           }
         ],
         "revision": "2026.10.28.1",
@@ -94,11 +102,11 @@ const PHASES=[
         "acceptance": [
           {
             "id": "expected-result",
-            "text": "Python e Docker/Compose respondem com versões e conexão ao Engine."
+            "text": "As ferramentas necessárias ao percurso escolhido foram verificadas; recursos indisponíveis estão identificados."
           },
           {
             "id": "negative-case",
-            "text": "O kit foi extraído e nenhum serviço de produção será usado."
+            "text": "O ambiente foi planejado com dados fictícios; kit extraído se o percurso local foi escolhido."
           },
           {
             "id": "restore-evidence",
