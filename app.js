@@ -12,6 +12,7 @@ const filters={query:'',module:'all',level:'all',tech:'all',cert:'all',status:'a
 const normalize = value => String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 function node(tag,cls,text){const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=text;return el;}
 function link(text,href,cls=''){const el=node('a',cls,text);el.href=href;return el;}
+function external(text,url){const a=link(text+' ↗',url);a.target='_blank';a.rel='noopener noreferrer';return a;}
 function message(text){$('message').textContent=text;const toast=$('global-toast');toast.textContent=text;toast.classList.add('is-visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('is-visible'),5000);}
 function sync(){state=store.get();$('storage-warning').hidden=store.available();}
 function commit(change){const ok=store.update(change);sync();if(!ok)message('Não foi possível salvar. Exporte um backup desta sessão antes de sair.');return ok;}
