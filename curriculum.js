@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 82999)
-Total output lines: 5061
-
 'use strict';
 const CURRICULUM_VERSION="2026.10.28.2";
 const PHASES=[
@@ -985,7 +982,3049 @@ const PHASES=[
             {
               "id": "acessar-ferramenta",
               "title": "Acessar ferramenta",
-              "text": "Abra a ferramenta local indicada em «Windows Server / Event Viewer» no computador ou VM de laboratório. Caminho de referência: Visualizador de Event…52999 tokens truncated…e alterar."
+              "text": "Abra a ferramenta local indicada em «Windows Server / Event Viewer» no computador ou VM de laboratório. Caminho de referência: Visualizador de Eventos → Logs do Windows → Segurança. Use conta autorizada do ambiente de teste. Não é necessário entrar no tenant Entra para executar esta etapa local.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Autentique usuário de teste no domínio e identifique tickets com klist.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Use uma conta comum do domínio no cliente e execute klist antes e depois de acessar um recurso autenticado do laboratório.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "No DC, abra Event Viewer → Windows Logs → Security e filtre eventos relevantes como 4768, 4769, 4771 e 4625 conforme auditoria habilitada.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Execute w32tm /query /status e nslookup NOME-DO-DC; registre sincronização de horário e resolução do KDC.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Simule erro de nome inexistente, sem alterar o relógio do controlador; explique como falhas DNS/tempo afetam tickets e como diagnosticar sem comprometer o domínio.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Verifique hora do cliente e DC com w32tm /query /status; examine eventos de autenticação no Event Viewer e SPN com setspn -L para conta de teste.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Windows Server / Event Viewer e compare com a entrega: Tickets Kerberos e eventos de logon identificados",
+              "host": "Windows Server / Event Viewer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "beginner",
+        "technologies": [
+          "kerberos",
+          "dns",
+          "windows"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-1-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Tickets Kerberos e eventos de logon identificados"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 7,
+        "labAction": "Observar em CL01 os tickets de E001 e os eventos de autenticação em DC01."
+      },
+      {
+        "id": "iam-1-2",
+        "title": "GPO, delegação e ACL",
+        "url": "https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview",
+        "study": [
+          {
+            "topic": "Política e delegação têm escopos",
+            "detail": "GPO aplica configurações a usuários/computadores conforme vínculo, herança e filtros. Delegação concede ações administrativas em objetos. Uma GPO na OU errada pode não atingir o cliente mesmo que o editor mostre a configuração."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Delegue reset de senha na OU piloto a GG-TI-SUPORTE. O mesmo operador deve falhar ao tentar alterar uma OU fora do escopo. Permissão mínima exige teste permitido e teste negado."
+          }
+        ],
+        "practice": [],
+        "evidence": "Relatório gpresult e delegação validada",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage/group-policy/group-policy-overview",
+          "steps": [
+            {
+              "id": "scope",
+              "title": "Selecionar o computador e a OU",
+              "text": "Em AD Users and Computers confira CL01 dentro de OU=Computadores,OU=AURORA. DC01 permanece em Domain Controllers. A GPO será vinculada somente à OU Computadores, não à raiz do domínio.",
+              "host": "DC01 · AD Users and Computers",
+              "expected": "Escopo contém CL01 e não o controlador.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "gpo-create",
+              "title": "Criar e vincular a GPO",
+              "text": "Abra Group Policy Management → Forest aurora.test → Domains → aurora.test → AURORA → Computadores. Clique direito → Create a GPO in this domain, and Link it here. Nome LAB-Bloqueio-Tela. Clique Edit.",
+              "host": "DC01 · GPMC",
+              "expected": "GPO aparece vinculada à OU Computadores.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "gpo-setting",
+              "title": "Configurar o parâmetro exato",
+              "text": "Computer Configuration → Policies → Windows Settings → Security Settings → Local Policies → Security Options → Interactive logon: Machine inactivity limit. Marque Define this policy setting e informe 300 segundos. Salve. Não edite a Default Domain Policy.",
+              "host": "DC01 · editor da GPO",
+              "expected": "Limite configurado em 300 segundos na GPO piloto.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "gpo-test",
+              "title": "Conferir no cliente",
+              "text": "Em CL01 abra PowerShell administrativo, crie a pasta de saída, atualize políticas e gere relatório. Abra C:\\Temp\\lab-gpo.html e encontre a GPO no escopo de computador.",
+              "command": "New-Item -ItemType Directory -Force C:\\Temp\ngpupdate /force\ngpresult /h C:\\Temp\\lab-gpo.html",
+              "host": "CL01",
+              "expected": "Relatório lista LAB-Bloqueio-Tela. A inatividade leva ao bloqueio após o período configurado.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "delegate",
+              "title": "Delegar uma tarefa limitada ao suporte",
+              "text": "No DC01 clique direito na OU Financeiro sob Colaboradores → Delegate Control. Adicione GG-TI-SUPORTE; selecione apenas Reset user passwords and force password change at next logon. Conclua. Não delegue Full Control.",
+              "host": "DC01 · AD Users and Computers",
+              "expected": "Paulo/E005 pode executar somente a tarefa delegada nesta OU.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "delegation-test",
+              "title": "Testar permitido e negado",
+              "text": "Com ti.operador em ferramenta RSAT de administração autorizada, tente resetar Ana na OU Financeiro: permitido. Tente Carla na OU Juridico: negado. Como você muda senha de laboratório, use credencial nova e registre o impacto para não confundir falha posterior de login.",
+              "host": "CL01 com RSAT ou sessão administrativa delegada",
+              "expected": "Permissão não se estende ao Jurídico. Não adicione o suporte a Domain Admins.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            },
+            {
+              "id": "restore",
+              "title": "Reverter o teste sem perder os grupos",
+              "text": "Se a delegação não for mantida no cenário, remova somente a entrada criada para GG-TI-SUPORTE na segurança avançada da OU. Para retirar a GPO, desabilite somente seu link piloto. Teste novamente e registre o estado final.",
+              "host": "DC01",
+              "expected": "Reversão limitada ao escopo configurado.",
+              "why": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "beginner",
+        "technologies": [
+          "active directory",
+          "gpo",
+          "windows"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-1-1"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Relatório gpresult e delegação validada"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 8,
+        "labAction": "Aplicar bloqueio de 300 segundos em CL01 e delegar reset somente na OU piloto."
+      },
+      {
+        "id": "iam-1-3",
+        "title": "Hardening, contas de serviço e gMSA",
+        "url": "https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts-overview",
+        "study": [
+          {
+            "topic": "Serviços não devem usar contas humanas privilegiadas",
+            "detail": "Uma gMSA tem senha gerenciada pelo AD e limita quais hosts podem obtê-la. Isso reduz manejo manual, mas não corrige permissões excessivas. O serviço precisa suportar essa conta e o host precisa ser autorizado."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "LAPS gerencia senha de administrador local; gMSA serve identidades de serviço no domínio. KDS e compatibilidade são pré-requisitos de gMSA. Não executar uma etapa não significa que ela funcionou."
+          }
+        ],
+        "practice": [],
+        "evidence": "Inventário de privilégios e conta de serviço controlada",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/manage/group-managed-service-accounts/group-managed-service-accounts-overview",
+          "steps": [
+            {
+              "id": "prerequisites",
+              "title": "Conferir suporte",
+              "text": "Use AD DS do laboratório e um host membro separado com serviço que suporte gMSA, por exemplo uma tarefa agendada compatível. Domínio e host precisam atender aos requisitos oficiais; execute em PowerShell com módulo ActiveDirectory e privilégios autorizados.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Active Directory Users and Computers e compare com a entrega: Inventário de privilégios e conta de serviço controlada",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "kds",
+              "title": "Verificar chave KDS",
+              "text": "No DC consulte Get-KdsRootKey. Se não existir, crie com Add-KdsRootKey -EffectiveImmediately e aguarde a janela de replicação indicada no guia (até 10 horas). Não retrodate em domínio compartilhado para contornar espera.",
+              "command": "Get-KdsRootKey",
+              "expected": "Chave existente e efetiva antes de criar a conta.",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "create",
+              "title": "Criar e autorizar o host",
+              "text": "Substitua CL01 pelo host membro que realmente executará o serviço. Não use grupo contendo todos os computadores.",
+              "command": "New-ADServiceAccount -Name svcAurora -DNSHostName svcAurora.aurora.test -PrincipalsAllowedToRetrieveManagedPassword (Get-ADComputer CL01)",
+              "expected": "gMSA criada com um host autorizado.",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "install",
+              "title": "Instalar no host membro",
+              "text": "No host autorizado com RSAT/módulo AD, execute os comandos. Se o host não tem o módulo, instale o RSAT compatível com sua edição pelo gerenciamento de recursos opcionais.",
+              "command": "Install-ADServiceAccount svcAurora\nTest-ADServiceAccount svcAurora",
+              "expected": "Test-ADServiceAccount retorna True; no host não autorizado deve falhar.",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "consumer",
+              "title": "Configurar consumidor compatível",
+              "text": "Em uma tarefa agendada de teste no host autorizado, use a identidade AURORA\\svcAurora$ com LogonType Password via New-ScheduledTaskPrincipal; não informe senha. Configure ação de baixo impacto, como gravar data em arquivo local com ACL limitada. Valide o direito Log on as a batch job conforme política e execute a tarefa.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Active Directory Users and Computers e compare com a entrega: Inventário de privilégios e conta de serviço controlada",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "verify",
+              "title": "Testar e remover",
+              "text": "Confirme identidade no log da tarefa, arquivo de saída e permissões mínimas. Não conceda Domain Admins para resolver falha. Remova tarefa de teste antes de remover a conta; reverta delegações adicionais.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Active Directory Users and Computers e compare com a entrega: Inventário de privilégios e conta de serviço controlada",
+              "host": "Active Directory Users and Computers",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "beginner",
+        "technologies": [
+          "gmsa",
+          "active directory"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-1-2"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Inventário de privilégios e conta de serviço controlada"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 9,
+        "labAction": "Criar svcAurora para um consumidor de teste autorizado, sem privilégio de domínio."
+      }
+    ],
+    "environment": "Windows Server para AD DS, cliente Windows e DNS interno em rede isolada.",
+    "outcome": "Domínio funcional com OUs, grupos, contas piloto, GPO e auditoria.",
+    "requirements": "Windows Server de avaliação ou licença válida; recursos de virtualização.",
+    "number": 2,
+    "difficulty": "beginner"
+  },
+  {
+    "id": "p2",
+    "title": "Microsoft Entra e híbrido",
+    "desc": "Identidades cloud, sincronização e administração.",
+    "items": [
+      {
+        "id": "iam-2-0",
+        "title": "Tenant, roles e emergência",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/role-based-access-control/security-emergency-access",
+        "study": [
+          {
+            "topic": "Plano administrativo e recuperação",
+            "detail": "Tenant é a fronteira de administração do diretório cloud. Separe conta de uso cotidiano e conta privilegiada; atribua função apenas quando o exercício exigir. Global Administrator não deve ser a solução padrão para qualquer erro."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Mantenha duas contas cloud-only de emergência, independentes do AD/federação, com autenticação resistente a phishing, custódia e monitoramento. Revise o procedimento antes de depender delas numa indisponibilidade."
+          }
+        ],
+        "practice": [],
+        "evidence": "Papéis mínimos e procedimento de emergência",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Entra ID → Funções e administradores. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Crie ou prepare tenant de laboratório e duas identidades não administrativas.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Na seção Entra ID → Roles and administrators, compare Global Administrator, User Administrator e Global Reader. Para um desenho corporativo resiliente, planeje no mínimo DUAS contas de emergência distintas, somente na nuvem e com domínio *.onmicrosoft.com, não federadas nem sincronizadas.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Se a infraestrutura e a custódia estiverem adequadas, prepare adm.emergencia e adm.emergencia2 como contas cloud-only separadas das contas operacionais; a Microsoft recomenda Global Administrator ativo para contas de emergência, métodos resistentes a phishing e monitoramento. Não conceda privilégios elevados sem controles e autorização.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Revise custódia, MFA resistente a phishing, alertas e exclusões de políticas que bloqueiem a recuperação. Não use dispositivo pessoal como único fator de emergência.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Teste com sessão controlada a acessibilidade da conta sem mudar políticas de produção. Registre conta, papel, método de autenticação, responsável e ciclo de validação; nunca divulgue credenciais.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Verifique funções e métodos de cada conta de emergência; teste login controlado e alertas, nunca a remoção do único administrador.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra admin center e compare com a entrega: Papéis mínimos e procedimento de emergência",
+              "host": "Microsoft Entra admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "rbac"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "prep-route"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Papéis mínimos e procedimento de emergência"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 10,
+        "labAction": "Preparar TENANT01, conta administrativa A002 e BG01/BG02 antes de mudar políticas."
+      },
+      {
+        "id": "iam-2-1",
+        "title": "Entra Connect e Cloud Sync",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/hybrid/cloud-sync/what-is-cloud-sync",
+        "study": [
+          {
+            "topic": "Sincronização precisa de uma origem definida",
+            "detail": "O AD pode ser autoritativo para os atributos sincronizados. Editar no destino pode ser sobrescrito. Defina identificador, UPN e escopo piloto antes de sincronizar; matching incorreto cria duplicação ou liga contas erradas."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Connect Sync e Cloud Sync não são instalações equivalentes nem têm a mesma matriz de recursos. Este laboratório usa Cloud Sync; selecione a documentação e o agente correspondentes. Propagar senha não implica habilitar writeback."
+          }
+        ],
+        "practice": [],
+        "evidence": "Conta piloto sincronizada e logs da alteração",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "upn-scope",
+              "title": "Preparar os UPNs e o escopo fixo",
+              "text": "No DC01 substitua SEU-TENANT pelo domínio onmicrosoft.com registrado na Arquitetura. Adicione esse sufixo ao AD e aplique aos dois pilotos. No Cloud Sync use somente as OUs Colaboradores e Grupos sob AURORA. Não sincronize Privilegiadas/Servicos. Não deve existir duplicata cloud de fin.ana/jur.carla.",
+              "command": "Set-ADForest -UPNSuffixes @{add=\"SEU-TENANT.onmicrosoft.com\"}\n\"fin.ana\",\"jur.carla\",\"fin.bruno\",\"jur.diego\",\"ti.operador\",\"rh.marina\" | ForEach-Object { Set-ADUser $_ -UserPrincipalName ( $_ + \"@SEU-TENANT.onmicrosoft.com\" ) }",
+              "expected": "UPNs correspondem ao domínio do tenant; E001/E002 continuam no AD.",
+              "host": "DC01",
+              "why": "O AD pode ser autoritativo para os atributos sincronizados."
+            },
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "No https://entra.microsoft.com, entre com papel Hybrid Identity Administrator (não convidado). Navegue até Entra ID → Entra Connect → Cloud sync. Para instalação do agente, abra Agents → Download on-premises agent. O portal pode estar em inglês ou português.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Confirme domínio AD, atributos UPN/proxyAddresses, servidor Windows membro do domínio com versão compatível, conectividade TLS e conta de administração para criar gMSA. O agente é suportado em DC, mas um servidor dedicado endurecido reduz interferências; com 16 GB, avalie o consumo antes de iniciar outra VM.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Inventarie atributos de uma conta piloto no AD e compare com possíveis contas cloud existentes. Não sincronize usuários duplicados ou administrativos sem planejar correspondência, origem autoritativa e escopo.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Instale o agente de provisionamento Microsoft Entra Cloud Sync conforme guia oficial, forneça contas administrativas somente durante a configuração e confirme que o agente aparece ativo no portal; não confunda instalar agente com habilitar sincronização.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "No portal, selecione Nova configuração → AD to Microsoft Entra ID sync; selecione o domínio aurora.test, filtro por OU e as OUs Colaboradores e Grupos sob AURORA; confira os mapeamentos e execute Teste sob demanda com fin.ana. Habilite a configuração somente após validar o resultado com a conta descartável.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Modifique um atributo não sensível na conta piloto do AD; confira propagação na nuvem, logs e ausência de contas duplicadas. Teste desativação apenas com conta descartável e documente recuperação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Confirme agente, conectividade e escopo de OU; compare objetos locais e sincronizados e leia logs do agente antes de alterar regras.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Cloud Sync e compare com a entrega: Conta piloto sincronizada e logs da alteração",
+              "host": "Microsoft Entra / Cloud Sync",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "active directory",
+          "cloud sync"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-0-0",
+          "iam-1-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Conta piloto sincronizada e logs da alteração"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 12,
+        "labAction": "Conta piloto sincronizada e logs da alteração"
+      },
+      {
+        "id": "iam-2-2",
+        "title": "MFA, FIDO2 e passkeys",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/authentication/concept-authentication-passwordless",
+        "study": [
+          {
+            "topic": "Registrar um fator não é exigi-lo",
+            "detail": "Métodos habilitados permitem registro; a política de acesso determina quando são exigidos. MFA por código pode ser alvo de phishing. FIDO2/passkeys vincula a autenticação à origem e permite resistência a phishing quando usado corretamente."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Planeje perda do autenticador e recuperação sem criar um atalho inseguro. Diferencie capacidade do método, compatibilidade do dispositivo e licença da política que o exige."
+          }
+        ],
+        "practice": [],
+        "evidence": "MFA/passkey testado com evidência",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "No portal https://entra.microsoft.com, acesse Entra ID → Security (Segurança) → Authentication methods (Métodos de autenticação) → Policies. A habilitação de Passkey (FIDO2) requer função compatível, como Authentication Policy Administrator.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Confirme se o tenant possui método FIDO2 habilitável, grupo piloto e dispositivo autenticador compatível. Passkeys FIDO2 estão disponíveis inclusive no Entra ID Free; exigir passkeys via Conditional Access pode requerer P1.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Examine os perfis de passkey e defina escopo somente para conta piloto. Alterações na política global de passkeys afetam o tenant; não ative indiscriminadamente.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Habilite o método permitido para grupo piloto e, quando elegível, registre a passkey na página de informações de segurança do usuário. Não use credenciais reais de terceiros.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Faça login de teste com método configurado; diferencie uma autenticação resistente a phishing de uma simples verificação por código. Não exponha códigos, chaves ou registros do autenticador.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Teste tentativa sem o método apropriado somente em escopo controlado. Registre tipo de método, dispositivo, data e logs. Sem P1, não alegue imposição por política de acesso condicional.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Confira políticas de métodos de autenticação, registro FIDO2, conta piloto e log de entrada. Não confunda registro de método com exigência por Conditional Access.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Authentication methods e compare com a entrega: MFA/passkey testado com evidência",
+              "host": "Microsoft Entra / Authentication methods",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "mfa",
+          "fido2"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-2-1"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: MFA/passkey testado com evidência"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 13,
+        "labAction": "Registrar MFA/passkey no piloto cloud e distinguir registro de exigência."
+      },
+      {
+        "id": "iam-2-3",
+        "title": "SSPR e proteção de identidade",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/authentication/concept-sspr-howitworks",
+        "study": [
+          {
+            "topic": "Recuperação também é uma decisão de confiança",
+            "detail": "Alterar senha conhecida é diferente de redefinir uma esquecida. SSPR exige métodos registrados e licença elegível para o cenário. Writeback precisa devolver a alteração ao AD e tem requisitos próprios."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Uma recuperação bem-sucedida deve permitir novo login e deixar trilha de auditoria. O estado de risco e sessões existentes podem exigir ações adicionais; não prometa que mudar senha encerra toda sessão de qualquer app."
+          }
+        ],
+        "practice": [],
+        "evidence": "Fluxo SSPR e registros de recuperação",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Entra ID → Redefinição de senha. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Compare três cenários: alterar senha conhecida (cloud Free), redefinir senha esquecida (licença elegível, como Business Standard ou P1/P2) e writeback híbrido (P1/P2 ou Business Premium, com configuração compatível). Identifique qual o tenant realmente permite.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Em Entra → Password reset, consulte licenças e configuração atual antes de alterar escopo; selecione somente LAB-CLOUD-PILOTO, que contém cloud.piloto.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "No Entra ID Free, teste apenas alteração voluntária de senha cloud. Para redefinição de senha esquecida, confira licença elegível e métodos registrados antes de utilizar o portal oficial.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Se licenciada, teste redefinição com conta piloto e valide o login posterior. Não presuma que o writeback local funciona somente por existir sincronização.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Compare logs de recuperação, método usado e origem da identidade. Se o recurso não estiver licenciado, registre cenário como estudo documental; não marque execução real.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Teste usuário piloto licenciado, métodos de recuperação e eventual writeback; valide o resultado no Entra e no AD sem expor credenciais.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Password reset e compare com a entrega: Fluxo SSPR e registros de recuperação",
+              "host": "Microsoft Entra / Password reset",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "sspr"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-2-2"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Fluxo SSPR e registros de recuperação"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 14,
+        "labAction": "Validar recuperação de cloud.piloto; writeback só se licenciado e configurado."
+      },
+      {
+        "id": "iam-2-4",
+        "title": "Conditional Access e Zero Trust",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/conditional-access/plan-conditional-access",
+        "study": [
+          {
+            "topic": "Acesso condicional avalia sinais e controles",
+            "detail": "Uma política combina sujeitos, recursos, condições e controles. Report-only calcula o resultado sem impor o bloqueio. Security Defaults fornece proteção básica e não deve ser retirado antes de planejar sua substituição."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Teste um grupo pequeno e contas de emergência antes de ampliar. Políticas combinadas podem gerar efeito diferente de uma política isolada; consulte logs por usuário, app e horário para explicar a decisão."
+          }
+        ],
+        "practice": [],
+        "evidence": "Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "verificar-licenca-tenant-e-autorizacao",
+              "title": "Verificar licença, tenant e autorização",
+              "text": "Entre em https://entra.microsoft.com com conta administrativa autorizada no tenant exclusivo de laboratório. Confirme Entra ID P1 ou Business Premium e função Conditional Access Administrator para gerenciar políticas. Risco baseado em usuário/login exige P2. Não ative trial pago automaticamente.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "registrar-security-defaults-antes-de-qualquer-alteracao",
+              "title": "Registrar Security Defaults ANTES de qualquer alteração",
+              "text": "Acesse Entra ID → Visão geral → Propriedades → Gerenciar padrões de segurança (Security defaults). Registre Habilitado/Desabilitado e capture evidência sanitizada. Security Defaults e políticas personalizadas de Conditional Access ativas não podem coexistir. Se não tiver P1 ou aprovação, mantenha Security Defaults habilitados e execute somente simulação/documentação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "garantir-acesso-de-emergencia-e-recuperacao",
+              "title": "Garantir acesso de emergência e recuperação",
+              "text": "Antes de alterar proteção, valide duas contas cloud-only *.onmicrosoft.com independentes do IdP/AD, protegidas por métodos resistentes a phishing e com custódia e monitoramento. Planeje exclusões das políticas que bloqueiam ou restringem entrada. Se não conseguir comprovar acesso de emergência, PARE e não desative Security Defaults.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "planejar-substituicao-equivalente-e-rollback",
+              "title": "Planejar substituição equivalente e rollback",
+              "text": "Documente as políticas-base para substituir Security Defaults: exigir MFA para usuários e administradores, MFA para administração Azure e bloquear autenticação legada; revise escopo, exceções, métodos registrados e impacto. Registre configurações existentes e o plano de reversão. Nunca deixe tenant real sem proteção equivalente.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-politicas-piloto-em-report-only",
+              "title": "Preparar políticas piloto em Report-only",
+              "text": "No Acesso Condicional, crie política nomeada LAB-CA-MFA-PILOTO, atribua somente grupo de usuários de teste, recurso de teste e controle Exigir MFA. Deixe Report-only. Não use todos os usuários/recursos sem plano aprovado. Confirme exclusões de emergência para políticas restritivas antes de qualquer ativação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-resultado-esperado-sem-impor-bloqueio",
+              "title": "Testar resultado esperado sem impor bloqueio",
+              "text": "Entre com usuário piloto e consulte Sign-in logs → Conditional Access → Report-only. Compare políticas aplicadas/não aplicadas e motivos. Report-only não bloqueia, não exige MFA interativo e não substitui proteção ativa.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "migrar-security-defaults-somente-com-protecao-pronta",
+              "title": "Migrar Security Defaults somente com proteção pronta",
+              "text": "SOMENTE no tenant de laboratório autorizado, com P1, acesso de emergência testado, políticas-base preparadas e plano aprovado: em Propriedades → Gerenciar padrões de segurança, desative Security Defaults, informe motivo de migração para Conditional Access e salve. Ative imediatamente políticas-base equivalentes após validação de impacto, em implantação controlada. Se o ambiente não permitir execução segura, documente esta etapa como SIMULAÇÃO e mantenha a proteção habilitada.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "validar-cenarios-positivos-e-negativos",
+              "title": "Validar cenários positivos e negativos",
+              "text": "Teste usuário piloto com MFA registrado, sem MFA, autenticação legada bloqueada e contas de emergência acessíveis. Registre data, resultado esperado/observado e logs. Não confunda efeito de Report-only com imposição real. Não declare migração completa se só criou política em modo relatório.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-e-recuperar-sem-perder-acesso",
+              "title": "Diagnosticar e recuperar sem perder acesso",
+              "text": "Se CA falhar, confira licença, Security Defaults, atribuições, exclusões, controles e logs. Para reverter política ativada, desabilite-a ou retire o grupo piloto com conta autorizada. Para retornar aos Security Defaults, a experiência Microsoft 365 pode exigir remover todas as políticas CA (inclusive Report-only); registre/exporte políticas antes, confira documentação atual e não apague configurações sem plano aprovado.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "evidenciar-a-entrega-e-estado-de-protecao",
+              "title": "Evidenciar a entrega e estado de proteção",
+              "text": "Crie LAB-iam-2-4.md com licença, estado anterior/posterior dos Security Defaults, lista de políticas-base, contas de emergência (sem segredos), matriz de testes, logs sanitizados, resultado real/simulado e rollback. Critério de aceite: tenant não fica desprotegido, Report-only validado e qualquer migração real possui MFA e proteção equivalente efetivamente habilitados.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Conditional Access e compare com a entrega: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO.",
+              "host": "Microsoft Entra / Conditional Access",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "conditional access"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-2-3"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Matriz de decisões e política piloto Report-only verificadas; registro do estado dos Security Defaults, licença P1, contas de emergência, plano de proteção equivalente e rollback. Se houver migração real, comprovar políticas-base ativas e testes positivos/negativos; caso contrário, marcar SIMULAÇÃO."
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 15,
+        "labAction": "Testar LAB-CA-MFA-PILOTO em Report-only para LAB-CLOUD-PILOTO, preservando emergência."
+      }
+    ],
+    "environment": "Domínio AD do módulo 02; tenant Microsoft Entra de teste; contas administrativas separadas.",
+    "outcome": "Identidade híbrida piloto, MFA, recuperação e acesso condicional testados.",
+    "requirements": "Tenant e licenças conforme o recurso; Cloud Sync requer servidor ingressado no domínio e agente compatível.",
+    "number": 3,
+    "difficulty": "intermediate"
+  },
+  {
+    "id": "p3",
+    "title": "Federação, SSO e protocolos",
+    "desc": "Acesso a aplicações e confiança entre sistemas.",
+    "items": [
+      {
+        "id": "iam-3-0",
+        "title": "SAML 2.0 e federação",
+        "url": "https://learn.microsoft.com/en-us/entra/identity/saas-apps/saml-toolkit-tutorial",
+        "study": [
+          {
+            "topic": "A confiança SAML liga um IdP a um SP",
+            "detail": "O IdP autentica e emite uma assertion; o SP valida assinatura, audiência, destinatário e tempo. Entity ID identifica a parte; ACS recebe a resposta. Copiar um ACS de outro aplicativo quebra o contrato de confiança."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "SSO autentica; o SP continua responsável por autorizar. Remover atribuição deve ser testado em nova sessão e com as regras de acesso do aplicativo. Certificado público de assinatura não é a chave privada."
+          }
+        ],
+        "practice": [],
+        "evidence": "SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://learn.microsoft.com/en-us/entra/identity/saas-apps/saml-toolkit-tutorial",
+          "steps": [
+            {
+              "id": "availability",
+              "title": "Conferir o SP escolhido",
+              "text": "Este laboratório usa Microsoft Entra SAML Toolkit, um serviço externo de demonstração. Confira disponibilidade e requisitos no guia oficial. Registre somente identidades fictícias que você controla; se o serviço não estiver disponível, marque a atividade como simulação, sem inventar SSO executado.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "gallery",
+              "title": "Adicionar o aplicativo",
+              "text": "No Entra, adicione Microsoft Entra SAML Toolkit da galeria. Abra Single sign-on → SAML. O aplicativo tem identificador fixo e uma instância por tenant; não crie duplicatas.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "trust",
+              "title": "Configurar a confiança",
+              "text": "Use no portal do Toolkit SAML Configuration → Create. Transfira Login URL, Entra Identifier, Logout URL e certificado público Raw do Entra. Copie de volta os valores Sign-on URL, Identifier e ACS fornecidos pelo Toolkit para Basic SAML Configuration. A ACS indicada no guia é https://samltoolkit.azurewebsites.net/SAML/Consume; confira os valores retornados pela configuração atual.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "user",
+              "title": "Vincular e atribuir usuário",
+              "text": "Registre no Toolkit uma conta de teste correspondente à identidade Entra e atribua diretamente esse usuário ao aplicativo. Em Properties, confira User assignment required. Atribuição por grupo pode exigir P1/P2; usuário direto evita presumir essa licença.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "positive",
+              "title": "Testar SSO iniciado pelo SP",
+              "text": "Use Test this application ou abra Sign-on URL. Confira identidade autenticada e evento de entrada. A assertion deve ser validada pelo SP; somente visualizar XML não prova assinatura válida.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "negative",
+              "title": "Testar retirada de atribuição",
+              "text": "Encerre sessão do SP, remova atribuição de teste e faça novo login com assignment required. Espere negação. Restaure apenas o acesso necessário; documente certificado, audiência, ACS e efeito da sessão já existente.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Entra + Microsoft Entra SAML Toolkit e compare com a entrega: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados.",
+              "host": "Entra + Microsoft Entra SAML Toolkit",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "saml",
+          "entra"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-0-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: SSO no SP escolhido e negação após retirada de atribuição observados; serviço externo e suas limitações registrados."
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 19,
+        "labAction": "Conectar o tenant ao SP Microsoft Entra SAML Toolkit e testar atribuição/negação."
+      },
+      {
+        "id": "iam-3-1",
+        "title": "OAuth 2.0 e OpenID Connect",
+        "url": "https://www.rfc-editor.org/rfc/rfc9700.html",
+        "study": [
+          {
+            "topic": "Qual parte do desenho será construída",
+            "detail": "Você vai conectar IDP01 à APP01. O navegador inicia login; Keycloak autentica; a aplicação troca o código, verifica os tokens e cria uma sessão local. Nenhum cadastro de usuário na aplicação será presumido."
+          },
+          {
+            "topic": "Por que ainda pode aparecer 403",
+            "detail": "Identidade autenticada e direito de acesso são estados distintos. O cadastro da APP01 começa vazio. Depois do POST SCIM da próxima aula, E001 terá FIN-LEITOR/Financeiro e poderá obter 200 em FIN. O ID token pertence ao cliente; o access token pertence à API aurora-api."
+          }
+        ],
+        "practice": [],
+        "evidence": "Cliente configurado, arquivos construídos, login Code+PKCE e negativas 400/401/403 demonstrados.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://www.rfc-editor.org/rfc/rfc9700.html",
+          "steps": [
+            {
+              "id": "client",
+              "title": "Criar o cliente OIDC",
+              "text": "No realm aurora: Clients → Create client. Type OpenID Connect; Client ID aurora-web. Client authentication OFF (público); Standard flow ON; Direct access grants OFF. Salve.",
+              "command": "",
+              "expected": "aurora-web é cliente público com fluxo de código.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "redirect",
+              "title": "Fixar os endereços",
+              "text": "Em Settings do cliente: Valid redirect URIs http://localhost:8765/callback; Web origins http://localhost:8765. Não use *. Em Advanced/Advanced settings, configure Proof Key for Code Exchange Code Challenge Method S256.",
+              "command": "",
+              "expected": "Callback exato e PKCE S256 salvos.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "audience",
+              "title": "Adicionar audience da API",
+              "text": "Clients → aurora-web → Client scopes → aurora-web-dedicated → Add mapper → By configuration → Audience. Name aurora-api; Included Custom Audience aurora-api; Add to access token ON; Add to ID token OFF. Salve.",
+              "command": "",
+              "expected": "Access token será emitido para aurora-api; ID token continua destinado ao cliente.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "folder",
+              "title": "Criar a aplicação a partir de um arquivo vazio",
+              "text": "No HOST01 abra PowerShell, crie APP01 e abra um novo arquivo laboratorio.mjs em seu editor. Você vai escrever cada parte abaixo no mesmo arquivo e na ordem. Não execute o arquivo incompleto.",
+              "command": "New-Item -ItemType Directory -Force C:\\AuroraLab\\APP01\nSet-Location C:\\AuroraLab\\APP01\nnode --version",
+              "expected": "Pasta APP01 criada; Node.js 22+ disponível.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "credential",
+              "title": "Gerar a credencial do provisionamento",
+              "text": "Gere um token aleatório local. Copie o resultado somente para scimToken de config.json na próxima etapa. Não coloque esse valor nas notas do portal nem no GitHub. É a credencial de S002, não a senha de Ana.",
+              "command": "node -e \"console.log(require('node:crypto').randomBytes(32).toString('base64url'))\"",
+              "expected": "Valor aleatório de mais de 32 caracteres gerado somente no seu computador.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "config-file",
+              "title": "Criar config.json e cadastro.json",
+              "text": "No editor, crie config.json com o JSON abaixo substituindo SOMENTE o token. Crie outro arquivo cadastro.json com [] (lista vazia). Salve UTF-8. O cadastro inicia vazio: autenticar não cria a conta da aplicação.",
+              "command": "{\n  \"issuer\": \"http://localhost:8080/realms/aurora\",\n  \"clientId\": \"aurora-web\",\n  \"scimToken\": \"SUBSTITUA_PELO_TOKEN_ALEATORIO_GERADO\"\n}",
+              "expected": "Dois arquivos existem na mesma pasta de laboratorio.mjs; cadastro.json contém somente [].",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "app-source-1",
+              "title": "Escrever a aplicação · parte 1/5 · configuração e dados",
+              "text": "No mesmo laboratorio.mjs, acrescente esta parte depois da anterior. Observe a responsabilidade indicada no título. Não copie os delimitadores Markdown e não execute o arquivo antes de acrescentar as cinco partes.",
+              "command": "// Aplicação didática construída na lição OIDC. Somente loopback.\nimport http from 'node:http';\nimport {readFileSync,writeFileSync,renameSync,appendFileSync} from 'node:fs';\nimport {createHash,randomBytes,createPublicKey,verify,timingSafeEqual} from 'node:crypto';\nconst loadConfig=()=>JSON.parse(readFileSync('config.json','utf8'));\nconst config=loadConfig(), origin='http://localhost:8765';\nif(!config.issuer?.startsWith('http://localhost:8080/realms/')||!config.clientId||!config.scimToken||config.scimToken.length<32)throw Error('Confira config.json: issuer local, clientId e token de pelo menos 32 caracteres.');\nconst core='urn:ietf:params:scim:schemas:core:2.0:User';\nconst enterprise='urn:ietf:params:scim:schemas:extension:enterprise:2.0:User';\nconst patch='urn:ietf:params:scim:api:messages:2.0:PatchOp';\nconst sessions=new Map(), pending=new Map();\nconst random=()=>randomBytes(32).toString('base64url');\nconst equal=(a,b)=>{const x=Buffer.from(a||''),y=Buffer.from(b||'');return x.length===y.length&&timingSafeEqual(x,y);};\nconst users=()=>JSON.parse(readFileSync('cadastro.json','utf8'));\nconst saveUsers=list=>{writeFileSync('cadastro.tmp.json',JSON.stringify(list,null,2));renameSync('cadastro.tmp.json','cadastro.json');};\nconst audit=(event,data={})=>appendFileSync('eventos.jsonl',JSON.stringify({time:new Date().toISOString(),event,...data})+'\\n');\nconst scimUser=u=>({schemas:[core,enterprise],id:u.id,externalId:u.employeeId,userName:u.userName,displayName:u.displayName,active:u.active,roles:[{value:u.role}], [enterprise]:{department:u.department}});\nconst cookies=req=>Object.fromEntries((req.headers.cookie||'').split(';').map(v=>v.trim().split('=')));\nfunction send(res,status,data,type='application/json'){\n const body=typeof data==='string'?data:JSON.stringify(data);\n res.writeHead(status,{'Content-Type':type+'; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':\"default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'\"});res.end(body);\n}\nfunction redirect(res,url,cookie){res.writeHead(302,{'Location':url,'Cache-Control':'no-store',...(cookie?{'Set-Cookie':cookie}:{})});res.end();}\nasync function jsonRequest(url,options={}){const res=await fetch(url,{...options,signal:AbortSignal.timeout(8000)});if(!res.ok)throw Error('Falha no IdP');return res.json();}\n",
+              "host": "HOST01 · editor → C:\\AuroraLab\\APP01\\laboratorio.mjs",
+              "why": "A separação deixa explícito onde se configuram confiança, cadastro, autenticação e autorização.",
+              "expected": "Esta parte foi acrescentada na ordem. Depois da parte 5, node --check laboratorio.mjs precisa passar."
+            },
+            {
+              "id": "app-source-2",
+              "title": "Escrever a aplicação · parte 2/5 · assinatura e claims",
+              "text": "No mesmo laboratorio.mjs, acrescente esta parte depois da anterior. Observe a responsabilidade indicada no título. Não copie os delimitadores Markdown e não execute o arquivo antes de acrescentar as cinco partes.",
+              "command": "async function tokenClaims(token,audience,nonce){\n const parts=token.split('.');if(parts.length!==3)throw Error('JWT inválido');\n const [h,b,s]=parts,header=JSON.parse(Buffer.from(h,'base64url')),claims=JSON.parse(Buffer.from(b,'base64url'));\n if(header.alg!=='RS256'||claims.iss!==config.issuer)throw Error('Algoritmo/emissor');\n const {keys}=await jsonRequest(config.issuer+'/protocol/openid-connect/certs');\n const jwk=keys.find(k=>k.kid===header.kid&&k.kty==='RSA');if(!jwk)throw Error('Chave desconhecida');\n if(!verify('RSA-SHA256',Buffer.from(h+'.'+b),createPublicKey({key:jwk,format:'jwk'}),Buffer.from(s,'base64url')))throw Error('Assinatura');\n const aud=Array.isArray(claims.aud)?claims.aud:[claims.aud],now=Date.now()/1000;\n if(!aud.includes(audience)||typeof claims.exp!=='number'||claims.exp<=now||claims.nbf>now+30||!claims.sub||(nonce!==undefined&&claims.nonce!==nonce))throw Error('Claims inválidas');\n return claims;\n}\nasync function body(req){let text='';for await(const part of req){text+=part;if(Buffer.byteLength(text)>65536)throw Error('Corpo maior que 64 KB');}const value=JSON.parse(text);if(!value||Array.isArray(value)||typeof value!=='object')throw Error('JSON deve ser objeto');return value;}\nfunction scimAuth(req){const c=loadConfig();return [c.scimToken,c.nextScimToken].filter(Boolean).some(t=>equal(req.headers.authorization,'Bearer '+t));}\n",
+              "host": "HOST01 · editor → C:\\AuroraLab\\APP01\\laboratorio.mjs",
+              "why": "A separação deixa explícito onde se configuram confiança, cadastro, autenticação e autorização.",
+              "expected": "Esta parte foi acrescentada na ordem. Depois da parte 5, node --check laboratorio.mjs precisa passar."
+            },
+            {
+              "id": "app-source-3",
+              "title": "Escrever a aplicação · parte 3/5 · cadastro e SCIM",
+              "text": "No mesmo laboratorio.mjs, acrescente esta parte depois da anterior. Observe a responsabilidade indicada no título. Não copie os delimitadores Markdown e não execute o arquivo antes de acrescentar as cinco partes.",
+              "command": "async function handleScim(req,res,url){\n const fail=(status,detail)=>send(res,status,{schemas:['urn:ietf:params:scim:api:messages:2.0:Error'],status:String(status),detail},'application/scim+json');\n if(!scimAuth(req))return fail(401,'Token SCIM ausente ou inválido');\n const collection=url.pathname==='/scim/v2/Users',id=url.pathname.split('/')[4];let list=users();\n if(req.method==='GET'){\n  if(!collection){const user=list.find(u=>u.id===id);return user?send(res,200,scimUser(user),'application/scim+json'):fail(404,'Usuário não encontrado');}\n  if(url.searchParams.has('filter')){const match=/^(externalId|userName) eq \"([^\"\\\\]+)\"$/.exec(url.searchParams.get('filter'));if(!match)return fail(400,'Filtro exato obrigatório');list=list.filter(u=>(match[1]==='externalId'?u.employeeId:u.userName)===match[2]);}\n  const start=Math.max(1,Number(url.searchParams.get('startIndex')||1)),count=Math.min(100,Math.max(0,Number(url.searchParams.get('count')||100)));if(!Number.isInteger(start)||!Number.isInteger(count))return fail(400,'Paginação');\n  const page=list.slice(start-1,start-1+count);return send(res,200,{schemas:['urn:ietf:params:scim:api:messages:2.0:ListResponse'],totalResults:list.length,startIndex:start,itemsPerPage:page.length,Resources:page.map(scimUser)},'application/scim+json');\n }\n if(req.method==='POST'&&collection){\n  const d=await body(req);if(!d.schemas?.includes(core)||!['externalId','userName','displayName'].every(k=>typeof d[k]==='string'&&d[k].length>0&&d[k].length<=100)||typeof d.active!=='boolean')return fail(400,'Atributos obrigatórios');\n  if(list.some(u=>u.employeeId===d.externalId||u.userName===d.userName))return fail(409,'Identidade já existe');\n  const department=d[enterprise]?.department,role=d.roles?.[0]?.value;\n  if(!['Financeiro','Jurídico','TI'].includes(department)||!['FIN-LEITOR','JUR-LEITOR','TI-OPERADOR'].includes(role))return fail(400,'Departamento/papel');\n  const user={id:randomBytes(12).toString('hex'),employeeId:d.externalId,userName:d.userName,displayName:d.displayName,active:d.active,department,role};list.push(user);saveUsers(list);audit('scim.create',{employeeId:user.employeeId});return send(res,201,scimUser(user),'application/scim+json');\n }\n if(req.method==='PATCH'&&!collection){\n  const d=await body(req),user=list.find(u=>u.id===id);if(!user)return fail(404,'Usuário não encontrado');\n  if(d.schemas?.length!==1||d.schemas[0]!==patch||!Array.isArray(d.Operations)||d.Operations.length<1||d.Operations.length>10)return fail(400,'PatchOp obrigatório');\n  const updated={...user};for(const op of d.Operations){if(String(op.op).toLowerCase()!=='replace')return fail(400,'Somente replace neste laboratório');\n   if(op.path==='active'&&typeof op.value==='boolean')updated.active=op.value;\n   else if(op.path===enterprise+':department'&&['Financeiro','Jurídico','TI'].includes(op.value))updated.department=op.value;\n   else if(op.path==='roles'&&Array.isArray(op.value)&&op.value.length===1&&['FIN-LEITOR','JUR-LEITOR','TI-OPERADOR'].includes(op.value[0].value))updated.role=op.value[0].value;\n   else return fail(400,'Path/valor não suportado');\n  }list=list.map(u=>u.id===id?updated:u);saveUsers(list);audit('scim.patch',{employeeId:updated.employeeId});return send(res,200,scimUser(updated),'application/scim+json');\n }\n return fail(405,'Operação não implementada no subconjunto didático');\n}\n",
+              "host": "HOST01 · editor → C:\\AuroraLab\\APP01\\laboratorio.mjs",
+              "why": "A separação deixa explícito onde se configuram confiança, cadastro, autenticação e autorização.",
+              "expected": "Esta parte foi acrescentada na ordem. Depois da parte 5, node --check laboratorio.mjs precisa passar."
+            },
+            {
+              "id": "app-source-4",
+              "title": "Escrever a aplicação · parte 4/5 · login e callback",
+              "text": "No mesmo laboratorio.mjs, acrescente esta parte depois da anterior. Observe a responsabilidade indicada no título. Não copie os delimitadores Markdown e não execute o arquivo antes de acrescentar as cinco partes.",
+              "command": "const server=http.createServer(async(req,res)=>{\n try{\n  const url=new URL(req.url,origin);\n  if(url.pathname==='/health')return send(res,200,{status:'ok'});\n  if(url.pathname.startsWith('/scim/v2/Users'))return await handleScim(req,res,url);\n  if(req.method==='GET'&&url.pathname==='/login'){\n   for(const [key,v] of pending)if(v.expires<Date.now())pending.delete(key);\n   for(const [key,v] of sessions)if(v.expires<Date.now())sessions.delete(key);\n   const state=random(),nonce=random(),verifier=random(),binding=random();pending.set(state,{nonce,verifier,binding,expires:Date.now()+300000});\n   const query=new URLSearchParams({client_id:config.clientId,redirect_uri:origin+'/callback',response_type:'code',scope:'openid profile',state,nonce,code_challenge:createHash('sha256').update(verifier).digest('base64url'),code_challenge_method:'S256'});\n   return redirect(res,config.issuer+'/protocol/openid-connect/auth?'+query,'transaction='+binding+'; HttpOnly; SameSite=Lax; Path=/; Max-Age=300');\n  }\n  if(req.method==='GET'&&url.pathname==='/callback'){\n   const tx=pending.get(url.searchParams.get('state'));pending.delete(url.searchParams.get('state'));\n   if(!tx||tx.expires<Date.now()||!equal(tx.binding,cookies(req).transaction))return send(res,400,{error:'Transação inválida'});\n   const tokens=await jsonRequest(config.issuer+'/protocol/openid-connect/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({grant_type:'authorization_code',client_id:config.clientId,redirect_uri:origin+'/callback',code:url.searchParams.get('code')||'',code_verifier:tx.verifier})});\n   const identity=await tokenClaims(tokens.id_token,config.clientId,tx.nonce),access=await tokenClaims(tokens.access_token,'aurora-api');if(identity.sub!==access.sub)throw Error('Sujeitos diferentes');\n   const sid=random();sessions.set(sid,{token:tokens.access_token,expires:Math.min(Date.now()+600000,access.exp*1000)});audit('login',{subject:identity.sub});return redirect(res,'/','aurora='+sid+'; HttpOnly; SameSite=Lax; Path=/; Max-Age=600');\n  }\n",
+              "host": "HOST01 · editor → C:\\AuroraLab\\APP01\\laboratorio.mjs",
+              "why": "A separação deixa explícito onde se configuram confiança, cadastro, autenticação e autorização.",
+              "expected": "Esta parte foi acrescentada na ordem. Depois da parte 5, node --check laboratorio.mjs precisa passar."
+            },
+            {
+              "id": "app-source-5",
+              "title": "Escrever a aplicação · parte 5/5 · autorização e inicialização",
+              "text": "No mesmo laboratorio.mjs, acrescente esta parte depois da anterior. Observe a responsabilidade indicada no título. Não copie os delimitadores Markdown e não execute o arquivo antes de acrescentar as cinco partes.",
+              "command": "  if(req.method==='GET'&&['/api/financeiro','/api/juridico'].includes(url.pathname)){\n   let claims;try{const session=sessions.get(cookies(req).aurora);const bearer=req.headers.authorization?.startsWith('Bearer ')?req.headers.authorization.slice(7):null;if(!bearer&&(!session||session.expires<Date.now()))throw Error('Sem sessão');claims=await tokenClaims(bearer||session.token,'aurora-api');}catch{return send(res,401,{decision:'negado',reason:'Autenticação inválida'});}\n   const user=users().find(u=>u.userName===claims.preferred_username),finance=url.pathname.endsWith('financeiro'),department=finance?'Financeiro':'Jurídico',role=finance?'FIN-LEITOR':'JUR-LEITOR';const allowed=!!user&&user.active&&user.department===department&&user.role===role;\n   audit('access',{subject:claims.sub,resource:department,allowed});return send(res,allowed?200:403,{decision:allowed?'permitido':'negado',resource:department,policy:'conta ativa + departamento + papel'});\n  }\n  if(req.method==='POST'&&url.pathname==='/logout'){\n   if(req.headers.origin!==origin)return send(res,403,{error:'Origem inválida'});sessions.delete(cookies(req).aurora);return redirect(res,'/','aurora=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0');\n  }\n  if(req.method==='GET'&&url.pathname==='/')return send(res,200,'<!doctype html><html lang=\"pt-BR\"><meta charset=\"utf-8\"><title>APP01 · Aurora</title><h1>APP01 · Portal Aurora</h1><p>Autenticação no Keycloak; autorização na aplicação.</p><ul><li><a href=\"/login\">Entrar</a></li><li><a href=\"/api/financeiro\">Financeiro</a></li><li><a href=\"/api/juridico\">Jurídico</a></li></ul><form method=\"post\" action=\"/logout\"><button>Sair da aplicação</button></form></html>','text/html');\n  send(res,404,{error:'Não encontrado'});\n }catch{send(res,400,{error:'Requisição ou integração inválida; confira configuração, corpo e IdP sem publicar segredos.'});}\n});\nserver.listen(8765,'127.0.0.1',()=>console.log('APP01 em http://localhost:8765 · somente laboratório local'));\n",
+              "host": "HOST01 · editor → C:\\AuroraLab\\APP01\\laboratorio.mjs",
+              "why": "A separação deixa explícito onde se configuram confiança, cadastro, autenticação e autorização.",
+              "expected": "Esta parte foi acrescentada na ordem. Depois da parte 5, node --check laboratorio.mjs precisa passar."
+            },
+            {
+              "id": "start",
+              "title": "Conferir e iniciar",
+              "text": "Depois de salvar TODAS as partes, execute a checagem de sintaxe. Se passar, inicie o servidor. Mantenha esse terminal aberto e use outro para SCIM. Caso falhe, confira ordem, chaves e arquivos na pasta atual.",
+              "command": "node --check laboratorio.mjs\nnode laboratorio.mjs",
+              "expected": "APP01 em http://localhost:8765; /health responde {\"status\":\"ok\"}.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "before-provision",
+              "title": "Observar login sem acesso provisionado",
+              "text": "Abra http://localhost:8765 e entre como fin.ana. O login no Keycloak deve funcionar, mas FIN/JUR dão 403 porque cadastro.json está vazio. Essa é uma negação correta. Não remova a validação para forçar 200.",
+              "command": "",
+              "expected": "Autenticado sem cadastro = 403. Sem sessão/token = 401.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "pkce-observation",
+              "title": "Observar Code + PKCE",
+              "text": "No DevTools de seu navegador, aba Network, inicie novo login e observe client_id=aurora-web, response_type=code e code_challenge_method=S256 na autorização. Não copie authorization code, token ou cookies para evidências.",
+              "command": "",
+              "expected": "O fluxo usa código, transação e PKCE; não usa senha do usuário diretamente na API.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            },
+            {
+              "id": "negative",
+              "title": "Testar transação e voltar ao fluxo",
+              "text": "Abra /callback?state=invalido: espere 400. Em janela privada abra /api/financeiro sem login: espere 401. Na aula SCIM você criará o cadastro e obterá 200/403 com Ana.",
+              "command": "",
+              "expected": "Negativas preservadas; próximo passo é provisionar E001, não alterar permissões do IdP.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Você vai conectar IDP01 à APP01."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "oidc",
+          "oauth",
+          "keycloak"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "prep-local"
+        ],
+        "acceptance": [
+          {
+            "id": "guided-result-v2",
+            "text": "A entrega desta lição foi observada: Cliente configurado, arquivos construídos, login Code+PKCE e negativas 400/401/403 demonstrados."
+          },
+          {
+            "id": "boundary-check-v2",
+            "text": "Os objetos e parâmetros usados correspondem à Arquitetura; cada sistema executado e cada pendência estão identificados."
+          },
+          {
+            "id": "negative-restore-v2",
+            "text": "O cenário negativo indicado foi conferido e o estado final/reversão registrado sem segredos."
+          }
+        ],
+        "sequence": 17,
+        "labAction": "Construir a APP01, configurar aurora-web e observar login sem provisionamento."
+      },
+      {
+        "id": "iam-3-2",
+        "title": "Provisionamento SCIM",
+        "url": "https://www.rfc-editor.org/rfc/rfc7644.html",
+        "study": [
+          {
+            "topic": "SCIM transporta ciclo de vida, não faz login",
+            "detail": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM. id é atribuído pelo destino; externalId correlaciona com RH. active=false desativa o cadastro, mas o efeito nas sessões depende da aplicação."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "A aplicação construída implementa um subconjunto didático: Users, filtros exatos, paginação e PATCH replace. Não é uma suíte de conformidade SCIM. Comunicação com Entra requer um destino suportado e alcançável de forma segura; localhost não é endpoint da nuvem."
+          }
+        ],
+        "practice": [],
+        "evidence": "POST e consulta de E001/E002 executados; autorização real e erros 401/409 conferidos.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://www.rfc-editor.org/rfc/rfc7644.html",
+          "steps": [
+            {
+              "id": "consumer",
+              "title": "Preparar a identidade do consumidor",
+              "text": "Deixe laboratorio.mjs iniciado. Em outro PowerShell no HOST01 leia config.json e monte o header em memória. Não imprima $cfg nem $headers, pois contêm a credencial.",
+              "command": "Set-Location C:\\AuroraLab\\APP01\n$cfg = Get-Content C:\\AuroraLab\\APP01\\config.json -Raw | ConvertFrom-Json\n$headers = @{Authorization=('Bearer ' + $cfg.scimToken)}",
+              "expected": "A variável contém o bearer de S002 sem copiá-lo ao portal.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "empty",
+              "title": "Consultar antes de criar",
+              "text": "Localize E001 por externalId. Se você já executou este POST antes, use o objeto existente em vez de criar uma duplicata.",
+              "command": "Invoke-RestMethod -Uri 'http://localhost:8765/scim/v2/Users?filter=externalId%20eq%20%22E001%22' -Headers $headers",
+              "expected": "totalResults=0 no estado inicial; =1 se Ana já foi provisionada.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "ana-json",
+              "title": "Montar o documento de Ana",
+              "text": "Crie a variável body com o JSON abaixo. schemas descreve o contrato; externalId E001 liga ao RH; id será criado pelo destino. Department e roles determinam a autorização da aplicação.",
+              "command": "$body = @'\n{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\n  ],\n  \"externalId\": \"E001\",\n  \"userName\": \"fin.ana\",\n  \"displayName\": \"Ana Lima\",\n  \"active\": true,\n  \"roles\": [\n    {\n      \"value\": \"FIN-LEITOR\"\n    }\n  ],\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\n    \"department\": \"Financeiro\"\n  }\n}\n'@",
+              "expected": "Documento representa J001 de E001 sem senha nem token.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "ana-post",
+              "title": "Criar Ana no destino",
+              "text": "Execute POST uma única vez para o estado inicial. Guarde o id retornado sem confundi-lo com employeeId. Se aparecer 409, consulte o objeto; não invente outro externalId para evitar o conflito.",
+              "command": "$ana = Invoke-RestMethod -Method POST -Uri http://localhost:8765/scim/v2/Users -Headers $headers -ContentType application/scim+json -Body $body\n$ana | Select-Object id,externalId,userName,active",
+              "expected": "Resposta criada; externalId E001 e active=True.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "carla",
+              "title": "Criar a conta de controle",
+              "text": "Prepare e envie Carla. O mesmo destino agora mantém duas contas. Não troque o externalId de Carla para E001.",
+              "command": "$body = @'\n{\n  \"schemas\": [\n    \"urn:ietf:params:scim:schemas:core:2.0:User\",\n    \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\"\n  ],\n  \"externalId\": \"E002\",\n  \"userName\": \"jur.carla\",\n  \"displayName\": \"Carla Souza\",\n  \"active\": true,\n  \"roles\": [\n    {\n      \"value\": \"JUR-LEITOR\"\n    }\n  ],\n  \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User\": {\n    \"department\": \"Jurídico\"\n  }\n}\n'@\nInvoke-RestMethod -Method POST -Uri http://localhost:8765/scim/v2/Users -Headers $headers -ContentType application/scim+json -Body $body",
+              "expected": "E002/Jurídico/JUR-LEITOR criado; dois IDs de destino distintos.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "positive",
+              "title": "Conferir o efeito na aplicação",
+              "text": "No navegador, entre como Ana. Abra FIN e JUR. Depois entre como Carla em sessão separada e repita. O servidor verifica o cadastro a cada acesso, não apenas no login.",
+              "command": "",
+              "expected": "Ana: FIN 200/JUR 403; Carla: FIN 403/JUR 200.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "negative",
+              "title": "Executar as negativas",
+              "text": "Abra /scim/v2/Users no navegador sem header: 401. Repetir o POST com E001 já existente: 409. O aplicativo implementa um subconjunto didático SCIM; localhost não pode ser configurado como endpoint do Entra cloud.",
+              "command": "",
+              "expected": "Autenticação do provisionador e prevenção de duplicação foram observadas.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            },
+            {
+              "id": "mapping",
+              "title": "Guardar os identificadores para as mudanças",
+              "text": "Refaça a consulta por E001 e anote apenas id, externalId e userName. Na próxima aula você atualizará esse id usando PATCH. Não apague/recrie Ana na transferência.",
+              "command": "Invoke-RestMethod -Uri 'http://localhost:8765/scim/v2/Users?filter=externalId%20eq%20%22E001%22' -Headers $headers",
+              "expected": "Exatamente um objeto é encontrado.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O cliente de provisionamento cria e atualiza contas em um servidor SCIM."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "scim",
+          "jml"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-3-1"
+        ],
+        "acceptance": [
+          {
+            "id": "guided-result-v2",
+            "text": "A entrega desta lição foi observada: POST e consulta de E001/E002 executados; autorização real e erros 401/409 conferidos."
+          },
+          {
+            "id": "boundary-check-v2",
+            "text": "Os objetos e parâmetros usados correspondem à Arquitetura; cada sistema executado e cada pendência estão identificados."
+          },
+          {
+            "id": "negative-restore-v2",
+            "text": "O cenário negativo indicado foi conferido e o estado final/reversão registrado sem segredos."
+          }
+        ],
+        "sequence": 18,
+        "labAction": "Criar E001/E002 na APP01 por POST SCIM e comparar autorização com o desenho."
+      },
+      {
+        "id": "iam-3-3",
+        "title": "App registrations e consentimento",
+        "url": "https://learn.microsoft.com/en-us/graph/auth-register-app-v2",
+        "study": [
+          {
+            "topic": "A permissão pertence ao cliente que recebe o token",
+            "detail": "App registration define o aplicativo; service principal é sua representação no tenant. Permissão delegada atua com usuário; permissão de aplicação atua sem usuário e pode exigir consentimento administrativo."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Graph Explorer tem seu próprio cliente. Fazer /me nele não valida as permissões de LAB-APP-READONLY. Para demonstrar sua aplicação, obtenha o token usando o client ID dela e registre o cliente sem copiar tokens para as evidências."
+          }
+        ],
+        "practice": [],
+        "evidence": "Contexto comprova client ID próprio, /me funciona e revogação da concessão correta foi retestada.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://learn.microsoft.com/en-us/graph/auth-register-app-v2",
+          "steps": [
+            {
+              "id": "client",
+              "title": "Criar cliente público de teste",
+              "text": "Crie LAB-APP-READONLY no tenant. Anote Application(client) ID e Directory(tenant) ID; em Authentication habilite public client flows para esta aplicação de laboratório. Não crie segredo em cliente público.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph PowerShell · aplicação própria e compare com a entrega: Contexto comprova client ID próprio, /me funciona e revogação da concessão correta foi retestada.",
+              "host": "Microsoft Graph PowerShell · aplicação própria",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "permission",
+              "title": "Definir a leitura mínima",
+              "text": "Em API permissions selecione Microsoft Graph → Delegated → User.Read. Obtenha aprovação conforme política do tenant; não conceda permissões amplas de escrita.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph PowerShell · aplicação própria e compare com a entrega: Contexto comprova client ID próprio, /me funciona e revogação da concessão correta foi retestada.",
+              "host": "Microsoft Graph PowerShell · aplicação própria",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "own-client",
+              "title": "Autenticar no cliente criado",
+              "text": "Instale o SDK e substitua os dois placeholders por IDs da sua aplicação. Device code é usado apenas no cliente público de teste autorizado; não use Graph Explorer para afirmar que testou esta aplicação.",
+              "command": "Install-Module Microsoft.Graph.Authentication -Scope CurrentUser\nConnect-MgGraph -ClientId \"SEU-CLIENT-ID\" -TenantId \"SEU-TENANT-ID\" -Scopes \"User.Read\" -UseDeviceCode\nGet-MgContext | Select-Object ClientId,TenantId,Scopes\nInvoke-MgGraphRequest -Method GET -Uri \"https://graph.microsoft.com/v1.0/me\"",
+              "expected": "Contexto mostra o client ID de LAB-APP-READONLY e /me retorna a identidade de teste.",
+              "host": "Microsoft Graph PowerShell · aplicação própria",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "revoke",
+              "title": "Revogar a concessão correta",
+              "text": "Desconecte o SDK. Em Enterprise applications encontre a representação de LAB-APP-READONLY e a concessão delegada correspondente. Revogue o consentimento de teste com papel autorizado. Não altere Graph Explorer.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph PowerShell · aplicação própria e compare com a entrega: Contexto comprova client ID próprio, /me funciona e revogação da concessão correta foi retestada.",
+              "host": "Microsoft Graph PowerShell · aplicação própria",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "retry",
+              "title": "Obter nova autorização",
+              "text": "Execute Disconnect-MgGraph e depois Connect-MgGraph novamente com o mesmo client ID. Registre falha ou novo pedido de consentimento conforme política; não prometa revogação imediata de access token já emitido. Remova a aplicação se não for reutilizá-la.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph PowerShell · aplicação própria e compare com a entrega: Contexto comprova client ID próprio, /me funciona e revogação da concessão correta foi retestada.",
+              "host": "Microsoft Graph PowerShell · aplicação própria",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "graph",
+          "oauth"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-0-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "Get-MgContext mostra o client ID criado e /me retorna o usuário de teste."
+          },
+          {
+            "id": "negative-case",
+            "text": "Após revogar a concessão correta, nova autorização exige consentimento ou falha conforme política."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 20,
+        "labAction": "Executar /me com o client ID LAB-APP-READONLY e revogar a concessão correta."
+      }
+    ],
+    "environment": "IDP01 criado manualmente; APP01 será construída nas aulas, a partir de arquivos vazios.",
+    "outcome": "Code+PKCE, autorização, POST/PATCH SCIM e integrações de teste explicados e executados por você.",
+    "requirements": "Node.js 22+ no HOST01, realm aurora e tenant somente para SAML/consentimento Microsoft.",
+    "number": 4,
+    "difficulty": "intermediate"
+  },
+  {
+    "id": "p4",
+    "title": "IGA — Governança de identidades",
+    "desc": "Acesso correto, pelo tempo correto, com rastreabilidade.",
+    "items": [
+      {
+        "id": "iam-4-0",
+        "title": "Joiner, Mover, Leaver (JML)",
+        "url": "https://www.rfc-editor.org/rfc/rfc7644.html",
+        "study": [
+          {
+            "topic": "JML é um processo de estados",
+            "detail": "Joiner cria vínculo e acesso inicial. Mover troca acesso removendo o anterior. Leaver retira acesso e encerra vínculo. employeeId permanece estável; departamento e status mudam. Um email não deve ser sua única correlação."
+          },
+          {
+            "topic": "Orquestração observável antes de automação",
+            "detail": "Nesta etapa, você aplica o evento em cada fronteira: AD, conferência do Entra, Keycloak e cadastro da APP01 por SCIM. Não há script de orquestração pronto. Se uma fronteira falhar, compare o estado do RH com cada destino e corrija a divergência sem criar outra pessoa."
+          }
+        ],
+        "practice": [],
+        "evidence": "J001/M001/L001 executados por fronteira, com matriz antes/depois e correlação do mesmo E001.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://www.rfc-editor.org/rfc/rfc7644.html",
+          "steps": [
+            {
+              "id": "j001",
+              "title": "Conferir o estado de admissão",
+              "text": "J001 corresponde ao que você já construiu: E001 no AD/Keycloak/APP01, grupo FIN no AD e FIN-LEITOR no destino. Registre o id SCIM e confirme Ana FIN 200/JUR 403, Carla JUR 200. O piloto Entra deve estar sincronizado se você executou Cloud Sync.",
+              "command": "",
+              "expected": "Todos os sistemas executados representam o mesmo vínculo E001. Sistemas não disponíveis estão identificados.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "rh-move",
+              "title": "Aprovar M001 no RH",
+              "text": "No rh.csv altere somente a linha E001: department Jurídico, manager E004, status active. Não altere employeeId nem userName. Registre M001 e o horário em suas evidências.",
+              "command": "",
+              "expected": "O estado desejado mudou; nenhum destino foi alterado automaticamente.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "ad-move",
+              "title": "Aplicar a transferência no AD",
+              "text": "No DC01 remova o grupo antigo, atualize Department e OU, depois conceda o grupo novo. Como a autorização Windows usa token de logon, faça logoff/login de Ana antes de retestar ACLs.",
+              "command": "Remove-ADGroupMember GG-FIN-LEITURA fin.ana -Confirm:$false\nSet-ADUser fin.ana -Department \"Jurídico\"\nGet-ADUser fin.ana | Move-ADObject -TargetPath \"OU=Juridico,OU=Colaboradores,OU=AURORA,DC=aurora,DC=test\"\nAdd-ADGroupMember GG-JUR-LEITURA fin.ana",
+              "expected": "E001 preservado; FIN removido, JUR concedido e OU mudou.",
+              "host": "DC01",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "cloud-move",
+              "title": "Conferir propagação",
+              "text": "No Entra aguarde/consulte o ciclo Cloud Sync do piloto e confira Department e grupos. Não edite o destino sincronizado para mascarar erro da origem. Se não houver sincronização executada, não marque esta parte como real.",
+              "command": "",
+              "expected": "Objeto existente atualizado sem duplicação.",
+              "host": "Entra Admin Center",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "idp-move",
+              "title": "Refletir M001 no IdP de bancada",
+              "text": "Em IDP01 → realm aurora → Users → fin.ana atualize department para Jurídico. Em Role mapping remova FIN-LEITOR e atribua JUR-LEITOR. Essa mudança é manual: não há conector AD → Keycloak configurado neste núcleo.",
+              "command": "",
+              "expected": "O mesmo usuário permanece no realm, com o novo papel.",
+              "host": "Console Keycloak",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "app-move",
+              "title": "Atualizar o destino por PATCH",
+              "text": "No HOST01 releia o token se necessário, consulte E001 e use o id retornado. O corpo altera departamento e papel na mesma requisição.",
+              "command": "$cfg = Get-Content C:\\AuroraLab\\APP01\\config.json -Raw | ConvertFrom-Json\n$headers = @{Authorization=('Bearer ' + $cfg.scimToken)}\n$result = Invoke-RestMethod -Uri 'http://localhost:8765/scim/v2/Users?filter=externalId%20eq%20%22E001%22' -Headers $headers\n$id = $result.Resources[0].id\n$body = @'\n{\n  \"schemas\": [\n    \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\n  ],\n  \"Operations\": [\n    {\n      \"op\": \"replace\",\n      \"path\": \"urn:ietf:params:scim:schemas:extension:enterprise:2.0:User:department\",\n      \"value\": \"Jurídico\"\n    },\n    {\n      \"op\": \"replace\",\n      \"path\": \"roles\",\n      \"value\": [\n        {\n          \"value\": \"JUR-LEITOR\"\n        }\n      ]\n    }\n  ]\n}\n'@\nInvoke-RestMethod -Method PATCH -Uri (\"http://localhost:8765/scim/v2/Users/\" + $id) -Headers $headers -ContentType application/scim+json -Body $body",
+              "expected": "Mesmo id de destino; Department Jurídico e JUR-LEITOR.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "test-move",
+              "title": "Retestar a sessão existente",
+              "text": "Sem apagar o cadastro, use a sessão de Ana na APP01 e teste os recursos. A aplicação reconsulta os atributos locais; não precisa esperar um novo login para negar FIN. Carla continua servindo como controle.",
+              "command": "",
+              "expected": "Ana FIN 403/JUR 200; Carla JUR 200.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "rh-leave",
+              "title": "Aprovar L001 e bloquear AD",
+              "text": "Altere status de E001 para inactive no rh.csv. No DC01 bloqueie a conta e retire grupos de acesso. Não exclua os objetos necessários à evidência.",
+              "command": "Disable-ADAccount fin.ana\nRemove-ADGroupMember GG-JUR-LEITURA fin.ana -Confirm:$false",
+              "expected": "Conta AD bloqueada; evidência de L001 preservada.",
+              "host": "DC01",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "idp-leave",
+              "title": "Bloquear o IdP e conferir o cloud",
+              "text": "No Keycloak → fin.ana coloque Enabled OFF e encerre as sessões do usuário. No Entra confira o bloqueio propagado; revogue sessões com função autorizada quando o cenário permitir. Bloqueio não é garantia universal de invalidação imediata de qualquer token já emitido.",
+              "command": "",
+              "expected": "Novo login no Keycloak é negado; estado Entra foi observado ou marcado como pendente.",
+              "host": "Keycloak e Entra",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "app-leave",
+              "title": "Desativar a conta no destino",
+              "text": "Use o mesmo $id de E001. Este PATCH retira o acesso efetivo na APP01 mesmo se existir um token ainda válido.",
+              "command": "$body = @'\n{\n  \"schemas\": [\n    \"urn:ietf:params:scim:api:messages:2.0:PatchOp\"\n  ],\n  \"Operations\": [\n    {\n      \"op\": \"replace\",\n      \"path\": \"active\",\n      \"value\": false\n    }\n  ]\n}\n'@\nInvoke-RestMethod -Method PATCH -Uri (\"http://localhost:8765/scim/v2/Users/\" + $id) -Headers $headers -ContentType application/scim+json -Body $body",
+              "expected": "active=False no destino; E001 não foi recriado.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "test-leave",
+              "title": "Testar e fechar a movimentação",
+              "text": "Teste FIN e JUR na sessão anterior; ambos devem negar: 403 se o token ainda é válido, 401 se a autenticação já não passa. Tente novo login. Registre horário de cada sistema e diferença entre bloqueio, sessão e autorização.",
+              "command": "",
+              "expected": "Nenhum acesso para Ana; Carla permanece sem mudança.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            },
+            {
+              "id": "return",
+              "title": "Preparar outro ensaio sem perder o histórico",
+              "text": "Para R001 de laboratório, use o evento de retorno na Arquitetura: reative os mesmos objetos e retorne atributos/grupos/papel ao estado J001. Faça PATCH de active=true, department Financeiro e roles FIN-LEITOR. Só faça isso mediante decisão fictícia explícita; não é política de readmissão automática.",
+              "command": "",
+              "expected": "Mesmo E001 pronto para repetir o exercício; nenhuma duplicata.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "Joiner cria vínculo e acesso inicial."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "jml",
+          "scim",
+          "keycloak"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-3-2"
+        ],
+        "acceptance": [
+          {
+            "id": "guided-result-v2",
+            "text": "A entrega desta lição foi observada: J001/M001/L001 executados por fronteira, com matriz antes/depois e correlação do mesmo E001."
+          },
+          {
+            "id": "boundary-check-v2",
+            "text": "Os objetos e parâmetros usados correspondem à Arquitetura; cada sistema executado e cada pendência estão identificados."
+          },
+          {
+            "id": "negative-restore-v2",
+            "text": "O cenário negativo indicado foi conferido e o estado final/reversão registrado sem segredos."
+          }
+        ],
+        "sequence": 21,
+        "labAction": "Executar J001, M001 e L001 manualmente, observando cada fronteira e cada decisão de acesso."
+      },
+      {
+        "id": "iam-4-1",
+        "title": "Entitlement Management",
+        "url": "https://learn.microsoft.com/pt-br/entra/id-governance/entitlement-management-overview",
+        "study": [
+          {
+            "topic": "Direito de acesso tem dono e prazo",
+            "detail": "Um catálogo organiza recursos; um pacote agrupa direitos e uma política define quem solicita, quem aprova e quando expira. A aprovação precisa refletir o risco do acesso e evitar autoaprovação indevida."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Conceder grupo não garante que o aplicativo retirará uma sessão existente na expiração. Verifique inclusão, remoção e acesso efetivo. O fluxo manual pode ensinar governança, mas não é execução de Entitlement Management."
+          }
+        ],
+        "practice": [],
+        "evidence": "Catálogo AURORA-RECURSOS, pacote FIN-LEITURA, aprovação de Bruno e retirada observados; expiração automática testada ou pendente identificada.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "license",
+              "title": "Confirmar o recurso e os responsáveis",
+              "text": "No Entra de estudo confirme licença elegível de Entitlement Management. Os responsáveis são Bruno/fin.bruno como aprovador e Ana/fin.ana como solicitante. Os objetos precisam existir no tenant por sincronização. Sem licença, registre o fluxo como simulado, sem afirmar que um pacote foi criado.",
+              "host": "TENANT01 · Entra Admin Center",
+              "expected": "Licença e papéis de administração de governança conferidos.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            },
+            {
+              "id": "catalog",
+              "title": "Criar o catálogo fixo",
+              "text": "Entra ID → Identity Governance → Entitlement management → Catalogs → New catalog. Name AURORA-RECURSOS; Enabled Yes. Na tela Resources → Add resources, adicione somente o grupo GG-FIN-LEITURA. Confira proprietário autorizado para adicionar o recurso.",
+              "host": "Entra · Entitlement management",
+              "expected": "Catálogo existe com o grupo financeiro, sem recursos administrativos.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            },
+            {
+              "id": "package",
+              "title": "Criar o pacote FIN-LEITURA",
+              "text": "Access packages → New access package. Name FIN-LEITURA; Catalog AURORA-RECURSOS. Em Resource roles, selecione GG-FIN-LEITURA como Member. Não inclua Owner e não adicione papéis administrativos.",
+              "host": "Entra",
+              "expected": "Pacote concede somente participação no grupo de leitura.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            },
+            {
+              "id": "policy",
+              "title": "Definir aprovação e duração",
+              "text": "Na política do pacote, limite solicitações ao piloto do laboratório. Exija aprovação; escolha fin.bruno como aprovador e evite autoaprovação. Lifecycle: expire assignment after 1 day; sem renovação automática neste ensaio. Salve e registre o horário de início.",
+              "host": "Entra",
+              "expected": "Há aprovador definido e prazo de um dia; não é concessão permanente.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            },
+            {
+              "id": "request",
+              "title": "Solicitar e aprovar como pessoas distintas",
+              "text": "Com Ana no portal My Access, localize FIN-LEITURA e solicite com justificativa J001. Em outra sessão com Bruno, revise a solicitação e aprove. No Entra confirme a atribuição e a participação no grupo. Não use a mesma sessão administrativa para fingir os dois papéis.",
+              "host": "My Access · sessões separadas",
+              "expected": "Solicitação, aprovação e concessão têm identidades/horários identificáveis.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            },
+            {
+              "id": "expiry",
+              "title": "Comprovar retirada sem confundir os testes",
+              "text": "Para testar remoção imediata, retire a atribuição do pacote e confira remoção do grupo. Para provar expiração automática, aguarde o prazo e registre o efeito real. Remoção manual não comprova que a expiração automática executou. APP01/Keycloak não recebem essa mudança automaticamente: registre essa fronteira separada.",
+              "host": "Entra e aplicação-alvo",
+              "expected": "Concessão/retirada observadas; expiração comprovada ou explicitamente pendente.",
+              "why": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "iga",
+          "entra"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-4-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Pacote de acesso com prazo e evidência"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 22,
+        "labAction": "Criar catálogo AURORA-RECURSOS e pacote FIN-LEITURA com aprovação de Bruno e expiração."
+      },
+      {
+        "id": "iam-4-2",
+        "title": "Access Reviews e SoD",
+        "url": "https://learn.microsoft.com/pt-br/entra/id-governance/access-reviews-overview",
+        "study": [
+          {
+            "topic": "SoD previne combinações incompatíveis",
+            "detail": "Solicitar e aprovar o próprio pagamento é um conflito de segregação de funções. Uma revisão periódica pergunta se cada acesso ainda é necessário; uma política SoD pode prevenir ou detectar combinações arriscadas."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "A decisão de revogar só vira controle efetivo quando a alteração chega ao destino. Registre dono, justificativa, prazo de exceção e reteste; planilha aprovada sem remoção ainda é uma pendência."
+          }
+        ],
+        "practice": [],
+        "evidence": "Revisão SoD com acesso removido",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Governança de identidade → Revisões de acesso. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Defina pares de funções incompatíveis e uma matriz SoD.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Monte matriz SoD: solicitante de pagamento não pode ser aprovador do mesmo pagamento; associe perfis fictícios a grupos.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Em Access Reviews licenciadas, crie revisão piloto com dono definido; sem licença, use CSV com usuário, acesso, dono, decisão e prazo.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Rejeite acesso excessivo de uma conta fictícia e remova a associação de grupo em ambiente de teste.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Repita login/acesso e confirme negação; registre decisão, responsável, evidência e exceção temporária se existir.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Confira escopo, revisores, convidados e decisões; compare a decisão de negar com remoção efetiva de acesso e logs.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Access Reviews e compare com a entrega: Revisão SoD com acesso removido",
+              "host": "Microsoft Entra / Access Reviews",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "iga",
+          "sod",
+          "entra"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-4-1"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Revisão SoD com acesso removido"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 23,
+        "labAction": "Investigar SOD01 em E003 e retirar a combinação incompatível de grupos."
+      },
+      {
+        "id": "iam-4-3",
+        "title": "Recertificação e auditoria",
+        "url": "https://learn.microsoft.com/pt-br/entra/id-governance/",
+        "study": [
+          {
+            "topic": "A campanha fecha um ciclo de governança",
+            "detail": "Uma campanha define escopo, população, revisores, prazo e tratamento de não resposta. A decisão gera remediação; o reteste confirma que o risco foi reduzido. Decisões sem evidência não permitem repetir a auditoria."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Separe acessos mantidos, revogados, exceções e pendências. Meça tempo até remoção e retenha evidência sanitizada. Esse processo é diferente de apenas exportar uma lista de membros."
+          }
+        ],
+        "practice": [],
+        "evidence": "Relatório de recertificação com decisões",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Governança de identidade → Revisões de acesso. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Monte inventário de acessos e responsáveis por aplicação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Exporte inventário de usuários, grupos e aplicações do laboratório sem informações sensíveis; registre data e origem.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Distribua lista aos proprietários fictícios de Financeiro e Jurídico; registre aprovar, revogar ou justificar exceção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Aplique uma revogação real em conta de teste e verifique efeito; mantenha log antes/depois e prazo de remediação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Consolide relatório com escopo, decisões, pendências, aprovadores, data e resultado do reteste.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Confirme datas da campanha, proprietários, decisão, justificativa e remoção; diferencie revisão manual de campanha automatizada.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Identity Governance e compare com a entrega: Relatório de recertificação com decisões",
+              "host": "Microsoft Entra / Identity Governance",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "iga",
+          "audit"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-4-2"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Relatório de recertificação com decisões"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 24,
+        "labAction": "Revisar acessos E001/E002 com Bruno/Diego, aplicar decisões e retestar o destino."
+      }
+    ],
+    "environment": "Os mesmos E001/E002 em RH, AD, IdP e aplicação; Entra quando sincronização executada.",
+    "outcome": "J001, M001, L001 e SOD01 aplicados nas fronteiras executadas.",
+    "requirements": "JML local é executável. Pacotes/revisões do Entra precisam de licença elegível; declare simulação quando documental.",
+    "number": 5,
+    "difficulty": "intermediate"
+  },
+  {
+    "id": "p5",
+    "title": "PAM — Acesso privilegiado",
+    "desc": "Controle, monitore e reduza privilégios.",
+    "items": [
+      {
+        "id": "iam-5-0",
+        "title": "PIM, JIT e elegibilidade",
+        "url": "https://learn.microsoft.com/pt-br/entra/id-governance/privileged-identity-management/pim-configure",
+        "study": [
+          {
+            "topic": "Elegibilidade não é privilégio ativo",
+            "detail": "PIM permite que uma identidade elegível ative uma função por período limitado, com condições como justificativa, MFA e aprovação. JIT reduz tempo de exposição; não substitui seleção correta da função e escopo."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Funções Entra e Azure RBAC têm escopos distintos. Teste antes, durante e após a ativação. Uma planilha com horários é uma simulação de JIT, não comprovação de que o serviço removeu o privilégio."
+          }
+        ],
+        "practice": [],
+        "evidence": "Ativação JIT temporária e logs",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Governança de identidade → Privileged Identity Management. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Confirme licença Microsoft Entra ID P2 ou Microsoft Entra ID Governance para PIM e pessoas envolvidas. Entra ID Free e P1 isolado não fornecem execução real de PIM.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Confirme licenciamento PIM aplicável; sem P2/ID Governance apropriado, não declare ativação real.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Use a conta cloud-only pim.piloto no tenant de estudo. No PIM → Microsoft Entra roles → Assignments → Add assignments selecione Reports Reader, Member pim.piloto, Assignment type Eligible e duração de 1 dia. Não altere a própria conta de emergência. Essa conta será usada somente neste exercício.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Como pim.piloto, PIM → My roles → Microsoft Entra roles → Eligible assignments → Reports Reader → Activate. Informe justificativa LAB-PIM-01, duração de 30 minutos e complete MFA/aprovação se a política exigir. Como administrador, confira a atribuição ativa e o evento. Ao terminar, Deactivate e reteste o estado de atribuição; não presuma que leitura básica já permitida ao usuário será bloqueada.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Sem licença, modele solicitação/aprovação/expiração em planilha e compare com PIM real, identificando explicitamente a simulação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Se PIM estiver ausente, confirme P2/ID Governance e papel adequado; confira elegibilidade, duração, MFA e logs de ativação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / PIM e compare com a entrega: Ativação JIT temporária e logs",
+              "host": "Microsoft Entra / PIM",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "pim",
+          "entra"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "prep-local"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Ativação JIT temporária e logs"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 25,
+        "labAction": "Ativar papel temporário de baixo impacto em conta de teste e conferir expiração."
+      },
+      {
+        "id": "iam-5-1",
+        "title": "PAM: sessão autorizada e trilha de auditoria",
+        "url": "https://learn.microsoft.com/pt-br/security/zero-trust/deploy/identity",
+        "study": [
+          {
+            "topic": "PAM protege o caminho privilegiado",
+            "detail": "Um bastion controla acesso a alvos e pode registrar sessão conforme edição. Um cofre armazena credenciais; rotação muda a credencial usada pelo consumidor. Nenhuma dessas funções garante automaticamente as demais."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Escolha produto, edição e versão antes do roteiro. Para esta lição, a entrega é sessão autorizada/negada e trilha disponível. Rotação é exercitada separadamente e não deve ser declarada se a edição não oferecer o recurso."
+          }
+        ],
+        "practice": [],
+        "evidence": "Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://www.jumpserver.org/",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Prepare uma instância isolada de JumpServer Community, verificando requisitos e instruções da versão oficial. Este é um laboratório de acesso privilegiado com bastion, NÃO um procedimento de Azure Key Vault. Não exponha serviços administrativos na internet.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Separe credenciais de teste SSH/RDP e identifique uma VM alvo. Não registre senhas em arquivos, capturas ou repositórios.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Use JumpServer Community para laboratório isolado; verifique requisitos atuais e só ligue VM extra após desligar Keycloak se necessário.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Cadastre ativo de teste e uma conta de operador; configure autorização mínima de sessão pela interface da versão instalada, registrando nomes de telas conforme a edição.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Teste acesso aprovado via bastion e tente acesso com conta sem autorização. Se disponível na edição, registre trilha/auditoria de sessão.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Compare auditoria de sessão e procedimento de rotação de credencial. Não alegue rotação automática ou gravação de sessão se a edição não oferecer esses recursos.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Se o acesso privilegiado falhar, verifique destino, credenciais de laboratório, gateway e logs de sessão; não confunda vault de segredos com PAM de sessões.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em JumpServer Community — PAM de sessões e compare com a entrega: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente.",
+              "host": "JumpServer Community — PAM de sessões",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "pam",
+          "jumpserver"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-5-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Ativo piloto e operador configurados, acesso permitido/negado testado e capacidade de auditoria da edição registrada. Rotação automática só conta se executada separadamente."
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 26,
+        "labAction": "Controlar uma sessão privilegiada para CL01 com operador e autorização limitados."
+      },
+      {
+        "id": "iam-5-2",
+        "title": "Break-glass e recuperação",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/role-based-access-control/security-emergency-access",
+        "study": [
+          {
+            "topic": "Recuperação precisa funcionar durante falhas",
+            "detail": "A conta de emergência não pode depender do componente que falhou. Contas cloud-only evitam depender da sincronização local, mas continuam exigindo métodos e custódia disponíveis. Teste de mesa complementa, não substitui, entrada real autorizada."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Registre cada uso, revise periodicamente e recupere a proteção após o evento. Não simule desastre removendo o único acesso administrativo nem desligue autenticação para facilitar a demonstração."
+          }
+        ],
+        "practice": [],
+        "evidence": "Procedimento break-glass ensaiado",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Entra ID → Funções e administradores. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Prepare duas contas de emergência cloud-only *.onmicrosoft.com, segregadas das contas operacionais e protegidas por FIDO2 ou autenticação baseada em certificado, sob custódia segura.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Revise as duas contas de emergência, sua independência de AD/SSO, funções administrativas ativas e alertas. Em tenant de estudo sem controle de custódia, documente o desenho sem ampliar privilégios.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Faça simulação de indisponibilidade, sem derrubar serviços. Verifique como uma conta emergencial acessaria o Entra sem depender de sincronização e registre responsáveis.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Documente testes de entrada, armazenamento de credenciais e rotação pós-uso; nunca remova os únicos meios de recuperação do tenant.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Planeje inspeção periódica de pelo menos 90 dias e alertas a cada uso administrativo. Registre o procedimento aprovado, riscos e resultados do tabletop.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Se a conta de emergência não entrar, revise independência de IdP, método resistente a phishing, CA aplicável e custódia; não execute lockout real.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / Roles e compare com a entrega: Procedimento break-glass ensaiado",
+              "host": "Microsoft Entra / Roles",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "entra",
+          "recovery"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-5-1"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Procedimento break-glass ensaiado"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 27,
+        "labAction": "Ensaiar recuperação com BG01/BG02 sem derrubar o tenant nem depender do AD."
+      }
+    ],
+    "environment": "Contas administrativas segregadas, acesso emergencial e registros de auditoria.",
+    "outcome": "Privilégio temporário, aprovação e recuperação simulados ou implementados.",
+    "requirements": "PIM e funcionalidades de PAM variam conforme licença e produto; não usar contas reais.",
+    "number": 6,
+    "difficulty": "intermediate"
+  },
+  {
+    "id": "p6",
+    "title": "Workload Identity e automação",
+    "desc": "Proteja identidades não humanas e integrações.",
+    "items": [
+      {
+        "id": "iam-6-0",
+        "title": "Service principals e managed identities",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity/managed-identities-azure-resources/overview",
+        "study": [
+          {
+            "topic": "Aplicações também têm identidade e ciclo de vida",
+            "detail": "Service principal representa uma aplicação no tenant; managed identity é gerenciada pela plataforma em recursos compatíveis. Uma aplicação precisa de dono, escopo mínimo, revisão e processo de revogação mesmo sem usuário interativo."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Permissão de aplicação não equivale a delegação de usuário. O token precisa ter audiência do recurso e autorização adequada. Não registre segredo apenas porque a tela permite: prefira credenciais adequadas ao consumidor."
+          }
+        ],
+        "practice": [],
+        "evidence": "App com permissões mínimas",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://entra.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://entra.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Entra ID → Registros de aplicativo. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Crie app registration de teste e identifique service principal.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Crie aplicação LAB-WORKLOAD-READ no Entra, sem segredos se não forem necessários, e identifique Application ID e Object ID.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Compare permissões delegadas e de aplicativo; registre apenas escopos mínimos para uma leitura de teste.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Se tiver recurso Azure compatível, habilite managed identity nele e teste token para recurso autorizado; sem Azure, documente conceito sem afirmar execução.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Remova permissão desnecessária e confirme negação controlada; registre proprietário técnico e prazo de revisão.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Compare objectId, appId, service principal e escopo RBAC; se usar managed identity, confirme recurso Azure compatível e token sem gravá-lo.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Entra / App registrations e compare com a entrega: App com permissões mínimas",
+              "host": "Microsoft Entra / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "workload",
+          "entra"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "prep-local"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: App com permissões mínimas"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 28,
+        "labAction": "Identificar S001 como aplicação de inventário, seu proprietário e suas permissões."
+      },
+      {
+        "id": "iam-6-1",
+        "title": "Certificados, segredos e rotação",
+        "url": "https://learn.microsoft.com/pt-br/entra/identity-platform/security-best-practices-for-app-registration",
+        "study": [
+          {
+            "topic": "Rotação exige testar o consumidor",
+            "detail": "Criar uma credencial nova é só o começo. Atualize o consumidor, confirme operação e então remova a antiga. Planeje a sobreposição para evitar indisponibilidade e uma reversão que não reintroduza segredo comprometido."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Revogar credencial impede novas emissões com ela; access tokens já emitidos podem durar até expirar ou sofrer revogação conforme o recurso. Separe esses testes nas evidências."
+          }
+        ],
+        "practice": [],
+        "evidence": "Credencial rotacionada e anterior revogada",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://portal.azure.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://portal.azure.com, entre com a conta exclusiva do laboratório e navegue até: Azure Portal → Cofres de chaves / Entra → Registros de aplicativo. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Inventarie credenciais de apps de teste com datas de expiração.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Inventarie credenciais de aplicação de teste com data de expiração e responsável, sem copiar valores secretos.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Crie nova credencial apenas no ambiente de teste; armazene em cofre autorizado, nunca em arquivo versionado.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Atualize consumidor de teste para usar credencial nova, confirme funcionamento e só então revogue a anterior.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Teste que a credencial antiga falha; documente rollback seguro e alerta de expiração. Key Vault pode gerar custos Azure.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Confira expiração e thumbprint do certificado, permissões do Key Vault e rotação; não registre segredo em logs ou Git.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Azure Key Vault / App registrations e compare com a entrega: Credencial rotacionada e anterior revogada",
+              "host": "Azure Key Vault / App registrations",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "workload",
+          "azure",
+          "secrets"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-6-0"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Credencial rotacionada e anterior revogada"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 29,
+        "labAction": "Rotacionar uma credencial de aplicação com consumidor identificado; separar emissão de token de sessão."
+      },
+      {
+        "id": "iam-6-2",
+        "title": "Microsoft Graph: inventário com menor privilégio",
+        "url": "https://learn.microsoft.com/pt-br/graph/overview",
+        "study": [
+          {
+            "topic": "Inventário é a base de automação segura",
+            "detail": "Uma consulta Graph devolve uma página, não necessariamente a população toda. O SDK com -All segue paginação. Exporte somente os atributos necessários, sem autenticar com permissão de escrita para uma leitura."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Para perfil básico delegado, avalie User.ReadBasic.All. User.Read.All é mais amplo. Criação/alteração JML requer outros escopos e controles; uma exportação CSV não demonstra automação de desligamento."
+          }
+        ],
+        "practice": [],
+        "evidence": "Relatório Graph automatizado",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://developer.microsoft.com/graph/graph-explorer",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Acesse https://developer.microsoft.com/graph/graph-explorer, entre com uma conta de teste do tenant e confirme as permissões delegadas antes de executar consultas. Não use credenciais administrativas para consultas básicas.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Autentique com permissões mínimas e liste usuários fictícios.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "No Graph Explorer, execute GET /v1.0/me com conta de teste e identifique quais permissões foram solicitadas.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Consulte GET /v1.0/users?$select=id,displayName,userPrincipalName apenas se a permissão estiver concedida; não eleve privilégios para facilitar.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Instale Microsoft.Graph no PowerShell 7 (Install-Module Microsoft.Graph -Scope CurrentUser), execute Connect-MgGraph -Scopes 'User.ReadBasic.All' com aprovação e rode Get-MgUser -All -Property Id,DisplayName,UserPrincipalName | Select-Object Id,DisplayName,UserPrincipalName | Export-Csv ./LAB-graph-users.csv -NoTypeInformation -Encoding utf8. Use apenas identidades fictícias; não eleve privilégios para contornar consentimento.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Valide número de linhas e UPNs do CSV, repita a consulta e compare para detectar duplicação; no REST, siga @odata.nextLink até o fim. Teste 403 (permissão) e 429 (limite/Retry-After) sem causar carga abusiva. Remova CSVs contendo dados reais.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "HTTP 401: token; 403: permissão/consentimento; 429: throttling e Retry-After. Siga @odata.nextLink e evite duplicações na reexecução.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Graph Explorer e compare com a entrega: Relatório Graph automatizado",
+              "host": "Microsoft Graph Explorer",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "hybrid",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "graph",
+          "powershell"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "iam-3-3"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Relatório Graph automatizado"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 30,
+        "labAction": "Exportar id, displayName e userPrincipalName do tenant com leitura mínima e paginação."
+      },
+      {
+        "id": "iam-6-3",
+        "title": "Identidade de serviço: rotacionar a credencial SCIM",
+        "url": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+        "study": [
+          {
+            "topic": "O consumidor também precisa de identidade",
+            "detail": "O provisionador autentica no destino SCIM com um bearer de laboratório. O segredo é uma credencial de serviço, não o usuário Ana. Ter permissão para provisionar exige dono, escopo, expiração e recuperação definidos."
+          },
+          {
+            "topic": "Rotação em duas fases",
+            "detail": "Prepare a próxima credencial mantendo a anterior aceita, teste o consumidor com a nova e só então ative/remova a antiga. A aplicação construída recarrega essas credenciais a cada requisição SCIM; não é necessário reiniciar a aplicação para a troca."
+          }
+        ],
+        "practice": [],
+        "evidence": "Rotação feita manualmente com sobreposição, consumidor testado e credencial antiga rejeitada.",
+        "prerequisite": "",
+        "prerequisiteIds": [
+          "iam-3-2"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "technologies": [
+          "workload",
+          "scim",
+          "secrets"
+        ],
+        "difficulty": "advanced",
+        "guide": {
+          "platformUrl": "https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html",
+          "steps": [
+            {
+              "id": "baseline",
+              "title": "Testar antes da mudança",
+              "text": "Com APP01 iniciada, leia config.json no PowerShell e confirme GET SCIM. Não imprima a variável $cfg. Guarde a credencial anterior apenas na memória desta sessão.",
+              "command": "$cfg = Get-Content C:\\AuroraLab\\APP01\\config.json -Raw | ConvertFrom-Json\n$headers = @{Authorization=('Bearer ' + $cfg.scimToken)}\n$old = $cfg.scimToken\nInvoke-RestMethod -Uri http://localhost:8765/scim/v2/Users -Headers $headers",
+              "expected": "Consulta funciona com a credencial atual.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            },
+            {
+              "id": "new",
+              "title": "Gerar a próxima credencial",
+              "text": "Em outro terminal gere outra credencial aleatória. Não coloque o resultado em screenshots ou evidências.",
+              "command": "node -e \"console.log(require('node:crypto').randomBytes(32).toString('base64url'))\"",
+              "expected": "Novo valor diferente do anterior.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            },
+            {
+              "id": "prepare",
+              "title": "Preparar a sobreposição",
+              "text": "No editor abra config.json e adicione a propriedade nextScimToken com o novo valor, mantendo scimToken anterior. Salve JSON válido. O servidor recarrega as credenciais para cada requisição SCIM; não precisa reiniciar.",
+              "command": "",
+              "expected": "Durante a transição ambos os valores são aceitos.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            },
+            {
+              "id": "test-new",
+              "title": "Testar o consumidor com a nova",
+              "text": "Releia config.json, monte outro header e consulte Users. Não avance se falhar.",
+              "command": "$cfg = Get-Content C:\\AuroraLab\\APP01\\config.json -Raw | ConvertFrom-Json\n$new = $cfg.nextScimToken\n$nextHeaders = @{Authorization=(\"Bearer \" + $new)}\nInvoke-RestMethod -Uri http://localhost:8765/scim/v2/Users -Headers $nextHeaders",
+              "expected": "Consulta funciona com a próxima credencial.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            },
+            {
+              "id": "cutover",
+              "title": "Fazer o corte",
+              "text": "No editor substitua scimToken pelo valor novo e remova nextScimToken. Salve. Atualize o header do consumidor pela leitura do arquivo. Não copie o segredo para dentro de um script versionado.",
+              "command": "",
+              "expected": "Somente o valor novo fica autorizado.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            },
+            {
+              "id": "negative",
+              "title": "Provar que a antiga perdeu acesso",
+              "text": "Na sessão que guardou $old, tente GET com esse bearer e observe 401. Com $nextHeaders, espere sucesso. Depois remova old/new/cfg/headers da sessão. Não use a antiga para reverter uma exposição; gere outra se necessário.",
+              "command": "$oldHeaders = @{Authorization=(\"Bearer \" + $old)}\ntry { Invoke-RestMethod -Uri http://localhost:8765/scim/v2/Users -Headers $oldHeaders } catch { [int]$_.Exception.Response.StatusCode }",
+              "expected": "Credencial antiga 401; nova funciona.",
+              "host": "HOST01 · PowerShell 7 / navegador",
+              "why": "O provisionador autentica no destino SCIM com um bearer de laboratório."
+            }
+          ]
+        },
+        "cost": "free",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "acceptance": [
+          {
+            "id": "guided-result-v2",
+            "text": "A entrega desta lição foi observada: Rotação feita manualmente com sobreposição, consumidor testado e credencial antiga rejeitada."
+          },
+          {
+            "id": "boundary-check-v2",
+            "text": "Os objetos e parâmetros usados correspondem à Arquitetura; cada sistema executado e cada pendência estão identificados."
+          },
+          {
+            "id": "negative-restore-v2",
+            "text": "O cenário negativo indicado foi conferido e o estado final/reversão registrado sem segredos."
+          }
+        ],
+        "sequence": 31,
+        "labAction": "Executar SEC01: preparar a credencial seguinte, testar consumidor e retirar a anterior."
+      }
+    ],
+    "environment": "S001/S002 definidos na Arquitetura e consumidores preparados nas lições anteriores.",
+    "outcome": "Identidades de serviço com dono e escopo, inventário e credencial rotacionada com consumidor testado.",
+    "requirements": "Inventário Graph é leitura delegada. Rotação SCIM local não depende de Azure Key Vault.",
+    "number": 7,
+    "difficulty": "intermediate"
+  },
+  {
+    "id": "p7",
+    "title": "Intune e Device Trust",
+    "desc": "Conformidade de dispositivos integrada à identidade.",
+    "items": [
+      {
+        "id": "iam-7-0",
+        "title": "Inscrição MDM e limites do Autopilot",
+        "url": "https://learn.microsoft.com/pt-br/intune/intune-service/enrollment/windows-enroll",
+        "study": [
+          {
+            "topic": "Gerenciar dispositivo exige inscrição",
+            "detail": "Entra registration, Entra join, ingresso em domínio AD e enrollment MDM são estados distintos. Um objeto aparecer no diretório não comprova que o Intune gerencia suas políticas."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Autopilot trata provisionamento de dispositivo e tem requisitos próprios. Esta lição verifica inscrição MDM; estudar o fluxo de Autopilot não autoriza marcar implantação executada. Confira edição Windows e licença antes de usar VM descartável."
+          }
+        ],
+        "practice": [],
+        "evidence": "Dispositivo inscrito e inventariado",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://intune.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://intune.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Dispositivos → Inscrição. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Confirme licença Intune, edição e suporte do Windows, e requisitos de inscrição. Prefira Windows 11 suportado no laboratório; não assuma que Autopilot funciona em qualquer VM ou que Enrollment MDM implica Autopilot.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Verifique licença Intune, sistema operacional suportado e capacidade da VM; não confunda inscrição MDM com Autopilot.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Se licenciado e com dispositivo compatível, inscreva máquina descartável de laboratório e confira registro. Para Autopilot, confirme suporte a identidade de hardware/registro antes de tentar implantação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "executar-e-observar",
+              "title": "Executar e observar",
+              "text": "Verifique status de inscrição e inventário no portal, incluindo UPN e ID do dispositivo. Não registre dados do hardware de produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "testar-cenarios",
+              "title": "Testar cenários",
+              "text": "Se Autopilot não puder ser executado no hardware ou tenant disponível, documente o fluxo teórico e marque explicitamente como não executado.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "diagnosticar-problemas",
+              "title": "Diagnosticar problemas",
+              "text": "Verifique licença, suporte do Windows, hardware, registro Autopilot, atribuição de perfil e conectividade; sem dispositivo real, registre simulação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Dispositivo inscrito e inventariado",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            }
+          ]
+        },
+        "cost": "trial",
+        "lab": {},
+        "revision": "2026.10.28.2",
+        "difficulty": "intermediate",
+        "technologies": [
+          "intune",
+          "windows"
+        ],
+        "tracks": [
+          "local",
+          "microsoft",
+          "premium"
+        ],
+        "prerequisiteIds": [
+          "prep-local"
+        ],
+        "acceptance": [
+          {
+            "id": "expected-result",
+            "text": "A entrega foi observada no ambiente: Dispositivo inscrito e inventariado"
+          },
+          {
+            "id": "negative-case",
+            "text": "Um cenário fora do escopo ou sem permissão foi negado, com motivo e evidência; se apenas documental, foi marcado como simulação."
+          },
+          {
+            "id": "restore-evidence",
+            "text": "Estado final e reversão registrados; evidências sem segredos, indicando o que foi real e o que foi simulado."
+          }
+        ],
+        "sequence": 32,
+        "labAction": "Inscrever somente CL01 descartável no Intune se o estado do dispositivo e licença permitirem."
+      },
+      {
+        "id": "iam-7-1",
+        "title": "Compliance e Conditional Access",
+        "url": "https://learn.microsoft.com/pt-br/intune/intune-service/protect/create-compliance-policy",
+        "study": [
+          {
+            "topic": "Conformidade é um sinal, não a decisão inteira",
+            "detail": "O Intune avalia o dispositivo conforme uma política e reporta um estado. Conditional Access consome esse sinal com outros controles. Atraso de sincronização pode explicar diferença entre configuração local e relatório."
+          },
+          {
+            "topic": "No cenário Aurora",
+            "detail": "Report-only ajuda a analisar impacto sem bloquear. Registre estado observado, motivo e horário. Não declare que houve bloqueio se apenas consultou o relatório de uma política não imposta."
+          }
+        ],
+        "practice": [],
+        "evidence": "Conformidade e decisões de acesso verificadas",
+        "prerequisite": "Conclua a preparação indicada abaixo ou registre experiência equivalente. Os pré-requisitos orientam a sequência sem bloquear sua navegação.",
+        "guide": {
+          "platformUrl": "https://intune.microsoft.com",
+          "steps": [
+            {
+              "id": "acessar-ferramenta",
+              "title": "Acessar ferramenta",
+              "text": "Abra https://intune.microsoft.com, entre com a conta exclusiva do laboratório e navegue até: Dispositivos → Conformidade. Verifique se você está no tenant/domínio de teste, nunca em produção.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Conformidade e decisões de acesso verificadas",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "preparar-cenario",
+              "title": "Preparar cenário",
+              "text": "Crie regra de compliance simples em grupo piloto.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Conformidade e decisões de acesso verificadas",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "conferir-ambiente",
+              "title": "Conferir ambiente",
+              "text": "Crie grupo piloto e política de conformidade simples, somente com licença Intune e dispositivo de teste.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Conformidade e decisões de acesso verificadas",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
+            },
+            {
+              "id": "configurar-em-laboratorio",
+              "title": "Configurar em laboratório",
+              "text": "Sincronize dispositivo e consulte estado compliant/noncompliant e motivo da avaliação.",
+              "command": "",
+              "expected": "Registre o resultado observado desta ação em Microsoft Intune admin center e compare com a entrega: Conformidade e decisões de acesso verificadas",
+              "host": "Microsoft Intune admin center",
+              "why": "Esta ação constrói ou valida uma fronteira específica do desenho. Confira os objetos da Arquitetura antes de alterar."
             },
             {
               "id": "executar-e-observar",
