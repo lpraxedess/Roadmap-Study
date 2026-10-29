@@ -6,6 +6,24 @@ const guidePositions={},expandedGuides=new Set();
 let currentLesson=null;
 let storage;
 try { storage=window.localStorage; } catch { storage={getItem(){throw Error('indisponível')},setItem(){throw Error('indisponível')}}; }
+const readerPositionKey='iam-lesson-reader-position-v1';
+const savedPositions=(()=>{
+ try{const v=JSON.parse(storage.getItem(readerPositionKey));return v&&typeof v==='object'&&!Array.isArray(v)?v:{}}catch{return {}}
+})();
+for(const t of tasks){const i=savedPositions[t.id];if(Number.isInteger(i)&&i>=0&&i<t.guide.steps.length)guidePositions[t.id]=i;}
+function rememberPosition(id,index){
+ const t=tasks.find(x=>x.id===id);
+ if(!t||!Number.isInteger(index)||index<0||index>=t.guide.steps.length)return;
+ guidePositions[id]=index;
+ try{storage.setItem(readerPositionKey,JSON.stringify(guidePositions))}catch{}
+}
+function restorePositions(data){
+ for(const key of Object.keys(guidePositions))delete guidePositions[key];
+ if(data&&typeof data==='object'&&!Array.isArray(data))for(const t of tasks){
+   const i=data[t.id];if(Number.isInteger(i)&&i>=0&&i<t.guide.steps.length)guidePositions[t.id]=i;
+ }
+ try{storage.setItem(readerPositionKey,JSON.stringify(guidePositions))}catch{}
+}
 const store = IAMState.create(PHASES,CERTIFICATIONS,storage);
 let state=store.get(), searchTimer, toastTimer;
 const filters={query:'',module:'all',level:'all',tech:'all',cert:'all',status:'all',track:'all'};
@@ -87,8 +105,8 @@ function renderLesson(t){
  for(const s of t.guide.steps){const key=t.id+'/'+s.id,li=node('li','step-row'),inputId='step-'+t.id+'-'+s.id;li.hidden=!showAll&&t.guide.steps.indexOf(s)!==active;li.value=t.guide.steps.indexOf(s)+1;li.append(node('p','step-host','Onde executar: '+s.host),node('h5','',s.title),node('p','',s.text));if(s.why)li.append(node('p','step-why','Por que fazer: '+s.why));
   if(s.command){const pre=node('pre');pre.append(node('code','',s.command));const copy=node('button','copy-code','Copiar');copy.type='button';copy.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(s.command);message('Comando copiado. Confira placeholders e ambiente antes de executar.')}catch{message('Selecione o comando e copie pelo teclado.')}});if(s.command.split('\n').length>18){const codePanel=node('details','code-panel');codePanel.append(node('summary','','Ver código desta etapa ('+s.command.split('\n').length+' linhas)'),pre,copy);li.append(codePanel);}else li.append(pre,copy);}
   if(s.expected)li.append(node('p','expected','Resultado esperado: '+s.expected));
-  li.append(checkbox(inputId,'Etapa conferida',state.steps.includes(key),checked=>{commit(d=>{d.steps=checked?[...d.steps,key]:d.steps.filter(x=>x!==key)});const index=t.guide.steps.indexOf(s);if(checked&&!showAll&&index<t.guide.steps.length-1){guidePositions[t.id]=index+1;preserveRender('step-'+t.id+'-'+t.guide.steps[index+1].id);}else preserveRender(inputId);}));steps.append(li);
- }lab.append(steps);const guideNav=node('div','guide-navigation');for(const [label,delta] of [['← Passo anterior',-1],['Próximo passo →',1]]){const button=node('button','button secondary',label);button.type='button';button.disabled=showAll||(delta<0?active===0:active===t.guide.steps.length-1);button.id='guide-'+(delta<0?'prev-':'next-')+t.id;button.addEventListener('click',()=>{guidePositions[t.id]=active+delta;preserveRender('step-'+t.id+'-'+t.guide.steps[active+delta].id);});guideNav.append(button);}const all=node('button','text-action',showAll?'Mostrar um passo por vez':'Ver todos os passos');all.type='button';all.id='guide-all-'+t.id;all.addEventListener('click',()=>{if(showAll)expandedGuides.delete(t.id);else expandedGuides.add(t.id);preserveRender(all.id);});guideNav.append(all);lab.append(guideNav);content.append(lab);
+  li.append(checkbox(inputId,'Etapa conferida',state.steps.includes(key),checked=>{commit(d=>{d.steps=checked?[...d.steps,key]:d.steps.filter(x=>x!==key)});const index=t.guide.steps.indexOf(s);if(checked&&!showAll&&index<t.guide.steps.length-1){rememberPosition(t.id,index+1);preserveRender('step-'+t.id+'-'+t.guide.steps[index+1].id);}else preserveRender(inputId);}));steps.append(li);
+ }lab.append(steps);const guideNav=node('div','guide-navigation');for(const [label,delta] of [['← Passo anterior',-1],['Próximo passo →',1]]){const button=node('button','button secondary',label);button.type='button';button.disabled=showAll||(delta<0?active===0:active===t.guide.steps.length-1);button.id='guide-'+(delta<0?'prev-':'next-')+t.id;button.addEventListener('click',()=>{rememberPosition(t.id,active+delta);preserveRender('step-'+t.id+'-'+t.guide.steps[active+delta].id);});guideNav.append(button);}const all=node('button','text-action',showAll?'Mostrar um passo por vez':'Ver todos os passos');all.type='button';all.id='guide-all-'+t.id;all.addEventListener('click',()=>{if(showAll)expandedGuides.delete(t.id);else expandedGuides.add(t.id);preserveRender(all.id);});guideNav.append(all);lab.append(guideNav);content.append(lab);
  const evidence=block('3. Validar e registrar evidência');
  const stepsDone=t.guide.steps.filter(step=>state.steps.includes(t.id+'/'+step.id)).length;
  const criteria=t.acceptance||[];
@@ -137,10 +155,10 @@ document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListen
 $('collapse-all').addEventListener('click',()=>{document.querySelectorAll('#roadmap-list details[open]').forEach(d=>d.open=false);$('collapse-all').focus();});
 $('route-choice')?.addEventListener('change',e=>{commit(d=>{d.track=e.target.value});dashboard();});
 document.addEventListener('keydown',e=>{if(e.defaultPrevented||e.altKey||e.shiftKey||e.target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='/'||e.key.toLowerCase()==='k'&&(e.ctrlKey||e.metaKey)){e.preventDefault();window.IAMNavigation?.show('studies');$('search').focus();}});
-$('export').addEventListener('click',()=>download('roadmap-iam-backup-v4.json',JSON.stringify({...store.export(),labPlanner:window.IAMLab?.exportState?.()},null,2),'application/json'));
+$('export').addEventListener('click',()=>download('roadmap-iam-backup-v4.json',JSON.stringify({...store.export(),labPlanner:window.IAMLab?.exportState?.(),hardware:window.IAMHardware?.exportState?.(),readerPositions:{...guidePositions}},null,2),'application/json'));
 $('import-button').addEventListener('click',()=>$('import').click());
-$('import').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1000000)throw Error('Arquivo maior que 1 MB.');const data=JSON.parse(await file.text());store.validate(data);if(!confirm('Substituir o progresso desta sessão pelo backup?'))return;const saved=store.import(data);if(data.labPlanner)window.IAMLab?.importState?.(data.labPlanner);sync();render();window.IAMNavigation?.renderCertifications();message(saved?(store.notice()||'Backup importado e salvo.'): 'Importado somente nesta sessão. Exporte um backup antes de sair.');}catch(error){message('Importação não realizada: '+error.message);}finally{e.target.value='';}});
-$('reset').addEventListener('click',()=>{if(!confirm('Zerar lições, evidências, certificações e checklist do laboratório? Exporte antes se deseja guardar o histórico.'))return;const saved=store.reset();window.IAMLab?.reset?.();sync();render();window.IAMNavigation?.renderCertifications();message(saved?'Progresso zerado.':'Zerado somente nesta sessão; armazenamento indisponível.');});
+$('import').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1000000)throw Error('Arquivo maior que 1 MB.');const data=JSON.parse(await file.text());store.validate(data);if(!confirm('Substituir o progresso desta sessão pelo backup?'))return;const saved=store.import(data);if(data.labPlanner)window.IAMLab?.importState?.(data.labPlanner);if(data.hardware)window.IAMHardware?.importState?.(data.hardware);restorePositions(data.readerPositions);sync();render();window.IAMNavigation?.renderCertifications();message(saved?(store.notice()||'Backup importado e salvo.'): 'Importado somente nesta sessão. Exporte um backup antes de sair.');}catch(error){message('Importação não realizada: '+error.message);}finally{e.target.value='';}});
+$('reset').addEventListener('click',()=>{if(!confirm('Zerar lições, evidências, certificações, checklist e confirmações de hardware? Exporte antes se deseja guardar o histórico.'))return;const saved=store.reset();window.IAMLab?.reset?.();window.IAMHardware?.reset?.();restorePositions(null);sync();render();window.IAMNavigation?.renderCertifications();message(saved?'Progresso zerado.':'Zerado somente nesta sessão; armazenamento indisponível.');});
 window.IAMApp={showStudyList,reveal,render,resetFilters,store,getState:()=>state,commit,message};
 sync();render();
 if(store.notice())message(store.notice());
