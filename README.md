@@ -6,14 +6,14 @@ O projeto acompanha a empresa fictícia **Aurora Serviços Digitais** do cadastr
 
 ## Navegação e experiência (versão 29/10/2026)
 
-A interface foi reorganizada para quatro áreas, sem menu lateral permanente: **Início**, **Jornada**, **Arquitetura** e **Certificações**.
+A interface mantém quatro áreas em um **menu lateral único**, sempre visível no desktop e recolhível por botão no celular: **Início**, **Jornada**, **Arquitetura** e **Certificações**.
 
 - **Início:** visualização do laboratório, progresso, próxima tarefa e panorama dos 11 módulos.
 - **Jornada:** estudo e laboratório são um único ambiente. O bloco de infraestrutura/VirtualBox, orçamento e marcos fica no início, e as 41 aulas vêm abaixo, com filtros recolhidos.
 - **Arquitetura:** diagrama, ativos, acessos, movimentos e **Atlas completo com 14 sistemas, 15 relações, seis movimentos, 11 módulos, 41 aulas e 296 microetapas**. Cada passo informa contexto, execução, comando quando disponível e resultado esperado.
-- **Certificações:** rotas complementares de carreira; nenhum exame é pré-requisito para realizar o laboratório.
+- **Certificações:** cartões compactos com sinalização luminosa por prioridade editorial da trilha. Vermelho: obrigatória **na trilha** (SC-300 é o marco central, não exigência do fornecedor); amarelo: recomendada (SC-900, AZ-900 e SC-100); cinza: opcional; verde: concluída (registro manual, substitui a cor de prioridade). Filtros por fornecedor e categoria, detalhes oficiais recolhidos em cada card.
 
-Tema preto #050505, grafite e destaque branco/cinza, transições de página com suporte a preferência por movimento reduzido, layout responsivo e largura total da janela.
+Tema preto #050505, grafite e destaque branco/cinza; apenas os LEDs das certificações usam verde, vermelho e amarelo. A área de conteúdo ocupa todo o espaço restante ao lado do menu lateral. Há transições e suporte à preferência por movimento reduzido.
 
 **[Auditoria da interface e decisões](docs/AUDITORIA-UX.md)** · **[Plano técnico completo](docs/PLANO-LABORATORIO.md)**
 
@@ -67,7 +67,8 @@ HTML, CSS e JavaScript, sem dependências de frontend e compatível com GitHub P
 | lab-profile.js | Windows 11 Pro + VirtualBox, requisitos das VMs, checagem de RAM/AMD-V e guia de execução |
 | home-studio.js | 11 módulos e panorama de progresso na home |
 | architecture-atlas.js | Atlas detalhado que apresenta as 296 microetapas do currículo |
-| monochrome.css | Tema preto/cinza/branco, full-width, transições e responsividade |
+| monochrome.css | Base do tema preto/cinza/branco, transições e responsividade |
+| sidebar-cert.css | Menu lateral, drawer mobile acessível e cards compactos com LEDs de prioridade |
 | scripts/e2e.mjs | Teste Playwright para desktop, mobile, navegação, leitor e Atlas |
 | docs/AUDITORIA-UX.md | Evidências da reorganização da experiência |
 | docs/GUIA-VIRTUALBOX.md | Roteiro de rede host-only, AD DS, Windows 11 convidado, DNS e NAT temporário |
@@ -85,6 +86,6 @@ HTML, CSS e JavaScript, sem dependências de frontend e compatível com GitHub P
 
 ## Validação
 
-Execute localmente com Node.js recente: **node scripts/validate.mjs**. O teste em browser real usa Playwright Chromium: **node scripts/e2e.mjs** após instalar a dependência e o navegador. Ambos são executados pelo GitHub Actions.
+Execute localmente com Node.js recente: **node scripts/validate.mjs**. O teste em browser real usa Playwright Chromium: **node scripts/e2e.mjs** após instalar a dependência e o navegador. Ele testa também a abertura/fechamento do menu no celular, LEDs e persistência das certificações. Ambos são executados pelo GitHub Actions.
 
 Backups devem ser exportados regularmente; o navegador pode apagar seu armazenamento local.
