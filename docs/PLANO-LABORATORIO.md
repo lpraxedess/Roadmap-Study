@@ -4,6 +4,47 @@ O portal ensina **o que é, por que usar, quando usar, onde configurar, como tes
 
 **Orçamento máximo:** R$ 200 por mês. A meta não é gastar tudo: primeiro construir localmente e no Entra Free, depois usar licenças por um período concentrado e com cálculo de custo real.
 
+## Perfil real do laboratório (informado em 29/10/2026)
+
+| Recurso | Informação confirmada |
+|---|---|
+| CPU | AMD Ryzen 5 5600, 6 núcleos e 12 threads |
+| RAM | 16 GB DDR4 3200 MHz |
+| Disco | 1 TB NVMe (espaço **livre** ainda não informado) |
+| GPU | RTX 3070 (não necessária nos exercícios IAM) |
+| Microsoft Entra | Tenant gratuito já existente, sem licenças |
+| Orçamento | Máximo de R$ 200/mês |
+| Disponibilidade | Sem número fixo de horas; avançar por microetapas e entregas |
+
+**Ainda falta confirmar o sistema operacional do HOST01, o espaço livre no NVMe e a virtualização AMD-V/SVM.** A escolha Hyper-V/VirtualBox/KVM e comandos de instalação dependerá do host. Não suponha que a edição Windows Home oferece Hyper-V completo.
+
+### Dimensionamento inicial para 16 GB de RAM
+
+| Máquina/serviço | CPU | RAM | Disco previsto | Quando manter ligado |
+|---|---:|---:|---:|---|
+| DC01 — Windows Server 2022/2025 | 2 vCPU | 3–4 GB | 60 GB | Administração AD/DNS; sincronização quando necessário |
+| CL01 — Windows 11 Enterprise de avaliação | 2 vCPU | 4 GB | 80 GB | Ingresso no domínio, GPO, Kerberos e depois Intune |
+| IDP01 — Keycloak em Docker | CPU sob demanda | Conforme disponibilidade | Volume local | Sessões OIDC/SAML/SCIM |
+| APP01 — Node.js | CPU sob demanda | Conforme disponibilidade | Pasta local | Sessões de aplicação |
+| TENANT01 — Entra Free | N/A | N/A | Cloud | Práticas gratuitas via navegador |
+
+Com DC01 (3–4 GB) + CL01 (4 GB) restam cerca de 8–9 GB de RAM ao sistema host; evitar abrir Docker/contêineres pesados e aplicativos simultaneamente. Em caso de swap/paginação, manter apenas DC01 ou CL01 quando a atividade permitir. Reservar aproximadamente **200 GB livres**, considerando ISOs, discos virtuais e snapshots.
+
+- Windows Server com interface gráfica recomenda 4 GB; 3 GB é modo enxuto para laboratório e pode reduzir a fluidez.
+- Windows 11 exige ao menos 4 GB e 64 GB de disco; verificar **UEFI, Secure Boot e TPM 2.0 virtual** no hipervisor. A avaliação Enterprise pode ser usada por 90 dias nas condições oficiais.
+- O agente Microsoft Entra Cloud Sync pode ser instalado em DC01: a Microsoft suporta essa configuração. É uma concessão para não adicionar outra VM em um laboratório de 16 GB, **não um modelo de separação de funções para produção**.
+- Segurança de rede: **host-only para comunicação AD** e saída HTTPS controlada se Cloud Sync exigir. Não encaminhar portas de gerenciamento para a internet.
+
+Fontes:
+- https://learn.microsoft.com/pt-br/windows-server/get-started/hardware-requirements
+- https://learn.microsoft.com/pt-br/windows/whats-new/windows-11-requirements
+- https://www.microsoft.com/pt-br/evalcenter/evaluate-windows-11-enterprise
+- https://learn.microsoft.com/pt-br/entra/identity/hybrid/cloud-sync/how-to-prerequisites
+
+### Forma de estudo: sem horas fixas
+
+Cada sessão pode ser curta. Abra o portal, retome a última aula e microetapa, execute uma única configuração, observe resultado, marque o passo confirmado e salve evidências. Se precisar parar no meio, a posição do leitor é guardada no navegador e incluída no backup. O roteiro usa marcos técnicos, **não semanas ou metas de horas**. O que libera o avanço é o resultado validado, não o calendário.
+
 ## Preparação: antes de qualquer ativação paga
 
 1. Registrar HOST01: sistema operacional, CPU, RAM, espaço disponível, virtualização, hypervisor, acesso administrador e banda.
@@ -95,16 +136,22 @@ O RH é origem do vínculo. E001/Ana começa em Financeiro, muda para Jurídico 
 - Preparar evidências sanitizadas e explicação de trade-offs sem divulgar segredos ou dados reais.
 - Seguir para SC-900, SC-300 e aprofundamentos de IAM, sem confundir a trilha com cobertura integral de certificações.
 
-## Calendário sugerido (flexível)
+## Marcos de execução, sem calendário fixo
 
-| Semanas | Entrega | Gasto preferencial |
+| Marco | Resultado esperado | Gasto recomendado |
 |---|---|---|
-| 1–2 | preparação, arquivos, Keycloak e ambiente local | R$ 0 |
-| 3–4 | AD DS, DNS, Kerberos, GPO e identidade piloto | R$ 0 com avaliação válida |
-| 5–6 | Entra Free, sincronização, logs e recuperação | R$ 0 quando viável |
-| 7–8 | OIDC, SAML, SCIM, APP01 e JML | R$ 0 |
-| 9–10 | janela licenciada para CA, Intune e IGA conforme elegibilidade | verificar contratação |
-| 11–12 | P2 opcional, Azure de curto prazo, auditoria e portfólio | dentro do limite |
+| 01 | Host, inventário, isolamento e cadastro Aurora verificados | R$ 0 |
+| 02 | AD DS, DNS, Kerberos, GPO e piloto validado | R$ 0 sob avaliação válida |
+| 03 | Tenant Entra Free existente, roles e MFA seguro | R$ 0 |
+| 04 | Piloto de sincronização híbrida e recuperação | Sem licença extra para sync básica |
+| 05 | OIDC, SAML, SCIM e APP01 operando | R$ 0 |
+| 06 | J001, M001 e L001 com testes positivos/negativos | R$ 0 |
+| 07 | Conditional Access e governança com licença elegível | Somente quando os roteiros estiverem prontos |
+| 08 | Intune, conformidade e dispositivo de teste | Janela licenciada opcional |
+| 09 | Azure pontual e identidade de carga de trabalho | Opcional, medido e eliminado após teste |
+| 10 | Evidências, diagrama, ADRs e portfólio | R$ 0 |
+
+Não é obrigatório executar todos os marcos na mesma ordem se o pré-requisito da aula permitir. **O Entra Free pode ser estudado antes de criar as VMs**, enquanto o sistema operacional e a virtualização do host são confirmados.
 
 ## Estimativa financeira
 
@@ -121,4 +168,4 @@ Fontes:
 
 ## Observação sobre a segurança
 
-O portal é estático e usa localStorage. Não executa alteração no AD, Entra, Intune, Azure nem autenticação Microsoft; as confirmações das etapas são manuais. Mantenha backups fora do navegador. Nunca salve senha, segredo, token ou dado corporativo verdadeiro.
+O portal é estático e usa localStorage. Não executa alteração no AD, Entra, Intune, Azure nem autenticação Microsoft; as confirmações das etapas são manuais. O perfil do HOST01 (sistema operacional, AMD-V/SVM e espaço livre) também permanece somente no navegador. Mantenha backups fora do navegador. Nunca salve senha, segredo, token ou dado corporativo verdadeiro.
