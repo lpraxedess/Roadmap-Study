@@ -43,7 +43,14 @@ assert.ok(read('navigation.js').includes("const mandatory=new Set(['sc300'])"),'
 assert.ok(read('navigation.js').includes("effectivePriority(cert,status)"),'Luz de conclusão não conectada ao progresso');
 assert.ok(read('navigation.js').includes("const mobile=matchMedia"),'Drawer móvel e teclado não configurados');
 assert.ok(html.includes('id="cert-priority"'),'Filtro de prioridade ausente');
-assert.ok(html.includes('cert-classification-note'),'Nota sobre classificação editorial ausente');
+assert.ok(!html.includes('cert-classification-note'),'Legenda explicativa não foi removida');
+assert.ok(!html.includes('cert-legend'),'Legenda de luzes redundante ainda aparece');
+assert.ok(!read('sidebar-cert.css').includes('.cert-legend{'),'Estilos mortos da legenda não removidos');
+assert.ok(!read('app.js').includes('Validar e registrar evidência'),'Seção redundante ainda aparece na aula');
+assert.ok(read('app.js').includes("block('3. Concluir aula')"),'Conclusão simplificada ausente');
+assert.ok(read('app.js').includes('lesson-notes-optional'),'Anotações antigas não estão acessíveis');
+assert.ok(html.includes('id="empty-clear-filters"'),'Estado vazio sem ação de recuperação');
+assert.ok(read('app.js').includes("$('empty-clear-filters')"),'Estado vazio não limpa filtros');
 assert.ok(read('app.js').includes('labPlanner:window.IAMLab'),'Backup do plano ausente');
 assert.ok(read('app.js').includes('hardware:window.IAMHardware'),'Backup do hardware ausente');
 assert.ok(read('app.js').includes('readerPositions:{...guidePositions}'),'Posição de leitura ausente');
