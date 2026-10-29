@@ -67,6 +67,14 @@ function renderLesson(t){
  const content=node('div','task-content'),intro=block('Nesta aula');
  intro.append(node('p','lesson-meta',({beginner:'Fundamentos',intermediate:'Intermediário',advanced:'Avançado'}[t.difficulty])+' · '+'Atividade '+String(t.sequence).padStart(2,'0')));
  intro.append(node('p','lesson-action','O que você vai construir: '+t.labAction));
+ const lessonContext=node('div','lesson-context');
+ const costLabel={free:'Prática gratuita/local',hybrid:'Híbrido · confira pré-requisitos',trial:'Requer avaliação ou licença'}[t.cost]||'Conferir custo';
+ const chip=node('span','lesson-chip',costLabel);lessonContext.append(chip);
+ lessonContext.append(node('span','lesson-chip',t.guide.steps.length+' passos guiados'));
+ const prereqs=(t.prerequisiteIds||[]).map(id=>tasks.find(item=>item.id===id)).filter(Boolean);
+ if(prereqs.length){const prerequisite=node('div','lesson-prereqs');prerequisite.append(node('strong','','Antes desta aula: '));for(const previous of prereqs){const ready=state.completed.includes(previous.id);prerequisite.append(link((ready?'✓ ':'↗ ')+previous.title,'#task-'+previous.id));}intro.append(prerequisite);}
+ intro.append(lessonContext);
+ if(t.cost==='trial')intro.append(node('p','lab-note','Recurso licenciado: confirme elegibilidade, preço e período de avaliação antes de ativar. Use a alternativa documental quando indisponível e registre como simulação.'));
  content.append(intro);
  const study=block('1. Entenda o conceito');for(const item of t.study){study.append(node('h5','',item.topic),node('p','',item.detail));}content.append(study);
  const lab=block('2. Execute e observe');
@@ -81,7 +89,30 @@ function renderLesson(t){
   if(s.expected)li.append(node('p','expected','Resultado esperado: '+s.expected));
   li.append(checkbox(inputId,'Etapa conferida',state.steps.includes(key),checked=>{commit(d=>{d.steps=checked?[...d.steps,key]:d.steps.filter(x=>x!==key)});const index=t.guide.steps.indexOf(s);if(checked&&!showAll&&index<t.guide.steps.length-1){guidePositions[t.id]=index+1;preserveRender('step-'+t.id+'-'+t.guide.steps[index+1].id);}else preserveRender(inputId);}));steps.append(li);
  }lab.append(steps);const guideNav=node('div','guide-navigation');for(const [label,delta] of [['← Passo anterior',-1],['Próximo passo →',1]]){const button=node('button','button secondary',label);button.type='button';button.disabled=showAll||(delta<0?active===0:active===t.guide.steps.length-1);button.id='guide-'+(delta<0?'prev-':'next-')+t.id;button.addEventListener('click',()=>{guidePositions[t.id]=active+delta;preserveRender('step-'+t.id+'-'+t.guide.steps[active+delta].id);});guideNav.append(button);}const all=node('button','text-action',showAll?'Mostrar um passo por vez':'Ver todos os passos');all.type='button';all.id='guide-all-'+t.id;all.addEventListener('click',()=>{if(showAll)expandedGuides.delete(t.id);else expandedGuides.add(t.id);preserveRender(all.id);});guideNav.append(all);lab.append(guideNav);content.append(lab);
- const evidence=block('Concluir aula');const check=checkbox('complete-'+t.id,'Marcar aula como concluída',complete,checked=>{commit(d=>{d.completed=checked?[...new Set([...d.completed,t.id])]:d.completed.filter(id=>id!==t.id);if(checked)d.legacy=d.legacy.filter(id=>id!==t.id)});preserveRender('complete-'+t.id);});evidence.append(check,node('p','muted','Marque quando terminar o conteúdo desta aula.'));content.append(evidence);
+ const evidence=block('3. Validar e registrar evidência');
+ const stepsDone=t.guide.steps.filter(step=>state.steps.includes(t.id+'/'+step.id)).length;
+ const criteria=t.acceptance||[];
+ const testsDone=criteria.filter(check=>state.tests.includes(t.id+'/'+check.id)).length;
+ evidence.append(node('p','muted','Passos conferidos: '+stepsDone+'/'+t.guide.steps.length+' · Critérios de aceite: '+testsDone+'/'+criteria.length+'. Registre apenas verificações feitas no seu laboratório.'));
+ const checks=node('div','lesson-acceptance');
+ for(const test of criteria){const key=t.id+'/'+test.id;checks.append(checkbox('accept-'+t.id+'-'+test.id,test.text,state.tests.includes(key),checked=>{commit(d=>{d.tests=checked?[...new Set([...d.tests,key])]:d.tests.filter(x=>x!==key)});preserveRender('accept-'+t.id+'-'+test.id);}));}
+ evidence.append(checks);
+ const status=node('label','field-label','Modalidade da execução');status.htmlFor='mode-'+t.id;
+ const mode=node('select','lesson-mode');mode.id='mode-'+t.id;
+ for(const [value,label] of [['','Selecione após executar'],['real','Prática real (validada)'],['mixed','Execução parcial / híbrida'],['simulation','Somente simulação ou documentação']]){const opt=node('option','',label);opt.value=value;mode.append(opt);}
+ mode.value=state.modes[t.id]||'';
+ mode.addEventListener('change',()=>{commit(d=>{if(mode.value)d.modes[t.id]=mode.value;else delete d.modes[t.id]});preserveRender(mode.id);});
+ evidence.append(status,mode);
+ const notesLabel=node('label','field-label','Evidência e observações (sem segredos)');notesLabel.htmlFor='notes-'+t.id;
+ const notes=node('textarea','lesson-notes');notes.id='notes-'+t.id;notes.rows=4;notes.maxLength=6000;notes.placeholder='Onde executei; resultado observado; falha e correção; link/caminho das evidências sanitizadas.';notes.value=state.notes[t.id]||'';
+ const saveNotes=node('button','button secondary','Salvar evidência');saveNotes.type='button';
+ saveNotes.addEventListener('click',()=>{const value=notes.value.trim();commit(d=>{if(value)d.notes[t.id]=value;else delete d.notes[t.id]});message('Observações salvas localmente. Exporte backup regularmente.');});
+ evidence.append(notesLabel,notes,saveNotes);
+ const ready=stepsDone===t.guide.steps.length&&testsDone===criteria.length&&!!state.modes[t.id];
+ const completion=checkbox('complete-'+t.id,'Marcar aula como concluída',complete,checked=>{if(checked&&!ready){message('Confirme os passos, testes e modalidade antes de concluir.');preserveRender('complete-'+t.id);return;}commit(d=>{d.completed=checked?[...new Set([...d.completed,t.id])]:d.completed.filter(id=>id!==t.id);if(checked)d.legacy=d.legacy.filter(id=>id!==t.id)});preserveRender('complete-'+t.id);});
+ if(!ready&&!complete){const input=completion.querySelector('input');input.disabled=true;}
+ evidence.append(completion,node('p','muted',ready?'Validações registradas. A conclusão depende da sua confirmação.':'Conclua os passos e critérios acima e selecione a modalidade. Simulação não conta como execução real.'));
+ content.append(evidence);
  const index=orderedTasks.findIndex(x=>x.id===t.id),lessonNav=node('nav','lesson-sequence');lessonNav.setAttribute('aria-label','Ordem de construção');if(index>0)lessonNav.append(link('← Tema anterior: '+orderedTasks[index-1].title,'#task-'+orderedTasks[index-1].id));if(index<orderedTasks.length-1)lessonNav.append(link('Próximo tema: '+orderedTasks[index+1].title+' →','#task-'+orderedTasks[index+1].id));content.append(lessonNav);details.append(content);return details;
 }
 function render(){
