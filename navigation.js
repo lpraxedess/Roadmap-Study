@@ -42,7 +42,10 @@
  });
 
  const prefersReduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
- let current=null;
+ const main=document.getElementById('main-content');
+ let current=null,activeTransition=null,routeAnimation=null;
+ // Navegação com duas camadas de animação: View Transitions nos navegadores compatíveis
+ // e Web Animations API como fallback. Sem movimento quando o usuário o desativa no SO.
  function swap(page,options={}){
   if(current===page){
    if(page==='studies'&&options.list!==false)window.IAMApp?.showStudyList();
@@ -54,7 +57,10 @@
   for(const view of views){
    view.hidden=view.dataset.pageView!==page;
    view.classList.remove('view-entering');
-   if(!view.hidden){void view.offsetWidth;view.classList.add('view-entering');}
+   if(!view.hidden&&!options.nativeTransition){
+    // CSS garante movimento mesmo quando Web Animations API não está disponível.
+    void view.offsetWidth;view.classList.add('view-entering');
+   }
   }
   for(const a of links){
    const active=a.dataset.page===page;
@@ -67,19 +73,50 @@
   if(drawer)setDrawer(false,false);
   if(page==='lab')page='studies';
   if(!hashes[page])page='overview';
-  const update=()=>swap(page,options);
-  // Entrada animada síncrona: preserva foco, rolagem e deep links para passos do atlas.
-  update();
-  if(options.history!==false&&location.hash!=='#'+hashes[page])history.pushState(null,'','#'+hashes[page]);
-  if(options.focus!==false){
-   const heading=document.getElementById('page-'+page)?.querySelector('h1,h2');
-   heading?.focus({preventScroll:true});
-   window.scrollTo({top:0,behavior:'instant'});
+  const changing=current!==null&&current!==page;
+  const animate=changing&&!prefersReduced()&&options.animate!==false;
+  // Acesso direto a âncoras e leitores usa atualização síncrona e preserva o foco.
+  // Somente transições entre as quatro seções passam pelo efeito de saída/entrada.
+  const update=(native=false)=>{
+   swap(page,{...options,nativeTransition:native});
+   if(options.focus!==false){
+    const heading=document.getElementById('page-'+page)?.querySelector('h1,h2');
+    heading?.focus({preventScroll:true});
+    window.scrollTo({top:0,behavior:'instant'});
+   }
+  };
+  if(activeTransition?.skipTransition){
+   activeTransition.skipTransition();activeTransition=null;
   }
+  routeAnimation?.cancel();routeAnimation=null;
+  if(animate&&typeof document.startViewTransition==='function'){
+   // A captura da página anterior é animada enquanto a seguinte entra pela direita.
+   const transition=document.startViewTransition(()=>update(true));
+   activeTransition=transition;
+   transition.finished.then(()=>{
+    if(activeTransition===transition)activeTransition=null;
+   },()=>{
+    if(activeTransition===transition)activeTransition=null;
+   });
+  }else{
+   update();
+   if(animate){
+    const next=document.getElementById('page-'+page);
+    if(typeof next?.animate==='function'){
+     next.classList.remove('view-entering');
+     routeAnimation=next.animate([
+      {opacity:0,transform:'translate3d(34px,18px,0) scale(.988)',filter:'blur(6px)'},
+      {opacity:1,transform:'translate3d(0,0,0) scale(1)',filter:'blur(0)'}
+     ],{duration:680,easing:'cubic-bezier(.22,1,.36,1)'});
+     routeAnimation.finished.then(()=>routeAnimation=null,()=>{});
+    }
+   }
+  }
+  if(options.history!==false&&location.hash!=='#'+hashes[page])history.pushState(null,'','#'+hashes[page]);
   return page;
  }
  function focusTarget(id,section){
-  show(section,{history:false,focus:false,list:section!=='studies'});
+  show(section,{history:false,focus:false,list:section!=='studies',animate:false});
   const target=document.getElementById(id);if(!target)return;
   for(let parent=target;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
   const focusable=target.querySelector('h2,h3,h4,summary')||target;
@@ -88,7 +125,7 @@
   target.scrollIntoView({block:'start',behavior:prefersReduced()?'instant':'smooth'});
  }
  function labTarget(){
-  show('studies',{history:false,focus:false});
+  show('studies',{history:false,focus:false,animate:false});
   const env=document.getElementById('study-environment');
   if(!env)return;
   env.open=true;
@@ -100,7 +137,7 @@
   const hash=decodeURIComponent(location.hash.slice(1));
   if(hash.startsWith('arch-')){focusTarget(hash,'architecture');return;}
   if(hash.startsWith('task-')||hash.startsWith('module-')){
-   show('studies',{history:false,focus:false,list:false});
+   show('studies',{history:false,focus:false,list:false,animate:false});
    requestAnimationFrame(()=>window.IAMApp?.reveal(hash,{keepHash:true}));
    return;
   }
