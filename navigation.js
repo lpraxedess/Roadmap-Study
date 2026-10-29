@@ -43,7 +43,7 @@
 
  const prefersReduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
  const main=document.getElementById('main-content');
- let current=null,activeTransition=null,routeAnimation=null;
+ let current=null,activeTransition=null,routeAnimation=null,navigationSequence=0;
  // Navegação com duas camadas de animação: View Transitions nos navegadores compatíveis
  // e Web Animations API como fallback. Sem movimento quando o usuário o desativa no SO.
  function swap(page,options={}){
@@ -75,9 +75,12 @@
   if(!hashes[page])page='overview';
   const changing=current!==null&&current!==page;
   const animate=changing&&!prefersReduced()&&options.animate!==false;
+  const sequence=++navigationSequence;
   // Acesso direto a âncoras e leitores usa atualização síncrona e preserva o foco.
   // Somente transições entre as quatro seções passam pelo efeito de saída/entrada.
   const update=(native=false)=>{
+   // Evita que uma transição anterior sobrescreva a rota em cliques rápidos.
+   if(sequence!==navigationSequence)return;
    swap(page,{...options,nativeTransition:native});
    if(options.focus!==false){
     const heading=document.getElementById('page-'+page)?.querySelector('h1,h2');
