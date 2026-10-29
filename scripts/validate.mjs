@@ -55,6 +55,13 @@ assert.ok(read('app.js').includes('labPlanner:window.IAMLab'),'Backup do plano a
 assert.ok(read('app.js').includes('hardware:window.IAMHardware'),'Backup do hardware ausente');
 assert.ok(read('app.js').includes('readerPositions:{...guidePositions}'),'Posição de leitura ausente');
 assert.ok(read('app.js').includes("$('nav-progress-value')"),'Menu não acompanha o progresso');
+assert.ok(read('navigation.js').includes('document.startViewTransition(()=>update(true))'),'View Transitions não está habilitada na troca de página');
+assert.ok(read('navigation.js').includes('routeAnimation=next.animate'),'Fallback de animação de rota ausente');
+assert.ok(read('sidebar-cert.css').includes('::view-transition-new(iam-page)'),'Animação de entrada da rota ausente');
+assert.ok(read('sidebar-cert.css').includes('::view-transition-old(iam-page)'),'Animação de saída da rota ausente');
+assert.ok(read('sidebar-cert.css').includes('align-items:start!important; /* Expandir um card não estica'),'Grade de certificações estica os vizinhos');
+assert.ok(read('sidebar-cert.css').includes('align-self:start!important;'),'Card de certificação não está independente');
+assert.ok(read('sidebar-cert.css').includes('@media(prefers-reduced-motion:reduce)'),'Preferência de movimento reduzido não coberta');
 
 const studyCtx=vm.createContext({});
 const phases=vm.runInContext(read('curriculum.js')+'\nPHASES',studyCtx);
