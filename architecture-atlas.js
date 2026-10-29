@@ -49,12 +49,12 @@ window.IAMAtlas=(()=>{
  function tagged(parent,label,value){const p=node('p','atlas-kv');p.append(node('span','',label),node('strong','',value));parent.append(p)}
  function render(){
   const root=$('arch-atlas');if(!root)return;
-  root.replaceChildren();
   const state=window.IAMApp?.getState()||{completed:[],steps:[]};
   // Atlas muito detalhado: não reconstruir centenas de etapas ao navegar sem alteração de progresso.
   const signature=state.completed.join('|')+'#'+state.steps.join('|');
   if(signature===lastProgressSignature&&root.childElementCount>0)return;
   lastProgressSignature=signature;
+  root.replaceChildren();
   const all=PHASES.flatMap(p=>p.items);
   const totalSteps=all.reduce((n,t)=>n+t.guide.steps.length,0);
   const hero=node('div','atlas-hero');
