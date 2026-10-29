@@ -9,12 +9,12 @@
  <link rel="stylesheet" href="style.css?v=a016cf8ca7c0">
  <link rel="stylesheet" href="experience.css?v=20261029-vbox">
  <link rel="stylesheet" href="monochrome.css?v=20261029-ux-final">
- <link rel="stylesheet" href="sidebar-cert.css?v=20261029-sidebar02">
+ <link rel="stylesheet" href="sidebar-cert.css?v=20261029-audit01">
  <script src="architecture.js?v=4d59df183b7e" defer></script>
  <script src="curriculum.js?v=20261028-clean2" defer></script>
  <script src="certifications.js?v=58f5155db1b7" defer></script>
  <script src="state.js?v=b2a0329faf28" defer></script>
- <script src="app.js?v=20261029-sidebar02" defer></script>
+ <script src="app.js?v=20261029-audit01" defer></script>
  <script src="architecture-view.js?v=20261029-mono" defer></script>
  <script src="architecture-atlas.js?v=20261029-ux-final" defer></script>
  <script src="home-studio.js?v=20261029-home" defer></script>
@@ -122,7 +122,7 @@
     <div class="journey-study-header"><div><span class="eyebrow">PLANO DE EXECUÇÃO / AULAS</span><h2>Escolha a próxima ação.</h2><p>Todos os módulos integram o mesmo cenário Aurora; os resultados de uma aula alimentam as próximas.</p></div><label class="search" for="search"><span class="sr-only">Buscar lições</span><input id="search" type="search" placeholder="Buscar tema, serviço ou tecnologia…"><kbd aria-hidden="true">/</kbd></label></div>
     <details class="filter-panel"><summary>Filtros avançados</summary><div class="advanced-filters"><label for="module-filter">Módulo<select id="module-filter"><option value="all">Todos</option></select></label><label for="level-filter">Nível<select id="level-filter"><option value="all">Todos</option><option value="beginner">Fundamentos</option><option value="intermediate">Intermediário</option><option value="advanced">Avançado</option></select></label><label for="tech-filter">Tecnologia<select id="tech-filter"><option value="all">Todas</option></select></label><label for="cert-filter">Certificação<select id="cert-filter"><option value="all">Todas</option></select></label></div><button id="clear-study-filters" type="button" class="text-action">Limpar filtros</button></details>
     <div class="study-toolbar"><div class="filters" role="group" aria-label="Situação das aulas"><button data-filter="all" aria-pressed="true" class="active">Todas</button><button data-filter="pending" aria-pressed="false">Pendentes</button><button data-filter="done" aria-pressed="false">Concluídas</button></div><span id="results-count" role="status"></span><button id="collapse-all" type="button" class="text-action" hidden>Recolher módulos</button></div>
-    <div id="roadmap-list"></div><p id="empty" role="status" hidden>Nenhuma aula corresponde aos filtros. Limpe os filtros para continuar.</p>
+    <div id="roadmap-list"></div><div id="empty" class="study-empty" role="status" hidden><strong>Nenhuma aula encontrada.</strong><p>Experimente outra busca ou remova os filtros.</p><button id="empty-clear-filters" type="button" class="button secondary">Limpar filtros</button></div>
    </section>
   </div>
   <div id="page-architecture" data-page-view="architecture" hidden>
@@ -136,13 +136,6 @@
      <div><span class="eyebrow">CARREIRA / PRÓXIMOS OBJETIVOS</span><h1 id="certifications-title" tabindex="-1">Suas certificações.</h1><p>Priorize o que importa para a carreira IAM. Registre seu andamento sem transformar uma recomendação de estudo em pré-requisito oficial.</p></div>
      <div class="certifications-spotlight"><span class="eyebrow">FOCO PRINCIPAL / IAM MICROSOFT</span><strong>SC-300</strong><span>Trilha principal · Entra, identidade híbrida e governança</span></div>
     </header>
-    <div class="cert-legend" role="group" aria-label="Legenda das luzes de prioridade">
-     <span class="cert-legend-item"><span class="cert-light cert-light--required" aria-hidden="true"></span>Obrigatória na trilha</span>
-     <span class="cert-legend-item"><span class="cert-light cert-light--recommended" aria-hidden="true"></span>Recomendada</span>
-     <span class="cert-legend-item"><span class="cert-light cert-light--optional" aria-hidden="true"></span>Opcional</span>
-     <span class="cert-legend-item"><span class="cert-light cert-light--earned" aria-hidden="true"></span>Concluída</span>
-    </div>
-    <p class="cert-classification-note">A prioridade é uma <strong>classificação do Roadmap IAM</strong>, não uma exigência dos provedores. SC-300 é o objetivo central do percurso; nenhuma certificação é obrigatória para começar a estudar. O verde substitui a prioridade quando você registra a conquista.</p>
     <div class="cert-tools">
      <label for="cert-provider">Fornecedor<select id="cert-provider"><option value="all">Todos</option></select></label>
      <label for="cert-priority">Categoria<select id="cert-priority"><option value="all">Todas</option><option value="required">Obrigatórias na trilha</option><option value="recommended">Recomendadas</option><option value="optional">Opcionais</option><option value="earned">Concluídas</option></select></label>
