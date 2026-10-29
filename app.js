@@ -68,6 +68,7 @@ function dashboard(){
  const current=nextTask();$('resume-title').textContent=current?current.title:'Percurso registrado. Revise suas evidências.';
  $('resume-module').textContent=current?PHASES.find(p=>p.items.includes(current)).title:'Práticas e simulações continuam diferenciadas no painel.';
  $('resume-link').href=current?'#task-'+current.id:'#estudos';$('resume-link').textContent=current?'Continuar →':'Revisar →';
+ const quickResume=document.querySelector('.header-start');if(quickResume)quickResume.href=current?'#task-'+current.id:'#estudos';
  $('legacy-notice').hidden=!state.legacy.length;$('legacy-notice').textContent=state.legacy.length+' lições com histórico anterior preservado. O conteúdo mudou: reconfirme passos, testes e evidência para concluir a nova versão.';
  $('steps-completed').textContent=state.steps.length+' microetapas concluídas. O progresso é salvo automaticamente neste navegador.';
  if($('route-choice'))$('route-choice').value=state.track;
@@ -184,7 +185,7 @@ $('search').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault
 $('clear-study-filters').addEventListener('click',()=>{resetFilters();render();$('search').focus();});
 $('empty-clear-filters').addEventListener('click',()=>{resetFilters();render();$('search').focus();});
 document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{filters.status=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});render();}));
-$('collapse-all').addEventListener('click',()=>{document.querySelectorAll('#roadmap-list details[open]').forEach(d=>d.open=false);$('collapse-all').focus();});
+
 $('route-choice')?.addEventListener('change',e=>{commit(d=>{d.track=e.target.value});dashboard();});
 document.addEventListener('keydown',e=>{if(e.defaultPrevented||e.altKey||e.shiftKey||e.target.isContentEditable||['INPUT','SELECT','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='/'||e.key.toLowerCase()==='k'&&(e.ctrlKey||e.metaKey)){e.preventDefault();window.IAMNavigation?.show('studies');$('search').focus();}});
 $('export').addEventListener('click',()=>download('roadmap-iam-backup-v4.json',JSON.stringify({...store.export(),labPlanner:window.IAMLab?.exportState?.(),hardware:window.IAMHardware?.exportState?.(),readerPositions:{...guidePositions}},null,2),'application/json'));
