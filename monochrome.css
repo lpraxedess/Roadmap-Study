@@ -576,3 +576,24 @@ input::placeholder,textarea::placeholder{color:#888!important}
  ::view-transition-old(root),::view-transition-new(root){animation:none!important}
  .page-content>[data-page-view].view-entering{animation:none!important}
 }
+
+/* Final monochrome refinements: make the study planner a horizontal section, not another sidebar. */
+.lab-layout{display:block!important;grid-template-columns:none!important}
+.lab-stage-nav{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px!important;max-height:none!important;overflow:visible!important;padding:0!important;margin-bottom:20px}
+.lab-stage{display:flex!important;flex-direction:column;justify-content:space-between;min-width:0!important;max-width:none!important;flex-shrink:1!important;padding:15px!important;transform:none!important}
+.lab-stage:hover{transform:translateY(-2px)!important}
+.lab-stage-detail{width:100%}
+.lab-stage-detail h3{font-size:clamp(1.3rem,2.5vw,2.7rem)}
+/* Original SVG labels and edges are neutral instead of blue/gold. Dashed edges remain visually distinct. */
+.architecture-topology-svg path[stroke="#6acbff"]{stroke:#f3f3f3!important}
+.architecture-topology-svg path[stroke="#c7ac79"]{stroke:#929292!important}
+.architecture-topology-svg path[fill="#6acbff"]{fill:#f5f5f5!important}
+.architecture-topology-svg rect{fill:#191919!important;stroke:#555!important}
+.architecture-topology-svg rect[stroke="#6acbff"]{stroke:#f6f6f6!important;fill:#242424!important}
+.architecture-topology-svg text{fill:#c5c5c5!important}
+.architecture-topology-svg text[fill="#edf0f3"]{fill:#f7f7f7!important}
+.architecture-topology-svg text[fill="#afdbf5"]{fill:#e1e1e1!important}
+.architecture-topology-svg text[fill="#dcc69c"]{fill:#acacac!important}
+.architecture-topology-svg text[fill="#a6afb9"]{fill:#9d9d9d!important}
+@media(max-width:1180px){.lab-stage-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.lab-stage-nav{display:flex!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding:0 0 10px!important;scrollbar-width:thin}.lab-stage{min-width:210px!important;max-width:235px!important;flex-shrink:0!important}}
