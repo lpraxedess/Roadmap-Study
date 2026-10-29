@@ -69,7 +69,7 @@ function dashboard(){
  $('resume-module').textContent=current?PHASES.find(p=>p.items.includes(current)).title:'Práticas e simulações continuam diferenciadas no painel.';
  $('resume-link').href=current?'#task-'+current.id:'#estudos';$('resume-link').textContent=current?'Continuar →':'Revisar →';
  $('legacy-notice').hidden=!state.legacy.length;$('legacy-notice').textContent=state.legacy.length+' lições com histórico anterior preservado. O conteúdo mudou: reconfirme passos, testes e evidência para concluir a nova versão.';
- $('steps-completed').textContent=state.steps.length+' passos e '+state.tests.length+' testes confirmados. Registro pessoal; o portal não verifica seu ambiente.';
+ $('steps-completed').textContent=state.steps.length+' microetapas concluídas. O progresso é salvo automaticamente neste navegador.';
  if($('route-choice'))$('route-choice').value=state.track;
  const list=$('module-progress-list');list.replaceChildren();
  for(const p of PHASES){const completed=p.items.filter(t=>state.completed.includes(t.id)).length;const a=link(p.title,'#module-'+p.id,'module-progress-row');a.append(node('span','module-mini-count',completed+' / '+p.items.length));list.append(a);}
@@ -110,30 +110,58 @@ function renderLesson(t){
   if(s.expected)li.append(node('p','expected','Resultado esperado: '+s.expected));
   li.append(checkbox(inputId,'Etapa conferida',state.steps.includes(key),checked=>{commit(d=>{d.steps=checked?[...d.steps,key]:d.steps.filter(x=>x!==key)});const index=t.guide.steps.indexOf(s);if(checked&&!showAll&&index<t.guide.steps.length-1){rememberPosition(t.id,index+1);preserveRender('step-'+t.id+'-'+t.guide.steps[index+1].id);}else preserveRender(inputId);}));steps.append(li);
  }lab.append(steps);const guideNav=node('div','guide-navigation');for(const [label,delta] of [['← Passo anterior',-1],['Próximo passo →',1]]){const button=node('button','button secondary',label);button.type='button';button.disabled=showAll||(delta<0?active===0:active===t.guide.steps.length-1);button.id='guide-'+(delta<0?'prev-':'next-')+t.id;button.addEventListener('click',()=>{rememberPosition(t.id,active+delta);preserveRender('step-'+t.id+'-'+t.guide.steps[active+delta].id);});guideNav.append(button);}const all=node('button','text-action',showAll?'Mostrar um passo por vez':'Ver todos os passos');all.type='button';all.id='guide-all-'+t.id;all.addEventListener('click',()=>{if(showAll)expandedGuides.delete(t.id);else expandedGuides.add(t.id);preserveRender(all.id);});guideNav.append(all);lab.append(guideNav);content.append(lab);
- const evidence=block('3. Validar e registrar evidência');
+ // Conclusão simples: as microetapas já contêm instruções e resultados esperados.
+ // Testes/evidências históricos permanecem no backup, sem exigir uma segunda checklist redundante.
+ const finish=block('3. Concluir aula');
+ finish.classList.add('lesson-finish');
  const stepsDone=t.guide.steps.filter(step=>state.steps.includes(t.id+'/'+step.id)).length;
- const criteria=t.acceptance||[];
- const testsDone=criteria.filter(check=>state.tests.includes(t.id+'/'+check.id)).length;
- evidence.append(node('p','muted','Passos conferidos: '+stepsDone+'/'+t.guide.steps.length+' · Critérios de aceite: '+testsDone+'/'+criteria.length+'. Registre apenas verificações feitas no seu laboratório.'));
- const checks=node('div','lesson-acceptance');
- for(const test of criteria){const key=t.id+'/'+test.id;checks.append(checkbox('accept-'+t.id+'-'+test.id,test.text,state.tests.includes(key),checked=>{commit(d=>{d.tests=checked?[...new Set([...d.tests,key])]:d.tests.filter(x=>x!==key)});preserveRender('accept-'+t.id+'-'+test.id);}));}
- evidence.append(checks);
- const status=node('label','field-label','Modalidade da execução');status.htmlFor='mode-'+t.id;
+ const remaining=t.guide.steps.length-stepsDone;
+ const tracker=node('div','lesson-finish-header');
+ tracker.append(node('span','lesson-finish-progress',stepsDone+' de '+t.guide.steps.length+' etapas concluídas'));
+ const bar=node('div','lesson-finish-bar');
+ bar.setAttribute('role','progressbar');bar.setAttribute('aria-label','Progresso das etapas desta aula');
+ bar.setAttribute('aria-valuemin','0');bar.setAttribute('aria-valuemax',String(t.guide.steps.length));bar.setAttribute('aria-valuenow',String(stepsDone));
+ const fill=node('span');fill.style.width=Math.round(stepsDone/t.guide.steps.length*100)+'%';bar.append(fill);tracker.append(bar);finish.append(tracker);
+ const status=node('label','field-label','Como realizou esta aula?');status.htmlFor='mode-'+t.id;
  const mode=node('select','lesson-mode');mode.id='mode-'+t.id;
- for(const [value,label] of [['','Selecione após executar'],['real','Prática real (validada)'],['mixed','Execução parcial / híbrida'],['simulation','Somente simulação ou documentação']]){const opt=node('option','',label);opt.value=value;mode.append(opt);}
+ for(const [value,label] of [['','Escolher modalidade'],['real','No laboratório real'],['mixed','Parcialmente no laboratório'],['simulation','Simulação / leitura guiada']]){
+  const opt=node('option','',label);opt.value=value;mode.append(opt);
+ }
  mode.value=state.modes[t.id]||'';
  mode.addEventListener('change',()=>{commit(d=>{if(mode.value)d.modes[t.id]=mode.value;else delete d.modes[t.id]});preserveRender(mode.id);});
- evidence.append(status,mode);
- const notesLabel=node('label','field-label','Evidência e observações (sem segredos)');notesLabel.htmlFor='notes-'+t.id;
- const notes=node('textarea','lesson-notes');notes.id='notes-'+t.id;notes.rows=4;notes.maxLength=6000;notes.placeholder='Onde executei; resultado observado; falha e correção; link/caminho das evidências sanitizadas.';notes.value=state.notes[t.id]||'';
- const saveNotes=node('button','button secondary','Salvar evidência');saveNotes.type='button';
- saveNotes.addEventListener('click',()=>{const value=notes.value.trim();commit(d=>{if(value)d.notes[t.id]=value;else delete d.notes[t.id]});message('Observações salvas localmente. Exporte backup regularmente.');});
- evidence.append(notesLabel,notes,saveNotes);
- const ready=stepsDone===t.guide.steps.length&&testsDone===criteria.length&&!!state.modes[t.id];
- const completion=checkbox('complete-'+t.id,'Marcar aula como concluída',complete,checked=>{if(checked&&!ready){message('Confirme os passos, testes e modalidade antes de concluir.');preserveRender('complete-'+t.id);return;}commit(d=>{d.completed=checked?[...new Set([...d.completed,t.id])]:d.completed.filter(id=>id!==t.id);if(checked)d.legacy=d.legacy.filter(id=>id!==t.id)});preserveRender('complete-'+t.id);});
- if(!ready&&!complete){const input=completion.querySelector('input');input.disabled=true;}
- evidence.append(completion,node('p','muted',ready?'Validações registradas. A conclusão depende da sua confirmação.':'Conclua os passos e critérios acima e selecione a modalidade. Simulação não conta como execução real.'));
- content.append(evidence);
+ const controls=node('div','lesson-finish-actions');
+ const modeField=node('div','lesson-finish-mode');modeField.append(status,mode);controls.append(modeField);
+ const ready=remaining===0&&!!state.modes[t.id];
+ const completion=checkbox('complete-'+t.id,'Concluir aula',complete,checked=>{
+  if(checked&&!ready){
+   message('Finalize as etapas e informe como realizou a aula.');
+   preserveRender('complete-'+t.id);return;
+  }
+  commit(d=>{
+   d.completed=checked?[...new Set([...d.completed,t.id])]:d.completed.filter(id=>id!==t.id);
+   if(checked)d.legacy=d.legacy.filter(id=>id!==t.id);
+  });
+  preserveRender('complete-'+t.id);
+ });
+ if(!ready&&!complete)completion.querySelector('input').disabled=true;
+ controls.append(completion);finish.append(controls);
+ if(!ready&&!complete)finish.append(node('p','lesson-finish-hint',remaining
+   ?'Faltam '+remaining+' etapas. Você pode continuar em outra sessão.'
+   :'Selecione a modalidade para concluir.'));
+ const notesArea=node('details','lesson-notes-optional');
+ notesArea.open=Boolean(state.notes[t.id]);
+ notesArea.append(node('summary','','Minhas anotações (opcional)'));
+ const notesLabel=node('label','field-label','Anotações pessoais');notesLabel.htmlFor='notes-'+t.id;
+ const notes=node('textarea','lesson-notes');notes.id='notes-'+t.id;notes.rows=3;notes.maxLength=6000;
+ notes.placeholder='Comandos úteis, observações ou pontos para revisar (sem senhas e tokens).';
+ notes.value=state.notes[t.id]||'';
+ const saveNotes=node('button','button secondary','Salvar anotações');saveNotes.type='button';
+ saveNotes.addEventListener('click',()=>{
+  const value=notes.value.trim();commit(d=>{if(value)d.notes[t.id]=value;else delete d.notes[t.id]});
+  message('Anotações salvas neste navegador.');
+ });
+ notesArea.append(notesLabel,notes,saveNotes);finish.append(notesArea);
+ content.append(finish);
  const index=orderedTasks.findIndex(x=>x.id===t.id),lessonNav=node('nav','lesson-sequence');lessonNav.setAttribute('aria-label','Ordem de construção');if(index>0)lessonNav.append(link('← Tema anterior: '+orderedTasks[index-1].title,'#task-'+orderedTasks[index-1].id));if(index<orderedTasks.length-1)lessonNav.append(link('Próximo tema: '+orderedTasks[index+1].title+' →','#task-'+orderedTasks[index+1].id));content.append(lessonNav);details.append(content);return details;
 }
 function render(){
@@ -154,6 +182,7 @@ for(const field of ['module','level','tech','cert'])$(field+'-filter').addEventL
 $('search').addEventListener('input',e=>{filters.query=e.target.value.trim();clearTimeout(searchTimer);searchTimer=setTimeout(render,140);});
 $('search').addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();clearTimeout(searchTimer);filters.query='';e.target.value='';render();}});
 $('clear-study-filters').addEventListener('click',()=>{resetFilters();render();$('search').focus();});
+$('empty-clear-filters').addEventListener('click',()=>{resetFilters();render();$('search').focus();});
 document.querySelectorAll('[data-filter]').forEach(button=>button.addEventListener('click',()=>{filters.status=button.dataset.filter;document.querySelectorAll('[data-filter]').forEach(b=>{b.classList.toggle('active',b===button);b.setAttribute('aria-pressed',String(b===button));});render();}));
 $('collapse-all').addEventListener('click',()=>{document.querySelectorAll('#roadmap-list details[open]').forEach(d=>d.open=false);$('collapse-all').focus();});
 $('route-choice')?.addEventListener('change',e=>{commit(d=>{d.track=e.target.value});dashboard();});
