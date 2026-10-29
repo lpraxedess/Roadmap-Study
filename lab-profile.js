@@ -3,7 +3,7 @@
 (() => {
   const KEY='iam-hardware-v1';
   const ROOT='lab-profile';
-  const defaults={os:'windows11',hypervisor:'virtualbox',vboxVersion:'unknown',freeGb:null,virtualization:'unknown',ramGb:16,tenant:'free'};
+  const defaults={os:'windows11pro',hypervisor:'virtualbox',vboxVersion:'unknown',freeGb:null,virtualization:'unknown',ramGb:16,tenant:'free'};
   const osChoices=[
     ['windows11','Windows 11 (edição ainda não informada)'],
     ['unknown','Não identificado'],
@@ -17,8 +17,8 @@
   const versionChoices=[['unknown','Versão não informada'],['7.2','VirtualBox 7.2'],['7.1','VirtualBox 7.1'],['7.0','VirtualBox 7.0'],['older','VirtualBox 6.x / anterior']];
   const read=()=>{try{const v=JSON.parse(localStorage.getItem(KEY));return typeof v==='object'&&v&&!Array.isArray(v)?v:{}}catch{return {}}};
   let profile={...defaults,...read()};
-  // O usuário confirmou Windows 11 e VirtualBox. Preservar apenas a edição Home/Pro que ele eventualmente selecionou.
-  if(!['windows11','windows11pro','windows11home'].includes(profile.os))profile.os='windows11';
+  // O usuário confirmou Windows 11 Pro e VirtualBox. Corrigir perfis legados com edição indefinida.
+  profile.os='windows11pro';
   profile.hypervisor='virtualbox';
   if(!versionChoices.some(([value])=>value===profile.vboxVersion))profile.vboxVersion='unknown';
   const node=(tag,cls,value)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(value!==undefined)el.textContent=value;return el};
@@ -30,15 +30,15 @@
   function render(){
     root.replaceChildren();
     const header=node('section','hardware-heading');
-    header.append(node('span','eyebrow','AMBIENTE IDENTIFICADO · PERFIL LOCAL'),node('h2','','Windows 11 + VirtualBox: seu laboratório de IAM.'),node('p','muted','Ryzen 5 5600 · 6 núcleos / 12 threads · RTX 3070 · 1 TB NVMe · 16 GB DDR4 · Microsoft Entra gratuito. Sem metas de horas ou prazo: avance somente após conferir cada resultado.'));
+    header.append(node('span','eyebrow','AMBIENTE IDENTIFICADO · PERFIL LOCAL'),node('h2','','Windows 11 Pro + VirtualBox: sua bancada IAM.'),node('p','muted','Ryzen 5 5600 · 6 núcleos / 12 threads · RTX 3070 · 1 TB NVMe · 16 GB DDR4 · Microsoft Entra gratuito. Sem metas de horas ou prazo: avance somente após conferir cada resultado.'));
     const facts=node('div','hardware-facts');
-    [['Host','Windows 11'],['Virtualização','VirtualBox'],['CPU','Ryzen 5 5600'],['Memória física','16 GB'],['Disco instalado','1 TB NVMe'],['Tenant','Entra Free'],['Licenças pagas','Nenhuma'],['Orçamento','R$ 200/mês']].forEach(([label,value])=>{const item=node('div','hardware-fact');item.append(node('small','',label),node('strong','',value));facts.append(item)});
+    [['Host','Windows 11 Pro'],['Virtualização','VirtualBox'],['CPU','Ryzen 5 5600'],['Memória física','16 GB'],['Disco instalado','1 TB NVMe'],['Tenant','Entra Free'],['Licenças pagas','Nenhuma'],['Orçamento','R$ 200/mês']].forEach(([label,value])=>{const item=node('div','hardware-fact');item.append(node('small','',label),node('strong','',value));facts.append(item)});
     header.append(facts);
     const inputs=node('div','hardware-inputs');
     const formTitle=node('h3','','Confirmações necessárias antes de criar as VMs');inputs.append(formTitle);
     const fields=node('div','hardware-fields');
     const makeSelect=(title,id,choices)=>{const field=node('label','hardware-field');field.append(node('span','',title));const select=document.createElement('select');select.id='hardware-'+id;for(const [value,label] of choices){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=profile[id]||'unknown';select.addEventListener('change',()=>{profile[id]=select.value;save();updateAdvice()});field.append(select);fields.append(field)};
-    makeSelect('Edição do Windows 11','os',osChoices);
+    makeSelect('Windows 11 do computador (edição confirmada: Pro)','os',osChoices);
     makeSelect('Versão do VirtualBox','vboxVersion',versionChoices);
     makeSelect('AMD-V/SVM habilitada no firmware','virtualization',virtChoices);
     const disk=node('label','hardware-field');disk.append(node('span','','Espaço livre do NVMe (GB)'));const input=document.createElement('input');input.type='number';input.min='0';input.max='1000';input.step='1';input.id='hardware-freeGb';input.placeholder='Ex.: 260 (ainda não informado)';input.value=profile.freeGb==null?'':String(profile.freeGb);input.addEventListener('change',()=>{const raw=input.value.trim();profile.freeGb=raw===''?null:Math.min(1000,Math.max(0,Number(raw)||0));save();updateAdvice()});disk.append(input);fields.append(disk);
@@ -85,7 +85,7 @@
   function updateAdvice(){
     const area=document.getElementById('hardware-advice');if(!area)return;area.replaceChildren();
     const msgs=[];
-    if(profile.os==='windows11')msgs.push('Windows 11 confirmado. Falta somente selecionar a edição Home ou Pro/Enterprise; o VirtualBox é compatível com ambas.');
+    // Edição confirmada pelo estudante: Windows 11 Pro.
     if(profile.os==='windows11home')msgs.push('No Windows 11 Home use VirtualBox; não presuma disponibilidade do papel Hyper-V completo. Isso não impede criar DC01 e CL01 no VirtualBox.');
     if(profile.vboxVersion==='unknown')msgs.push('VirtualBox já confirmado. Confira a versão pelo menu Ajuda → Sobre ou pelo VBoxManage --version. Recomendado: versão 7.x recente para Windows 11 convidado com TPM virtual.');
     if(profile.vboxVersion==='older')msgs.push('VirtualBox anterior à família 7.x: confirme disponibilidade de TPM 2.0 virtual e suporte a Windows 11; avalie atualizar antes de criar CL01.');
@@ -96,14 +96,14 @@
     else msgs.push('Espaço livre informado suficiente para a proposta inicial, desde que snapshots e ISOs sejam controlados.');
     msgs.push('Com 16 GB de RAM: DC01 4 GB + CL01 4 GB deixam cerca de 8 GB para o Windows host e outros processos. Se começar a paginar, desligue CL01.');
     for(const m of msgs)area.append(node('p','',m));
-    const status=node('strong','hardware-advice-status',profile.os==='windows11'||profile.vboxVersion==='unknown'||profile.virtualization!=='enabled'||profile.freeGb===null||profile.freeGb<180?'Pré-voo pendente: confirme ambiente antes de instalar.':'Pré-voo informado: confira licenças e requisitos do hipervisor antes de instalar.');
+    const status=node('strong','hardware-advice-status',profile.vboxVersion==='unknown'||profile.virtualization!=='enabled'||profile.freeGb===null||profile.freeGb<180?'Pré-voo pendente: confirme ambiente antes de instalar.':'Pré-voo informado: confira licenças e requisitos do hipervisor antes de instalar.');
     area.prepend(status);
   }
   window.IAMHardware={
     exportState:()=>({version:1,...profile}),
     importState(raw){
       if(!raw||raw.version!==1||!osChoices.some(([id])=>id===raw.os)||!virtChoices.some(([id])=>id===raw.virtualization)||!(raw.freeGb===null||(Number.isFinite(raw.freeGb)&&raw.freeGb>=0&&raw.freeGb<=1000))||(raw.vboxVersion!==undefined&&!versionChoices.some(([id])=>id===raw.vboxVersion)))throw Error('Perfil de hardware inválido no backup.');
-      profile={...defaults,os:['windows11pro','windows11home'].includes(raw.os)?raw.os:'windows11',virtualization:raw.virtualization,freeGb:raw.freeGb,vboxVersion:raw.vboxVersion||'unknown',hypervisor:'virtualbox',ramGb:16,tenant:'free'};save();render();
+      profile={...defaults,os:'windows11pro',virtualization:raw.virtualization,freeGb:raw.freeGb,vboxVersion:raw.vboxVersion||'unknown',hypervisor:'virtualbox',ramGb:16,tenant:'free'};save();render();
     },
     reset(){profile={...defaults};save();render();},
     render
