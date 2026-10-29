@@ -59,7 +59,27 @@ try{
  assert.ok(usable>=2250,'Conteúdo com sidebar está estreito em ultrawide: '+usable);
  await desktop.setViewportSize({width:1600,height:900});
  await desktop.screenshot({path:join(cwd,'artifacts/home-desktop.png'),fullPage:true});
+ // Verifica mudança animada de seção, não apenas a existência de CSS.
+ await desktop.evaluate(()=>{
+  window.__iamTransitionCalls=0;
+  if(typeof document.startViewTransition==='function'){
+   const original=document.startViewTransition.bind(document);
+   document.startViewTransition=(update)=>{window.__iamTransitionCalls++;return original(update);};
+  }
+ });
  await findAndUse(desktop,'.sidebar-primary-nav a[data-page="studies"]');
+ const navigationMotion=await desktop.evaluate(()=>({
+  supported:typeof document.startViewTransition==='function',
+  calls:window.__iamTransitionCalls,
+  name:getComputedStyle(document.documentElement,'::view-transition-new(iam-page)').animationName,
+  duration:getComputedStyle(document.documentElement,'::view-transition-new(iam-page)').animationDuration,
+  reduced:matchMedia('(prefers-reduced-motion: reduce)').matches
+ }));
+ if(navigationMotion.supported&&!navigationMotion.reduced){
+  assert.ok(navigationMotion.calls>0,'A troca de rota não chamou a API de transição: '+JSON.stringify(navigationMotion));
+  assert.ok(navigationMotion.name.includes('iam-route-in'),'Transição visual de entrada ausente: '+JSON.stringify(navigationMotion));
+  assert.ok(parseFloat(navigationMotion.duration)>=.6,'Transição quase instantânea: '+JSON.stringify(navigationMotion));
+ }
  assert.equal(await desktop.locator('#page-studies').isVisible(),true);
  await desktop.locator('#study-environment > summary').click();
  assert.equal(await desktop.locator('#lab-profile').isVisible(),true);
@@ -92,6 +112,24 @@ try{
  assert.equal(await desktop.locator('.cert-classification-note').count(),0,'Texto de classificação redundante ainda aparece');
  assert.equal(await desktop.locator('.cert-priority').count(),18,'Cada cartão deve identificar sua prioridade');
  assert.equal(await desktop.locator('.cert-light--required').count()>=1,true);
+ // Uma única certificação aberta não pode esticar o cartão vizinho da grade.
+ const certGroup=desktop.locator('.cert-list').first();
+ const firstCard=certGroup.locator('.cert-card').first();
+ const peerCard=certGroup.locator('.cert-card').nth(1);
+ const firstHeightBefore=(await firstCard.boundingBox()).height;
+ const peerHeightBefore=(await peerCard.boundingBox()).height;
+ const peerDetails=peerCard.locator('.cert-more');
+ assert.equal(await peerDetails.getAttribute('open'),null);
+ await firstCard.locator('.cert-more > summary').click();
+ const firstHeightAfter=(await firstCard.boundingBox()).height;
+ const peerHeightAfter=(await peerCard.boundingBox()).height;
+ assert.ok(firstHeightAfter>firstHeightBefore+35,'O cartão selecionado não expandiu seu conteúdo');
+ assert.ok(Math.abs(peerHeightAfter-peerHeightBefore)<3,
+  'Certificações da mesma linha expandiram juntas: '+JSON.stringify({firstHeightBefore,firstHeightAfter,peerHeightBefore,peerHeightAfter}));
+ assert.equal(await peerDetails.getAttribute('open'),null,'Detalhes do cartão vizinho abriram indevidamente');
+ assert.equal(await certGroup.locator('.cert-more[open]').count(),1,'Somente o cartão escolhido deve abrir');
+ await firstCard.locator('.cert-more > summary').click();
+ assert.equal(await certGroup.locator('.cert-more[open]').count(),0);
  const beforePriority=await desktop.locator('.cert-card').filter({has:desktop.locator('#cert-sc300')}).getAttribute('data-priority');
  assert.equal(beforePriority,'required','SC-300 deve ser prioridade obrigatória do roteiro IAM');
  const filter=desktop.locator('#cert-priority');
@@ -151,6 +189,13 @@ try{
  await fits(phone,'certificações mobile');
  await phone.screenshot({path:join(cwd,'artifacts/certificacoes-mobile.png'),fullPage:true});
  await phone.screenshot({path:join(cwd,'artifacts/home-mobile.png'),fullPage:true});
+ // A expansão deve continuar independente em uma coluna no celular.
+ const phoneCard=phone.locator('.cert-card').first();
+ if(await phoneCard.count()){
+  await phoneCard.locator('.cert-more > summary').click();
+  assert.equal(await phone.locator('.cert-more[open]').count(),1);
+  await phoneCard.locator('.cert-more > summary').click();
+ }
  await phone.goto(base+'#laboratorio',{waitUntil:'networkidle'});
  await phone.locator('#study-environment[open]').waitFor();
  await fits(phone,'laboratorio mobile');
@@ -161,7 +206,7 @@ try{
  await phone.screenshot({path:join(cwd,'artifacts/arquitetura-mobile.png'),fullPage:true});
  assert.equal(await phone.locator('.atlas-step').count(),296);
  assert.deepEqual(errors,[],'Falhas do console JavaScript: '+errors.join('\n'));
- console.log('E2E OK: sidebar desktop/mobile, desktop 1600px e 2560px, mobile 390px, LEDs de prioridade, filtros, conclusão persistente, 296 passos e sem overflow.');
+ console.log('E2E OK: transições reais de rota, expansão individual das certificações, sidebar desktop/mobile, 1600/2560/390 px, filtros, conclusão persistente, 296 passos e sem overflow.');
 }catch(error){
  console.error('E2E FALHOU:',error.stack||error);
  if(errors.length)console.error('Erros JS:',errors);
