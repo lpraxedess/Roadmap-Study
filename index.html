@@ -9,6 +9,7 @@
  <link rel="stylesheet" href="style.css?v=a016cf8ca7c0">
  <link rel="stylesheet" href="experience.css?v=20261029-vbox">
  <link rel="stylesheet" href="monochrome.css?v=20261029-ux-final">
+ <link rel="stylesheet" href="sidebar-cert.css?v=20261029-sidebar01">
  <script src="architecture.js?v=4d59df183b7e" defer></script>
  <script src="curriculum.js?v=20261028-clean2" defer></script>
  <script src="certifications.js?v=58f5155db1b7" defer></script>
@@ -19,21 +20,38 @@
  <script src="home-studio.js?v=20261029-home" defer></script>
  <script src="lab-planner.js?v=20261029-ux-final" defer></script>
  <script src="lab-profile.js?v=20261029-ux-final" defer></script>
- <script src="navigation.js?v=20261029-ux-final" defer></script>
+ <script src="navigation.js?v=20261029-sidebar01" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main-content">Pular para o conteúdo</a>
 <header class="topbar" id="topbar">
+ <button id="menu-toggle" class="nav-toggle" type="button" aria-label="Abrir menu de navegação" aria-controls="sidebar" aria-expanded="false"><span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span></button>
  <a href="#visao-geral" class="logo" aria-label="IAM Roadmap, página inicial"><span class="logo-mark" aria-hidden="true">I<span>/</span>M</span><span class="brand-caption">ROADMAP <small>IAM ENGINEERING</small></span></a>
- <nav class="primary-nav" aria-label="Navegação principal">
-  <a href="#visao-geral" data-page="overview">Início</a>
-  <a href="#estudos" data-page="studies">Jornada</a>
-  <a href="#arquitetura" data-page="architecture">Arquitetura</a>
-  <a href="#certificacoes" data-page="certifications">Certificações</a>
- </nav>
  <div class="header-right"><span class="header-progress"><span class="header-progress-label">PROGRESSO</span><strong id="sidebar-progress-value">0%</strong><span class="header-progress-track" aria-hidden="true"><span id="sidebar-progress-fill"></span></span></span><a href="#task-prep-route" class="header-start">Continuar <span aria-hidden="true">↗</span></a></div>
 </header>
 <div class="app-shell">
+ <div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
+ <aside class="sidebar" id="sidebar" aria-label="Menu lateral do portal">
+  <div class="sidebar-top">
+   <span class="eyebrow">MAPA DE NAVEGAÇÃO</span>
+   <button id="menu-close" class="sidebar-close" type="button" aria-label="Fechar menu">×</button>
+  </div>
+  <nav class="sidebar-primary-nav" aria-label="Navegação principal">
+   <a href="#visao-geral" data-page="overview"><span class="sidebar-number" aria-hidden="true">01</span><span>Início</span><span class="sidebar-chevron" aria-hidden="true">↗</span></a>
+   <a href="#estudos" data-page="studies"><span class="sidebar-number" aria-hidden="true">02</span><span>Jornada</span><span class="sidebar-chevron" aria-hidden="true">↗</span></a>
+   <a href="#arquitetura" data-page="architecture"><span class="sidebar-number" aria-hidden="true">03</span><span>Arquitetura</span><span class="sidebar-chevron" aria-hidden="true">↗</span></a>
+   <a href="#certificacoes" data-page="certifications"><span class="sidebar-number" aria-hidden="true">04</span><span>Certificações</span><span class="sidebar-chevron" aria-hidden="true">↗</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+   <div class="sidebar-lab-identity"><span class="eyebrow">SEU AMBIENTE</span><strong>Aurora / IAM LAB</strong><small>Windows 11 Pro · VirtualBox</small><small>Entra Free · R$ 0 para iniciar</small></div>
+   <div class="sidebar-progress" aria-label="Progresso do estudo">
+    <div><span>Progresso geral</span><strong id="nav-progress-value">0%</strong></div>
+    <div class="progress-track" aria-hidden="true"><span id="nav-progress-fill"></span></div>
+    <small>41 aulas · evolução no seu ritmo</small>
+   </div>
+   <a class="sidebar-backup" href="#backup-title">Backup e privacidade <span aria-hidden="true">↗</span></a>
+  </div>
+ </aside>
  <main id="main-content" class="page-content">
   <p id="storage-warning" class="notice warning" role="alert" hidden>O armazenamento deste navegador está indisponível. Exporte seu trabalho antes de sair.</p>
   <div id="page-overview" data-page-view="overview">
@@ -112,7 +130,30 @@
    <div id="architecture-content"></div>
    <section id="arch-atlas" class="architecture-atlas" aria-label="Mapa completo dos componentes e configurações"></section>
   </div>
-  <div id="page-certifications" data-page-view="certifications" hidden><section class="certifications"><span class="eyebrow">PRÓXIMAS ETAPAS / MERCADO E CERTIFICAÇÃO</span><h1 id="certifications-title" tabindex="-1">Certificações com propósito.</h1><p>Use a prática desenvolvida no laboratório Aurora para orientar sua especialização. SC-900 pode fundamentar o início; SC-300 é o caminho central para o IAM Microsoft. Nenhuma certificação é um pré-requisito obrigatório para começar.</p><div class="notice">SC-900 não é requisito para SC-300. A obtenção do título Cybersecurity Architect Expert depende dos pré-requisitos da Microsoft; CISSP e CISM têm requisitos próprios de experiência. Consulte o programa oficial.</div><div class="cert-tools"><label for="cert-provider">Fornecedor<select id="cert-provider"><option value="all">Todos</option></select></label><span id="cert-visible-count"></span></div><p id="cert-progress" role="status"></p><div id="certification-levels"></div><p class="muted">Relacionar aulas a certificações não comprova cobertura integral de exame. Revisão editorial: 28/10/2026.</p></section></div>
+  <div id="page-certifications" data-page-view="certifications" hidden>
+   <section class="certifications">
+    <header class="certifications-intro">
+     <div><span class="eyebrow">CARREIRA / PRÓXIMOS OBJETIVOS</span><h1 id="certifications-title" tabindex="-1">Suas certificações.</h1><p>Priorize o que importa para a carreira IAM. Registre seu andamento sem transformar uma recomendação de estudo em pré-requisito oficial.</p></div>
+     <div class="certifications-spotlight"><span class="eyebrow">FOCO PRINCIPAL / IAM MICROSOFT</span><strong>SC-300</strong><span>Trilha principal · Entra, identidade híbrida e governança</span></div>
+    </header>
+    <div class="cert-legend" role="group" aria-label="Legenda das luzes de prioridade">
+     <span class="cert-legend-item"><span class="cert-light cert-light--required" aria-hidden="true"></span>Obrigatória na trilha</span>
+     <span class="cert-legend-item"><span class="cert-light cert-light--recommended" aria-hidden="true"></span>Recomendada</span>
+     <span class="cert-legend-item"><span class="cert-light cert-light--optional" aria-hidden="true"></span>Opcional</span>
+     <span class="cert-legend-item"><span class="cert-light cert-light--earned" aria-hidden="true"></span>Concluída</span>
+    </div>
+    <p class="cert-classification-note">A prioridade é uma <strong>classificação do Roadmap IAM</strong>, não uma exigência dos provedores. SC-300 é o objetivo central do percurso; nenhuma certificação é obrigatória para começar a estudar. O verde substitui a prioridade quando você registra a conquista.</p>
+    <div class="cert-tools">
+     <label for="cert-provider">Fornecedor<select id="cert-provider"><option value="all">Todos</option></select></label>
+     <label for="cert-priority">Categoria<select id="cert-priority"><option value="all">Todas</option><option value="required">Obrigatórias na trilha</option><option value="recommended">Recomendadas</option><option value="optional">Opcionais</option><option value="earned">Concluídas</option></select></label>
+     <span id="cert-visible-count"></span>
+     <span id="cert-progress" role="status"></span>
+    </div>
+    <div id="certification-levels"></div>
+    <details class="cert-official-warning"><summary>Entenda os pré-requisitos oficiais</summary><p>SC-900 não é requisito da SC-300. A certificação Cybersecurity Architect Expert tem exigências específicas da Microsoft; CISSP e CISM também possuem requisitos de experiência. Consulte cada programa oficial antes de pagar.</p></details>
+    <p class="cert-footnote muted">O relacionamento entre aulas e certificações é editorial; não comprova a cobertura completa dos exames. Referências verificadas em 28/10/2026.</p>
+   </section>
+  </div>
  </main>
 </div>
 <footer id="site-footer"><span>IAM / ROADMAP</span><span>Aprender construindo, validar antes de concluir.</span><a href="https://github.com/lpraxedess/Roadmap-Study" target="_blank" rel="noopener noreferrer">Código do projeto ↗</a></footer>
