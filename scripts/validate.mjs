@@ -8,7 +8,7 @@ const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const read=path=>readFileSync(join(root,path),'utf8');
 const html=read('index.html');
 const scripts=['architecture.js','curriculum.js','certifications.js','state.js','app.js','architecture-view.js','architecture-atlas.js','home-studio.js','lab-planner.js','lab-profile.js','navigation.js'];
-const styles=['style.css','experience.css','monochrome.css'];
+const styles=['style.css','experience.css','monochrome.css','sidebar-cert.css'];
 for(const path of [...scripts,...styles,'docs/GUIA-VIRTUALBOX.md'])assert.ok(existsSync(join(root,path)),path+' ausente');
 for(const path of scripts){
  assert.ok(html.includes('src="'+path+'?'),path+' não está carregado');
@@ -20,7 +20,12 @@ for(const page of ['overview','studies','architecture','certifications']){
  assert.ok(html.includes('data-page="'+page+'"'),'Navegação '+page+' ausente');
 }
 assert.ok(!html.includes('data-page-view="lab"'),'Laboratório não deve ocupar rota independente');
-assert.ok(!html.includes('<aside class="sidebar"'),'Menu lateral permanente detectado');
+assert.ok(html.includes('<aside class="sidebar"'),'Menu lateral não foi restaurado');
+assert.ok(html.includes('id="nav-scrim"'),'Máscara do drawer ausente');
+assert.ok(html.includes('id="menu-toggle"'),'Botão do menu móvel ausente');
+assert.ok(html.includes('id="menu-close"'),'Botão de fechamento do menu ausente');
+assert.ok(html.includes('id="nav-progress-value"'),'Indicador de progresso no menu ausente');
+assert.equal((html.match(/data-page="(?:overview|studies|architecture|certifications)"/g)||[]).length,4,'Deve haver apenas quatro opções de navegação');
 assert.equal((html.match(/id="lab-profile"/g)||[]).length,1,'Painel do hardware duplicado');
 assert.equal((html.match(/id="lab-planner"/g)||[]).length,1,'Planejador duplicado');
 assert.ok(html.includes('id="study-environment"'),'Laboratório não integrado à Jornada');
@@ -29,9 +34,20 @@ assert.ok(read('navigation.js').includes("if(hash==='laboratorio'"),'Redireciona
 assert.ok(read('monochrome.css').includes('max-width:none!important'),'Conteúdo continua limitado em monitores grandes');
 assert.ok(read('monochrome.css').includes('mono-entrance'),'Transição visual de navegação ausente');
 assert.ok(read('monochrome.css').includes('--bg:#050505'),'Tema preto não definido');
+assert.ok(read('sidebar-cert.css').includes('grid-template-columns:252px minmax(0,1fr)'),'Sidebar não ocupa coluna própria');
+assert.ok(read('sidebar-cert.css').includes('.cert-light--required'),'Luz vermelha ausente');
+assert.ok(read('sidebar-cert.css').includes('.cert-light--recommended'),'Luz amarela ausente');
+assert.ok(read('sidebar-cert.css').includes('.cert-light--optional'),'Luz cinza ausente');
+assert.ok(read('sidebar-cert.css').includes('.cert-light--earned'),'Luz verde ausente');
+assert.ok(read('navigation.js').includes("const mandatory=new Set(['sc300'])"),'SC-300 não definida como foco da trilha');
+assert.ok(read('navigation.js').includes("effectivePriority(cert,status)"),'Luz de conclusão não conectada ao progresso');
+assert.ok(read('navigation.js').includes("const mobile=matchMedia"),'Drawer móvel e teclado não configurados');
+assert.ok(html.includes('id="cert-priority"'),'Filtro de prioridade ausente');
+assert.ok(html.includes('cert-classification-note'),'Nota sobre classificação editorial ausente');
 assert.ok(read('app.js').includes('labPlanner:window.IAMLab'),'Backup do plano ausente');
 assert.ok(read('app.js').includes('hardware:window.IAMHardware'),'Backup do hardware ausente');
 assert.ok(read('app.js').includes('readerPositions:{...guidePositions}'),'Posição de leitura ausente');
+assert.ok(read('app.js').includes("$('nav-progress-value')"),'Menu não acompanha o progresso');
 
 const studyCtx=vm.createContext({});
 const phases=vm.runInContext(read('curriculum.js')+'\nPHASES',studyCtx);
