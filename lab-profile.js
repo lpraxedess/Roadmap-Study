@@ -38,7 +38,9 @@
     const formTitle=node('h3','','Confirmações necessárias antes de criar as VMs');inputs.append(formTitle);
     const fields=node('div','hardware-fields');
     const makeSelect=(title,id,choices)=>{const field=node('label','hardware-field');field.append(node('span','',title));const select=document.createElement('select');select.id='hardware-'+id;for(const [value,label] of choices){const option=document.createElement('option');option.value=value;option.textContent=label;select.append(option)}select.value=profile[id]||'unknown';select.addEventListener('change',()=>{profile[id]=select.value;save();updateAdvice()});field.append(select);fields.append(field)};
-    makeSelect('Windows 11 do computador (edição confirmada: Pro)','os',osChoices);
+    const confirmedOS=node('div','hardware-field');
+    confirmedOS.append(node('span','','Sistema operacional confirmado'),node('strong','hardware-confirmed-os','Windows 11 Pro'));
+    fields.append(confirmedOS);
     makeSelect('Versão do VirtualBox','vboxVersion',versionChoices);
     makeSelect('AMD-V/SVM habilitada no firmware','virtualization',virtChoices);
     const disk=node('label','hardware-field');disk.append(node('span','','Espaço livre do NVMe (GB)'));const input=document.createElement('input');input.type='number';input.min='0';input.max='1000';input.step='1';input.id='hardware-freeGb';input.placeholder='Ex.: 260 (ainda não informado)';input.value=profile.freeGb==null?'':String(profile.freeGb);input.addEventListener('change',()=>{const raw=input.value.trim();profile.freeGb=raw===''?null:Math.min(1000,Math.max(0,Number(raw)||0));save();updateAdvice()});disk.append(input);fields.append(disk);
