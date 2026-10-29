@@ -2,7 +2,7 @@
 (() => {
  const sidebar=document.getElementById('sidebar'),toggle=document.getElementById('menu-toggle'),close=document.getElementById('menu-close'),scrim=document.getElementById('nav-scrim');
  const mobile=matchMedia('(max-width: 980px)'),views=[...document.querySelectorAll('[data-page-view]')],links=[...document.querySelectorAll('[data-page]')];
- const hashes={overview:'visao-geral',studies:'estudos',architecture:'arquitetura',certifications:'certificacoes'};
+ const hashes={overview:'visao-geral',lab:'laboratorio',studies:'estudos',architecture:'arquitetura',certifications:'certificacoes'};
  let drawer=false;
  function setDrawer(open,restore=true){
   drawer=open&&mobile.matches;document.body.classList.toggle('nav-open',drawer);toggle.setAttribute('aria-expanded',String(drawer));
@@ -16,6 +16,7 @@
   setDrawer(false,false);
   if(page==='studies')window.IAMApp?.showStudyList();
   if(page==='architecture')window.IAMArchitecture?.render();
+  if(page==='lab')window.IAMLab?.render();
   for(const v of views)v.hidden=v.dataset.pageView!==page;
   for(const a of links){const active=a.dataset.page===page;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');}
   if(options.history!==false&&location.hash!=='#'+hashes[page])history.pushState(null,'','#'+hashes[page]);
