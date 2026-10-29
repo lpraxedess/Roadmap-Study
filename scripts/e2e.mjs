@@ -49,6 +49,11 @@ try{
  const theme=await desktop.locator('body').evaluate(el=>getComputedStyle(el).backgroundColor);
  assert.equal(theme,'rgb(5, 5, 5)');
  await fits(desktop,'home desktop');
+ await desktop.setViewportSize({width:2560,height:1200});
+ await fits(desktop,'home ultrawide');
+ const usable=await desktop.locator('#main-content').evaluate(el=>el.getBoundingClientRect().width);
+ assert.ok(usable>=2500,'Conteúdo ainda limitado a max-width: '+usable);
+ await desktop.setViewportSize({width:1600,height:900});
  await desktop.screenshot({path:join(cwd,'artifacts/home-desktop.png'),fullPage:true});
  await findAndUse(desktop,'.primary-nav a[data-page="studies"]');
  assert.equal(await desktop.locator('#page-studies').isVisible(),true);
@@ -66,9 +71,16 @@ try{
  assert.equal(await desktop.locator('.atlas-system-card').count(),14);
  assert.equal(await desktop.locator('.atlas-edge').count(),15);
  await fits(desktop,'arquitetura desktop');
+ const technicalTitleColor=await desktop.locator('#arch-topology > h3').evaluate(el=>getComputedStyle(el).color);
+ assert.equal(technicalTitleColor,'rgb(245, 245, 245)','Título técnico tem cor fora da paleta monocromática');
  await desktop.screenshot({path:join(cwd,'artifacts/arquitetura-desktop.png'),fullPage:true});
  await desktop.goto(base+'#arch-lesson-iam-3-1',{waitUntil:'networkidle'});
  assert.equal(await desktop.locator('#arch-lesson-iam-3-1').getAttribute('open'),'');
+ await findAndUse(desktop,'.primary-nav a[data-page="certifications"]');
+ assert.equal(await desktop.locator('#page-certifications').isVisible(),true);
+ assert.ok(await desktop.locator('.cert-card').count()>5);
+ await fits(desktop,'certificações desktop');
+ await desktop.screenshot({path:join(cwd,'artifacts/certificacoes-desktop.png'),fullPage:true});
  await desktop.goto(base+'#task-prep-route',{waitUntil:'networkidle'});
  await desktop.locator('#lesson-reader').waitFor({state:'visible'});
  assert.ok((await desktop.locator('#lesson-reader').innerText()).includes('Conhecer a empresa'));
@@ -78,6 +90,8 @@ try{
  await phone.goto(base,{waitUntil:'networkidle'});
  await phone.locator('.home-path-card').first().waitFor();
  await fits(phone,'home mobile');
+ const fourth=await phone.locator('.primary-nav a').last().boundingBox();
+ assert.ok(fourth&&fourth.x+fourth.width<=391,'Último item do menu superior está oculto no celular: '+JSON.stringify(fourth));
  await phone.screenshot({path:join(cwd,'artifacts/home-mobile.png'),fullPage:true});
  await phone.goto(base+'#laboratorio',{waitUntil:'networkidle'});
  await phone.locator('#study-environment[open]').waitFor();
@@ -86,9 +100,10 @@ try{
  await phone.goto(base+'#arquitetura',{waitUntil:'networkidle'});
  await phone.locator('.atlas-systems-grid .atlas-system-card').first().waitFor();
  await fits(phone,'arquitetura mobile');
+ await phone.screenshot({path:join(cwd,'artifacts/arquitetura-mobile.png'),fullPage:true});
  assert.equal(await phone.locator('.atlas-step').count(),296);
  assert.deepEqual(errors,[],'Falhas do console JavaScript: '+errors.join('\n'));
- console.log('E2E OK: desktop 1600px, mobile 390px, navegação, jornada integrada, atlas, 296 passos, leitor de aulas, sem overflow.');
+ console.log('E2E OK: desktop 1600px, ultrawide 2560px, mobile 390px, paleta neutra, navegação, jornada integrada, atlas, 296 passos, certificações e leitor, sem overflow.');
 }catch(error){
  console.error('E2E FALHOU:',error.stack||error);
  if(errors.length)console.error('Erros JS:',errors);
