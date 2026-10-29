@@ -67,3 +67,28 @@ A pedido do estudante, o menu lateral retornou sem desfazer o layout em preto/gr
 A listagem de certificações foi compactada em cartões menores, com nome e resumo limitado a duas linhas por padrão, detalhes técnicos expansíveis e filtros por fornecedor/categoria. LEDs luminosos indicam prioridade editorial e acompanhamento: vermelho (SC-300, marco central da trilha IAM), amarelo (SC-900, AZ-900 e SC-100), cinza (alternativas/opcionais) e verde (concluída, status autodeclarado). O status verde **substitui** a cor da prioridade da certificação. O roteiro não exige certificação prévia para começar; nenhuma classificação editorial altera os pré-requisitos oficiais dos fornecedores.
 
 O teste Chromium inclui confirmação de menu lateral desktop e móvel, persistência do progresso das certificações, troca de filtros e prevenção de overflow em 390, 1600 e 2560px.
+
+## Auditoria de usabilidade adicional — 29/10/2026
+
+### Ajustes aplicados nesta revisão
+
+| Prioridade | Achado | Correção |
+|---|---|---|
+| Alta | As quatro luzes e a explicação de classificação eram repetidas sobre os próprios cartões das certificações. | Removidas a legenda visual e a nota. O cartão preserva seu LED, a prioridade legível e o filtro correspondente. |
+| Alta | A aula tinha duas camadas de confirmação: microetapas já conferidas e uma seção obrigatória “Validar e registrar evidência”. | A seção redundante foi substituída por **Concluir aula**: progresso das microetapas, seleção da modalidade real/parcial/simulação e conclusão. Nenhum formulário adicional de evidências é obrigatório. |
+| Média | Notas pessoais e testes extras ocupavam muita área visual e interrompiam o aprendizado. | Notas permanecem disponíveis em bloco **opcional e recolhido**. Critérios técnicos e resultados esperados continuam documentados no currículo e na topologia, sem checklist duplicado na aula. |
+| Média | Filtros muito específicos podiam resultar em uma listagem vazia sem ação evidente de recuperação. | O estado vazio agora mostra **Limpar filtros**, retornando imediatamente às aulas. |
+| Alta | O atalho **Continuar** no cabeçalho estava fixo na primeira aula. | Agora segue a próxima aula pendente conforme o progresso salvo. |
+| Baixa | Existia botão oculto “Recolher módulos” sem função visível e link de documentação com seta repetida. | Controle morto removido e link corrigido. |
+| Média | O Atlas completo era reconstruído ao voltar à Arquitetura, apesar de não haver alteração em progresso. | Cache simples da renderização por assinatura de aulas/microetapas concluídas; reconstrução apenas quando os dados relevantes mudam. |
+
+O progresso pré-existente, inclusive confirmações antigas de testes e notas exportadas, continua preservado no armazenamento e nos backups. A interface de conclusão da aula **não exibe nem exige** a antiga lista separada de testes.
+
+### Pendências não bloqueantes identificadas
+
+- **CSS legado acumulado:** o projeto carrega base, experiências anteriores, tema monocromático e ajustes laterais. A consolidação reduziria manutenção e risco de conflitos de especificidade; exige revisão visual completa para não perder o estilo aprovado.
+- **Atlas grande no primeiro acesso:** são 296 microetapas apresentadas na arquitetura. A navegação posterior evita reconstruções desnecessárias, mas o primeiro render ainda cria muitos elementos. Uma possível etapa futura é carregar o conteúdo interno de cada módulo somente quando expandido, preservando links diretos.
+- **Acessibilidade assistiva:** testes automatizados cobrem navegação e foco básico, mas ainda é recomendado testar manualmente leitores de tela (NVDA no Windows 11), contraste dos LEDs e comportamento ao ampliar o navegador para 200%.
+- **Persistência local:** o portal não fornece sincronização de dados entre dispositivos. Continua necessário exportar backups, sem registrar senhas, tokens ou dados reais no navegador.
+
+A revisão conserva o princípio de estudar no próprio ritmo e de separar execuções reais de simulações, sem exigir documentação burocrática extra por aula.
