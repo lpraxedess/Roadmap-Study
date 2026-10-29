@@ -1,8 +1,16 @@
 # IAM / Roadmap — Aurora
 
-Portal estático de aprendizagem prática em **Identity and Access Management (IAM)**, do básico ao avançado, com uma empresa fictícia única, navegação superior e interface full-width monocromática.
+Portal estático de aprendizagem prática em **Identity and Access Management (IAM)**, do básico ao avançado, com uma empresa fictícia única, navegação lateral e interface monocromática responsiva.
 
 O projeto acompanha a empresa fictícia **Aurora Serviços Digitais** do cadastro de RH até Active Directory, Microsoft Entra, identidade híbrida, OIDC/SAML/SCIM, governança, PAM, Intune, automação, auditoria e portfólio.
+
+## Simplificação de uso (revisão de 29/10/2026)
+
+- **Certificações:** removidas a legenda e a explicação repetidas; cada cartão mantém sua luz e prioridade.
+- **Aulas:** substituída a seção “Validar e registrar evidência” por “Concluir aula”, com progresso das microetapas e modalidade de execução. Os testes técnicos continuam no currículo e na arquitetura, mas não existe mais uma segunda checklist de confirmação na aula.
+- **Busca vazia:** agora inclui botão visível para limpar filtros.
+- **Continuar:** o link no cabeçalho acompanha a próxima aula pendente.
+- **Controles e links:** removido o botão oculto sem função e corrigida a seta duplicada no link oficial.
 
 ## Navegação e experiência (versão 29/10/2026)
 
@@ -35,8 +43,8 @@ Consulte [guia Windows 11 + VirtualBox](docs/GUIA-VIRTUALBOX.md) e [plano operac
 1. Acesse **Jornada** e expanda **Configurar ambiente, rede, VirtualBox e custos** para conferir a bancada, as etapas de construção e a estimativa financeira.
 2. Em **Arquitetura**, conheça as identidades E001–E006, ativos e eventos J001/M001/L001.
 3. Em **Estudos**, abra uma aula e execute um passo de cada vez. Cada microetapa informa onde executar, o que fazer, o motivo e o resultado esperado.
-4. Confirme os critérios de aceite; registre a modalidade como **real**, **parcial** ou **simulada**. Simulação não equivale a execução.
-5. Anote observações sem senhas/tokens e exporte backups. O backup inclui notas, progresso, checklist do laboratório, posição da microetapa, perfil de hardware e valores estimados de orçamento.
+4. Marque as microetapas realizadas e selecione a modalidade como **real**, **parcial** ou **simulada**. A conclusão não exige uma segunda checklist nem registro de evidências.
+5. As anotações são **opcionais** e ficam recolhidas na aula. Evite senhas e tokens; exporte backups do progresso, posição de leitura, perfil de hardware e planejamento.
 6. Use **Certificações** para organizar estudos adicionais, não como certificado de conclusão.
 
 **[Plano operacional detalhado](docs/PLANO-LABORATORIO.md)** · **[Abrir Jornada + Laboratório](https://lpraxedess.github.io/Roadmap-Study/#estudos)** · [Link legado do laboratório](https://lpraxedess.github.io/Roadmap-Study/#laboratorio)
@@ -60,7 +68,7 @@ HTML, CSS e JavaScript, sem dependências de frontend e compatível com GitHub P
 | index.html | Estrutura do portal |
 | style.css / experience.css | UI responsiva, animações e acessibilidade |
 | navigation.js | Rotas, menu mobile e histórico |
-| app.js / curriculum.js | 41 aulas, 296 passos guiados, critérios e evidências |
+| app.js / curriculum.js | 41 aulas, 296 passos guiados, conclusão direta e notas opcionais |
 | architecture.js / architecture-view.js | Topologia e cenário empresarial |
 | state.js | Progresso, persistência e backup |
 | lab-planner.js | 10 marcos de implantação, checklist e estimador de custo |
