@@ -57,7 +57,7 @@
   for(const view of views){
    view.hidden=view.dataset.pageView!==page;
    view.classList.remove('view-entering');
-   if(!view.hidden&&!options.nativeTransition){
+   if(!view.hidden&&!options.nativeTransition&&options.animate!==false&&!prefersReduced()){
     // CSS garante movimento mesmo quando Web Animations API não está disponível.
     void view.offsetWidth;view.classList.add('view-entering');
    }
