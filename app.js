@@ -62,6 +62,8 @@ function dashboard(){
  $('percent').textContent=pct+'%';$('count').textContent=completed+' / '+tasks.length+' aulas concluídas';$('progress-fill').style.width=pct+'%';$('progress').setAttribute('aria-valuenow',pct);
  $('real-count').textContent=real;$('simulation-count').textContent=sim;$('mixed-count').textContent=mixed;
  $('sidebar-progress-value').textContent=pct+'%';$('sidebar-progress-fill').style.width=pct+'%';
+ if($('nav-progress-value'))$('nav-progress-value').textContent=pct+'%';
+ if($('nav-progress-fill'))$('nav-progress-fill').style.width=pct+'%';
  $('phase-total').textContent=PHASES.length+' módulos';$('task-total').textContent=tasks.length+' lições';
  const current=nextTask();$('resume-title').textContent=current?current.title:'Percurso registrado. Revise suas evidências.';
  $('resume-module').textContent=current?PHASES.find(p=>p.items.includes(current)).title:'Práticas e simulações continuam diferenciadas no painel.';
