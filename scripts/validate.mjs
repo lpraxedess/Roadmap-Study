@@ -57,4 +57,60 @@ for(const part of ['Ryzen 5 5600','16 GB','1 TB NVMe','Microsoft Entra','getStag
   if(part==='getStages')assert.ok(combined.includes(part));
   else assert.ok(combined.includes(part),'Perfil incompleto: '+part);
 }
+
+assert.ok(existsSync(join(root,'docs/GUIA-VIRTUALBOX.md')),'Guia VirtualBox ausente');
+const vboxGuide=read('docs/GUIA-VIRTUALBOX.md');
+for(const word of ['192.168.56.1','192.168.56.10','192.168.56.20','Host-only','Cloud Sync','TPM 2.0']){
+  assert.ok(vboxGuide.includes(word),'Guia VirtualBox incompleto: '+word);
+}
+assert.ok(read('lab-profile.js').includes("os:'windows11'"),'Windows 11 não é perfil padrão');
+assert.ok(read('lab-profile.js').includes("hypervisor:'virtualbox'"),'VirtualBox não é perfil padrão');
+assert.ok(read('lab-profile.js').includes('vbox-walkthrough'),'Guia VirtualBox não integrado à interface');
+assert.ok(read('lab-planner.js').includes('AURORA-LAB')||read('lab-planner.js').includes('host-only'),'Rede host-only não encontrada');
+assert.ok(read('lab-planner.js').includes('virtualbox'),'Checklist do VirtualBox não encontrado');
+
+class MockElement {
+  constructor(tag){this.tag=tag;this.children=[];this.attributes={};this.events={};this.style={};
+    this.value='';this.textContent='';this.classList={toggle(){},add(){},remove(){}};}
+  set id(v){this._id=v;elements.set(v,this)}
+  get id(){return this._id}
+  append(...items){this.children.push(...items);return this}
+  prepend(...items){this.children.unshift(...items);return this}
+  replaceChildren(...items){this.children=items}
+  setAttribute(name,value){this.attributes[name]=value}
+  addEventListener(name,fn){this.events[name]=fn}
+  focus(){}
+}
+const elements=new Map(),localData=new Map();
+const fakeStorage={
+  getItem(key){return localData.has(key)?localData.get(key):null},
+  setItem(key,value){localData.set(key,String(value))}
+};
+const fakeDom={
+  getElementById(id){return elements.get(id)||null},
+  createElement(tag){return new MockElement(tag)}
+};
+elements.set('lab-profile',new MockElement('div'));
+elements.set('lab-planner',new MockElement('div'));
+const fakeWindow={};
+const env=vm.createContext({window:fakeWindow,document:fakeDom,localStorage:fakeStorage,alert(){}});
+vm.runInContext(read('lab-planner.js'),env,{filename:'lab-planner.js'});
+vm.runInContext(read('lab-profile.js'),env,{filename:'lab-profile.js'});
+const initialProfile=fakeWindow.IAMHardware.exportState();
+assert.equal(initialProfile.os,'windows11');
+assert.equal(initialProfile.hypervisor,'virtualbox');
+assert.equal(initialProfile.ramGb,16);
+assert.equal(fakeWindow.IAMLab.getStages().length,10);
+assert.ok(elements.has('hardware-advice'),'Verificação pré-voo não foi renderizada');
+assert.ok(elements.has('lab-budget-summary'),'Orçamento não foi renderizado');
+const fullProfile={...initialProfile,vboxVersion:'7.2',virtualization:'enabled',freeGb:240};
+fakeWindow.IAMHardware.importState(fullProfile);
+assert.equal(fakeWindow.IAMHardware.exportState().vboxVersion,'7.2');
+fakeWindow.IAMLab.importState({version:1,checks:{'base-virtualbox':true},budget:{cap:200,license:0,seats:1,azure:0,extras:0,reserve:35},active:'base'});
+assert.equal(fakeWindow.IAMLab.exportState().checks['base-virtualbox'],true);
+fakeWindow.IAMHardware.reset();fakeWindow.IAMLab.reset();
+assert.equal(fakeWindow.IAMHardware.exportState().os,'windows11','Reset perdeu o SO confirmado');
+assert.equal(fakeWindow.IAMHardware.exportState().hypervisor,'virtualbox','Reset perdeu o virtualizador');
+assert.equal(fakeWindow.IAMLab.exportState().budget.cap,200);
+
 console.log('Validação concluída: '+phases.length+' módulos, '+lessons.length+' aulas, '+steps+' passos, '+checks+' testes.');
