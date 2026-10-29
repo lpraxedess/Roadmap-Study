@@ -3,62 +3,63 @@
 (() => {
   const KEY='iam-lab-plan-v1';
   const BUDGET='iam-lab-budget-v1';
+  const ACTIVE='iam-lab-active-stage-v1';
   const stages=[
-    {id:'base',name:'01 · Preparar a bancada',phase:'prep',time:'Semana 1',tier:'Local · R$ 0',goal:'Organizar arquivos, recursos e o contrato da empresa Aurora.',work:[
-      ['inventario','Registrar CPU, memória RAM, espaço livre, sistema operacional e suporte à virtualização.','Antes de instalar VMs, confirmar capacidade. Se faltar RAM, usar apenas a trilha local e adiar AD.'],
-      ['dados','Criar C:\\AuroraLab\\rh.csv com o cadastro fictício E001–E006.','Verificar seis employeeId únicos. Nunca usar dados reais.'],
+    {id:'base',name:'01 · Preparar a bancada',phase:'prep',time:'Marco 01 · sem prazo',tier:'Local · R$ 0',goal:'Organizar arquivos, recursos e o contrato da empresa Aurora.',work:[
+      ['inventario','Revisar perfil preenchido: Ryzen 5 5600, 16 GB RAM, 1 TB NVMe e tenant gratuito.','Informar sistema operacional, espaço realmente livre e virtualização AMD-V/SVM; priorizar um conjunto de VMs de cada vez.'],
+      ['dados','Criar rh.csv do cadastro fictício E001–E006, na pasta AuroraLab.','No Windows, use C:\\AuroraLab; em Linux use diretório equivalente. Verificar seis IDs únicos. Nunca usar dados reais.'],
       ['isolamento','Criar rede virtual host-only para DC01 e CL01.','Testar que serviços AD não estão publicados na internet.'],
       ['backup','Criar pasta de evidências sem senhas/tokens e exportar o progresso do portal.','Salvar a exportação fora da VM.']
     ],link:'prep-route',doc:'https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview'},
-    {id:'ad',name:'02 · Active Directory',phase:'p1',time:'Semanas 2–3',tier:'Local · avaliação',goal:'Construir DC01, DNS, domínio aurora.test, OUs, grupos e CL01.',work:[
-      ['eval','Conferir termos e prazo da avaliação do Windows Server.','Avaliação de 180 dias; não tratar licença de avaliação como produção.'],
-      ['dc','Criar DC01 e o domínio aurora.test em rede isolada.','Validar DNS e consulta dos registros SRV.'],
+    {id:'ad',name:'02 · Active Directory',phase:'p1',time:'Marco 02 · no seu ritmo',tier:'Local · avaliação',goal:'Construir DC01, DNS, domínio aurora.test, OUs, grupos e CL01.',work:[
+      ['eval','Escolher hipervisor após confirmar SO e ativar AMD-V/SVM; conferir Windows Server Evaluation.','DC01: 2 vCPU, 3–4 GB RAM, disco 60 GB. Windows Server Evaluation: 180 dias, não usar em produção.'],
+      ['dc','Criar DC01, configurar AD DS/DNS e domínio aurora.test sem acesso público.','Usar rede host-only para AD. Manter NAT apenas para saída quando exigido, sem encaminhamento de portas. Validar DNS/SRV.'],
       ['ou','Criar OUs, grupos e contas fictícias do piloto.','Conferir associação FIN e JUR e negar privilégio excessivo.'],
-      ['cliente','Associar CL01 ao domínio e testar Kerberos/GPO.','Registrar teste de usuário comum e controle negativo.']
+      ['cliente','Instalar CL01 (Windows 11) e testar ingresso, Kerberos, GPO e controle negativo.','CL01: 2 vCPU, 4 GB RAM, disco 80 GB; exigir TPM virtual/Secure Boot e licença ou avaliação válida. Desligar quando não estiver em uso.']
     ],link:'iam-1-0',doc:'https://www.microsoft.com/pt-br/evalcenter/download-windows-server-2025'},
-    {id:'entra',name:'03 · Microsoft Entra Free',phase:'p2',time:'Semana 4',tier:'Cloud · Free',goal:'Separar administração, usuários, grupos e auditoria do tenant de laboratório.',work:[
-      ['tenant','Obter tenant de testes autorizado e registrar seu domínio onmicrosoft.com.','Não pressupor que é possível criar tenants adicionais em conta gratuita.'],
+    {id:'entra',name:'03 · Microsoft Entra Free',phase:'p2',time:'Marco 03 · quando preferir',tier:'Cloud · Free',goal:'Separar administração, usuários, grupos e auditoria do tenant de laboratório.',work:[
+      ['tenant','Conferir o tenant Microsoft gratuito já existente e registrar o domínio onmicrosoft.com.','Verificar edição, roles e acesso administrativo; não criar outro tenant ou ativar uma assinatura paga.'],
       ['privilegios','Criar administrador cloud-only separado e definir recuperação.','Não sincronizar contas administrativas; evitar bloqueio do tenant.'],
       ['identidades','Criar usuários/grupos de teste com nomenclatura da Aurora.','Conferir permissões e registrar evidências sem identificadores sensíveis.'],
-      ['mfa','Habilitar métodos disponíveis e testar MFA quando aplicável.','Manter rota de emergência antes de políticas restritivas.']
+      ['mfa','Conferir Security Defaults e testar MFA com usuários fictícios quando disponível.','MFA e padrões de segurança estão no Entra Free; políticas Conditional Access personalizadas exigem P1. Proteja contas administrativas.']
     ],link:'iam-2-0',doc:'https://learn.microsoft.com/pt-br/entra/fundamentals/create-new-tenant'},
-    {id:'hibrido',name:'04 · Sincronização híbrida',phase:'p2',time:'Semana 5',tier:'Cloud Free · checar pré-requisitos',goal:'Sincronizar escopo mínimo de AD para Entra com monitoramento.',work:[
-      ['agente','Verificar requisitos oficiais de Cloud Sync e conta Hybrid Identity Administrator.','Agente em Windows Server ingressado no domínio; não confundir com um script simples.'],
+    {id:'hibrido',name:'04 · Sincronização híbrida',phase:'p2',time:'Marco 04 · após preparar AD + Entra',tier:'Cloud Free · checar pré-requisitos',goal:'Sincronizar escopo mínimo de AD para Entra com monitoramento.',work:[
+      ['agente','Verificar requisitos oficiais do Cloud Sync e função Hybrid Identity Administrator.','A Microsoft permite agente no próprio DC01: opção para 16 GB de RAM no laboratório, não referência de topologia de produção. Precisa HTTPS de saída e gMSA.'],
       ['escopo','Limitar sincronização ao piloto Colaboradores e Grupos.','Contas privilegiadas e de emergência ficam fora do escopo.'],
       ['teste','Conferir identidade correlacionada, estado e logs do provisionamento.','Validar duplicatas, falhas e reversão.'],
       ['reversao','Documentar recuperação e diferença entre desabilitar AD e revogar sessões cloud.','Não assumir desligamento imediato de todas as sessões.']
     ],link:'iam-2-1',doc:'https://learn.microsoft.com/pt-br/entra/identity/hybrid/cloud-sync/how-to-prerequisites'},
-    {id:'protocolos',name:'05 · OIDC, SAML e SCIM',phase:'p3',time:'Semanas 6–7',tier:'Local · R$ 0',goal:'Construir IDP01 e APP01; ver autenticação, autorização e provisionamento separados.',work:[
+    {id:'protocolos',name:'05 · OIDC, SAML e SCIM',phase:'p3',time:'Marco 05 · laboratório local',tier:'Local · R$ 0',goal:'Construir IDP01 e APP01; ver autenticação, autorização e provisionamento separados.',work:[
       ['idp','Retomar IDP01/realm aurora configurado na preparação; validar seu isolamento local.','Somente loopback para modo de desenvolvimento.'],
       ['oidc','Registrar cliente OIDC, redirect URI exata e PKCE S256.','Testar state, nonce, issuer, audience e expiração.'],
       ['scim','Criar/atualizar cadastro APP01 por chamadas SCIM.','Distinguir provisionamento de autenticação; não expor token.'],
       ['negativo','Executar cenários de 401/403, mudança de departamento e desativação.','Registrar efeito observado e reversão.']
     ],link:'iam-3-1',doc:'https://www.keycloak.org/guides'},
-    {id:'jml',name:'06 · Ciclo JML e governança',phase:'p4',time:'Semana 8',tier:'Local primeiro',goal:'Executar J001, M001 e L001 em sistemas separados e provar a revogação.',work:[
+    {id:'jml',name:'06 · Ciclo JML e governança',phase:'p4',time:'Marco 06 · após protocolos',tier:'Local primeiro',goal:'Executar J001, M001 e L001 em sistemas separados e provar a revogação.',work:[
       ['j','Admissão: E001 obtém grupo FIN e acesso positivo somente em FIN.','FIN 200; JUR 403.'],
       ['m','Transferência: remover FIN, conceder JUR e atualizar APP01.','FIN 403; JUR 200.'],
       ['l','Desligamento: desabilitar contas, remover atribuições e testar novas sessões.','Ambos os acessos negados.'],
       ['auditoria','Produzir matriz de evidência, revisor, data, identidade e sistema.','Separar automação real de ações manuais.']
     ],link:'iam-4-0',doc:'https://learn.microsoft.com/pt-br/entra/id-governance/'},
-    {id:'premium',name:'07 · Janela licenciada P1/P2',phase:'p5',time:'Após dominar o Free',tier:'Pago/trial · controlado',goal:'Concentrar testes dependentes de licença em um período delimitado.',work:[
-      ['requisitos','Listar previamente políticas CA, SSPR, PIM e revisões a executar.','CA/SSPR avançado dependem de licença; PIM e Identity Protection exigem P2 ou elegibilidade equivalente.'],
-      ['licencas','Verificar preço final, impostos, prazo, quantidade de usuários e elegibilidade do trial.','Preço anunciado por usuário/ano não é mensal sem compromisso.'],
+    {id:'premium',name:'07 · Janela licenciada P1/P2',phase:'p5',time:'Marco 07 · sem data para ativar',tier:'Pago/trial · controlado',goal:'Concentrar testes dependentes de licença em um período delimitado.',work:[
+      ['requisitos','Preparar primeiro roteiros CA, SSPR, PIM e revisões antes de ativar qualquer trial.','CA requer P1; PIM requer P2 ou Entra ID Governance válido; Identity Protection requer P2. Não presumir disponibilidade de trial.'],
+      ['licencas','Conferir preço final, impostos, usuários beneficiados, ciclo de cobrança e cancelamento.','Referências em reais são por usuário/mês em COMPROMISSO ANUAL, pagas anualmente e antes de impostos; não contratar só para testar.'],
       ['ca','Criar política Conditional Access inicialmente em modo somente relatório quando disponível.','Excluir contas de emergência; ensaiar com usuário piloto.'],
       ['desligar','Exportar evidências, remover recursos temporários e revisar renovação.','Cancelar a avaliação antes da conversão se não quiser cobrar.']
     ],link:'iam-2-4',doc:'https://www.microsoft.com/pt-br/security/microsoft-entra-pricing'},
-    {id:'intune',name:'08 · Intune + dispositivo',phase:'p7',time:'Janela licenciada P1',tier:'P1 / Business Premium',goal:'Gerenciar um dispositivo Windows elegível sem comprometer o computador principal.',work:[
-      ['elegibilidade','Confirmar Windows suportado, licença Intune P1 e Entra P1/P2.','Inscrição MDM automática exige licença. Não inferir suporte ao Autopilot.'],
+    {id:'intune',name:'08 · Intune + dispositivo',phase:'p7',time:'Marco 08 · somente se licenciado',tier:'P1 / Business Premium',goal:'Gerenciar um dispositivo Windows elegível sem comprometer o computador principal.',work:[
+      ['elegibilidade','Confirmar Windows suportado, licença Intune e requisito do fluxo de inscrição escolhido.','Business Premium inclui Intune P1 e Entra P1 para usuários licenciados. Entra P1/P2 é requisito em alguns cenários, não em toda inscrição manual.'],
       ['enroll','Inscrever CL01 ou VM Windows elegível no Intune.','Validar entrada do dispositivo e último check-in.'],
       ['compliance','Criar política de conformidade piloto e observar resultado.','Testar usuário/dispositivo de prova antes de CA exigir conformidade.'],
       ['remocao','Desassociar dispositivo e remover políticas ao concluir.','Documentar impacto de wipe/retire; não aplicar em dispositivo pessoal.']
     ],link:'iam-7-0',doc:'https://learn.microsoft.com/en-us/intune/intune-service/enrollment/windows-enroll'},
-    {id:'azure',name:'09 · Azure com custo sob controle',phase:'p6',time:'Somente quando necessário',tier:'Opcional · variável',goal:'Testar RBAC, service principal e managed identity sem VM Azure permanente.',work:[
+    {id:'azure',name:'09 · Azure com custo sob controle',phase:'p6',time:'Marco 09 · opcional',tier:'Opcional · variável',goal:'Testar RBAC, service principal e managed identity sem VM Azure permanente.',work:[
       ['assinatura','Confirmar tipo de assinatura, créditos e preço regional.','Conta Free com crédito tem limite; Pay-as-you-go não tem trava de gastos.'],
       ['alerta','Criar orçamento e alertas de 50%, 80% e 100% no Azure Cost Management.','Alertas não interrompem automaticamente cobranças.'],
       ['piloto','Usar grupo de recursos descartável e recursos elegíveis, verificando custo antes de criar.','Não deixar VM, disco ou IP público alocado sem necessidade.'],
       ['limpeza','Excluir grupo de recursos após teste e inspecionar custos e cobranças pendentes.','Orçamento no portal é somente planejamento, não replica fatura Azure.']
     ],link:'iam-6-0',doc:'https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/avoid-charges-free-account'},
-    {id:'portfolio',name:'10 · Projeto final e portfólio',phase:'p9',time:'Após etapas anteriores',tier:'Local · R$ 0',goal:'Comprovar fluxo completo, limites e decisões técnicas.',work:[
+    {id:'portfolio',name:'10 · Projeto final e portfólio',phase:'p9',time:'Marco 10 · entrega final',tier:'Local · R$ 0',goal:'Comprovar fluxo completo, limites e decisões técnicas.',work:[
       ['fluxo','Executar cenário JML com AD, Entra, IdP e APP01 existentes.','Identificar os componentes realmente integrados e os que foram operados manualmente.'],
       ['evidencias','Capturar logs sanitizados de testes positivos, negativos e recuperação.','Nunca registrar credenciais, tokens ou e-mails reais.'],
       ['arquitetura','Publicar desenho, matriz RBAC/SoD e ADRs técnicos.','Informar custo, pré-requisitos e decisões.'],
@@ -75,6 +76,7 @@
   const plan=read(BUDGET,{cap:200,license:0,seats:1,azure:0,extras:0,reserve:35});
   const licenses=[
     {value:0,label:'Sem licença paga · R$ 0'},
+    {value:57.30,label:'Entra ID P2 · R$ 57,30/usuário/mês (plano anual)'},
     {value:40.10,label:'Entra ID P1 · R$ 40,10/usuário/mês (plano anual)'},
     {value:45.80,label:'Intune P1 · R$ 45,80/usuário/mês (plano anual)'},
     {value:107.60,label:'Business Premium sem Teams · R$ 107,60/usuário/mês (plano anual)'},
@@ -83,16 +85,18 @@
   let active='base';
   const container=$('lab-planner');
   if(!container)return;
+  const savedStage=read(ACTIVE,null);
+  if(stages.some(stage=>stage.id===savedStage))active=savedStage;
   function render(){
     container.replaceChildren();
     const completed=stages.flatMap(s=>s.work.map(([id])=>s.id+'-'+id)).filter(id=>checked[id]).length;
     const total=stages.reduce((n,s)=>n+s.work.length,0);
     const intro=text('section','lab-intro');
-    intro.append(text('span','eyebrow','PLANO OPERACIONAL · AURORA IAM'),text('h2','','Construa um laboratório que evolui com você.'),text('p','muted','Uma única empresa fictícia. Cada etapa entrega um componente verificável. Aulas detalhadas e checklist de infraestrutura trabalham juntos — nenhuma opção abaixo cria recursos cloud automaticamente.'));
+    intro.append(text('span','eyebrow','PLANO OPERACIONAL · AURORA IAM'),text('h2','','Construa um laboratório que evolui com você.'),text('p','muted','Tenant gratuito existente, Ryzen 5 5600 e 16 GB RAM. Avance por entregas práticas, sem metas diárias, semanais ou prazo final. As configurações são realizadas por você e verificadas nas aulas; o portal não cria recursos cloud.'));
     const badges=text('div','lab-intro-badges');
     [['10','etapas de implantação'],[String(total),'verificações operacionais'],[String(completed),'verificações registradas']].forEach(([n,t])=>{const b=text('div','lab-intro-badge');b.append(text('strong','',n),text('small','',t));badges.append(b)});intro.append(badges);container.append(intro);
     const layout=text('div','lab-layout'),nav=text('nav','lab-stage-nav');nav.setAttribute('aria-label','Etapas do laboratório');
-    stages.forEach(s=>{const done=s.work.filter(([id])=>checked[s.id+'-'+id]).length;const button=text('button','lab-stage'+(s.id===active?' is-active':''),s.name);button.type='button';button.setAttribute('aria-current',s.id===active?'step':'false');button.append(text('small','',done+' de '+s.work.length+' · '+s.time));button.addEventListener('click',()=>{active=s.id;render();$('lab-stage-detail')?.focus({preventScroll:true});});nav.append(button)});
+    stages.forEach(s=>{const done=s.work.filter(([id])=>checked[s.id+'-'+id]).length;const button=text('button','lab-stage'+(s.id===active?' is-active':''),s.name);button.type='button';button.setAttribute('aria-current',s.id===active?'step':'false');button.append(text('small','',done+' de '+s.work.length+' · '+s.time));button.addEventListener('click',()=>{active=s.id;write(ACTIVE,active);render();$('lab-stage-detail')?.focus({preventScroll:true});});nav.append(button)});
     const body=text('div','lab-stage-detail');body.id='lab-stage-detail';body.tabIndex=-1;
     const stage=stages.find(s=>s.id===active);
     body.append(text('span','eyebrow',stage.tier+' · '+stage.time),text('h3','',stage.name),text('p','muted',stage.goal));
@@ -100,7 +104,7 @@
     const list=text('ol','lab-checklist');stage.work.forEach(([id,title,expected],i)=>{const li=text('li','lab-check'+(checked[stage.id+'-'+id]?' is-done':''));const label=text('label','lab-check-main');const input=document.createElement('input');input.type='checkbox';input.checked=!!checked[stage.id+'-'+id];input.addEventListener('change',()=>{checked[stage.id+'-'+id]=input.checked;if(!write(KEY,checked))alert('Não foi possível salvar as verificações neste navegador.');render()});const wrap=text('span');wrap.append(text('strong','',String(i+1).padStart(2,'0')+' · '+title),text('small','',expected));label.append(input,wrap);li.append(label);list.append(li)});body.append(list);
     const advisory=text('p','lab-note','O checklist registra sua confirmação manual, não valida tecnicamente o ambiente. Para comprovar execução, faça os testes de cada aula e salve evidências sem segredos.');
     body.append(advisory);layout.append(nav,body);container.append(layout);
-    const cost=text('section','lab-budget');cost.id='lab-budget';cost.append(text('span','eyebrow','CONTROLE FINANCEIRO · VALORES EM BRL'),text('h3','','Orçamento mensal para o laboratório'),text('p','muted','Calcule uma reserva antes de iniciar períodos pagos. Os preços licenciados abaixo são referências publicadas para compromisso anual, por usuário, sem impostos. Não são cotação de cobrança mensal nem substituem o checkout.'));
+    const cost=text('section','lab-budget');cost.id='lab-budget';cost.append(text('span','eyebrow','CONTROLE FINANCEIRO · VALORES EM BRL'),text('h3','','Orçamento mensal para o laboratório'),text('p','muted','Com seu tenant gratuito, a recomendação inicial é gasto zero. Ative trials ou licenças apenas quando a etapa exigir. Preços são referências por usuário/mês EM COMPROMISSO ANUAL, PAGOS ANUALMENTE, sem impostos. Não são preços de assinatura mensal sem compromisso.'));
     const form=text('div','lab-budget-grid'),fields=[
       ['cap','Teto mensal disponível',200],
       ['seats','Usuários que precisam de licença',1],
@@ -113,7 +117,7 @@
     cost.append(form);
     const summary=text('div','lab-budget-summary');summary.id='lab-budget-summary';cost.append(summary);
     const info=text('p','lab-note','Planejamento local. Não consulta cobrança Microsoft e não aplica limite de gastos no Azure. Alerts de orçamento são avisos; Pay-as-you-go não possui spending limit automático.');cost.append(info);
-    const references=text('div','lab-reference-links');[['Preços oficiais Microsoft','https://www.microsoft.com/pt-br/security/pricing/small-medium-business'],['Azure Cost Management','https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending'],['Limite de gastos do Azure Free','https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/spending-limit']].forEach(([label,url])=>{const l=a(label+' ↗',url);l.target='_blank';l.rel='noopener noreferrer';references.append(l)});cost.append(references);container.append(cost);renderBudget();
+    const references=text('div','lab-reference-links');[['Preços oficiais Microsoft Entra (inclui P2)','https://www.microsoft.com/pt-br/security/microsoft-entra-pricing'],['Azure Cost Management','https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending'],['Limite de gastos do Azure Free','https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/spending-limit']].forEach(([label,url])=>{const l=a(label+' ↗',url);l.target='_blank';l.rel='noopener noreferrer';references.append(l)});cost.append(references);container.append(cost);renderBudget();
     const guard=text('section','lab-safety');guard.append(text('span','eyebrow','ANTES DE ATIVAR UMA AVALIAÇÃO'),text('h3','','Regras para não interromper o estudo'));
     const guardList=text('ul');[
       'Use somente ambiente e usuários fictícios; não sincronize conta pessoal ou corporativa.',
@@ -131,11 +135,12 @@
     cards.forEach(([label,value])=>{const box=text('div','lab-cost-stat');box.append(text('small','',label),text('strong','',value));target.append(box)});
     target.classList.toggle('over-budget',available<0);
     if(available<0)target.append(text('p','lab-budget-warning','A projeção ultrapassa o teto após reservar imprevistos. Revise itens antes de contratar.'));
+    if(Number(plan.license)>0){const annual=Math.max(0,Number(plan.license)||0)*Math.max(1,Math.floor(Number(plan.seats)||1))*12;target.append(text('p','lab-budget-disclaimer','Referência de licenças sob compromisso anual: '+money(annual)+' ao ano para '+Math.max(1,Math.floor(Number(plan.seats)||1))+' usuário(s), sem impostos, Azure ou extras. Confirme a cobrança e o cancelamento no checkout.'));}
   }
   window.IAMLab={
     render,
     getStages:()=>stages,
-    exportState:()=>({version:1,checks:{...checked},budget:{...plan}}),
+    exportState:()=>({version:1,checks:{...checked},budget:{...plan},active}),
     importState(payload){
       if(!payload)return;
       if(payload.version!==1||!payload.checks||typeof payload.checks!=='object'||Array.isArray(payload.checks)||!payload.budget||typeof payload.budget!=='object'||Array.isArray(payload.budget))throw Error('Plano de laboratório inválido.');
@@ -147,12 +152,13 @@
         const raw=payload.budget[key];const value=Number(raw);
         plan[key]=raw!==undefined&&Number.isFinite(value)&&value>=0&&value<1000000?(key==='seats'?Math.max(1,Math.floor(value)):value):fallback;
       }
+      if(stages.some(s=>s.id===payload.active)){active=payload.active;write(ACTIVE,active);}
       write(KEY,checked);write(BUDGET,plan);render();
     },
     reset(){
       for(const key of Object.keys(checked))delete checked[key];
       Object.assign(plan,{cap:200,license:0,seats:1,azure:0,extras:0,reserve:35});
-      write(KEY,checked);write(BUDGET,plan);active='base';render();
+      write(KEY,checked);write(BUDGET,plan);active='base';write(ACTIVE,active);render();
     }
   };
   render();
