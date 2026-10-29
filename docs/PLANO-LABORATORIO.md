@@ -12,28 +12,30 @@ O portal ensina **o que é, por que usar, quando usar, onde configurar, como tes
 | RAM | 16 GB DDR4 3200 MHz |
 | Disco | 1 TB NVMe (espaço **livre** ainda não informado) |
 | GPU | RTX 3070 (não necessária nos exercícios IAM) |
+| Sistema operacional do host | **Windows 11**, edição Home/Pro ainda não informada |
+| Hipervisor | **Oracle VirtualBox**, versão ainda não informada |
 | Microsoft Entra | Tenant gratuito já existente, sem licenças |
 | Orçamento | Máximo de R$ 200/mês |
 | Disponibilidade | Sem número fixo de horas; avançar por microetapas e entregas |
 
-**Ainda falta confirmar o sistema operacional do HOST01, o espaço livre no NVMe e a virtualização AMD-V/SVM.** A escolha Hyper-V/VirtualBox/KVM e comandos de instalação dependerá do host. Não suponha que a edição Windows Home oferece Hyper-V completo.
+**Sistema operacional e hipervisor já estão definidos: Windows 11 + Oracle VirtualBox.** Falta confirmar apenas edição do Windows, versão do VirtualBox, espaço livre do NVMe e virtualização AMD-V/SVM. O tutorial específico foi publicado em [GUIA-VIRTUALBOX.md](GUIA-VIRTUALBOX.md).
 
 ### Dimensionamento inicial para 16 GB de RAM
 
 | Máquina/serviço | CPU | RAM | Disco previsto | Quando manter ligado |
 |---|---:|---:|---:|---|
-| DC01 — Windows Server 2022/2025 | 2 vCPU | 3–4 GB | 60 GB | Administração AD/DNS; sincronização quando necessário |
+| DC01 — Windows Server 2022/2025 | 2 vCPU | **4 GB** | 60 GB | Administração AD/DNS; sincronização quando necessário |
 | CL01 — Windows 11 Enterprise de avaliação | 2 vCPU | 4 GB | 80 GB | Ingresso no domínio, GPO, Kerberos e depois Intune |
 | IDP01 — Keycloak em Docker | CPU sob demanda | Conforme disponibilidade | Volume local | Sessões OIDC/SAML/SCIM |
 | APP01 — Node.js | CPU sob demanda | Conforme disponibilidade | Pasta local | Sessões de aplicação |
 | TENANT01 — Entra Free | N/A | N/A | Cloud | Práticas gratuitas via navegador |
 
-Com DC01 (3–4 GB) + CL01 (4 GB) restam cerca de 8–9 GB de RAM ao sistema host; evitar abrir Docker/contêineres pesados e aplicativos simultaneamente. Em caso de swap/paginação, manter apenas DC01 ou CL01 quando a atividade permitir. Reservar aproximadamente **200 GB livres**, considerando ISOs, discos virtuais e snapshots.
+Com DC01 (4 GB) + CL01 (4 GB) restam cerca de 8 GB de RAM ao sistema host; evitar abrir Docker/contêineres pesados e aplicativos simultaneamente. Em caso de swap/paginação, manter apenas DC01 ou CL01 quando a atividade permitir. Reservar aproximadamente **200 GB livres**, considerando ISOs, discos virtuais e snapshots.
 
-- Windows Server com interface gráfica recomenda 4 GB; 3 GB é modo enxuto para laboratório e pode reduzir a fluidez.
+- Windows Server com interface gráfica recomenda 4 GB; o agente Cloud Sync exige **mínimo de 4 GB**, portanto não reduzir DC01 para 3 GB se executar o agente.
 - Windows 11 exige ao menos 4 GB e 64 GB de disco; verificar **UEFI, Secure Boot e TPM 2.0 virtual** no hipervisor. A avaliação Enterprise pode ser usada por 90 dias nas condições oficiais.
 - O agente Microsoft Entra Cloud Sync pode ser instalado em DC01: a Microsoft suporta essa configuração. É uma concessão para não adicionar outra VM em um laboratório de 16 GB, **não um modelo de separação de funções para produção**.
-- Segurança de rede: **host-only para comunicação AD** e saída HTTPS controlada se Cloud Sync exigir. Não encaminhar portas de gerenciamento para a internet.
+- Segurança de rede no VirtualBox: **host-only para comunicação AD** (host .56.1, DC01 .56.10, CL01 .56.20 na sub-rede 192.168.56.0/24), sem DHCP do VirtualBox nessa interface. Habilitar temporariamente **Adaptador 2 NAT** no DC01 somente quando for necessário tráfego externo; não adicionar port forwarding, não registrar IP NAT no DNS do domínio. Se a sub-rede conflitar com outra rede/VPN, revisar o endereçamento em todas as partes do projeto.
 
 Fontes:
 - https://learn.microsoft.com/pt-br/windows-server/get-started/hardware-requirements
@@ -47,7 +49,7 @@ Cada sessão pode ser curta. Abra o portal, retome a última aula e microetapa, 
 
 ## Preparação: antes de qualquer ativação paga
 
-1. Registrar HOST01: sistema operacional, CPU, RAM, espaço disponível, virtualização, hypervisor, acesso administrador e banda.
+1. Confirmar edição Windows 11, versão do VirtualBox, espaço disponível do NVMe e AMD-V/SVM; CPU/RAM/hipervisor já estão identificados.
 2. Separar pasta local AuroraLab, planilha fictícia de RH (E001–E006), pasta de evidências sanitizadas e um perfil de navegador para o tenant de testes.
 3. Verificar se já possui tenant de força de trabalho, domínio onmicrosoft.com e assinatura Azure legítimos. Não presumir que contas gratuitas podem criar tenants adicionais.
 4. Criar contas cloud-only de administração/recuperação no tenant antes de testar políticas de restrição.
@@ -70,17 +72,17 @@ O RH é origem do vínculo. E001/Ana começa em Financeiro, muda para Jurídico 
 ## Etapa 1 — Banco de laboratório, PowerShell e arquivos
 
 - Criar C:\AuroraLab e arquivo rh.csv da Arquitetura; conferir employeeId único e status do piloto.
-- Validar PowerShell, Node.js, Docker e hypervisor antes de instalar VMs.
+- Validar PowerShell, Node.js e Docker, verificar AMD-V/SVM e a versão já instalada do Oracle VirtualBox antes de iniciar DC01.
 - Fixar portas, nomes, redes e escopo que serão utilizados ao longo do projeto.
 - Documentar o estado inicial e montar rotina de snapshots/backups que não dependam do navegador.
 - **Validação:** o cadastro existe, o projeto local inicia e os sistemas podem ser identificados.
 
 ## Etapa 2 — Active Directory e Windows
 
-- Criar rede host-only. **Nunca** expor DNS/LDAP/SMB/RDP do laboratório à internet.
-- Instalar Windows Server Evaluation em DC01, se elegível. Ela expira em 180 dias; licença de produção é assunto distinto.
+- Seguir o [guia Windows 11 + VirtualBox](GUIA-VIRTUALBOX.md): criar rede host-only 192.168.56.0/24 com IPs fixos e DHCP da rede host-only desativado. **Nunca** expor DNS/LDAP/SMB/RDP do laboratório à internet.
+- Instalar Windows Server Evaluation em DC01 com 2 vCPU, **4 GB RAM** e VDI dinâmico de 60 GB, se elegível. Ela expira em 180 dias; licença de produção é assunto distinto.
 - Instalar AD DS e DNS; criar domínio aurora.test, OUs de Colaboradores/Grupos/Computadores, contas Ana/Carla e grupos FIN/JUR.
-- Ingressar CL01 no domínio (cliente Windows com licença/avaliação válidas). Validar DNS SRV, Kerberos, GPO, grupo e acesso negativo.
+- Criar CL01 com 2 vCPU, 4 GB RAM, VDI 80 GB e UEFI/TPM 2.0/Secure Boot; ingressar no domínio (cliente Windows com licença/avaliação válidas). Validar DNS SRV, Kerberos, GPO, grupo e acesso negativo.
 - **Validação:** usuário normal não administra domínio; permissão FIN não autoriza JUR; rollback registrado.
 - **Fontes:** https://www.microsoft.com/pt-br/evalcenter/download-windows-server-2025
 
@@ -88,7 +90,7 @@ O RH é origem do vínculo. E001/Ana começa em Financeiro, muda para Jurídico 
 
 - Obter tenant autorizado, domínio onmicrosoft.com e contas cloud-only de administração e emergência.
 - Revisar roles por função mínima e credenciais protegidas, sem segredos nas evidências.
-- Validar pré-requisitos do agente Cloud Sync: Windows Server ingressado em domínio, conta Hybrid Identity Administrator, conta gMSA, firewall e escopo.
+- Para Cloud Sync, habilitar NAT temporário no segundo adaptador de DC01 (sem port forwarding), manter DNS interno do AD e desabilitar registro da interface NAT no DNS do domínio. Verificar conta Hybrid Identity Administrator, gMSA, firewall, 4 GB RAM e escopo do agente.
 - Sincronizar apenas as OUs piloto. Testar uma alteração, atraso, erro, conta não incluída e recuperação.
 - **Validação:** identificar a mesma pessoa no RH, AD e Entra; contas privilegiadas nunca entram automaticamente no escopo.
 - **Fontes:** https://learn.microsoft.com/pt-br/entra/identity/hybrid/cloud-sync/how-to-prerequisites
