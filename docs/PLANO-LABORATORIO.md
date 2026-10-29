@@ -12,13 +12,13 @@ O portal ensina **o que é, por que usar, quando usar, onde configurar, como tes
 | RAM | 16 GB DDR4 3200 MHz |
 | Disco | 1 TB NVMe (espaço **livre** ainda não informado) |
 | GPU | RTX 3070 (não necessária nos exercícios IAM) |
-| Sistema operacional do host | **Windows 11**, edição Home/Pro ainda não informada |
+| Sistema operacional do host | **Windows 11 Pro** (confirmado) |
 | Hipervisor | **Oracle VirtualBox**, versão ainda não informada |
 | Microsoft Entra | Tenant gratuito já existente, sem licenças |
 | Orçamento | Máximo de R$ 200/mês |
 | Disponibilidade | Sem número fixo de horas; avançar por microetapas e entregas |
 
-**Sistema operacional e hipervisor já estão definidos: Windows 11 + Oracle VirtualBox.** Falta confirmar apenas edição do Windows, versão do VirtualBox, espaço livre do NVMe e virtualização AMD-V/SVM. O tutorial específico foi publicado em [GUIA-VIRTUALBOX.md](GUIA-VIRTUALBOX.md).
+**Sistema operacional e hipervisor já estão definidos: Windows 11 Pro + Oracle VirtualBox.** Falta confirmar apenas versão do VirtualBox, espaço livre do NVMe e virtualização AMD-V/SVM. O tutorial específico foi publicado em [GUIA-VIRTUALBOX.md](GUIA-VIRTUALBOX.md).
 
 ### Dimensionamento inicial para 16 GB de RAM
 
@@ -45,7 +45,7 @@ Fontes:
 
 ### Forma de estudo: sem horas fixas
 
-Cada sessão pode ser curta. Abra o portal, retome a última aula e microetapa, execute uma única configuração, observe resultado, marque o passo confirmado e salve evidências. Se precisar parar no meio, a posição do leitor é guardada no navegador e incluída no backup. O roteiro usa marcos técnicos, **não semanas ou metas de horas**. O que libera o avanço é o resultado validado, não o calendário.
+Cada sessão pode ser curta. Abra o portal, retome a última aula e microetapa, execute uma configuração, observe o resultado e marque a microetapa concluída. Anotações são opcionais; não há uma segunda checklist de evidência na aula. Se precisar parar no meio, a posição do leitor é guardada no navegador e incluída no backup. O roteiro usa marcos técnicos, **não semanas ou metas de horas**. O que libera o avanço é o resultado validado, não o calendário.
 
 ## Preparação: antes de qualquer ativação paga
 
