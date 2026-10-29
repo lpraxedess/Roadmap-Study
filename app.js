@@ -71,6 +71,7 @@ function dashboard(){
  if($('route-choice'))$('route-choice').value=state.track;
  const list=$('module-progress-list');list.replaceChildren();
  for(const p of PHASES){const completed=p.items.filter(t=>state.completed.includes(t.id)).length;const a=link(p.title,'#module-'+p.id,'module-progress-row');a.append(node('span','module-mini-count',completed+' / '+p.items.length));list.append(a);}
+ window.IAMHome?.render();
 }
 function matches(task,phase){
  const cert=CERTIFICATIONS.find(c=>c.id===filters.cert);
