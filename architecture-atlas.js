@@ -21,6 +21,7 @@ window.IAMAtlas=(()=>{
   {id:'azure',layer:'09 / WORKLOAD',label:'Azure / Graph / aplicações',asset:'S001 inventário · identidades gerenciadas',role:'Permissões de API, service principals, segredos, rotação e RBAC cloud opcionais.',in:'Assinatura Azure legítima se uma prática exigir recurso pago',out:'Tokens de aplicação, logs, Graph e recursos descartáveis',test:'Menor privilégio, rotação, ausência de recursos cloud permanentes.',lessons:['iam-6-0','iam-6-1','iam-6-2']},
   {id:'audit',layer:'10 / OBSERVABILIDADE',label:'Auditoria / resposta / portfólio',asset:'AD + Entra + Keycloak + APP01',role:'Correlaciona decisões, resultados positivos/negativos e retorno ao estado do teste.',in:'Logs e evidências sanitizadas dos sistemas realmente executados',out:'ADRs, diagramas, cenários de incidente e entregáveis de carreira',test:'Identificar causa-raiz, provar reversão e separar prática real de simulação.',lessons:['iam-8-0','iam-8-3','iam-9-0','iam-9-2']}
  ];
+ let lastProgressSignature=null;
  const edges=[
   ['RH / evento','DC01 / AD DS','Manual / operador','Criar/desabilitar usuário, alterar departamento e grupos.','Validar J001, M001, L001 no AD e registrar hora.'],
   ['CL01 / Windows','DC01 / DNS + KDC','Rede host-only','DNS 53; Kerberos 88/464; LDAP 389; SMB 445; RPC necessário conforme tarefa.','Resolver SRV e autenticar conta comum no domínio.'],
@@ -50,6 +51,10 @@ window.IAMAtlas=(()=>{
   const root=$('arch-atlas');if(!root)return;
   root.replaceChildren();
   const state=window.IAMApp?.getState()||{completed:[],steps:[]};
+  // Atlas muito detalhado: não reconstruir centenas de etapas ao navegar sem alteração de progresso.
+  const signature=state.completed.join('|')+'#'+state.steps.join('|');
+  if(signature===lastProgressSignature&&root.childElementCount>0)return;
+  lastProgressSignature=signature;
   const all=PHASES.flatMap(p=>p.items);
   const totalSteps=all.reduce((n,t)=>n+t.guide.steps.length,0);
   const hero=node('div','atlas-hero');
