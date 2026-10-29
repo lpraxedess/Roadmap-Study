@@ -198,3 +198,26 @@ a{transition:color .2s var(--ease)}
 .lab-budget-disclaimer{grid-column:1/-1;border:1px solid #465a7a;border-radius:12px;background:#111e31;color:#bfd1e9;padding:13px 16px;margin:0;font-size:.83rem;line-height:1.65;max-width:none}
 @media(max-width:850px){.hardware-facts{grid-template-columns:repeat(2,minmax(0,1fr))}.hardware-fields{grid-template-columns:1fr 1fr}.hardware-field:last-child{grid-column:1/-1}}
 @media(max-width:580px){.hardware-facts{grid-template-columns:1fr 1fr;gap:8px}.hardware-fact{padding:15px 12px}.hardware-fact strong{font-size:.9rem}.hardware-fields{grid-template-columns:1fr}.hardware-field:last-child{grid-column:auto}.hardware-machines{grid-template-columns:1fr}.hardware-heading{padding:8px 0 28px}.hardware-machine{padding:20px}.hardware-session{padding:18px}}
+
+/* Guia específico Windows 11 + Oracle VirtualBox */
+.hardware-fields{grid-template-columns:repeat(2,minmax(0,1fr))}
+.vbox-walkthrough{margin-top:36px;padding:clamp(19px,3.5vw,36px);border:1px solid #3b4e71;background:radial-gradient(circle at 95% 0,rgba(139,125,245,.12),transparent 43%),linear-gradient(155deg,#141f31,#0f1725);border-radius:22px}
+.vbox-walkthrough>h3{font-size:clamp(1.4rem,2.8vw,2.15rem);max-width:26ch;line-height:1.24}
+.vbox-guide{list-style:none;counter-reset:vbox;margin:20px 0 0;padding:0;display:grid;gap:11px}
+.vbox-guide-step{list-style:none;counter-increment:vbox;border:1px solid #314560;background:#111b2b;border-radius:13px;overflow:hidden}
+.vbox-guide-details>summary{padding:18px 20px;display:flex;align-items:center;gap:12px;color:#e4edfd;font-size:.92rem;font-weight:600;list-style:none}
+.vbox-guide-details>summary::before{content:counter(vbox,decimal-leading-zero);display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;color:#b6d3ff;border:1px solid #3b5a7c;border-radius:8px;min-width:32px;min-height:32px;font-size:.75rem;font-weight:700}
+.vbox-guide-details>summary::after{content:'+';margin-left:auto;color:#98b5db;font-size:1.3rem;font-weight:400}
+.vbox-guide-details[open]>summary::after{content:'−'}
+.vbox-guide-details>summary::-webkit-details-marker{display:none}
+.vbox-guide-details>summary:hover{background:#1a2940}
+.vbox-guide-details[open]{background:#142237}
+.vbox-guide-details>p{font-size:.86rem;line-height:1.84;color:#bdcce1;margin:0;padding:2px 20px 16px 64px;max-width:105ch}
+.vbox-guide-details>.vbox-guide-expected{color:#add9c9;border-top:1px solid #2d4560;padding-top:13px}
+.vbox-doc-link,.lab-setup-link{margin:19px 0 0;font-size:.87rem}
+.vbox-doc-link>a,.lab-setup-link>a{display:inline-flex;align-items:center;padding:12px 15px;border:1px solid #4a678d;border-radius:10px;background:#1a304b;color:#c7deff;font-weight:610;transition:background .2s,border-color .2s}
+.vbox-doc-link>a:hover,.lab-setup-link>a:hover{background:#2a4466;border-color:#7398c8;text-decoration:none}
+.lab-setup-link{margin:24px 0 35px}
+@media(max-width:850px){.hardware-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.hardware-field:last-child{grid-column:auto}}
+@media(max-width:580px){.hardware-fields{grid-template-columns:1fr}.vbox-walkthrough{padding:18px}.vbox-guide-details>summary{padding:15px 13px;font-size:.84rem}.vbox-guide-details>p{padding:2px 15px 14px;font-size:.82rem}.vbox-guide-details>summary::before{min-width:27px;min-height:27px}}
+@media(prefers-reduced-motion:reduce){.vbox-doc-link>a,.lab-setup-link>a{transition:none}}
