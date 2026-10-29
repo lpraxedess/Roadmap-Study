@@ -7,14 +7,15 @@ O projeto acompanha a empresa fictícia **Aurora Serviços Digitais** do cadastr
 ## Perfil atual do estudante
 
 - Ryzen 5 5600, 16 GB DDR4 3200 MHz, RTX 3070 e NVMe de 1 TB. A GPU não é necessária para o laboratório IAM.
+- HOST01 executa **Windows 11** e utiliza **Oracle VirtualBox**. Edição Home/Pro e versão do VirtualBox ainda não foram informadas.
 - Tenant Microsoft Entra Free já disponível, **sem licenças adicionais**.
 - Orçamento máximo de R$ 200/mês; **começar gastando R$ 0**.
 - Sem carga horária fixa; o aprendizado ocorre por **marcos e microetapas verificadas**, não semanas ou prazos.
-- Perfil do sistema operacional, espaço livre e SVM/AMD-V pode ser completado em **Laboratório & custos**.
-- DC01 sugerido com 2 vCPUs/3–4 GB RAM/disco 60 GB; CL01 2 vCPUs/4 GB RAM/disco 80 GB. Não manter todas as VMs e Docker simultaneamente.
+- Em **Laboratório & custos**, informar edição Windows 11, versão do VirtualBox, espaço livre e AMD-V/SVM. O portal já seleciona Windows 11 + VirtualBox por padrão.
+- DC01 no VirtualBox: 2 vCPUs, **4 GB RAM**, VDI 60 GB; CL01: 2 vCPUs, **4 GB RAM**, VDI 80 GB com UEFI/TPM 2.0/Secure Boot. Não manter ambas as VMs e Docker simultaneamente.
 - Ao recarregar o portal, ele lembra a microetapa atual; backup inclui perfil de hardware e posição de leitura.
 
-Consulte [plano adaptado ao equipamento](docs/PLANO-LABORATORIO.md#perfil-real-do-laboratório-informado-em-29102026) e requisitos oficiais antes de instalar ou contratar recursos.
+Consulte [guia Windows 11 + VirtualBox](docs/GUIA-VIRTUALBOX.md) e [plano operacional adaptado](docs/PLANO-LABORATORIO.md) antes de instalar ou contratar recursos.
 
 ## Comece aqui
 
@@ -50,7 +51,8 @@ HTML, CSS e JavaScript, sem dependências de frontend e compatível com GitHub P
 | architecture.js / architecture-view.js | Topologia e cenário empresarial |
 | state.js | Progresso, persistência e backup |
 | lab-planner.js | 10 marcos de implantação, checklist e estimador de custo |
-| lab-profile.js | Requisitos do computador, RAM, VMs, OS/virtualização e espaço livre |
+| lab-profile.js | Windows 11 + VirtualBox, requisitos das VMs, checagem de RAM/AMD-V e guia de execução |
+| docs/GUIA-VIRTUALBOX.md | Roteiro de rede host-only, AD DS, Windows 11 convidado, DNS e NAT temporário |
 | certifications.js | Referências profissionais e certificações |
 
 **O portal não cria contas nem configura automaticamente AD, Entra ou Azure.** Ele ensina, orienta e registra confirmações manuais. Dados são locais ao navegador, sem sincronização entre dispositivos.
