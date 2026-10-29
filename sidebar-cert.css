@@ -178,13 +178,15 @@
 .cert-list{
  display:grid!important;
  grid-template-columns:repeat(3,minmax(0,1fr))!important;
- align-items:stretch;
+ align-items:start!important; /* Expandir um card não estica os vizinhos da mesma linha. */
  gap:11px!important;
 }
 .cert-card--compact{
  display:flex!important;
  flex-direction:column;
  align-items:stretch;
+ align-self:start!important;
+ height:auto!important;
  gap:9px;
  padding:15px 16px 12px!important;
  min-width:0;
@@ -271,6 +273,8 @@
 }
 .cert-card--compact .cert-more>summary:after{content:"＋";float:right;font-size:.92rem;color:#aaa}
 .cert-card--compact .cert-more[open]>summary:after{content:"−"}
+.cert-card--compact .cert-more[open] .cert-more-content{animation:iam-cert-detail-enter .32s cubic-bezier(.22,1,.36,1) both}
+@keyframes iam-cert-detail-enter{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .cert-more-content{border-top:1px solid #303030;padding-top:8px;display:grid;gap:7px}
 .cert-card--compact .cert-more-content>p{margin:0!important;font-size:.74rem!important;line-height:1.65!important;color:#adadad!important}
 .cert-more-content a{color:#eee;font-size:.75rem;text-decoration:underline;text-underline-offset:3px}
@@ -389,3 +393,36 @@
 .study-empty .button{min-height:38px!important;margin-top:4px}
 @media(max-width:650px){.lesson-finish-actions{align-items:stretch}.lesson-finish-actions>.check-row{width:100%}.study-empty{padding:20px}}
 @media(prefers-reduced-motion:reduce){.lesson-finish-bar>span{transition:none}}
+
+
+/* Navegação perceptível, mantendo sidebar e cabeçalho imóveis.
+   Chromium/Edge: View Transitions API; outros navegadores: Web Animations API. */
+@keyframes iam-route-out{
+ 0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1)}
+ 100%{opacity:0;filter:blur(6px);transform:translate3d(-28px,-2px,0) scale(.993)}
+}
+@keyframes iam-route-in{
+ 0%{opacity:0;filter:blur(8px);transform:translate3d(38px,20px,0) scale(.988)}
+ 65%{opacity:1;filter:blur(0)}
+ 100%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1)}
+}
+@supports (view-transition-name: iam-page){
+ .page-content{view-transition-name:iam-page}
+ ::view-transition-old(root),::view-transition-new(root){animation:none!important}
+ ::view-transition-old(iam-page){animation:iam-route-out .30s cubic-bezier(.4,0,1,1) both!important;transform-origin:50% 15%}
+ ::view-transition-new(iam-page){animation:iam-route-in .68s cubic-bezier(.22,1,.36,1) both!important;transform-origin:50% 15%}
+}
+.page-content>[data-page-view].view-entering{
+ animation:iam-route-in .68s cubic-bezier(.22,1,.36,1) both!important;
+ transform-origin:50% 15%;
+}
+.sidebar-primary-nav a.is-active{transition:background .32s ease,border-color .32s ease,color .32s ease,box-shadow .32s ease!important}
+.sidebar-primary-nav a.is-active .sidebar-chevron{transition:opacity .32s ease,transform .32s cubic-bezier(.22,1,.36,1)}
+@media(prefers-reduced-motion:reduce){
+ .page-content>[data-page-view].view-entering,
+ .cert-card--compact .cert-more[open] .cert-more-content{animation:none!important}
+ @supports (view-transition-name: iam-page){
+  ::view-transition-old(root),::view-transition-new(root),
+  ::view-transition-old(iam-page),::view-transition-new(iam-page){animation:none!important}
+ }
+}
