@@ -184,6 +184,8 @@ try{
  assert.equal(await phone.locator('#menu-toggle').getAttribute('aria-expanded'),'false');
  await phone.locator('#menu-toggle').click();
  await phone.locator('.sidebar-primary-nav a[data-page="certifications"]').click();
+ // View Transitions atualiza o DOM no próximo quadro; aguarde a mudança de rota.
+ await phone.locator('#page-certifications').waitFor({state:'visible'});
  assert.equal(await phone.locator('#page-certifications').isVisible(),true);
  assert.equal(await phone.locator('#sidebar').isVisible(),false,'Drawer não fechou após navegar');
  await fits(phone,'certificações mobile');
