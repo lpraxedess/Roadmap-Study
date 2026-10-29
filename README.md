@@ -4,13 +4,25 @@ Portal estático de estudos e laboratório incremental para a carreira de **Iden
 
 O projeto acompanha a empresa fictícia **Aurora Serviços Digitais** do cadastro de RH até Active Directory, Microsoft Entra, identidade híbrida, OIDC/SAML/SCIM, governança, PAM, Intune, automação, auditoria e portfólio.
 
+## Perfil atual do estudante
+
+- Ryzen 5 5600, 16 GB DDR4 3200 MHz, RTX 3070 e NVMe de 1 TB. A GPU não é necessária para o laboratório IAM.
+- Tenant Microsoft Entra Free já disponível, **sem licenças adicionais**.
+- Orçamento máximo de R$ 200/mês; **começar gastando R$ 0**.
+- Sem carga horária fixa; o aprendizado ocorre por **marcos e microetapas verificadas**, não semanas ou prazos.
+- Perfil do sistema operacional, espaço livre e SVM/AMD-V pode ser completado em **Laboratório & custos**.
+- DC01 sugerido com 2 vCPUs/3–4 GB RAM/disco 60 GB; CL01 2 vCPUs/4 GB RAM/disco 80 GB. Não manter todas as VMs e Docker simultaneamente.
+- Ao recarregar o portal, ele lembra a microetapa atual; backup inclui perfil de hardware e posição de leitura.
+
+Consulte [plano adaptado ao equipamento](docs/PLANO-LABORATORIO.md#perfil-real-do-laboratório-informado-em-29102026) e requisitos oficiais antes de instalar ou contratar recursos.
+
 ## Comece aqui
 
 1. Acesse **Laboratório & custos** para conferir a bancada, as etapas de construção e a estimativa financeira.
 2. Em **Arquitetura**, conheça as identidades E001–E006, ativos e eventos J001/M001/L001.
 3. Em **Estudos**, abra uma aula e execute um passo de cada vez. Cada microetapa informa onde executar, o que fazer, o motivo e o resultado esperado.
 4. Confirme os critérios de aceite; registre a modalidade como **real**, **parcial** ou **simulada**. Simulação não equivale a execução.
-5. Anote observações sem senhas/tokens e exporte backups. O backup inclui notas, progresso, checklist do laboratório e valores estimados de orçamento.
+5. Anote observações sem senhas/tokens e exporte backups. O backup inclui notas, progresso, checklist do laboratório, posição da microetapa, perfil de hardware e valores estimados de orçamento.
 6. Use **Certificações** para organizar estudos adicionais, não como certificado de conclusão.
 
 **[Plano operacional detalhado](docs/PLANO-LABORATORIO.md)** · **[Abrir laboratório interativo](https://lpraxedess.github.io/Roadmap-Study/#laboratorio)**
@@ -37,7 +49,8 @@ HTML, CSS e JavaScript, sem dependências de frontend e compatível com GitHub P
 | app.js / curriculum.js | 41 aulas, 296 passos guiados, critérios e evidências |
 | architecture.js / architecture-view.js | Topologia e cenário empresarial |
 | state.js | Progresso, persistência e backup |
-| lab-planner.js | 10 etapas de implantação, checklist e estimador de custo |
+| lab-planner.js | 10 marcos de implantação, checklist e estimador de custo |
+| lab-profile.js | Requisitos do computador, RAM, VMs, OS/virtualização e espaço livre |
 | certifications.js | Referências profissionais e certificações |
 
 **O portal não cria contas nem configura automaticamente AD, Entra ou Azure.** Ele ensina, orienta e registra confirmações manuais. Dados são locais ao navegador, sem sincronização entre dispositivos.
