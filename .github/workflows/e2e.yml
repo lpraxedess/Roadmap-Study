@@ -1,0 +1,30 @@
+name: Testar interface e navegação
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  interface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar browser de testes
+        run: |
+          npm install --no-save --no-audit --no-fund playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Auditar interface em desktop e celular
+        run: node scripts/e2e.mjs
+      - name: Guardar capturas para revisão visual
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-interface
+          path: artifacts/
+          if-no-files-found: ignore
