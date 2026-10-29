@@ -396,7 +396,10 @@
 
 
 /* Navegação perceptível, mantendo sidebar e cabeçalho imóveis.
-   Chromium/Edge: View Transitions API; outros navegadores: Web Animations API. */
+   Chromium/Edge: View Transitions API; outros navegadores: Web Animations API.
+   O deslocamento horizontal fica recortado à região de conteúdo no celular. */
+.page-content{overflow-x:clip}
+
 @keyframes iam-route-out{
  0%{opacity:1;filter:blur(0);transform:translate3d(0,0,0) scale(1)}
  100%{opacity:0;filter:blur(6px);transform:translate3d(-28px,-2px,0) scale(.993)}
