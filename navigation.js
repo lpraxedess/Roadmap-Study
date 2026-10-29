@@ -7,6 +7,10 @@
  const prefersReduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
  let current=null;
  function swap(page,options={}){
+  if(current===page){
+   if(page==='studies'&&options.list!==false)window.IAMApp?.showStudyList();
+   return;
+  }
   if(page==='studies'&&options.list!==false)window.IAMApp?.showStudyList();
   if(page==='architecture'){window.IAMArchitecture?.render();window.IAMAtlas?.render();}
   if(page==='overview')window.IAMHome?.render();
