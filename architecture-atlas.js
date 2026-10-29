@@ -152,7 +152,7 @@ window.IAMAtlas=(()=>{
     lessonActions.append(link('Abrir aula guiada →','#task-'+lesson.id));
     if(lesson.guide.platformUrl||lesson.url)lessonActions.append(link('Documentação técnica ↗',lesson.guide.platformUrl||lesson.url,true));
     body.append(lessonActions);
-    const list=node('ol','atlas-step-list');
+    const stepList=node('ol','atlas-step-list');
     for(let i=0;i<lesson.guide.steps.length;i++){
      const step=lesson.guide.steps[i],id=lesson.id+'/'+step.id,confirmed=state.steps.includes(id);
      const stepNode=node('li','atlas-step'+(confirmed?' is-verified':''));stepNode.id='arch-step-'+lesson.id+'-'+step.id;
@@ -166,9 +166,9 @@ window.IAMAtlas=(()=>{
       const pre=node('pre');const codeText=node('code','',step.command);pre.append(codeText);code.append(pre);stepNode.append(code);
      }
      tagged(stepNode,'RESULTADO ESPERADO',step.expected||lesson.evidence||'Conferir resultado na aula');
-     list.append(stepNode);
+     stepList.append(stepNode);
     }
-    body.append(list);
+    body.append(stepList);
     if(lesson.acceptance?.length){
      const acceptance=detail('Critérios de aceite e evidências ('+lesson.acceptance.length+')','atlas-acceptance');
      const criteria=node('ul');
