@@ -6,16 +6,19 @@
   const ACTIVE='iam-lab-active-stage-v1';
   const stages=[
     {id:'base',name:'01 · Preparar a bancada',phase:'prep',time:'Marco 01 · sem prazo',tier:'Local · R$ 0',goal:'Organizar arquivos, recursos e o contrato da empresa Aurora.',work:[
-      ['inventario','Revisar perfil preenchido: Ryzen 5 5600, 16 GB RAM, 1 TB NVMe e tenant gratuito.','Informar sistema operacional, espaço realmente livre e virtualização AMD-V/SVM; priorizar um conjunto de VMs de cada vez.'],
+      ['inventario','Conferir HOST01: Windows 11 + VirtualBox, Ryzen 5 5600, 16 GB RAM e tenant gratuito.','Falta confirmar edição Home/Pro, versão do VirtualBox, espaço livre no NVMe e se AMD-V/SVM está ativa.'],
+      ['virtualbox','Verificar suporte do VirtualBox 7.x ao Windows 11 convidado.','Conferir versão do VBoxManage, recursos EFI/TPM virtual/Secure Boot e eventual coexistência com Hyper-V. Não desativar defesas do host sem diagnóstico.'],
       ['dados','Criar rh.csv do cadastro fictício E001–E006, na pasta AuroraLab.','No Windows, use C:\\AuroraLab; em Linux use diretório equivalente. Verificar seis IDs únicos. Nunca usar dados reais.'],
-      ['isolamento','Criar rede virtual host-only para DC01 e CL01.','Testar que serviços AD não estão publicados na internet.'],
+      ['isolamento','Criar no VirtualBox uma rede host-only para o laboratório, sem bridge.','Exemplo: HOST01=192.168.56.1/24 e DHCP host-only desativado. Confirmar ausência de conflito com VPN/rede física.'],
+      ['ips','Registrar IPs do laboratório antes da instalação.','DC01=192.168.56.10/24, CL01=192.168.56.20/24. DNS de ambos aponta DC01; sem gateway na NIC host-only.'],
       ['backup','Criar pasta de evidências sem senhas/tokens e exportar o progresso do portal.','Salvar a exportação fora da VM.']
     ],link:'prep-route',doc:'https://learn.microsoft.com/pt-br/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview'},
     {id:'ad',name:'02 · Active Directory',phase:'p1',time:'Marco 02 · no seu ritmo',tier:'Local · avaliação',goal:'Construir DC01, DNS, domínio aurora.test, OUs, grupos e CL01.',work:[
-      ['eval','Escolher hipervisor após confirmar SO e ativar AMD-V/SVM; conferir Windows Server Evaluation.','DC01: 2 vCPU, 3–4 GB RAM, disco 60 GB. Windows Server Evaluation: 180 dias, não usar em produção.'],
-      ['dc','Criar DC01, configurar AD DS/DNS e domínio aurora.test sem acesso público.','Usar rede host-only para AD. Manter NAT apenas para saída quando exigido, sem encaminhamento de portas. Validar DNS/SRV.'],
+      ['eval','No VirtualBox criar DC01 com Windows Server Evaluation (Desktop Experience).','DC01: 2 vCPU, 4 GB RAM, VDI dinâmico de 60 GB; host-only no adaptador 1, adaptador 2 desligado. Avaliação 180 dias.'],
+      ['dc','Instalar AD DS/DNS em DC01 e promover a nova floresta aurora.test.','IPv4 do DC01 192.168.56.10/24, DNS para si próprio, sem gateway na NIC privada. Verificar _ldap._tcp.dc._msdcs.aurora.test.'],
       ['ou','Criar OUs, grupos e contas fictícias do piloto.','Conferir associação FIN e JUR e negar privilégio excessivo.'],
-      ['cliente','Instalar CL01 (Windows 11) e testar ingresso, Kerberos, GPO e controle negativo.','CL01: 2 vCPU, 4 GB RAM, disco 80 GB; exigir TPM virtual/Secure Boot e licença ou avaliação válida. Desligar quando não estiver em uso.']
+      ['cliente','Criar CL01 no VirtualBox com Windows 11 licenciado ou avaliação válida.','CL01: 2 vCPU, 4 GB RAM, VDI dinâmico 80 GB, UEFI, Secure Boot e TPM 2.0 virtual; adaptador 1 host-only.'],
+      ['ingresso','Conferir DNS, ingressar CL01 no domínio aurora.test e validar GPO/Kerberos.','CL01 192.168.56.20/24, DNS 192.168.56.10; use Resolve-DnsName SRV, gpresult /r e teste negativo sem administrador.']
     ],link:'iam-1-0',doc:'https://www.microsoft.com/pt-br/evalcenter/download-windows-server-2025'},
     {id:'entra',name:'03 · Microsoft Entra Free',phase:'p2',time:'Marco 03 · quando preferir',tier:'Cloud · Free',goal:'Separar administração, usuários, grupos e auditoria do tenant de laboratório.',work:[
       ['tenant','Conferir o tenant Microsoft gratuito já existente e registrar o domínio onmicrosoft.com.','Verificar edição, roles e acesso administrativo; não criar outro tenant ou ativar uma assinatura paga.'],
@@ -24,7 +27,7 @@
       ['mfa','Conferir Security Defaults e testar MFA com usuários fictícios quando disponível.','MFA e padrões de segurança estão no Entra Free; políticas Conditional Access personalizadas exigem P1. Proteja contas administrativas.']
     ],link:'iam-2-0',doc:'https://learn.microsoft.com/pt-br/entra/fundamentals/create-new-tenant'},
     {id:'hibrido',name:'04 · Sincronização híbrida',phase:'p2',time:'Marco 04 · após preparar AD + Entra',tier:'Cloud Free · checar pré-requisitos',goal:'Sincronizar escopo mínimo de AD para Entra com monitoramento.',work:[
-      ['agente','Verificar requisitos oficiais do Cloud Sync e função Hybrid Identity Administrator.','A Microsoft permite agente no próprio DC01: opção para 16 GB de RAM no laboratório, não referência de topologia de produção. Precisa HTTPS de saída e gMSA.'],
+      ['agente','Antes de usar Cloud Sync, adicionar NAT temporário ao adaptador 2 de DC01.','Preservar host-only em adaptador 1, não encaminhar portas, conferir saída HTTPS, DNS interno, gMSA e Hybrid Identity Administrator. Agente em DC é suportado para laboratório com 4 GB RAM.'],
       ['escopo','Limitar sincronização ao piloto Colaboradores e Grupos.','Contas privilegiadas e de emergência ficam fora do escopo.'],
       ['teste','Conferir identidade correlacionada, estado e logs do provisionamento.','Validar duplicatas, falhas e reversão.'],
       ['reversao','Documentar recuperação e diferença entre desabilitar AD e revogar sessões cloud.','Não assumir desligamento imediato de todas as sessões.']
@@ -42,7 +45,7 @@
       ['auditoria','Produzir matriz de evidência, revisor, data, identidade e sistema.','Separar automação real de ações manuais.']
     ],link:'iam-4-0',doc:'https://learn.microsoft.com/pt-br/entra/id-governance/'},
     {id:'premium',name:'07 · Janela licenciada P1/P2',phase:'p5',time:'Marco 07 · sem data para ativar',tier:'Pago/trial · controlado',goal:'Concentrar testes dependentes de licença em um período delimitado.',work:[
-      ['requisitos','Preparar primeiro roteiros CA, SSPR, PIM e revisões antes de ativar qualquer trial.','CA requer P1; PIM requer P2 ou Entra ID Governance válido; Identity Protection requer P2. Não presumir disponibilidade de trial.'],
+      ['requisitos','Preparar primeiro roteiros CA, SSPR, PIM e revisões antes de ativar qualquer trial.','CA requer P1; PIM depende de P2 ou licença elegível de governança; Identity Protection exige P2. Não presumir disponibilidade de avaliação.'],
       ['licencas','Conferir preço final, impostos, usuários beneficiados, ciclo de cobrança e cancelamento.','Referências em reais são por usuário/mês em COMPROMISSO ANUAL, pagas anualmente e antes de impostos; não contratar só para testar.'],
       ['ca','Criar política Conditional Access inicialmente em modo somente relatório quando disponível.','Excluir contas de emergência; ensaiar com usuário piloto.'],
       ['desligar','Exportar evidências, remover recursos temporários e revisar renovação.','Cancelar a avaliação antes da conversão se não quiser cobrar.']
@@ -104,7 +107,7 @@
     const list=text('ol','lab-checklist');stage.work.forEach(([id,title,expected],i)=>{const li=text('li','lab-check'+(checked[stage.id+'-'+id]?' is-done':''));const label=text('label','lab-check-main');const input=document.createElement('input');input.type='checkbox';input.checked=!!checked[stage.id+'-'+id];input.addEventListener('change',()=>{checked[stage.id+'-'+id]=input.checked;if(!write(KEY,checked))alert('Não foi possível salvar as verificações neste navegador.');render()});const wrap=text('span');wrap.append(text('strong','',String(i+1).padStart(2,'0')+' · '+title),text('small','',expected));label.append(input,wrap);li.append(label);list.append(li)});body.append(list);
     const advisory=text('p','lab-note','O checklist registra sua confirmação manual, não valida tecnicamente o ambiente. Para comprovar execução, faça os testes de cada aula e salve evidências sem segredos.');
     body.append(advisory);layout.append(nav,body);container.append(layout);
-    const cost=text('section','lab-budget');cost.id='lab-budget';cost.append(text('span','eyebrow','CONTROLE FINANCEIRO · VALORES EM BRL'),text('h3','','Orçamento mensal para o laboratório'),text('p','muted','Com seu tenant gratuito, a recomendação inicial é gasto zero. Ative trials ou licenças apenas quando a etapa exigir. Preços são referências por usuário/mês EM COMPROMISSO ANUAL, PAGOS ANUALMENTE, sem impostos. Não são preços de assinatura mensal sem compromisso.'));
+    const cost=text('section','lab-budget');cost.id='lab-budget';cost.append(text('span','eyebrow','CONTROLE FINANCEIRO · VALORES EM BRL'),text('h3','','Orçamento mensal para o laboratório'),text('p','muted','Com seu tenant gratuito, a recomendação inicial é gasto zero. Ative trials ou licenças apenas quando a etapa exigir. Preços são referências por usuário/mês EM COMPROMISSO ANUAL, com periodicidade de cobrança conforme a contratação, sem impostos. Não são preços de assinatura mensal sem compromisso.'));
     const form=text('div','lab-budget-grid'),fields=[
       ['cap','Teto mensal disponível',200],
       ['seats','Usuários que precisam de licença',1],
@@ -118,6 +121,9 @@
     const summary=text('div','lab-budget-summary');summary.id='lab-budget-summary';cost.append(summary);
     const info=text('p','lab-note','Planejamento local. Não consulta cobrança Microsoft e não aplica limite de gastos no Azure. Alerts de orçamento são avisos; Pay-as-you-go não possui spending limit automático.');cost.append(info);
     const references=text('div','lab-reference-links');[['Preços oficiais Microsoft Entra (inclui P2)','https://www.microsoft.com/pt-br/security/microsoft-entra-pricing'],['Azure Cost Management','https://learn.microsoft.com/en-us/azure/cost-management-billing/costs/cost-mgt-alerts-monitor-usage-spending'],['Limite de gastos do Azure Free','https://learn.microsoft.com/en-us/azure/cost-management-billing/manage/spending-limit']].forEach(([label,url])=>{const l=a(label+' ↗',url);l.target='_blank';l.rel='noopener noreferrer';references.append(l)});cost.append(references);container.append(cost);renderBudget();
+    const guide=text('p','lab-setup-link');
+    const guideAnchor=a('Guia prático Windows 11 + VirtualBox →','https://github.com/lpraxedess/Roadmap-Study/blob/main/docs/GUIA-VIRTUALBOX.md');
+    guideAnchor.target='_blank';guideAnchor.rel='noopener noreferrer';guide.append(guideAnchor);container.append(guide);
     const guard=text('section','lab-safety');guard.append(text('span','eyebrow','ANTES DE ATIVAR UMA AVALIAÇÃO'),text('h3','','Regras para não interromper o estudo'));
     const guardList=text('ul');[
       'Use somente ambiente e usuários fictícios; não sincronize conta pessoal ou corporativa.',
