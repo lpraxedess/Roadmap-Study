@@ -209,7 +209,7 @@
     const details=node('details','cert-more');
     details.append(node('summary','','Conteúdo e requisitos'));
     const content=node('div','cert-more-content');
-    content.append(node('p','',cert.prerequisite),node('p','',cert.labs),node('p','',cert.next),external('Abrir programa oficial ↗',cert.url));
+    content.append(node('p','',cert.prerequisite),node('p','',cert.labs),node('p','',cert.next),external('Abrir programa oficial',cert.url));
     details.append(content);
     card.append(details);
     grid.append(card);
