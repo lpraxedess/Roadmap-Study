@@ -7,7 +7,7 @@ import vm from 'node:vm';
 const root=join(dirname(fileURLToPath(import.meta.url)),'..');
 const read=path=>readFileSync(join(root,path),'utf8');
 const html=read('index.html');
-const scripts=['architecture.js','curriculum.js','certifications.js','state.js','app.js','architecture-view.js','navigation.js','lab-planner.js'];
+const scripts=['architecture.js','curriculum.js','certifications.js','state.js','app.js','architecture-view.js','navigation.js','lab-planner.js','lab-profile.js'];
 const styles=['style.css','experience.css'];
 for(const file of [...scripts,...styles])assert.ok(existsSync(join(root,file)),file+' ausente');
 for(const file of scripts) {
@@ -21,6 +21,9 @@ for(const page of ['overview','lab','architecture','studies','certifications']) 
 }
 assert.ok(read('navigation.js').includes("lab:'laboratorio'"),'Rota laboratório não habilitada');
 assert.ok(read('app.js').includes('labPlanner:window.IAMLab'),'Backup do plano ausente');
+assert.ok(read('app.js').includes('hardware:window.IAMHardware'),'Perfil de hardware ausente no backup');
+assert.ok(read('app.js').includes('readerPositions:{...guidePositions}'),'Microetapa do leitor ausente no backup');
+assert.match(html,/id="lab-profile"/,'Painel de hardware ausente');
 
 const ctx=vm.createContext({});
 const phases=vm.runInContext(read('curriculum.js')+'\nPHASES',ctx);
@@ -46,7 +49,12 @@ for(const task of lessons){
   steps+=task.guide.steps.length;checks+=task.acceptance.length;
 }
 assert.ok(steps>=290&&checks>=120,'Conteúdo inferior ao esperado');
-for(const part of ['getStages','exportState','importState','reset','cap:200','seats:1']){
+for(const part of ['getStages','exportState','importState','reset','cap:200','seats:1',"time:'Marco",'57.30']){
   assert.ok(read('lab-planner.js').includes(part),'Recurso do planejador ausente: '+part);
+}
+for(const part of ['Ryzen 5 5600','16 GB','1 TB NVMe','Microsoft Entra','getStages','importState']) {
+  const combined=read('lab-profile.js')+'\n'+read('lab-planner.js');
+  if(part==='getStages')assert.ok(combined.includes(part));
+  else assert.ok(combined.includes(part),'Perfil incompleto: '+part);
 }
 console.log('Validação concluída: '+phases.length+' módulos, '+lessons.length+' aulas, '+steps+' passos, '+checks+' testes.');
