@@ -29,7 +29,7 @@
       ['reversao','Documentar recuperação e diferença entre desabilitar AD e revogar sessões cloud.','Não assumir desligamento imediato de todas as sessões.']
     ],link:'iam-2-1',doc:'https://learn.microsoft.com/pt-br/entra/identity/hybrid/cloud-sync/how-to-prerequisites'},
     {id:'protocolos',name:'05 · OIDC, SAML e SCIM',phase:'p3',time:'Semanas 6–7',tier:'Local · R$ 0',goal:'Construir IDP01 e APP01; ver autenticação, autorização e provisionamento separados.',work:[
-      ['idp','Configurar realm aurora no Keycloak local.','Somente loopback para modo de desenvolvimento.'],
+      ['idp','Retomar IDP01/realm aurora configurado na preparação; validar seu isolamento local.','Somente loopback para modo de desenvolvimento.'],
       ['oidc','Registrar cliente OIDC, redirect URI exata e PKCE S256.','Testar state, nonce, issuer, audience e expiração.'],
       ['scim','Criar/atualizar cadastro APP01 por chamadas SCIM.','Distinguir provisionamento de autenticação; não expor token.'],
       ['negativo','Executar cenários de 401/403, mudança de departamento e desativação.','Registrar efeito observado e reversão.']
@@ -72,13 +72,13 @@
   const write=(key,obj)=>{try{localStorage.setItem(key,JSON.stringify(obj));return true}catch{return false}};
   const money=value=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(value);
   const checked=read(KEY,{});
-  const plan=read(BUDGET,{cap:200,license:0,azure:0,extras:0,reserve:35});
+  const plan=read(BUDGET,{cap:200,license:0,seats:1,azure:0,extras:0,reserve:35});
   const licenses=[
     {value:0,label:'Sem licença paga · R$ 0'},
-    {value:40.10,label:'Entra ID P1 · R$ 40,10/usuário (preço anual)'},
-    {value:45.80,label:'Intune P1 · R$ 45,80/usuário (preço anual)'},
-    {value:107.60,label:'Business Premium sem Teams · R$ 107,60/usuário (preço anual)'},
-    {value:126,label:'Business Premium com Teams · R$ 126/usuário (preço anual)'}
+    {value:40.10,label:'Entra ID P1 · R$ 40,10/usuário/mês (plano anual)'},
+    {value:45.80,label:'Intune P1 · R$ 45,80/usuário/mês (plano anual)'},
+    {value:107.60,label:'Business Premium sem Teams · R$ 107,60/usuário/mês (plano anual)'},
+    {value:126,label:'Business Premium com Teams · R$ 126/usuário/mês (plano anual)'}
   ];
   let active='base';
   const container=$('lab-planner');
@@ -103,12 +103,13 @@
     const cost=text('section','lab-budget');cost.id='lab-budget';cost.append(text('span','eyebrow','CONTROLE FINANCEIRO · VALORES EM BRL'),text('h3','','Orçamento mensal para o laboratório'),text('p','muted','Calcule uma reserva antes de iniciar períodos pagos. Os preços licenciados abaixo são referências publicadas para compromisso anual, por usuário, sem impostos. Não são cotação de cobrança mensal nem substituem o checkout.'));
     const form=text('div','lab-budget-grid'),fields=[
       ['cap','Teto mensal disponível',200],
+      ['seats','Usuários que precisam de licença',1],
       ['azure','Azure e consumos variáveis estimados',0],
       ['extras','Outros gastos estimados',0],
       ['reserve','Reserva para imprevistos',35]
     ];
     const licenseLabel=text('label','lab-field');licenseLabel.append(text('span','','Licença de referência (1 usuário)'));const sel=document.createElement('select');sel.id='lab-license';licenses.forEach(item=>{const op=document.createElement('option');op.value=String(item.value);op.textContent=item.label;sel.append(op)});sel.value=String(plan.license||0);sel.addEventListener('change',()=>{plan.license=Number(sel.value);write(BUDGET,plan);renderBudget()});licenseLabel.append(sel);form.append(licenseLabel);
-    fields.forEach(([id,label,fallback])=>{const field=text('label','lab-field');field.append(text('span','',label));const input=document.createElement('input');input.type='number';input.id='lab-'+id;input.min='0';input.step='0.01';input.inputMode='decimal';input.value=Number.isFinite(plan[id])?String(plan[id]):String(fallback);input.addEventListener('input',()=>{const n=Number(input.value);plan[id]=Number.isFinite(n)?Math.max(0,n):0;write(BUDGET,plan);renderBudget()});field.append(input);form.append(field)});
+    fields.forEach(([id,label,fallback])=>{const field=text('label','lab-field');field.append(text('span','',label));const input=document.createElement('input');input.type='number';input.id='lab-'+id;input.min='0';input.step=id==='seats'?'1':'0.01';input.inputMode='decimal';input.value=Number.isFinite(plan[id])?String(plan[id]):String(fallback);input.addEventListener('input',()=>{const n=Number(input.value);plan[id]=Number.isFinite(n)?Math.max(id==='seats'?1:0,id==='seats'?Math.floor(n):n):0;write(BUDGET,plan);renderBudget()});field.append(input);form.append(field)});
     cost.append(form);
     const summary=text('div','lab-budget-summary');summary.id='lab-budget-summary';cost.append(summary);
     const info=text('p','lab-note','Planejamento local. Não consulta cobrança Microsoft e não aplica limite de gastos no Azure. Alerts de orçamento são avisos; Pay-as-you-go não possui spending limit automático.');cost.append(info);
@@ -117,7 +118,7 @@
     const guardList=text('ul');[
       'Use somente ambiente e usuários fictícios; não sincronize conta pessoal ou corporativa.',
       'Configure administradores de recuperação antes de políticas de acesso condicional.',
-      'Concentre P1, P2 e Intune em uma janela de testes; confirme se a avaliação exige cartão ou renova automaticamente.',
+      'Concentre P1, P2 e Intune em janelas de testes; confira licenças por usuário beneficiado, possíveis impostos, cartão e renovação automática.',
       'Máquinas virtuais de Windows Server e Windows cliente exigem licença ou avaliação válida e hardware compatível.',
       'Não exponha AD DS, RDP, Keycloak em modo dev ou tokens SCIM na internet.',
       'Desligar VM Azure não significa eliminar todos os custos: discos e IPs podem continuar cobrando.'
@@ -125,12 +126,34 @@
   }
   function renderBudget(){
     const target=$('lab-budget-summary');if(!target)return;target.replaceChildren();
-    const cap=Math.max(0,Number(plan.cap)||0),spend=[plan.license,plan.azure,plan.extras].reduce((s,n)=>s+Math.max(0,Number(n)||0),0),reserve=Math.max(0,Number(plan.reserve)||0),available=cap-spend-reserve;
+    const cap=Math.max(0,Number(plan.cap)||0),spend=Math.max(0,Number(plan.license)||0)*Math.max(1,Math.floor(Number(plan.seats)||1))+Math.max(0,Number(plan.azure)||0)+Math.max(0,Number(plan.extras)||0),reserve=Math.max(0,Number(plan.reserve)||0),available=cap-spend-reserve;
     const cards=[['Estimativa de gastos',money(spend)],['Margem após reserva',money(available)],['Teto informado',money(cap)]];
     cards.forEach(([label,value])=>{const box=text('div','lab-cost-stat');box.append(text('small','',label),text('strong','',value));target.append(box)});
     target.classList.toggle('over-budget',available<0);
     if(available<0)target.append(text('p','lab-budget-warning','A projeção ultrapassa o teto após reservar imprevistos. Revise itens antes de contratar.'));
   }
-  window.IAMLab={render,getStages:()=>stages};
+  window.IAMLab={
+    render,
+    getStages:()=>stages,
+    exportState:()=>({version:1,checks:{...checked},budget:{...plan}}),
+    importState(payload){
+      if(!payload)return;
+      if(payload.version!==1||!payload.checks||typeof payload.checks!=='object'||Array.isArray(payload.checks)||!payload.budget||typeof payload.budget!=='object'||Array.isArray(payload.budget))throw Error('Plano de laboratório inválido.');
+      const allowed=new Set(stages.flatMap(stage=>stage.work.map(([id])=>stage.id+'-'+id)));
+      if(Object.keys(payload.checks).length>100||Object.keys(payload.checks).some(k=>!allowed.has(k)||typeof payload.checks[k]!=='boolean'))throw Error('Checklist do laboratório inválido.');
+      for(const key of Object.keys(checked))delete checked[key];
+      for(const [key,value] of Object.entries(payload.checks))checked[key]=value;
+      for(const [key,fallback] of Object.entries({cap:200,license:0,seats:1,azure:0,extras:0,reserve:35})){
+        const raw=payload.budget[key];const value=Number(raw);
+        plan[key]=raw!==undefined&&Number.isFinite(value)&&value>=0&&value<1000000?(key==='seats'?Math.max(1,Math.floor(value)):value):fallback;
+      }
+      write(KEY,checked);write(BUDGET,plan);render();
+    },
+    reset(){
+      for(const key of Object.keys(checked))delete checked[key];
+      Object.assign(plan,{cap:200,license:0,seats:1,azure:0,extras:0,reserve:35});
+      write(KEY,checked);write(BUDGET,plan);active='base';render();
+    }
+  };
   render();
 })();
