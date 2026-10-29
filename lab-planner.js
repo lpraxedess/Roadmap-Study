@@ -6,7 +6,7 @@
   const ACTIVE='iam-lab-active-stage-v1';
   const stages=[
     {id:'base',name:'01 · Preparar a bancada',phase:'prep',time:'Marco 01 · sem prazo',tier:'Local · R$ 0',goal:'Organizar arquivos, recursos e o contrato da empresa Aurora.',work:[
-      ['inventario','Conferir HOST01: Windows 11 + VirtualBox, Ryzen 5 5600, 16 GB RAM e tenant gratuito.','Falta confirmar edição Home/Pro, versão do VirtualBox, espaço livre no NVMe e se AMD-V/SVM está ativa.'],
+      ['inventario','Conferir HOST01: Windows 11 + VirtualBox, Ryzen 5 5600, 16 GB RAM e tenant gratuito.','Windows 11 Pro já confirmado. Conferir versão do VirtualBox, espaço livre no NVMe e AMD-V/SVM habilitada.'],
       ['virtualbox','Verificar suporte do VirtualBox 7.x ao Windows 11 convidado.','Conferir versão do VBoxManage, recursos EFI/TPM virtual/Secure Boot e eventual coexistência com Hyper-V. Não desativar defesas do host sem diagnóstico.'],
       ['dados','Criar rh.csv do cadastro fictício E001–E006, na pasta AuroraLab.','No Windows, use C:\\AuroraLab; em Linux use diretório equivalente. Verificar seis IDs únicos. Nunca usar dados reais.'],
       ['isolamento','Criar no VirtualBox uma rede host-only para o laboratório, sem bridge.','Exemplo: HOST01=192.168.56.1/24 e DHCP host-only desativado. Confirmar ausência de conflito com VPN/rede física.'],
