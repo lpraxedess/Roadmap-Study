@@ -25,10 +25,9 @@
  function show(page,options={}){
   if(page==='lab')page='studies';
   if(!hashes[page])page='overview';
-  const changed=current!==page;
   const update=()=>swap(page,options);
-  if(changed&&document.startViewTransition&&!prefersReduced())document.startViewTransition(update);
-  else update();
+  // Entrada animada síncrona: preserva foco, rolagem e deep links para passos do atlas.
+  update();
   if(options.history!==false&&location.hash!=='#'+hashes[page])history.pushState(null,'','#'+hashes[page]);
   if(options.focus!==false){
    const heading=document.getElementById('page-'+page)?.querySelector('h1,h2');
