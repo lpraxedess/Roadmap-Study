@@ -130,6 +130,7 @@ try{
  assert.equal(await finishCheck.isDisabled(),false);
  await finishCheck.check();
  assert.equal(await finishCheck.isChecked(),true);
+ assert.notEqual(await desktop.locator('.header-start').getAttribute('href'),'#task-prep-route','O atalho Continuar não pode retornar à aula já concluída');
  await fits(desktop,'aula desktop');
  const phone=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,isMobile:true,hasTouch:true});
  attach(phone,'mobile');
