@@ -597,3 +597,17 @@ input::placeholder,textarea::placeholder{color:#888!important}
 .architecture-topology-svg text[fill="#a6afb9"]{fill:#9d9d9d!important}
 @media(max-width:1180px){.lab-stage-nav{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:700px){.lab-stage-nav{display:flex!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding:0 0 10px!important;scrollbar-width:thin}.lab-stage{min-width:210px!important;max-width:235px!important;flex-shrink:0!important}}
+
+/* Revisão sobre capturas reais do Chromium: títulos, índice arquitetural e menu compacto. */
+.home-hero h1:focus,.journey-hero h1:focus,.architecture-hero h1:focus,.certifications h1:focus{outline:none!important}
+.architecture-section>h3,.architecture-section>h4,.architecture-section h3,.architecture-section h4{color:#f5f5f5!important;-webkit-text-fill-color:#f5f5f5!important}
+.lab-field,.lab-field>span,.hardware-field,.hardware-field>span,.lab-stage-detail>p,.lab-budget>p,.lab-budget .muted{color:#b1b1b1!important}
+.lab-intro h2,.lab-budget h3,.lab-stage-detail h3,.hardware-heading h2{color:#f5f5f5!important}
+.lab-budget-summary .lab-cost-stat small{color:#9e9e9e!important}
+@media(max-width:700px){
+ .primary-nav{justify-content:space-between!important;gap:1px!important}
+ .primary-nav a{padding:9px 7px!important;font-size:.72rem!important;letter-spacing:-.01em}
+}
+@media(max-width:360px){
+ .primary-nav a{padding:8px 5px!important;font-size:.68rem!important}
+}
