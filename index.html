@@ -1,41 +1,122 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
- <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#070809">
- <meta name="description" content="Aprenda IAM construindo um laboratório: identidade, AD, Entra, OIDC, SCIM, JML, governança e acesso privilegiado.">
- <title>IAM / Roadmap · estude, execute, valide</title>
- <link rel="stylesheet" href="style.css?v=a016cf8ca7c0"><link rel="stylesheet" href="experience.css?v=20261029-vbox">
- <script src="architecture.js?v=4d59df183b7e" defer></script><script src="curriculum.js?v=20261028-clean2" defer></script><script src="certifications.js?v=58f5155db1b7" defer></script><script src="state.js?v=b2a0329faf28" defer></script><script src="app.js?v=20261029-hardware-resume" defer></script><script src="architecture-view.js?v=8debf066872e" defer></script><script src="navigation.js?v=20261029-lab" defer></script><script src="lab-planner.js?v=20261029-vbox" defer></script><script src="lab-profile.js?v=20261029-vbox" defer></script>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="theme-color" content="#050505">
+ <meta name="description" content="Roadmap IAM do básico ao avançado: estudo, prática, validações, laboratório Aurora no VirtualBox, Active Directory, Microsoft Entra e Intune.">
+ <title>IAM / Roadmap — laboratório real, aprendizado contínuo</title>
+ <link rel="stylesheet" href="style.css?v=a016cf8ca7c0">
+ <link rel="stylesheet" href="experience.css?v=20261029-vbox">
+ <link rel="stylesheet" href="monochrome.css?v=20261029-01">
+ <script src="architecture.js?v=4d59df183b7e" defer></script>
+ <script src="curriculum.js?v=20261028-clean2" defer></script>
+ <script src="certifications.js?v=58f5155db1b7" defer></script>
+ <script src="state.js?v=b2a0329faf28" defer></script>
+ <script src="app.js?v=20261029-navigation" defer></script>
+ <script src="architecture-view.js?v=20261029-mono" defer></script>
+ <script src="architecture-atlas.js?v=20261029-atlas" defer></script>
+ <script src="home-studio.js?v=20261029-home" defer></script>
+ <script src="lab-planner.js?v=20261029-vbox" defer></script>
+ <script src="lab-profile.js?v=20261029-w11pro" defer></script>
+ <script src="navigation.js?v=20261029-tabs" defer></script>
 </head>
 <body>
-<a class="skip-link" href="#estudos">Ir ao conteúdo de estudo</a>
-<header class="topbar" id="topbar"><button id="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="false">☰ <span>Menu</span></button><a href="#visao-geral" class="logo">IAM <span>/</span> ROADMAP</a><a href="#task-prep-route" class="header-start">Começar →</a></header>
+<a class="skip-link" href="#main-content">Pular para o conteúdo</a>
+<header class="topbar" id="topbar">
+ <a href="#visao-geral" class="logo" aria-label="IAM Roadmap, página inicial"><span class="logo-mark" aria-hidden="true">I<span>/</span>M</span><span class="brand-caption">ROADMAP <small>IAM ENGINEERING</small></span></a>
+ <nav class="primary-nav" aria-label="Navegação principal">
+  <a href="#visao-geral" data-page="overview">Início</a>
+  <a href="#estudos" data-page="studies">Jornada</a>
+  <a href="#arquitetura" data-page="architecture">Arquitetura</a>
+  <a href="#certificacoes" data-page="certifications">Certificações</a>
+ </nav>
+ <div class="header-right"><span class="header-progress"><span class="header-progress-label">PROGRESSO</span><strong id="sidebar-progress-value">0%</strong><span class="header-progress-track" aria-hidden="true"><span id="sidebar-progress-fill"></span></span></span><a href="#task-prep-route" class="header-start">Continuar <span aria-hidden="true">↗</span></a></div>
+</header>
 <div class="app-shell">
- <div class="nav-scrim" id="nav-scrim" aria-hidden="true"></div>
- <aside class="sidebar" id="sidebar" aria-label="Navegação do portal">
-  <div class="sidebar-top"><span class="eyebrow">SEU ESPAÇO DE ESTUDO</span><button id="menu-close" type="button" aria-label="Fechar menu">×</button></div>
-  <nav aria-label="Principal"><a href="#visao-geral" data-page="overview">01 <span>Visão geral</span></a><a href="#laboratorio" data-page="lab">02 <span>Laboratório &amp; custos</span></a><a href="#arquitetura" data-page="architecture">03 <span>Arquitetura</span></a><a href="#estudos" data-page="studies">04 <span>Estudos</span></a><a href="#certificacoes" data-page="certifications">05 <span>Certificações</span></a></nav>
-  <div class="sidebar-progress"><div><span>Seu progresso</span><strong id="sidebar-progress-value">0%</strong></div><div class="progress-track" aria-hidden="true"><span id="sidebar-progress-fill"></span></div><small>Prática e simulação aparecem separadas no painel.</small></div>
-  <a class="sidebar-lab" href="#backup-title">Backup e privacidade ↗</a>
-  <p class="sidebar-foot">Entenda.<br>Execute.<br><span>Evolua.</span></p>
- </aside>
  <main id="main-content" class="page-content">
-  <p id="storage-warning" class="notice warning" role="alert" hidden>O armazenamento está indisponível. Exporte o progresso desta sessão antes de fechar a página.</p>
+  <p id="storage-warning" class="notice warning" role="alert" hidden>O armazenamento deste navegador está indisponível. Exporte seu trabalho antes de sair.</p>
   <div id="page-overview" data-page-view="overview">
-   <section class="hero"><span class="eyebrow">IDENTIDADE · ACESSO · PRÁTICA</span><h1 tabindex="-1">Aprenda IAM.<br><span>Construa o ambiente.</span></h1><p>Da primeira identidade ao ciclo de vida completo. Uma trilha guiada, com teoria, laboratório e testes em cada etapa.</p><div class="hero-actions"><a class="button" href="#arquitetura">Conhecer a empresa →</a><a class="button secondary" href="#task-prep-route">Iniciar estudo guiado</a><a class="button secondary" href="#laboratorio">Planejar meu laboratório</a></div><div class="hero-meta"><span id="phase-total">11 módulos</span><span id="task-total">41 lições</span><span>Um cenário que evolui com você</span></div></section>
-   <section class="lab-home-callout" aria-labelledby="lab-home-title"><div><span class="eyebrow">LABORATÓRIO GUIADO · ORÇAMENTO DE R$ 200/MÊS</span><h2 id="lab-home-title">Saiba o que construir antes de contratar.</h2><p>Monte a Aurora por etapas: ambiente local, Active Directory, Entra Free, identidade híbrida, protocolos, governança e, só quando necessário, Intune e recursos licenciados. Acompanhe verificações e simule o custo mensal.</p></div><a href="#laboratorio" class="button">Abrir plano e custos →</a></section><section class="dashboard" aria-labelledby="dashboard-title"><div class="section-heading"><div><span class="eyebrow">SUA CONTINUIDADE</span><h2 id="dashboard-title">Um passo de cada vez.</h2></div><strong id="percent" class="percent">0%</strong></div><p id="count">0 lições com registro completo</p><div class="progress-track" role="progressbar" aria-label="Lições com registro completo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress"><span id="progress-fill"></span></div><div class="execution-stats"><div><strong id="real-count">0</strong><span>Prática real</span></div><div><strong id="mixed-count">0</strong><span>Execução parcial</span></div><div><strong id="simulation-count">0</strong><span>Simulação</span></div></div><p class="muted" id="steps-completed"></p><p id="legacy-notice" class="notice" hidden></p><div class="learning-resume"><div><span class="eyebrow">PRÓXIMA ATIVIDADE</span><strong id="resume-title"></strong><small id="resume-module"></small></div><a id="resume-link" class="button" href="#task-prep-route">Continuar →</a></div><details class="module-overview"><summary>Ver progresso por módulo</summary><div id="module-progress-list"></div></details></section>
-   <section class="lab-infra" aria-labelledby="infra-title"><span class="eyebrow">UMA EMPRESA. UM DESENHO. CONSTRUÇÃO GUIADA.</span><h2 id="infra-title" tabindex="-1">Primeiro entenda o ambiente.<br>Depois construa cada parte.</h2><p>A Aurora já tem pessoas, departamentos, grupos, endereços e movimentações definidos. Você vai configurar cada componente nas aulas, a partir do zero, e conferir seu efeito no fluxo completo.</p><div class="architecture-teaser"><div><h3>Arquitetura</h3><p>Topologia horizontal, inventário, identidades, regras de acesso e os eventos J001, M001 e L001.</p><a href="#arquitetura">Ver o desenho completo →</a></div><div><h3>Estudo orientado</h3><p>Cada tema aponta uma etapa do desenho. A prática mostra onde executar, o que preencher, por que fazer e qual resultado conferir.</p><a href="#task-prep-route">Construir o primeiro passo →</a></div></div></section>
-   <section class="learning-method"><span class="eyebrow">COMO ESTUDAR</span><h2>Entender é o começo.</h2><ol class="method-steps"><li><strong>Leia o conceito</strong><p>Entenda o que será aplicado na prática.</p></li><li><strong>Execute no ambiente</strong><p>Siga uma ação e observe seu resultado.</p></li><li><strong>Teste os limites</strong><p>Comprove o que permite e o que nega.</p></li></ol></section>
-   <section class="backup" aria-labelledby="backup-title"><span class="eyebrow">DADOS LOCAIS</span><h2 id="backup-title" tabindex="-1">Seu progresso fica com você.</h2><p>Sem conta no portal. Notas, confirmações e certificações ficam neste navegador. Exporte um backup para transferir ou preservar. Backups antigos são aceitos como histórico; lições revisadas pedem nova confirmação.</p><div class="actions"><button id="export" type="button" class="button">↓ Exportar backup</button><button id="import-button" type="button" class="button secondary">↑ Importar</button><input type="file" id="import" accept=".json,application/json" hidden><button id="reset" type="button" class="button danger">Zerar</button></div><p id="message" role="status" aria-live="polite"></p></section>
+   <section class="hero home-hero" aria-labelledby="home-title">
+    <div class="home-hero-copy">
+     <span class="eyebrow"><span class="signal-dot" aria-hidden="true"></span> SISTEMA DE APRENDIZAGEM · IAM / AURORA</span>
+     <h1 id="home-title" tabindex="-1">Domine identidade.<br><span>Construa o acesso.</span></h1>
+     <p>Uma jornada completa e prática: do primeiro usuário ao IAM híbrido, governança, protocolos, PAM e segurança de dispositivos. Cada conceito vira uma configuração, um teste e uma evidência.</p>
+     <div class="hero-actions"><a class="button" href="#estudos">Explorar a jornada <span aria-hidden="true">↗</span></a><a class="button secondary" href="#task-prep-route">Retomar meu laboratório <span aria-hidden="true">→</span></a></div>
+     <div class="hero-meta"><span id="phase-total">11 módulos</span><span id="task-total">41 lições</span><span>296 microetapas práticas</span><span>R$ 0 para começar</span></div>
+    </div>
+    <div class="home-system" aria-label="Prévia da arquitetura do laboratório Aurora">
+     <div class="home-system-top"><span>TOPOLOGIA / AURORA</span><span class="system-live"><span class="signal-dot" aria-hidden="true"></span> AMBIENTE DE TESTE</span></div>
+     <div class="system-grid">
+      <div class="system-node node-rh"><small>01 / ORIGEM</small><strong>RH · E001–E006</strong><span>J001 · M001 · L001</span></div>
+      <div class="system-link" aria-hidden="true"><span></span></div>
+      <div class="system-nodes-row"><div class="system-node"><small>02 / DIRETÓRIO</small><strong>AD DS · DC01</strong><span>DNS + Kerberos</span></div><div class="system-node"><small>03 / CLOUD</small><strong>Entra ID</strong><span>Tenant gratuito</span></div></div>
+      <div class="system-link branch" aria-hidden="true"><span></span></div>
+      <div class="system-nodes-row"><div class="system-node"><small>04 / LOGIN</small><strong>Keycloak · OIDC</strong><span>PKCE / SAML</span></div><div class="system-node"><small>05 / ACESSO</small><strong>APP01 · SCIM</strong><span>FIN 200 / JUR 403</span></div></div>
+      <div class="system-diagnostic"><span>OPERACIONAL</span><strong>11 módulos · 1 laboratório contínuo</strong><a href="#arquitetura">Ver topologia detalhada <span aria-hidden="true">↗</span></a></div>
+     </div>
+    </div>
+   </section>
+   <div class="home-strip" aria-label="Características do projeto"><span>ENTENDA O QUÊ</span><span aria-hidden="true">/</span><span>APLIQUE NO AMBIENTE</span><span aria-hidden="true">/</span><span>PROVE O RESULTADO</span><span aria-hidden="true">/</span><span>CONTINUE DE ONDE PAROU</span></div>
+   <section class="home-control" aria-label="Sua evolução e próxima execução">
+    <div class="home-control-heading"><span class="eyebrow">PAINEL DE CONTROLE / SUA EVOLUÇÃO</span><h2>Seu próximo passo está aqui.</h2><p>Estude no ritmo do dia. O ambiente e a lição evoluem juntos; não existe prazo obrigatório.</p></div>
+    <div class="home-control-grid">
+     <div class="dashboard" aria-labelledby="dashboard-title">
+      <div class="section-heading"><div><span class="eyebrow">JORNADA CONCLUÍDA</span><h3 id="dashboard-title">Execuções registradas</h3></div><strong id="percent" class="percent">0%</strong></div>
+      <p id="count">0 / 41 aulas concluídas</p>
+      <div class="progress-track" role="progressbar" aria-label="Lições concluídas" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress"><span id="progress-fill"></span></div>
+      <div class="execution-stats"><div><strong id="real-count">0</strong><span>Práticas reais</span></div><div><strong id="mixed-count">0</strong><span>Parciais</span></div><div><strong id="simulation-count">0</strong><span>Simulações</span></div></div>
+      <p class="muted" id="steps-completed"></p><p id="legacy-notice" class="notice" hidden></p>
+     </div>
+     <div class="home-resume-card">
+      <span class="eyebrow">CONTINUE DE ONDE PAROU</span><span class="resume-ordinal">SEU PRÓXIMO OBJETIVO <span aria-hidden="true">↗</span></span>
+      <div class="learning-resume"><div><strong id="resume-title"></strong><small id="resume-module"></small></div><a id="resume-link" class="button" href="#task-prep-route">Continuar →</a></div>
+      <div class="home-mini-spec"><span>LABORATÓRIO</span><strong>Windows 11 Pro · VirtualBox · Ryzen 5600</strong><small>16 GB RAM / tenant Microsoft Entra Free / teto R$ 200</small></div>
+     </div>
+    </div>
+   </section>
+   <section class="home-explore" aria-labelledby="home-explore-title">
+    <div class="home-section-heading"><div><span class="eyebrow">O QUE VOCÊ VAI DOMINAR</span><h2 id="home-explore-title">Da identidade ao controle total.</h2></div><a class="text-action" href="#estudos">Abrir todas as aulas ↗</a></div>
+    <div id="home-path" class="home-path-grid" aria-label="Visão dos módulos do programa"></div>
+   </section>
+   <section class="home-focus" aria-labelledby="home-focus-title">
+    <div class="home-focus-lead"><span class="eyebrow">UMA EMPRESA. UMA TOPOLOGIA. UM PROJETO REAL.</span><h2 id="home-focus-title">Aprendizado que constrói infraestrutura.</h2><p>A Aurora começa com dados fictícios do RH e termina com diretório, identidade cloud, autenticação, autorização, governança, auditoria e controle de dispositivos. Cada equipamento e relação aparece na arquitetura; cada configuração aponta para uma aula.</p><a href="#arquitetura" class="button secondary">Inspecionar toda a arquitetura ↗</a></div>
+    <div class="home-focus-grid"><article><span class="eyebrow">01 / CONSTRUIR</span><strong>Ambiente coerente</strong><p>DC01, CL01, Entra Free, Keycloak e APP01 com nomes, IPs e responsabilidades definidos.</p></article><article><span class="eyebrow">02 / COMPROVAR</span><strong>Resultados observáveis</strong><p>Saídas de comandos, acesso permitido e negado, evidências sanitizadas e reversão.</p></article><article><span class="eyebrow">03 / EVOLUIR</span><strong>Sem gastos prematuros</strong><p>Comece localmente. Conditional Access, PIM, Intune e Azure entram só quando a aula exigir.</p></article></div>
+   </section>
+   <section class="home-backup" aria-labelledby="backup-title">
+    <div><span class="eyebrow">CONTROLE LOCAL / PRIVACIDADE</span><h2 id="backup-title" tabindex="-1">Seu progresso pertence a você.</h2><p>O portal registra estudo, validação, notas, microetapas e planejamento neste navegador. Exporte o histórico para preservar ou transferir de dispositivo.</p></div>
+    <div class="backup">
+     <div class="actions"><button id="export" type="button" class="button secondary">Exportar backup ↓</button><button id="import-button" type="button" class="button secondary">Importar ↑</button><input type="file" id="import" accept=".json,application/json" hidden><button id="reset" type="button" class="button danger">Zerar dados</button></div><p id="message" role="status" aria-live="polite"></p>
+     <details class="module-overview"><summary>Ver progresso detalhado por módulo</summary><div id="module-progress-list"></div></details>
+    </div>
+   </section>
   </div>
-  <div id="page-lab" data-page-view="lab" hidden><h2 class="sr-only" tabindex="-1">Laboratório e custos</h2><div id="lab-profile" aria-label="Perfil de hardware do laboratório"></div><div id="lab-planner"><p class="muted">Carregando o plano operacional…</p></div></div><div id="page-architecture" data-page-view="architecture" hidden><section class="architecture-hero"><span class="eyebrow">O MAPA DO SEU LABORATÓRIO</span><h2 id="architecture-title" tabindex="-1">Arquitetura da Aurora.</h2><p>Conheça a empresa antes de configurar uma ferramenta. Este é o desenho fixo que as aulas vão construir: pessoas, componentes, configurações, fluxos e mudanças.</p><nav class="architecture-index" aria-label="Seções da arquitetura"><a href="#arch-topology">Topologia</a><a href="#arch-flows">Fluxos</a><a href="#arch-identities">Identidades</a><a href="#arch-infrastructure">Ativos e rede</a><a href="#arch-config">Configurações</a><a href="#arch-policies">Acessos</a><a href="#arch-events">Movimentações</a><a href="#arch-stages">Etapas e temas</a></nav></section><div id="architecture-content"></div></div>
   <div id="page-studies" data-page-view="studies" hidden>
-   <section class="roadmap" aria-labelledby="roadmap-title"><span class="eyebrow">ENTENDA → PRATIQUE → VERIFIQUE</span><div class="section-heading"><h2 id="roadmap-title" tabindex="-1">Sua trilha de IAM.</h2><label class="search" for="search"><span class="sr-only">Buscar lições</span><input id="search" type="search" placeholder="Buscar tema ou tecnologia…"><kbd aria-hidden="true">/</kbd></label></div><p class="muted">Siga a ordem de construção da Arquitetura. Em cada lição, use Tema anterior / Próximo tema para continuar o mesmo laboratório.</p><details class="filter-panel"><summary>Refinar a trilha</summary><div class="advanced-filters"><label for="module-filter">Módulo<select id="module-filter"><option value="all">Todos</option></select></label><label for="level-filter">Nível<select id="level-filter"><option value="all">Todos</option><option value="beginner">Fundamentos</option><option value="intermediate">Intermediário</option><option value="advanced">Avançado</option></select></label><label for="tech-filter">Tecnologia<select id="tech-filter"><option value="all">Todas</option></select></label><label for="cert-filter">Certificação relacionada<select id="cert-filter"><option value="all">Todas</option></select></label></div><button id="clear-study-filters" type="button" class="text-action">Limpar filtros</button></details><div class="study-toolbar"><div class="filters" role="group" aria-label="Situação"><button data-filter="all" aria-pressed="true" class="active">Todas</button><button data-filter="pending" aria-pressed="false">Pendentes</button><button data-filter="done" aria-pressed="false">Concluídas</button></div><span id="results-count" role="status"></span><button id="collapse-all" type="button" class="text-action" hidden>Recolher módulos</button></div><div id="roadmap-list"></div><p id="empty" role="status" hidden>Nenhuma lição corresponde aos filtros. Use Limpar filtros para ver toda a trilha.</p></section>
+   <section class="roadmap" aria-labelledby="roadmap-title">
+    <div class="journey-hero"><span class="eyebrow">JORNADA IAM / ESTUDO + LABORATÓRIO</span><h1 id="roadmap-title" tabindex="-1">Aprenda. Configure.<br><span>Valide e avance.</span></h1><p>Um único espaço para a teoria objetiva, a montagem do ambiente, comandos, validações e custos. Selecione uma aula e execute uma microetapa por vez.</p>
+     <div class="journey-highlights"><span>41 aulas conectadas</span><span>296 passos executáveis</span><span>11 áreas técnicas</span><span>Windows 11 Pro + VirtualBox</span></div>
+    </div>
+    <div class="journey-split-heading"><div><span class="eyebrow">SEU AMBIENTE DE EXECUÇÃO</span><h2>Laboratório Aurora <span>/</span> Windows 11 Pro</h2><p>O laboratório é a aplicação prática do estudo, não uma trilha separada. Prepare seu hardware, rede, VMs e orçamento no mesmo lugar.</p></div><a href="#arquitetura" class="button secondary">Ver projeto final ↗</a></div>
+    <details id="study-environment" class="study-environment">
+     <summary><span class="environment-summary-main"><strong>Configurar ambiente, rede, VirtualBox e custos</strong><small>Requisitos, guia de execução, 10 marcos técnicos e orçamento mensal</small></span><span class="environment-chevron" aria-hidden="true">+</span></summary>
+     <div class="environment-body"><div id="lab-profile" aria-label="Perfil de hardware e configuração do laboratório"></div><div id="lab-planner"><p class="muted">Carregando plano de laboratório…</p></div></div>
+    </details>
+    <div class="journey-study-header"><div><span class="eyebrow">PLANO DE EXECUÇÃO / AULAS</span><h2>Escolha a próxima ação.</h2><p>Todos os módulos integram o mesmo cenário Aurora; os resultados de uma aula alimentam as próximas.</p></div><label class="search" for="search"><span class="sr-only">Buscar lições</span><input id="search" type="search" placeholder="Buscar tema, serviço ou tecnologia…"><kbd aria-hidden="true">/</kbd></label></div>
+    <details class="filter-panel"><summary>Filtros avançados</summary><div class="advanced-filters"><label for="module-filter">Módulo<select id="module-filter"><option value="all">Todos</option></select></label><label for="level-filter">Nível<select id="level-filter"><option value="all">Todos</option><option value="beginner">Fundamentos</option><option value="intermediate">Intermediário</option><option value="advanced">Avançado</option></select></label><label for="tech-filter">Tecnologia<select id="tech-filter"><option value="all">Todas</option></select></label><label for="cert-filter">Certificação<select id="cert-filter"><option value="all">Todas</option></select></label></div><button id="clear-study-filters" type="button" class="text-action">Limpar filtros</button></details>
+    <div class="study-toolbar"><div class="filters" role="group" aria-label="Situação das aulas"><button data-filter="all" aria-pressed="true" class="active">Todas</button><button data-filter="pending" aria-pressed="false">Pendentes</button><button data-filter="done" aria-pressed="false">Concluídas</button></div><span id="results-count" role="status"></span><button id="collapse-all" type="button" class="text-action" hidden>Recolher módulos</button></div>
+    <div id="roadmap-list"></div><p id="empty" role="status" hidden>Nenhuma aula corresponde aos filtros. Limpe os filtros para continuar.</p>
+   </section>
   </div>
-  <div id="page-certifications" data-page-view="certifications" hidden><section class="certifications"><span class="eyebrow">CARREIRA · CONHECIMENTO ANTES DA PROVA</span><h2 id="certifications-title" tabindex="-1">Certificações com propósito.</h2><p>Uma orientação para o foco Microsoft é SC-900 → SC-300 → SC-100. As alternativas acompanham sua especialização; não são uma lista obrigatória.</p><div class="notice">SC-900 não é requisito da SC-300. O título Cybersecurity Architect Expert exige SC-100 e uma certificação associada elegível. CISSP e CISM têm requisitos de experiência. Consulte o programa oficial antes de pagar.</div><div class="cert-tools"><label for="cert-provider">Fornecedor<select id="cert-provider"><option value="all">Todos</option></select></label><span id="cert-visible-count"></span></div><p id="cert-progress" role="status"></p><div id="certification-levels"></div><p class="muted">Relacionar uma lição a uma certificação não comprova cobertura do exame. Preços, requisitos e disponibilidade devem ser conferidos no fornecedor. Revisão editorial: 28/10/2026.</p></section></div>
+  <div id="page-architecture" data-page-view="architecture" hidden>
+   <section class="architecture-hero"><span class="eyebrow">ARQUITETURA / VISÃO FINAL DO LABORATÓRIO</span><h1 id="architecture-title" tabindex="-1">Um sistema inteiro.<br><span>Todas as conexões.</span></h1><p>Explore a arquitetura completa da Aurora: ativos, identidades, vínculos, protocolos, políticas, movimentações, decisões e o caminho de cada configuração até o resultado esperado. Integrações automáticas e ações manuais são diferenciadas.</p><nav class="architecture-index" aria-label="Seções da arquitetura"><a href="#arch-topology">Mapa geral</a><a href="#arch-flows">Fluxos</a><a href="#arch-identities">Identidades</a><a href="#arch-infrastructure">Infraestrutura</a><a href="#arch-events">Movimentações</a><a href="#arch-atlas">Mapa completo / 296 passos</a></nav></section>
+   <div id="architecture-content"></div>
+   <section id="arch-atlas" class="architecture-atlas" aria-label="Mapa completo dos componentes e configurações"></section>
+  </div>
+  <div id="page-certifications" data-page-view="certifications" hidden><section class="certifications"><span class="eyebrow">PRÓXIMAS ETAPAS / MERCADO E CERTIFICAÇÃO</span><h1 id="certifications-title" tabindex="-1">Certificações com propósito.</h1><p>Use a prática desenvolvida no laboratório Aurora para orientar sua especialização. SC-900 pode fundamentar o início; SC-300 é o caminho central para o IAM Microsoft. Nenhuma certificação é um pré-requisito obrigatório para começar.</p><div class="notice">SC-900 não é requisito para SC-300. A obtenção do título Cybersecurity Architect Expert depende dos pré-requisitos da Microsoft; CISSP e CISM têm requisitos próprios de experiência. Consulte o programa oficial.</div><div class="cert-tools"><label for="cert-provider">Fornecedor<select id="cert-provider"><option value="all">Todos</option></select></label><span id="cert-visible-count"></span></div><p id="cert-progress" role="status"></p><div id="certification-levels"></div><p class="muted">Relacionar aulas a certificações não comprova cobertura integral de exame. Revisão editorial: 28/10/2026.</p></section></div>
  </main>
 </div>
-<footer id="site-footer">IAM / ROADMAP <span>Um projeto pessoal para aprender construindo.</span><a href="https://github.com/lpraxedess/Roadmap-Study" target="_blank" rel="noopener noreferrer">GitHub ↗</a></footer>
+<footer id="site-footer"><span>IAM / ROADMAP</span><span>Aprender construindo, validar antes de concluir.</span><a href="https://github.com/lpraxedess/Roadmap-Study" target="_blank" rel="noopener noreferrer">Código do projeto ↗</a></footer>
 <div id="global-toast" class="global-toast" role="status" aria-live="polite" aria-atomic="true"></div>
-<noscript><p class="notice">Ative JavaScript para abrir a trilha e registrar progresso. A Arquitetura e as lições orientam a construção manual do ambiente.</p></noscript>
-</body></html>
+<noscript><p class="notice">Ative JavaScript para carregar a trilha e registrar progresso.</p></noscript>
+</body>
+</html>
